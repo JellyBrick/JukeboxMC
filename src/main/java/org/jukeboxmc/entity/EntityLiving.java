@@ -4,6 +4,8 @@ import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
 import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 import org.apache.commons.math3.util.FastMath;
 import org.jukeboxmc.Server;
+import org.jukeboxmc.entity.ai.EntityAI;
+import org.jukeboxmc.entity.ai.goal.Goal;
 import org.jukeboxmc.entity.attribute.Attribute;
 import org.jukeboxmc.entity.attribute.AttributeType;
 import org.jukeboxmc.event.entity.EntityDamageByEntityEvent;
@@ -12,16 +14,14 @@ import org.jukeboxmc.event.entity.EntityHealEvent;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-public abstract class EntityLiving extends Entity {
+public abstract class EntityLiving extends EntityAI {
 
     protected int deadTimer = 0;
     protected int fireTicks = 0;
@@ -54,7 +54,7 @@ public abstract class EntityLiving extends Entity {
 
         if ( this.getHealth() < 1 ) {
             if ( this.deadTimer > 0 && this.deadTimer-- > 1 ) {
-                this.despawn();
+                this.close();
                 this.isDead = true;
                 this.deadTimer = 0;
             }

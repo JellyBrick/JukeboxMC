@@ -125,6 +125,14 @@ public class Location extends Vector {
         return new Vector( (float) x, (float) y, (float) z ).normalize();
     }
 
+    @Override
+    public Location clone() {
+        Location clone = (Location) super.clone();
+        clone.world = this.world;
+        clone.yaw = this.yaw;
+        clone.pitch = this.pitch;
+        return clone;
+    }
 
     @Override
     public String toString() {

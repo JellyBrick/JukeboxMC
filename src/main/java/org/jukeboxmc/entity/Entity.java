@@ -562,7 +562,7 @@ public abstract class Entity {
         }
     }
 
-    protected void move( Vector velocity ) {
+    public void move( Vector velocity ) {
         if ( velocity.getX() == 0 && velocity.getY() == 0 && velocity.getZ() == 0 ) {
             return;
         }
@@ -671,7 +671,7 @@ public abstract class Entity {
         isDead = dead;
     }
 
-    protected void updateMovement() {
+    public void updateMovement() {
         float diffPosition = ( this.location.getX() - this.lastLocation.getX() ) * ( this.location.getX() - this.lastLocation.getX() ) + ( this.location.getY() - this.lastLocation.getY() ) * ( this.location.getY() - this.lastLocation.getY() ) + ( this.location.getZ() - this.lastLocation.getZ() ) * ( this.location.getZ() - this.lastLocation.getZ() );
         float diffRotation = ( this.location.getYaw() - this.lastLocation.getYaw() ) * ( this.location.getYaw() - this.lastLocation.getYaw() ) + ( this.location.getPitch() - this.lastLocation.getPitch() ) * ( this.location.getPitch() - this.lastLocation.getPitch() );
 
@@ -683,7 +683,7 @@ public abstract class Entity {
             this.lastLocation.setZ( this.location.getZ() );
             this.lastLocation.setYaw( this.location.getYaw() );
             this.lastLocation.setPitch( this.location.getPitch() );
-            this.sendEntityMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY() + 0, this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), this.onGround );
+            this.sendEntityMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), this.onGround );
         }
 
         if ( diffMotion > 0.0025 || ( diffMotion > 0.0001 && this.getVelocity().squaredLength() <= 0.0001 ) ) {
@@ -694,7 +694,7 @@ public abstract class Entity {
         }
     }
 
-    private void sendEntityMovePacket( Location location, boolean onGround ) {
+    public void sendEntityMovePacket( Location location, boolean onGround ) {
         MoveEntityAbsolutePacket moveEntityAbsolutePacket = new MoveEntityAbsolutePacket();
         moveEntityAbsolutePacket.setRuntimeEntityId( this.entityId );
         moveEntityAbsolutePacket.setTeleported( false );

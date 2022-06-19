@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author LucGamesYT
  * @version 1.0
  */
-public class Vector {
+public class Vector implements Cloneable {
 
     protected float x;
     protected float y;
@@ -226,6 +226,20 @@ public class Vector {
     @Override
     public int hashCode() {
         return Objects.hash( this.x, this.y, this.z, this.dimension );
+    }
+
+    @Override
+    public Vector clone(){
+        try {
+            Vector clone = (Vector) super.clone();
+            clone.x = this.x;
+            clone.y = this.y;
+            clone.z = this.z;
+            clone.dimension = dimension;
+            return clone;
+        } catch ( CloneNotSupportedException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     @Override

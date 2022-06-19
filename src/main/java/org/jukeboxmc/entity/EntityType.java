@@ -3,6 +3,7 @@ package org.jukeboxmc.entity;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.jukeboxmc.entity.item.EntityItem;
+import org.jukeboxmc.entity.passive.EntityCow;
 import org.jukeboxmc.entity.passive.EntityHuman;
 import org.jukeboxmc.entity.passive.EntityNPC;
 import org.jukeboxmc.entity.projectile.EntityArrow;
@@ -23,7 +24,8 @@ public enum EntityType {
     SNOWBALL( EntitySnowball.class, "minecraft:snowball" ),
     FISHING_HOOK( EntityFishingHook.class, "minecraft:fishing_hook" ),
     EGG( EntityEgg.class, "minecraft:egg" ),
-    NPC( EntityNPC.class, "minecraft:npc" );
+    NPC( EntityNPC.class, "minecraft:npc" ),
+    COW( EntityCow.class, "minecraft:cow" );
 
     private final Class<? extends Entity> entityClass;
     private final String identifier;
