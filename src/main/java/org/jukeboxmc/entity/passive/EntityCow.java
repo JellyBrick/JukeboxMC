@@ -7,7 +7,7 @@ import org.jukeboxmc.entity.ai.goal.LookAtRandomGoal;
 import org.jukeboxmc.entity.ai.goal.MoveRandomGoal;
 
 /**
- * @author LucGamesYT
+ * @author LucGamesYT, Kaooot
  * @version 1.0
  */
 public class EntityCow extends EntityLiving {
@@ -39,5 +39,4 @@ public class EntityCow extends EntityLiving {
     public EntityType getEntityType() {
         return EntityType.COW;
     }
-
 }

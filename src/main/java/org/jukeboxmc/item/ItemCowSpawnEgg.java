@@ -7,7 +7,7 @@ import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
 
 /**
- * @author LucGamesYT
+ * @author Kaooot
  * @version 1.0
  */
 public class ItemCowSpawnEgg extends Item {
