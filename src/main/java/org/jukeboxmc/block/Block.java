@@ -13,6 +13,7 @@ import org.jukeboxmc.block.direction.BlockFace;
 import org.jukeboxmc.block.direction.Direction;
 import org.jukeboxmc.block.type.UpdateReason;
 import org.jukeboxmc.blockentity.BlockEntity;
+import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.item.Item;
 import org.jukeboxmc.item.type.ItemTierType;
 import org.jukeboxmc.item.type.ItemToolType;
@@ -220,6 +221,10 @@ public abstract class Block implements Cloneable {
     public void leaveBlock( Player player ) {
     }
 
+    public void onEntityCollision( Entity entity) {
+
+    }
+
     public int getTickRate() {
         return 10;
     }
@@ -348,18 +353,12 @@ public abstract class Block implements Cloneable {
     //========= Other =========
 
     public Block getSide( Direction direction, int layer ) {
-        switch ( direction ) {
-            case SOUTH:
-                return this.getRelative( Vector.south(), layer );
-            case NORTH:
-                return this.getRelative( Vector.north(), layer );
-            case EAST:
-                return this.getRelative( Vector.east(), layer );
-            case WEST:
-                return this.getRelative( Vector.west(), layer );
-            default:
-                return null;
-        }
+        return switch ( direction ) {
+            case SOUTH -> this.getRelative( Vector.south(), layer );
+            case NORTH -> this.getRelative( Vector.north(), layer );
+            case EAST -> this.getRelative( Vector.east(), layer );
+            case WEST -> this.getRelative( Vector.west(), layer );
+        };
     }
 
     public Block getSide( Direction direction ) {
@@ -367,22 +366,14 @@ public abstract class Block implements Cloneable {
     }
 
     public Block getSide( BlockFace blockFace, int layer ) {
-        switch ( blockFace ) {
-            case DOWN:
-                return this.getRelative( Vector.down(), layer );
-            case UP:
-                return this.getRelative( Vector.up(), layer );
-            case SOUTH:
-                return this.getRelative( Vector.south(), layer );
-            case NORTH:
-                return this.getRelative( Vector.north(), layer );
-            case EAST:
-                return this.getRelative( Vector.east(), layer );
-            case WEST:
-                return this.getRelative( Vector.west(), layer );
-            default:
-                return null;
-        }
+        return switch ( blockFace ) {
+            case DOWN -> this.getRelative( Vector.down(), layer );
+            case UP -> this.getRelative( Vector.up(), layer );
+            case SOUTH -> this.getRelative( Vector.south(), layer );
+            case NORTH -> this.getRelative( Vector.north(), layer );
+            case EAST -> this.getRelative( Vector.east(), layer );
+            case WEST -> this.getRelative( Vector.west(), layer );
+        };
     }
 
     public Block getSide( BlockFace blockFace ) {

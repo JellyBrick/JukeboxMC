@@ -1,7 +1,5 @@
 package org.jukeboxmc.world.generator.noise.bukkit;
 
-import org.jukeboxmc.world.World;
-
 import java.util.Random;
 
 /**

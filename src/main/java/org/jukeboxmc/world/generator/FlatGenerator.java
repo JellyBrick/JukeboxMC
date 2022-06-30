@@ -1,6 +1,9 @@
 package org.jukeboxmc.world.generator;
 
-import org.jukeboxmc.block.*;
+import org.jukeboxmc.block.Block;
+import org.jukeboxmc.block.BlockBedrock;
+import org.jukeboxmc.block.BlockDirt;
+import org.jukeboxmc.block.BlockGrass;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.world.Biome;
 import org.jukeboxmc.world.Dimension;
@@ -39,6 +42,7 @@ public class FlatGenerator extends Generator {
                 chunk.setBlock( blockX, 3, blockZ, 0, this.blockGrass );
             }
         }
+        chunk.calculateHeightmap( chunk.getMaxY() );
     }
 
     @Override

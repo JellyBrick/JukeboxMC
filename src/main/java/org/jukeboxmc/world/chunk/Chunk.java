@@ -13,6 +13,7 @@ import org.jukeboxmc.JukeboxMC;
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockAir;
 import org.jukeboxmc.block.BlockPalette;
+import org.jukeboxmc.block.BlockType;
 import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.math.Location;
@@ -128,6 +129,41 @@ public class Chunk {
 
     public short[] getHeight() {
         return this.height;
+    }
+
+    public void setHeight( int x, int z, short height ) {
+        this.height[( z << 4 ) + x] = height;
+    }
+
+    public int getHeight( int x, int z ) {
+        return this.height[( z << 4 ) + x];
+    }
+
+    public Block getHeighestBlockAt( int x, int z ) {
+        for ( int blockY = this.getMaxY(); blockY > this.getMinY(); blockY-- ) {
+            Block block = this.getBlock( x, blockY, z, 0 );
+            if ( !block.getType().equals( BlockType.AIR ) ) {
+                return block;
+            }
+        }
+        return new BlockAir();
+    }
+
+    public void calculateHeightmap( int maxHeight ) {
+        if ( maxHeight == 0 ) {
+            return;
+        }
+
+        for ( int i = 0; i < 16; ++i ) {
+            for ( int k = 0; k < 16; ++k ) {
+                for ( int j = ( maxHeight + 16 ) - 1; j > 0; --j ) {
+                    if ( !this.getBlock( i, j, k, 0 ).getType().equals( BlockType.AIR ) ) {
+                        this.setHeight( i, k, (short) ( (short) j + 1 ) );
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public boolean isInitiating() {

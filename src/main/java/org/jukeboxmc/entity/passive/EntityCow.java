@@ -14,9 +14,9 @@ public class EntityCow extends EntityLiving {
 
     public EntityCow() {
         this.addAIGoals(
-                new DoNothingGoal( this, 3, 5, 0.40F ),
-                new MoveRandomGoal( this, 6, 0.60F ),
-                new LookAtRandomGoal( this, 1, 3, 0.10F )
+                new DoNothingGoal( this, 1, 2, 0.20F ),
+                new MoveRandomGoal( this, 10, 0.70F ),
+                new LookAtRandomGoal( this, 1, 3, 0.30F )
         );
     }
 

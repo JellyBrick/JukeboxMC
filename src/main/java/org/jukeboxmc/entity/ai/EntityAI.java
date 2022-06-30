@@ -39,7 +39,6 @@ public abstract class EntityAI extends Entity {
             if ( this.currentGoal == null ) {
                 return;
             }
-
             this.currentGoal.start();
         }
 
@@ -50,7 +49,7 @@ public abstract class EntityAI extends Entity {
                 return;
             }
 
-            this.currentGoal.tick();
+            this.currentGoal.tick(currentTick);
         }
     }
 

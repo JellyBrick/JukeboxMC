@@ -827,7 +827,6 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
 
     public boolean attackWithItemInHand( Entity target ) {
         if ( target instanceof EntityLiving living ) {
-
             boolean success = false;
 
             EntityDamageEvent.DamageSource damageSource = EntityDamageEvent.DamageSource.ENTITY_ATTACK;

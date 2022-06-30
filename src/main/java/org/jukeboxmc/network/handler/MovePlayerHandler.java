@@ -21,7 +21,6 @@ public class MovePlayerHandler implements PacketHandler<MovePlayerPacket> {
         Location toLocation = new Location( player.getWorld(), new Vector( packet.getPosition().sub( 0, player.getEyeHeight(), 0 ) ), packet.getRotation().getY() , packet.getRotation().getX(), player.getDimension() );
         PlayerMoveEvent playerMoveEvent = new PlayerMoveEvent( player, player.getLocation(), toLocation );
         Server.getInstance().getPluginManager().callEvent( playerMoveEvent );
-
         if ( playerMoveEvent.isCancelled() ) {
             playerMoveEvent.setTo( playerMoveEvent.getFrom() );
         }

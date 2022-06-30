@@ -24,7 +24,8 @@ public class CommandManager {
                 StopCommand.class,
                 TeleportCommand.class,
                 SeedCommand.class,
-                SaveCommand.class
+                SaveCommand.class,
+                KillCommand.class
         );
 
         for( Class<? extends Command> commandClass : commands ) {

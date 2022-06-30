@@ -2,8 +2,7 @@ package org.jukeboxmc.item;
 
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.direction.BlockFace;
-import org.jukeboxmc.entity.passive.*;
-import org.jukeboxmc.entity.hostile.*;
+import org.jukeboxmc.entity.hostile.EntityHusk;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
 

@@ -5,7 +5,6 @@ import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 import org.apache.commons.math3.util.FastMath;
 import org.jukeboxmc.Server;
 import org.jukeboxmc.entity.ai.EntityAI;
-import org.jukeboxmc.entity.ai.goal.Goal;
 import org.jukeboxmc.entity.attribute.Attribute;
 import org.jukeboxmc.entity.attribute.AttributeType;
 import org.jukeboxmc.event.entity.EntityDamageByEntityEvent;
@@ -14,7 +13,9 @@ import org.jukeboxmc.event.entity.EntityHealEvent;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**

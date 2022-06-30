@@ -73,7 +73,10 @@ public class EntityHuman extends EntityLiving implements InventoryHolder {
 
     @Override
     public float getEyeHeight() {
-        return 1.62f;
+        if ( !this.isSneaking() ) {
+            return 1.62f;
+        }
+        return 1.54f;
     }
 
     @Override

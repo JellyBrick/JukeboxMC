@@ -19,7 +19,6 @@ public class LookAtRandomGoal extends Goal {
 
     public LookAtRandomGoal( Entity entity, int minSeconds, int maxSeconds, float chance ) {
         super( entity );
-
         this.minSeconds = minSeconds;
         this.maxSeconds = maxSeconds;
         this.chance = chance;
@@ -49,11 +48,11 @@ public class LookAtRandomGoal extends Goal {
         Location location = this.entity.getLocation().clone();
 
         location.setYaw( (float) Math.toDegrees( -Math.atan2( x / diff, z / diff ) ) );
-        this.entity.sendEntityMovePacket( location.add( 0, this.entity.getEyeHeight(), 0 ), true );
+        this.entity.sendEntityMovePacket( location, true );
     }
 
     @Override
-    public void tick() {
+    public void tick(long currentTick) {
         this.ticks--;
     }
 

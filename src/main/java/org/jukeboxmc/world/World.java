@@ -794,6 +794,40 @@ public class World {
         return targetEntity;
     }
 
+    public List<Block> getCollisionBlocks( Entity entity, boolean includePassThrough ) {
+        AxisAlignedBB boundingBox = entity.getBoundingBox().grow( 0.1f, 0.1f, 0.1f );
+        int minX = (int) FastMath.floor( boundingBox.getMinX() );
+        int minY = (int) FastMath.floor( boundingBox.getMinY() );
+        int minZ = (int) FastMath.floor( boundingBox.getMinZ() );
+        int maxX = (int) FastMath.ceil( boundingBox.getMaxX() );
+        int maxY = (int) FastMath.ceil( boundingBox.getMaxY() );
+        int maxZ = (int) FastMath.ceil( boundingBox.getMaxZ() );
+        return this.iterateBlocks( minX, maxX, minY, maxY, minZ, maxZ, boundingBox, includePassThrough );
+    }
+
+    private List<Block> iterateBlocks( int minX, int maxX, int minY, int maxY, int minZ, int maxZ, AxisAlignedBB
+            boundingBox, boolean includePassThrough ) {
+        List<Block> values = null;
+
+        for ( int z = minZ; z < maxZ; ++z ) {
+            for ( int x = minX; x < maxX; ++x ) {
+                for ( int y = minY; y < maxY; ++y ) {
+                    Block block = this.getBlock( x, y, z, 0 );
+
+                    if ( ( !block.canPassThrough() || includePassThrough ) && block.getBoundingBox().intersectsWith( boundingBox ) ) {
+                        if ( values == null ) {
+                            values = new ArrayList<>();
+                        }
+
+                        values.add( block );
+                    }
+                }
+            }
+        }
+        return values;
+    }
+
+
     private Vector getRelative( Vector blockPosition, Vector position ) {
         float x = blockPosition.getX() + position.getX();
         float y = blockPosition.getY() + position.getY();

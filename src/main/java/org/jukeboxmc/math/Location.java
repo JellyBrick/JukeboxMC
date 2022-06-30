@@ -1,6 +1,8 @@
 package org.jukeboxmc.math;
 
 import org.jukeboxmc.block.Block;
+import org.jukeboxmc.block.direction.BlockFace;
+import org.jukeboxmc.block.direction.Direction;
 import org.jukeboxmc.world.Biome;
 import org.jukeboxmc.world.Dimension;
 import org.jukeboxmc.world.World;
@@ -62,8 +64,18 @@ public class Location extends Vector {
     }
 
     @Override
+    public Location add( Vector vector ) {
+        return new Location( this.world, this.x + vector.x, this.y + vector.y, this.z + vector.z, this.yaw, this.pitch, this.dimension );
+    }
+
+    @Override
     public Location subtract( float x, float y, float z ) {
         return new Location( this.world, this.x - x, this.y - y, this.z - z, this.yaw, this.pitch, this.dimension );
+    }
+
+    @Override
+    public Location subtract( Vector vector ) {
+        return new Location( this.world, this.x - vector.x, this.y - vector.y, this.z - vector.z, this.yaw, this.pitch, this.dimension );
     }
 
     @Override
@@ -72,8 +84,45 @@ public class Location extends Vector {
     }
 
     @Override
+    public Location multiply( Vector vector ) {
+        return new Location( this.world, this.x * vector.x, this.y * vector.y, this.z * vector.z, this.yaw, this.pitch, this.dimension );
+    }
+
+    @Override
     public Location divide( float x, float y, float z ) {
         return new Location( this.world, this.x / x, this.y / y, this.z / z, this.yaw, this.pitch, this.dimension );
+    }
+
+    @Override
+    public Location divide( Vector vector ) {
+        return new Location( this.world, this.x / vector.x, this.y / vector.y, this.z / vector.z, this.yaw, this.pitch, this.dimension );
+    }
+
+    public Location getSide( Direction direction ) {
+        return switch ( direction ) {
+            case SOUTH -> this.getRelative( Vector.south() );
+            case NORTH -> this.getRelative( Vector.north() );
+            case EAST -> this.getRelative( Vector.east() );
+            case WEST -> this.getRelative( Vector.west() );
+        };
+    }
+
+    public Location getSide( BlockFace blockFace ) {
+        return switch ( blockFace ) {
+            case DOWN -> this.getRelative( Vector.down() );
+            case UP -> this.getRelative( Vector.up() );
+            case SOUTH -> this.getRelative( Vector.south() );
+            case NORTH -> this.getRelative( Vector.north() );
+            case EAST -> this.getRelative( Vector.east() );
+            case WEST -> this.getRelative( Vector.west() );
+        };
+    }
+
+    public Location getRelative( Vector position ) {
+        float x = this.getX() + position.getBlockX();
+        float y = this.getY() + position.getBlockY();
+        float z = this.getZ() + position.getBlockZ();
+        return new Location( this.world, x, y, z, this.yaw, this.pitch, this.dimension );
     }
 
     public World getWorld() {

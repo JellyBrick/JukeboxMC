@@ -169,16 +169,32 @@ public class Vector implements Cloneable {
         return new Vector( this.x + x, this.y + y, this.z + z, this.dimension );
     }
 
+    public Vector add( final Vector vector ) {
+        return new Vector( this.x + vector.x, this.y + vector.y, this.z + vector.z, this.dimension );
+    }
+
     public Vector subtract( final float x, final float y, final float z ) {
         return new Vector( this.x - x, this.y - y, this.z - z, this.dimension );
+    }
+
+    public Vector subtract( final Vector vector ) {
+        return new Vector( this.x - vector.x, this.y - vector.y, this.z - vector.z, this.dimension );
     }
 
     public Vector multiply( final float x, final float y, final float z ) {
         return new Vector( this.x * x, this.y * y, this.z * z, this.dimension );
     }
 
+    public Vector multiply( final Vector vector ) {
+        return new Vector( this.x * vector.x, this.y * vector.y, this.z * vector.z, this.dimension );
+    }
+
     public Vector divide( final float x, final float y, final float z ) {
         return new Vector( this.x / x, this.y / y, this.z / z, this.dimension );
+    }
+
+    public Vector divide( final Vector vector ) {
+        return new Vector( this.x / vector.x, this.y / vector.y, this.z / vector.z, this.dimension );
     }
 
     public Vector normalize() {

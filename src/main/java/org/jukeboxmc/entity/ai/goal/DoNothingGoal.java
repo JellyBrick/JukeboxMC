@@ -18,7 +18,6 @@ public class DoNothingGoal extends Goal {
 
     public DoNothingGoal( Entity entity, int minSeconds, int maxSeconds, float chance ) {
         super( entity );
-
         this.minSeconds = minSeconds;
         this.maxSeconds = maxSeconds;
         this.chance = chance;
@@ -40,7 +39,7 @@ public class DoNothingGoal extends Goal {
     }
 
     @Override
-    public void tick() {
+    public void tick(long currentTick) {
         this.ticks--;
     }
 

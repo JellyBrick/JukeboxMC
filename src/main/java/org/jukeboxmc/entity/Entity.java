@@ -17,6 +17,7 @@ import org.jukeboxmc.event.entity.*;
 import org.jukeboxmc.math.AxisAlignedBB;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
+import org.jukeboxmc.player.AdventureSettings;
 import org.jukeboxmc.player.GameMode;
 import org.jukeboxmc.player.Player;
 import org.jukeboxmc.world.Dimension;
@@ -119,7 +120,7 @@ public abstract class Entity {
         addEntityPacket.setRuntimeEntityId( this.entityId );
         addEntityPacket.setUniqueEntityId( this.entityId );
         addEntityPacket.setIdentifier( this.getEntityType().getIdentifier() );
-        addEntityPacket.setPosition( this.location.add( 0, this.getEyeHeight(), 0 ).toVector3f() );
+        addEntityPacket.setPosition( this.location.toVector3f() );
         addEntityPacket.setMotion( this.velocity.toVector3f() );
         addEntityPacket.setRotation( Vector3f.from( this.location.getPitch(), this.location.getYaw(), this.location.getYaw() ) );
         addEntityPacket.getMetadata().putAll( this.metadata.getEntityDataMap() );
@@ -140,6 +141,10 @@ public abstract class Entity {
 
     public Location getLocation() {
         return this.location;
+    }
+
+    public Location getEyeLocation() {
+        return this.location.clone().add( 0, this.getEyeHeight(), 0 );
     }
 
     public Vector getVelocity() {
@@ -186,12 +191,24 @@ public abstract class Entity {
         return this.location.getX();
     }
 
+    public void setX( float x ) {
+        this.location.setX( x );
+    }
+
     public float getY() {
         return this.location.getY();
     }
 
+    public void setY( float y ) {
+        this.location.setY( y );
+    }
+
     public float getZ() {
         return this.location.getZ();
+    }
+
+    public void setZ( float z ) {
+        this.location.setZ( z );
     }
 
     public int getBlockX() {
@@ -636,7 +653,7 @@ public abstract class Entity {
         this.fallDistance = fallDistance;
     }
 
-    protected void checkGroundState( float movX, float movY, float movZ, float dx, float dy, float dz ) {
+    public void checkGroundState( float movX, float movY, float movZ, float dx, float dy, float dz ) {
         this.isCollidedVertically = movY != dy;
         this.isCollidedHorizontally = ( movX != dx || movZ != dz );
         this.isCollided = ( this.isCollidedHorizontally || this.isCollidedVertically );
@@ -674,15 +691,14 @@ public abstract class Entity {
     public void updateMovement() {
         float diffPosition = ( this.location.getX() - this.lastLocation.getX() ) * ( this.location.getX() - this.lastLocation.getX() ) + ( this.location.getY() - this.lastLocation.getY() ) * ( this.location.getY() - this.lastLocation.getY() ) + ( this.location.getZ() - this.lastLocation.getZ() ) * ( this.location.getZ() - this.lastLocation.getZ() );
         float diffRotation = ( this.location.getYaw() - this.lastLocation.getYaw() ) * ( this.location.getYaw() - this.lastLocation.getYaw() ) + ( this.location.getPitch() - this.lastLocation.getPitch() ) * ( this.location.getPitch() - this.lastLocation.getPitch() );
-
         float diffMotion = ( this.velocity.getX() - this.lastVector.getX() ) * ( this.velocity.getX() - this.lastVector.getX() ) + ( this.velocity.getY() - this.lastVector.getY() ) * ( this.velocity.getY() - this.lastVector.getY() ) + ( this.velocity.getZ() - this.lastVector.getZ() ) * ( this.velocity.getZ() - this.lastVector.getZ() );
-
         if ( diffPosition > 0.0001 || diffRotation > 1.0 ) {
             this.lastLocation.setX( this.location.getX() );
             this.lastLocation.setY( this.location.getY() );
             this.lastLocation.setZ( this.location.getZ() );
             this.lastLocation.setYaw( this.location.getYaw() );
             this.lastLocation.setPitch( this.location.getPitch() );
+            this.onGround = this.location.getY() - this.lastLocation.getY() > 1;
             this.sendEntityMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), this.onGround );
         }
 
@@ -691,6 +707,107 @@ public abstract class Entity {
             this.lastVector.setY( this.velocity.getY() );
             this.lastVector.setZ( this.velocity.getZ() );
             this.setVelocity( this.velocity, true );
+        }
+    }
+
+    private boolean stuckInBlock = false;
+    private int stuckInBlockTicks = 0;
+
+    public void checkInsideBlock() {
+        // Check in which block we are
+        int fullBlockX = this.getBlockX();
+        int fullBlockY = this.getBlockY();
+        int fullBlockZ = this.getBlockZ();
+
+        // Are we stuck inside a block?
+        Block block = this.getWorld().getBlock( fullBlockX, fullBlockY, fullBlockZ, 0 );
+        if ( block.isSolid() && block.getBoundingBox().intersectsWith( this.boundingBox ) ) {
+            // We need to check for "smooth" movement when its a player (it climbs .5 steps in .3 -> .420 -> .468 .487 .495 .498 .499 steps
+            if ( this instanceof Player && ( this.stuckInBlockTicks++ <= 20 || ( (Player) this ).getAdventureSettings().get( AdventureSettings.Type.NO_CLIP) ) ) { // Yes we can "smooth" for up to 20 ticks, thanks mojang :D
+                return;
+            }
+
+            // Calc with how much force we can get out of here, this depends on how far we are in
+            float diffX = this.getX() - fullBlockX;
+            float diffY = this.getY() - fullBlockY;
+            float diffZ = this.getZ() - fullBlockZ;
+
+            // Random out the force
+            double force = Math.random() * 0.2 + 0.1;
+
+            // Check for free blocks
+            boolean freeMinusX = !this.getWorld().getBlock( fullBlockX - 1, fullBlockY, fullBlockZ, 0 ).isSolid();
+            boolean freePlusX = !this.getWorld().getBlock( fullBlockX + 1, fullBlockY, fullBlockZ, 0 ).isSolid();
+            boolean freeMinusY = !this.getWorld().getBlock( fullBlockX, fullBlockY - 1, fullBlockZ, 0 ).isSolid();
+            boolean freePlusY = !this.getWorld().getBlock( fullBlockX, fullBlockY + 1, fullBlockZ, 0 ).isSolid();
+            boolean freeMinusZ = !this.getWorld().getBlock( fullBlockX, fullBlockY, fullBlockZ - 1, 0 ).isSolid();
+            boolean freePlusZ = !this.getWorld().getBlock( fullBlockX, fullBlockY, fullBlockZ + 1, 0 ).isSolid();
+
+            // Since we want the lowest amount of push we have to select the smallest side
+            byte direction = -1;
+            float lowest = 9999;
+
+            // The -X side is free, use it for now
+            if ( freeMinusX ) {
+                direction = 0;
+                lowest = diffX;
+            }
+
+            // Choose +X side only when free and we need to move less
+            if ( freePlusX && 1 - diffX < lowest ) {
+                direction = 1;
+                lowest = 1 - diffX;
+            }
+
+            // Choose -Y side only when free and we need to move less
+            if ( freeMinusY && diffY < lowest ) {
+                direction = 2;
+                lowest = diffY;
+            }
+
+            // Choose +Y side only when free and we need to move less
+            if ( freePlusY && 1 - diffY < lowest ) {
+                direction = 3;
+                lowest = 1 - diffY;
+            }
+
+            // Choose -Z side only when free and we need to move less
+            if ( freeMinusZ && diffZ < lowest ) {
+                direction = 4;
+                lowest = diffZ;
+            }
+
+            // Choose +Z side only when free and we need to move less
+            if ( freePlusZ && 1 - diffZ < lowest ) {
+                direction = 5;
+            }
+
+            // Push to the side we selected
+            switch ( direction ) {
+                case 0:
+                    this.setVelocity( new Vector( (float) -force, 0, 0 ) );
+                    break;
+                case 1:
+                    this.setVelocity( new Vector( (float) force, 0, 0 ) );
+                    break;
+                case 2:
+                    this.setVelocity( new Vector( 0, (float) -force, 0 ) );
+                    break;
+                case 3:
+                    this.setVelocity( new Vector( 0, (float) force, 0 ) );
+                    break;
+                case 4:
+                    this.setVelocity( new Vector( 0, 0, (float) -force ) );
+                    break;
+                case 5:
+                    this.setVelocity( new Vector( 0, 0, (float) force ) );
+                    break;
+            }
+
+            this.stuckInBlock = true;
+        } else {
+            this.stuckInBlock = false;
+            this.stuckInBlockTicks = 0;
         }
     }
 
@@ -738,6 +855,7 @@ public abstract class Entity {
         if ( event instanceof EntityDamageByEntityEvent ) {
             Entity damager = ( (EntityDamageByEntityEvent) event ).getDamager();
             if ( damager instanceof Player ) {
+                Server.getInstance().getPluginManager().callEvent( event );
                 return !( (Player) damager ).getGameMode().equals( GameMode.SPECTATOR );
             }
         }
