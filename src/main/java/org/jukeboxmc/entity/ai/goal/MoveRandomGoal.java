@@ -3,6 +3,7 @@ package org.jukeboxmc.entity.ai.goal;
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockFence;
 import org.jukeboxmc.block.BlockType;
+import org.jukeboxmc.block.direction.Direction;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
@@ -20,7 +21,9 @@ public class MoveRandomGoal extends Goal {
 
     private final int radius;
     private final float chance;
+    private final Random random;
 
+    private int collideCounter = 0;
     private boolean cancel = false;
     private Location targetLocation;
 
@@ -28,6 +31,7 @@ public class MoveRandomGoal extends Goal {
         super( entity );
         this.radius = radius;
         this.chance = chance;
+        this.random = new Random();
     }
 
     @Override
@@ -42,14 +46,23 @@ public class MoveRandomGoal extends Goal {
 
     @Override
     public void start() {
-        int randomX = new Random().nextInt( this.entity.getBlockX() - this.radius, this.entity.getBlockX() + this.radius );
-        int randomZ = new Random().nextInt( this.entity.getBlockZ() - this.radius, this.entity.getBlockZ() + this.radius );
-        this.targetLocation = new Location( this.entity.getWorld(), randomX, 0, randomZ, 0, 0 );
+        boolean searchLocation = true;
+        while ( searchLocation ) {
+            float x = this.random.nextFloat() * 2 - 1;
+            float z = this.random.nextFloat() * 2 - 1;
+
+            if ( Math.pow( x, 2 ) + Math.pow( z, 2 ) < 1 ) {
+                int xx = this.entity.getBlockX() + ((int) Math.floor( x * radius ));
+                int zz = this.entity.getBlockZ() + ((int) Math.floor( z * radius ));
+                this.targetLocation = new Location( this.entity.getWorld(), xx, 0, zz, 0, 0 );
+                searchLocation = false;
+            }
+        }
     }
 
     @Override
     public void tick( long currentTick ) {
-        float movementSpeed = 0.75f;
+        float movementSpeed = 0.60f;
         float x = this.targetLocation.getX() - this.entity.getX();
         float z = this.targetLocation.getZ() - this.entity.getZ();
         float diff = Math.abs( x ) + Math.abs( z );
@@ -67,7 +80,16 @@ public class MoveRandomGoal extends Goal {
         nextBlockLocation.setZ( this.entity.getZ() + ( motionZ * 5 ) );
 
         if ( nextBlockLocation.getBlock() instanceof BlockFence ) {
-            this.cancel = true;
+            Direction opposite = this.entity.getDirection().opposite();
+            Location clone = this.entity.getLocation().clone();
+            Location location = clone.getSide( opposite, this.radius * 2 );
+            location.setY( 0 );
+            if ( this.collideCounter > 3 ) {
+                this.cancel = true;
+                return;
+            }
+            this.targetLocation = location;
+            this.collideCounter++;
             return;
         }
 
@@ -81,33 +103,22 @@ public class MoveRandomGoal extends Goal {
         }
 
         this.entity.setLocation( nextLocation );
+
+        Chunk fromChunk = this.entity.getLastLocation().getChunk();
+        Chunk toChunk = this.entity.getChunk();
+
+        if ( toChunk.getX() != fromChunk.getX() || toChunk.getZ() != fromChunk.getZ() ) {
+            fromChunk.removeEntity( this.entity );
+            toChunk.addEntity( this.entity );
+        }
+
         this.entity.updateMovement();
     }
-
 
     @Override
     public void end() {
         this.cancel = false;
+        this.collideCounter = 0;
         this.targetLocation = null;
-    }
-
-    private Location findNextBetterLocation() {
-        while ( true ) {
-            int randomX = new Random().nextInt( this.entity.getBlockX() - this.radius, this.entity.getBlockX() + this.radius );
-            int randomZ = new Random().nextInt( this.entity.getBlockZ() - this.radius, this.entity.getBlockZ() + this.radius );
-            Chunk chunk = this.entity.getWorld().getChunk( randomX >> 4, randomZ >> 4, this.entity.getDimension() );
-            int blockY = chunk.getHeighestBlockAt( randomX, randomZ ).getLocation().getBlockY() + 1;
-
-            for ( int x = randomX - this.radius; x <= randomX + this.radius; x++ ) {
-                for ( int z = randomZ - this.radius; z <= randomZ + this.radius; z++ ) {
-                    Block block = this.entity.getWorld().getBlock( x, blockY, z, 0 );
-                    if ( block instanceof BlockFence ) {
-                        if ( block.getLocation().distance( new Vector( randomX, blockY, randomZ ) ) >= radius  ) {
-                            return new Location( this.entity.getWorld(), randomX, 0, randomZ );
-                        }
-                    }
-                }
-            }
-        }
     }
 }

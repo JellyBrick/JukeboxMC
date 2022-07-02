@@ -107,6 +107,15 @@ public class Location extends Vector {
         };
     }
 
+    public Location getSide( Direction direction, int step ) {
+        return switch ( direction ) {
+            case SOUTH -> this.getRelative( Vector.south( step ) );
+            case NORTH -> this.getRelative( Vector.north( step ) );
+            case EAST -> this.getRelative( Vector.east( step ) );
+            case WEST -> this.getRelative( Vector.west( step ) );
+        };
+    }
+
     public Location getSide( BlockFace blockFace ) {
         return switch ( blockFace ) {
             case DOWN -> this.getRelative( Vector.down() );
@@ -115,6 +124,17 @@ public class Location extends Vector {
             case NORTH -> this.getRelative( Vector.north() );
             case EAST -> this.getRelative( Vector.east() );
             case WEST -> this.getRelative( Vector.west() );
+        };
+    }
+
+    public Location getSide( BlockFace blockFace, int step ) {
+        return switch ( blockFace ) {
+            case DOWN -> this.getRelative( Vector.down(step) );
+            case UP -> this.getRelative( Vector.up(step) );
+            case SOUTH -> this.getRelative( Vector.south(step) );
+            case NORTH -> this.getRelative( Vector.north(step) );
+            case EAST -> this.getRelative( Vector.east(step) );
+            case WEST -> this.getRelative( Vector.west(step) );
         };
     }
 
