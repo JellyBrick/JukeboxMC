@@ -195,7 +195,9 @@ public class PlayerConnection {
     }
 
     public void disconnect( String reason ) {
-        this.player.savePlayerData();
+        if ( this.server.isSavePlayerData() ) {
+            this.player.savePlayerData();
+        }
 
         this.player.getWorld().removeEntity( this.player );
         this.player.getChunk().removeEntity( this.player );
@@ -463,7 +465,9 @@ public class PlayerConnection {
             this.player.setSkin( loginData.getSkin() );
             this.player.setDeviceInfo( loginData.getDeviceInfo() );
 
-            this.player.loadPlayerData();
+            if ( this.server.isSavePlayerData() ) {
+                this.player.loadPlayerData();
+            }
         }
     }
 

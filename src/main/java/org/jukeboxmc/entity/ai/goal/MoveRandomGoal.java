@@ -2,6 +2,7 @@ package org.jukeboxmc.entity.ai.goal;
 
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockFence;
+import org.jukeboxmc.block.BlockFenceGate;
 import org.jukeboxmc.block.BlockType;
 import org.jukeboxmc.block.direction.Direction;
 import org.jukeboxmc.entity.Entity;
@@ -79,12 +80,13 @@ public class MoveRandomGoal extends Goal {
         nextBlockLocation.setX( this.entity.getX() + ( motionX * 5 ) );
         nextBlockLocation.setZ( this.entity.getZ() + ( motionZ * 5 ) );
 
-        if ( nextBlockLocation.getBlock() instanceof BlockFence ) {
+        Block nextBlock = nextBlockLocation.getBlock();
+        if ( nextBlock instanceof BlockFence || nextBlock instanceof BlockFenceGate ) {
             Direction opposite = this.entity.getDirection().opposite();
             Location clone = this.entity.getLocation().clone();
             Location location = clone.getSide( opposite, this.radius * 2 );
             location.setY( 0 );
-            if ( this.collideCounter > 3 ) {
+            if ( this.collideCounter > 2 ) {
                 this.cancel = true;
                 return;
             }
@@ -93,12 +95,12 @@ public class MoveRandomGoal extends Goal {
             return;
         }
 
-        if ( nextBlockLocation.getBlock().isSolid() ) {
+        if ( nextBlock.isSolid() ) {
             nextLocation.setY( this.entity.getY() + 1f );
         }
 
         Block blockForwardDown = nextBlockLocation.clone().subtract( 0, 1, 0 ).getBlock();
-        if ( !blockForwardDown.isSolid() && nextBlockLocation.getBlock().getType().equals( BlockType.AIR ) ) {
+        if ( !blockForwardDown.isSolid() && nextBlock.getType().equals( BlockType.AIR ) ) {
             nextLocation.setY( this.entity.getY() - 1f );
         }
 

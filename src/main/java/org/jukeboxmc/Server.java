@@ -95,6 +95,7 @@ public class Server {
     private String generatorName;
     private boolean onlineMode;
     private boolean forceResourcePacks;
+    private boolean savePlayerData;
 
 
     private static final AtomicBoolean INITIATING = new AtomicBoolean( true );
@@ -196,6 +197,7 @@ public class Server {
         serverConfig.addDefault( "generator", "flat" ); //TODO
         serverConfig.addDefault( "online-mode", true );
         serverConfig.addDefault( "forceResourcePacks", false );
+        serverConfig.addDefault( "save-player-data", false );
         serverConfig.save();
 
         this.serverAddress = serverConfig.getString( "address" );
@@ -209,6 +211,7 @@ public class Server {
         this.generatorName = serverConfig.getString( "generator" );
         this.onlineMode = serverConfig.getBoolean( "online-mode" );
         this.forceResourcePacks = serverConfig.getBoolean( "forceResourcePacks" );
+        this.savePlayerData = serverConfig.getBoolean( "save-player-data" );
     }
 
     public boolean isInMainThread() {
@@ -646,6 +649,10 @@ public class Server {
 
     public boolean isForceResourcePacks() {
         return this.forceResourcePacks;
+    }
+
+    public boolean isSavePlayerData() {
+        return this.savePlayerData;
     }
 
     public File getPluginFolder() {
