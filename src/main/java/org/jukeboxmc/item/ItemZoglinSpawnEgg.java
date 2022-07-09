@@ -19,7 +19,7 @@ public class ItemZoglinSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityZoglin entityZoglin = new EntityZoglin();
-        entityZoglin.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityZoglin.getEyeHeight(), 0.5f ) );
+        entityZoglin.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityZoglin.spawn();
 
         return true;

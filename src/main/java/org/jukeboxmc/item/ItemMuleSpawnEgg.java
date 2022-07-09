@@ -19,7 +19,7 @@ public class ItemMuleSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityMule entityMule = new EntityMule();
-        entityMule.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityMule.getEyeHeight(), 0.5f ) );
+        entityMule.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityMule.spawn();
 
         return true;

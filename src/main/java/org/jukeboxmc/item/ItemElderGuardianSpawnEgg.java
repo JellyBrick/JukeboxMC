@@ -19,7 +19,7 @@ public class ItemElderGuardianSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityElderGuardian entityElderGuardian = new EntityElderGuardian();
-        entityElderGuardian.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityElderGuardian.getEyeHeight(), 0.5f ) );
+        entityElderGuardian.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityElderGuardian.spawn();
 
         return true;

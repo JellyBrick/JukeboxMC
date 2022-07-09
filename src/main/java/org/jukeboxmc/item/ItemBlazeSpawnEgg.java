@@ -19,7 +19,7 @@ public class ItemBlazeSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityBlaze entityBlaze = new EntityBlaze();
-        entityBlaze.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityBlaze.getEyeHeight(), 0.5f ) );
+        entityBlaze.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityBlaze.spawn();
 
         return true;

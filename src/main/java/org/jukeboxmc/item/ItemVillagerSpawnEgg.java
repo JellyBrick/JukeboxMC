@@ -19,7 +19,7 @@ public class ItemVillagerSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityVillagerV2 entityVillager = new EntityVillagerV2();
-        entityVillager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityVillager.getEyeHeight(), 0.5f ) );
+        entityVillager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityVillager.spawn();
 
         return true;

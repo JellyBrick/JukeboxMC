@@ -19,7 +19,7 @@ public class ItemCaveSpiderSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityCaveSpider entityCaveSpider = new EntityCaveSpider();
-        entityCaveSpider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityCaveSpider.getEyeHeight(), 0.5f ) );
+        entityCaveSpider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityCaveSpider.spawn();
 
         return true;

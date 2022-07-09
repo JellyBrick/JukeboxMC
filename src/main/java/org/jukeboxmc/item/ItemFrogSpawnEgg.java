@@ -19,7 +19,7 @@ public class ItemFrogSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityFrog entityFrog = new EntityFrog();
-        entityFrog.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityFrog.getEyeHeight(), 0.5f ) );
+        entityFrog.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityFrog.spawn();
 
         return true;

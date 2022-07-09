@@ -19,7 +19,7 @@ public class ItemBeeSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityBee entityBee = new EntityBee();
-        entityBee.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityBee.getEyeHeight(), 0.5f ) );
+        entityBee.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityBee.spawn();
 
         return true;

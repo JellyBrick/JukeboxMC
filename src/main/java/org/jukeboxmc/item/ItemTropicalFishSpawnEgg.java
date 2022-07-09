@@ -19,7 +19,7 @@ public class ItemTropicalFishSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityTropicalfish entityTropicalFish = new EntityTropicalfish();
-        entityTropicalFish.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityTropicalFish.getEyeHeight(), 0.5f ) );
+        entityTropicalFish.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityTropicalFish.spawn();
 
         return true;

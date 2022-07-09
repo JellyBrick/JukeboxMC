@@ -19,7 +19,7 @@ public class ItemAllaySpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityAllay entityAllay = new EntityAllay();
-        entityAllay.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityAllay.getEyeHeight(), 0.5f ) );
+        entityAllay.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f,0, 0.5f ) );
         entityAllay.spawn();
 
         return true;

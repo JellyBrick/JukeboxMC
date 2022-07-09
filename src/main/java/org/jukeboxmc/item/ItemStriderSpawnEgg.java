@@ -19,7 +19,7 @@ public class ItemStriderSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityStrider entityStrider = new EntityStrider();
-        entityStrider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityStrider.getEyeHeight(), 0.5f ) );
+        entityStrider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityStrider.spawn();
 
         return true;

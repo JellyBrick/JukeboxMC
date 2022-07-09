@@ -19,7 +19,7 @@ public class ItemZombiePigmanSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityZombiePigman entityZombiePigman = new EntityZombiePigman();
-        entityZombiePigman.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityZombiePigman.getEyeHeight(), 0.5f ) );
+        entityZombiePigman.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityZombiePigman.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemSkeletonSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntitySkeleton entitySkeleton = new EntitySkeleton();
-        entitySkeleton.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entitySkeleton.getEyeHeight(), 0.5f ) );
+        entitySkeleton.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entitySkeleton.spawn();
 
         return true;

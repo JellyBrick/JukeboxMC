@@ -19,7 +19,7 @@ public class ItemMagmaCubeSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityMagmaCube entityMagmaCube = new EntityMagmaCube();
-        entityMagmaCube.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityMagmaCube.getEyeHeight(), 0.5f ) );
+        entityMagmaCube.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityMagmaCube.spawn();
 
         return true;

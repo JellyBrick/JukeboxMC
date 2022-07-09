@@ -19,7 +19,7 @@ public class ItemWitchSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityWitch entityWitch = new EntityWitch();
-        entityWitch.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityWitch.getEyeHeight(), 0.5f ) );
+        entityWitch.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityWitch.spawn();
 
         return true;

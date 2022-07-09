@@ -19,7 +19,7 @@ public class ItemSpiderSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntitySpider entitySpider = new EntitySpider();
-        entitySpider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entitySpider.getEyeHeight(), 0.5f ) );
+        entitySpider.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entitySpider.spawn();
 
         return true;

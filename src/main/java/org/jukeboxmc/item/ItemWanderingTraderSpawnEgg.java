@@ -19,7 +19,7 @@ public class ItemWanderingTraderSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityWanderingTrader entityWanderingTrader = new EntityWanderingTrader();
-        entityWanderingTrader.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityWanderingTrader.getEyeHeight(), 0.5f ) );
+        entityWanderingTrader.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityWanderingTrader.spawn();
 
         return true;

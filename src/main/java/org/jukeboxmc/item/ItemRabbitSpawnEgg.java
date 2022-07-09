@@ -19,7 +19,7 @@ public class ItemRabbitSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityRabbit entityRabbit = new EntityRabbit();
-        entityRabbit.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityRabbit.getEyeHeight(), 0.5f ) );
+        entityRabbit.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityRabbit.spawn();
 
         return true;

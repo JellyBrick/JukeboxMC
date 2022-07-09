@@ -19,7 +19,7 @@ public class ItemShulkerSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityShulker entityShulker = new EntityShulker();
-        entityShulker.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityShulker.getEyeHeight(), 0.5f ) );
+        entityShulker.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityShulker.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemVexSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityVex entityVex = new EntityVex();
-        entityVex.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityVex.getEyeHeight(), 0.5f ) );
+        entityVex.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityVex.spawn();
 
         return true;

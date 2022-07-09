@@ -19,7 +19,7 @@ public class ItemStraySpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityStray entityStray = new EntityStray();
-        entityStray.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityStray.getEyeHeight(), 0.5f ) );
+        entityStray.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityStray.spawn();
 
         return true;

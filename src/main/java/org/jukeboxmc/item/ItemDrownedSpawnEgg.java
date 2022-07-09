@@ -19,7 +19,7 @@ public class ItemDrownedSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityDrowned entityDrowned = new EntityDrowned();
-        entityDrowned.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityDrowned.getEyeHeight(), 0.5f ) );
+        entityDrowned.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityDrowned.spawn();
 
         return true;

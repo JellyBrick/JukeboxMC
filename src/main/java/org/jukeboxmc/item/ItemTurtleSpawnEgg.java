@@ -19,7 +19,7 @@ public class ItemTurtleSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityTurtle entityTurtle = new EntityTurtle();
-        entityTurtle.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityTurtle.getEyeHeight(), 0.5f ) );
+        entityTurtle.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityTurtle.spawn();
 
         return true;

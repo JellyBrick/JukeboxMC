@@ -19,7 +19,7 @@ public class ItemHuskSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityHusk entityHusk = new EntityHusk();
-        entityHusk.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityHusk.getEyeHeight(), 0.5f ) );
+        entityHusk.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityHusk.spawn();
 
         return true;

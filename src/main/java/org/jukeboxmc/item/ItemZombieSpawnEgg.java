@@ -19,7 +19,7 @@ public class ItemZombieSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityZombie entityZombie = new EntityZombie();
-        entityZombie.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityZombie.getEyeHeight(), 0.5f ) );
+        entityZombie.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityZombie.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemGuardianSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityGuardian entityGuardian = new EntityGuardian();
-        entityGuardian.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityGuardian.getEyeHeight(), 0.5f ) );
+        entityGuardian.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityGuardian.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemNpcSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityNPC entityNpc = new EntityNPC();
-        entityNpc.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityNpc.getEyeHeight(), 0.5f ) );
+        entityNpc.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityNpc.spawn();
 
         return true;

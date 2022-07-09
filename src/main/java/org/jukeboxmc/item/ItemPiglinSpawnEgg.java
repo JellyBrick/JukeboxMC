@@ -19,7 +19,7 @@ public class ItemPiglinSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityPiglin entityPiglin = new EntityPiglin();
-        entityPiglin.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityPiglin.getEyeHeight(), 0.5f ) );
+        entityPiglin.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityPiglin.spawn();
 
         return true;

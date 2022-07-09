@@ -19,7 +19,7 @@ public class ItemWardenSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityWarden entityWarden = new EntityWarden();
-        entityWarden.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityWarden.getEyeHeight(), 0.5f ) );
+        entityWarden.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityWarden.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemPandaSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityPanda entityPanda = new EntityPanda();
-        entityPanda.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityPanda.getEyeHeight(), 0.5f ) );
+        entityPanda.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityPanda.spawn();
 
         return true;

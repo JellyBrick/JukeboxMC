@@ -19,7 +19,7 @@ public class ItemTadpoleSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityTadpole entityTadpole = new EntityTadpole();
-        entityTadpole.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityTadpole.getEyeHeight(), 0.5f ) );
+        entityTadpole.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityTadpole.spawn();
 
         return true;

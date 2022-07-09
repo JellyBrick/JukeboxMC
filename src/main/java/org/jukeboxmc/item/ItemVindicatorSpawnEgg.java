@@ -19,7 +19,7 @@ public class ItemVindicatorSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityVindicator entityVindicator = new EntityVindicator();
-        entityVindicator.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityVindicator.getEyeHeight(), 0.5f ) );
+        entityVindicator.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityVindicator.spawn();
 
         return true;

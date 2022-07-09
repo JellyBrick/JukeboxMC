@@ -19,7 +19,7 @@ public class ItemGhastSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityGhast entityGhast = new EntityGhast();
-        entityGhast.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityGhast.getEyeHeight(), 0.5f ) );
+        entityGhast.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityGhast.spawn();
 
         return true;

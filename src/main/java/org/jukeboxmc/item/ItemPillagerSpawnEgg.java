@@ -19,7 +19,7 @@ public class ItemPillagerSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityPillager entityPillager = new EntityPillager();
-        entityPillager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityPillager.getEyeHeight(), 0.5f ) );
+        entityPillager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityPillager.spawn();
 
         return true;

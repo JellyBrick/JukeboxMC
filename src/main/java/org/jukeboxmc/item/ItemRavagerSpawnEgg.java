@@ -19,7 +19,7 @@ public class ItemRavagerSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityRavager entityRavager = new EntityRavager();
-        entityRavager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityRavager.getEyeHeight(), 0.5f ) );
+        entityRavager.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityRavager.spawn();
 
         return true;

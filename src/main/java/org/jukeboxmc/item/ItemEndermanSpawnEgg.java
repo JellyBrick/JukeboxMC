@@ -19,7 +19,7 @@ public class ItemEndermanSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityEnderman entityEnderman = new EntityEnderman();
-        entityEnderman.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityEnderman.getEyeHeight(), 0.5f ) );
+        entityEnderman.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityEnderman.spawn();
 
         return true;

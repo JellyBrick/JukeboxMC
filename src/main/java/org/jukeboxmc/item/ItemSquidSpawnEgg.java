@@ -19,7 +19,7 @@ public class ItemSquidSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntitySquid entitySquid = new EntitySquid();
-        entitySquid.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entitySquid.getEyeHeight(), 0.5f ) );
+        entitySquid.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entitySquid.spawn();
 
         return true;

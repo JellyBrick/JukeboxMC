@@ -19,7 +19,7 @@ public class ItemAxolotlSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityAxolotl entityAxolotl = new EntityAxolotl();
-        entityAxolotl.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityAxolotl.getEyeHeight(), 0.5f ) );
+        entityAxolotl.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityAxolotl.spawn();
 
         return true;

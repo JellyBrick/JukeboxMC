@@ -19,7 +19,7 @@ public class ItemSilverfishSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntitySilverfish entitySilverfish = new EntitySilverfish();
-        entitySilverfish.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entitySilverfish.getEyeHeight(), 0.5f ) );
+        entitySilverfish.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entitySilverfish.spawn();
 
         return true;

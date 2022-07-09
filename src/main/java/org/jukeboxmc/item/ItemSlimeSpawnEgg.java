@@ -19,7 +19,7 @@ public class ItemSlimeSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntitySlime entitySlime = new EntitySlime();
-        entitySlime.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entitySlime.getEyeHeight(), 0.5f ) );
+        entitySlime.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entitySlime.spawn();
 
         return true;

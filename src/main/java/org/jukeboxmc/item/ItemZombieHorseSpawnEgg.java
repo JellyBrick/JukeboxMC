@@ -19,7 +19,7 @@ public class ItemZombieHorseSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityZombieHorse entityZombieHorse = new EntityZombieHorse();
-        entityZombieHorse.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityZombieHorse.getEyeHeight(), 0.5f ) );
+        entityZombieHorse.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityZombieHorse.spawn();
 
         return true;

@@ -19,7 +19,7 @@ public class ItemEvokerSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityEvocationIllager entityEvoker = new EntityEvocationIllager();
-        entityEvoker.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityEvoker.getEyeHeight(), 0.5f ) );
+        entityEvoker.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityEvoker.spawn();
 
         return true;
