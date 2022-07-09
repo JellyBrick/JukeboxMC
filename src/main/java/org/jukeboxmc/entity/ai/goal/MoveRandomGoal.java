@@ -4,18 +4,17 @@ import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockFence;
 import org.jukeboxmc.block.BlockFenceGate;
 import org.jukeboxmc.block.BlockType;
+import org.jukeboxmc.block.direction.BlockFace;
 import org.jukeboxmc.block.direction.Direction;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
-import org.jukeboxmc.util.PerformanceCheck;
-import org.jukeboxmc.world.Dimension;
 import org.jukeboxmc.world.chunk.Chunk;
 
 import java.util.Random;
 
 /**
- * @author LucGamesYT
+ * @author LucGamesY^T
  * @version 1.0
  */
 public class MoveRandomGoal extends Goal {
@@ -24,12 +23,23 @@ public class MoveRandomGoal extends Goal {
     private final float chance;
     private final Random random;
 
+    private float movementSpeed = 0.60f;
     private int collideCounter = 0;
     private boolean cancel = false;
     private Location targetLocation;
 
+    public MoveRandomGoal( Entity entity, int radius, float chance, float movementSpeed ) {
+        super( entity );
+        this.entity.setOnGround( true );
+        this.radius = radius;
+        this.chance = chance;
+        this.movementSpeed = movementSpeed;
+        this.random = new Random();
+    }
+
     public MoveRandomGoal( Entity entity, int radius, float chance ) {
         super( entity );
+        this.entity.setOnGround( true );
         this.radius = radius;
         this.chance = chance;
         this.random = new Random();
@@ -53,8 +63,8 @@ public class MoveRandomGoal extends Goal {
             float z = this.random.nextFloat() * 2 - 1;
 
             if ( Math.pow( x, 2 ) + Math.pow( z, 2 ) < 1 ) {
-                int xx = this.entity.getBlockX() + ((int) Math.floor( x * radius ));
-                int zz = this.entity.getBlockZ() + ((int) Math.floor( z * radius ));
+                int xx = this.entity.getBlockX() + ( (int) Math.floor( x * radius ) );
+                int zz = this.entity.getBlockZ() + ( (int) Math.floor( z * radius ) );
                 this.targetLocation = new Location( this.entity.getWorld(), xx, 0, zz, 0, 0 );
                 searchLocation = false;
             }
@@ -63,13 +73,12 @@ public class MoveRandomGoal extends Goal {
 
     @Override
     public void tick( long currentTick ) {
-        float movementSpeed = 0.60f;
         float x = this.targetLocation.getX() - this.entity.getX();
         float z = this.targetLocation.getZ() - this.entity.getZ();
         float diff = Math.abs( x ) + Math.abs( z );
 
-        float motionX = movementSpeed * 0.15f * ( x / diff );
-        float motionZ = movementSpeed * 0.15f * ( z / diff );
+        float motionX = this.movementSpeed * 0.15f * ( x / diff );
+        float motionZ = this.movementSpeed * 0.15f * ( z / diff );
 
         Location nextLocation = this.entity.getLocation().clone();
         nextLocation.setX( this.entity.getX() + motionX );
@@ -83,8 +92,7 @@ public class MoveRandomGoal extends Goal {
         Block nextBlock = nextBlockLocation.getBlock();
         if ( nextBlock instanceof BlockFence || nextBlock instanceof BlockFenceGate ) {
             Direction opposite = this.entity.getDirection().opposite();
-            Location clone = this.entity.getLocation().clone();
-            Location location = clone.getSide( opposite, this.radius * 2 );
+            Location location = this.entity.getLocation().clone().getSide( opposite, this.radius * 2 );
             location.setY( 0 );
             if ( this.collideCounter > 2 ) {
                 this.cancel = true;
@@ -95,6 +103,27 @@ public class MoveRandomGoal extends Goal {
             return;
         }
 
+        Block nextBlockAbove = nextBlock.getSide( BlockFace.UP );
+        Block nextBlockAboveAbove = nextBlock.getSide( BlockFace.UP ).getSide( BlockFace.UP );
+
+        if ( nextBlock.isSolid() && this.entity.getLocation().getSide( BlockFace.UP ).getBlock().isSolid() ) {
+            this.cancel = true;
+            return;
+        }
+        if ( nextBlock.isSolid() && nextBlockAbove.isSolid() ) {
+            this.cancel = true;
+            return;
+        }
+        if ( nextBlock.isSolid() && nextBlockAbove.isTransparent() && nextBlockAboveAbove.isSolid() && this.entity.getHeight() > 1.0f ) {
+            this.cancel = true;
+            return;
+        }
+        if ( nextBlock.isSolid() && !nextBlockAbove.isTransparent() ) {
+            if ( nextBlockAboveAbove.isTransparent() && this.entity.getHeight() > 1.0f ) {
+                this.cancel = true;
+                return;
+            }
+        }
         if ( nextBlock.isSolid() ) {
             nextLocation.setY( this.entity.getY() + 1f );
         }
@@ -108,7 +137,6 @@ public class MoveRandomGoal extends Goal {
 
         Chunk fromChunk = this.entity.getLastLocation().getChunk();
         Chunk toChunk = this.entity.getChunk();
-
         if ( toChunk.getX() != fromChunk.getX() || toChunk.getZ() != fromChunk.getZ() ) {
             fromChunk.removeEntity( this.entity );
             toChunk.addEntity( this.entity );

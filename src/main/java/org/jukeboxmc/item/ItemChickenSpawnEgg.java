@@ -19,9 +19,8 @@ public class ItemChickenSpawnEgg extends Item {
     @Override
     public boolean interact( Player player, BlockFace blockFace, Vector clickedVector, Block clickedBlock ) {
         EntityChicken entityChicken = new EntityChicken();
-        entityChicken.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, -entityChicken.getEyeHeight(), 0.5f ) );
+        entityChicken.setLocation( clickedBlock.getSide( blockFace ).getLocation().add( 0.5f, 0, 0.5f ) );
         entityChicken.spawn();
-
         return true;
     }
 }

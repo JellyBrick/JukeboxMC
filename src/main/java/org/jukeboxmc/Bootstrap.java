@@ -18,6 +18,8 @@ public class Bootstrap {
 
     public Bootstrap() {
         ResourceLeakDetector.setLevel( ResourceLeakDetector.Level.DISABLED );
+        System.setProperty("leveldb.mmap", "true");
+        System.getProperties().putIfAbsent("io.netty.allocator.type", "unpooled");
         Logger logger = new Logger();
         logger.info( "Starting JukeboxMC (Bedrock Edition " + Network.CODEC.getMinecraftVersion() + " with Protocol " + Network.CODEC.getProtocolVersion() + ")" );
         this.server = new Server( logger );

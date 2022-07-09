@@ -13,6 +13,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.util.FastMath;
+import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -396,7 +397,7 @@ public class World {
 
     public boolean open() {
         try {
-            this.db = Iq80DBFactory.factory.open( new File( this.worldFolder, "db" ), new Options().blockSize( 1024 * 1024 * 1024 ).createIfMissing( true ) );
+            this.db = Iq80DBFactory.factory.open( new File( this.worldFolder, "db" ), new Options().compressionType( CompressionType.ZLIB_RAW ).blockSize( 64 * 1024 ).createIfMissing( true ) );
             return true;
         } catch ( Exception e ) {
             e.printStackTrace();
