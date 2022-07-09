@@ -1,5 +1,6 @@
 package org.jukeboxmc.entity.ai;
 
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.entity.ai.goal.Goal;
 
@@ -49,7 +50,7 @@ public abstract class EntityAI extends Entity {
                 return;
             }
 
-            this.currentGoal.tick(currentTick);
+            this.currentGoal.tick( currentTick );
         }
     }
 
@@ -61,6 +62,14 @@ public abstract class EntityAI extends Entity {
         }
 
         return null;
+    }
+
+    public void setNoAI( boolean value ) {
+        this.metadata.setFlag( EntityFlag.NO_AI, value );
+    }
+
+    public boolean isNoAI() {
+        return this.metadata.getFlag( EntityFlag.NO_AI );
     }
 
 }

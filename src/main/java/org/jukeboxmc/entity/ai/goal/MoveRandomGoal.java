@@ -6,7 +6,7 @@ import org.jukeboxmc.block.BlockFenceGate;
 import org.jukeboxmc.block.BlockType;
 import org.jukeboxmc.block.direction.BlockFace;
 import org.jukeboxmc.block.direction.Direction;
-import org.jukeboxmc.entity.Entity;
+import org.jukeboxmc.entity.ai.EntityAI;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.world.chunk.Chunk;
@@ -28,7 +28,7 @@ public class MoveRandomGoal extends Goal {
     private boolean cancel = false;
     private Location targetLocation;
 
-    public MoveRandomGoal( Entity entity, int radius, float chance, float movementSpeed ) {
+    public MoveRandomGoal( EntityAI entity, int radius, float chance, float movementSpeed ) {
         super( entity );
         this.entity.setOnGround( true );
         this.radius = radius;
@@ -37,7 +37,7 @@ public class MoveRandomGoal extends Goal {
         this.random = new Random();
     }
 
-    public MoveRandomGoal( Entity entity, int radius, float chance ) {
+    public MoveRandomGoal( EntityAI entity, int radius, float chance ) {
         super( entity );
         this.entity.setOnGround( true );
         this.radius = radius;
@@ -47,7 +47,7 @@ public class MoveRandomGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return new Random().nextFloat() <= this.chance;
+        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI();
     }
 
     @Override

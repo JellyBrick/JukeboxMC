@@ -1,6 +1,6 @@
 package org.jukeboxmc.entity.ai.goal;
 
-import org.jukeboxmc.entity.Entity;
+import org.jukeboxmc.entity.ai.EntityAI;
 import org.jukeboxmc.math.Location;
 
 import java.util.Random;
@@ -17,7 +17,7 @@ public class LookAtRandomGoal extends Goal {
 
     private int ticks;
 
-    public LookAtRandomGoal( Entity entity, int minSeconds, int maxSeconds, float chance ) {
+    public LookAtRandomGoal( EntityAI entity, int minSeconds, int maxSeconds, float chance ) {
         super( entity );
         this.minSeconds = minSeconds;
         this.maxSeconds = maxSeconds;
@@ -26,7 +26,7 @@ public class LookAtRandomGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return new Random().nextFloat() <= this.chance;
+        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI();
     }
 
     @Override

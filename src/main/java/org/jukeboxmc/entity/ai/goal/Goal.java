@@ -1,6 +1,6 @@
 package org.jukeboxmc.entity.ai.goal;
 
-import org.jukeboxmc.entity.Entity;
+import org.jukeboxmc.entity.ai.EntityAI;
 
 /**
  * @author LucGamesYT
@@ -8,9 +8,9 @@ import org.jukeboxmc.entity.Entity;
  */
 public abstract class Goal {
 
-    protected final Entity entity;
+    protected final EntityAI entity;
 
-    protected Goal( Entity entity ) {
+    protected Goal( EntityAI entity ) {
         this.entity = entity;
     }
 
