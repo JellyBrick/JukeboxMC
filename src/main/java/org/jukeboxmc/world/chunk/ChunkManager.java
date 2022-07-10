@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.player.Player;
 import org.jukeboxmc.util.Utils;
 import org.jukeboxmc.world.Dimension;
@@ -137,6 +138,9 @@ public class ChunkManager {
     private synchronized boolean unloadChunk0( Chunk chunk, boolean safe, boolean save ) {
         if ( safe ) {
             if ( chunk.getPlayers().size() <= 0 ) {
+                for ( Entity entity : chunk.getEntities() ) {
+                    entity.close();
+                }
                 if ( save ) {
                     this.world.saveChunk( chunk );
                     return true;
@@ -145,6 +149,9 @@ public class ChunkManager {
                 return false;
             }
         } else {
+            for ( Entity entity : chunk.getEntities() ) {
+                entity.close();
+            }
             if ( save ) {
                 this.world.saveChunk( chunk );
                 return true;

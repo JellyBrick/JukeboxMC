@@ -2,7 +2,6 @@ package org.jukeboxmc.network.handler;
 
 import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket;
 import org.jukeboxmc.Server;
-import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.event.player.PlayerMoveEvent;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
@@ -37,15 +36,10 @@ public class MovePlayerHandler implements PacketHandler<MovePlayerPacket> {
         } else {
             Chunk fromChunk = player.getLastLocation().getChunk();
             Chunk toChunk = player.getChunk();
+
             if ( toChunk.getX() != fromChunk.getX() || toChunk.getZ() != fromChunk.getZ() ) {
                 fromChunk.removeEntity( player );
                 toChunk.addEntity( player );
-
-                for ( Entity entity : toChunk.getEntities() ) {
-                    if ( !( entity instanceof Player ) && !entity.isClosed() && player.getLastLocation().getWorld().equals( player.getWorld() ) ) {
-                        entity.spawn( player );
-                    }
-                }
             }
 
             float moveX = toLocation.getX() - player.getLastLocation().getX();

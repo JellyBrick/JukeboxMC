@@ -62,6 +62,7 @@ public abstract class Entity {
     protected boolean closed = false;
     protected boolean onGround = false;
     protected boolean isDead = false;
+    protected boolean spawned = false;
 
     private final Set<Long> spawnedFor = new HashSet<>();
 
@@ -322,6 +323,7 @@ public abstract class Entity {
             Entity entity = entitySpawnEvent.getEntity();
             this.getWorld().addEntity( entity );
             this.getChunk().addEntity( entity );
+            this.spawned = true;
             player.sendPacket( entity.createSpawnPacket() );
             this.spawnedFor.add( player.getEntityId() );
         }
@@ -346,6 +348,7 @@ public abstract class Entity {
             removeEntityPacket.setUniqueEntityId( entityDespawnEvent.getEntity().getEntityId() );
             player.sendPacket( removeEntityPacket );
             this.spawnedFor.remove( player.getEntityId() );
+            this.spawned = false;
         }
         return this;
     }
@@ -685,7 +688,15 @@ public abstract class Entity {
     }
 
     public void setDead( boolean dead ) {
-        isDead = dead;
+        this.isDead = dead;
+    }
+
+    public boolean isSpawned() {
+        return this.spawned;
+    }
+
+    public void setSpawned( boolean spawned ) {
+        this.spawned = spawned;
     }
 
     public void updateMovement() {
@@ -723,7 +734,7 @@ public abstract class Entity {
         Block block = this.getWorld().getBlock( fullBlockX, fullBlockY, fullBlockZ, 0 );
         if ( block.isSolid() && block.getBoundingBox().intersectsWith( this.boundingBox ) ) {
             // We need to check for "smooth" movement when its a player (it climbs .5 steps in .3 -> .420 -> .468 .487 .495 .498 .499 steps
-            if ( this instanceof Player && ( this.stuckInBlockTicks++ <= 20 || ( (Player) this ).getAdventureSettings().get( AdventureSettings.Type.NO_CLIP) ) ) { // Yes we can "smooth" for up to 20 ticks, thanks mojang :D
+            if ( this instanceof Player && ( this.stuckInBlockTicks++ <= 20 || ( (Player) this ).getAdventureSettings().get( AdventureSettings.Type.NO_CLIP ) ) ) { // Yes we can "smooth" for up to 20 ticks, thanks mojang :D
                 return;
             }
 

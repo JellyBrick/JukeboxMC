@@ -47,12 +47,12 @@ public class MoveRandomGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI();
+        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI() && this.entity.isSpawned();
     }
 
     @Override
     public boolean hasEnded() {
-        return new Vector( this.entity.getX(), 0, this.entity.getZ() ).distance( this.targetLocation ) <= 1 || this.cancel;
+        return new Vector( this.entity.getX(), 0, this.entity.getZ() ).distance( this.targetLocation ) <= 1 || this.cancel || this.entity.isClosed();
     }
 
     @Override
@@ -76,10 +76,8 @@ public class MoveRandomGoal extends Goal {
         float x = this.targetLocation.getX() - this.entity.getX();
         float z = this.targetLocation.getZ() - this.entity.getZ();
         float diff = Math.abs( x ) + Math.abs( z );
-
         float motionX = this.movementSpeed * 0.15f * ( x / diff );
         float motionZ = this.movementSpeed * 0.15f * ( z / diff );
-
         Location nextLocation = this.entity.getLocation().clone();
         nextLocation.setX( this.entity.getX() + motionX );
         nextLocation.setZ( this.entity.getZ() + motionZ );

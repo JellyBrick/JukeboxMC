@@ -1,5 +1,7 @@
 package org.jukeboxmc.math;
 
+import org.apache.commons.math3.util.FastMath;
+
 /**
  * @author LucGamesYT
  * @version 1.0
@@ -15,7 +17,7 @@ public class Vector2 {
         this.z = z;
     }
 
-    public static Vector2 direction(double angle ) {
+    public static Vector2 direction( double angle ) {
         return new Vector2( (float) Math.cos( angle ), (float) Math.sin( angle ) );
     }
 
@@ -35,6 +37,15 @@ public class Vector2 {
         return new Vector2( this.x * v, this.z * v );
     }
 
+    public float distance( final Vector2 vector ) {
+        return (float) Math.sqrt( this.distanceSquared( vector ) );
+    }
+
+    public float distanceSquared( final Vector2 vector ) {
+        return (float) ( FastMath.pow( ( this.x - vector.getX() ), 2 ) +
+                FastMath.pow( ( this.z - vector.getZ() ), 2 ) );
+    }
+
     public float lengthSquared() {
         return this.x * this.x + this.z * this.z;
     }
@@ -48,7 +59,7 @@ public class Vector2 {
         return ZERO;
     }
 
-    public float dot(Vector2 v){
+    public float dot( Vector2 v ) {
         return this.x * v.x + this.z * v.z;
     }
 
@@ -56,7 +67,7 @@ public class Vector2 {
         return this.x;
     }
 
-    public Vector2 setX( float x) {
+    public Vector2 setX( float x ) {
         this.x = x;
         return this;
     }
@@ -65,7 +76,7 @@ public class Vector2 {
         return this.z;
     }
 
-    public Vector2 setZ(float z) {
+    public Vector2 setZ( float z ) {
         this.z = z;
         return this;
     }

@@ -464,6 +464,11 @@ public class World {
         return this.chunkManagers.get( dimension ).getLoadedChunks();
     }
 
+    public synchronized boolean isChunkLoaded( Dimension dimension, int x, int z ) {
+        return this.chunkManagers.get( dimension ).isChunkLoaded( x, z );
+    }
+
+
     public synchronized Chunk getChunk( int x, int z, Dimension dimension ) {
         return this.chunkManagers.get( dimension ).getChunk( x, z );
     }
@@ -1061,7 +1066,7 @@ public class World {
     }
 
     public CompletableFuture<Boolean> saveChunk( Chunk chunk ) {
-        if ( !chunk.isDirty() ) {
+        if ( !chunk.isChanged() ) {
             return chunk.save( this.db ).exceptionally( throwable -> {
                 throwable.printStackTrace();
                 return null;
