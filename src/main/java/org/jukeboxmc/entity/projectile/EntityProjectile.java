@@ -95,7 +95,7 @@ public abstract class EntityProjectile extends Entity {
                     }
                 }
                 this.hitEntity = hitEntity;
-                this.updateMovement();
+                this.updateAbsoluteMovement();
                 this.close();
                 if ( this instanceof EntityFishingHook ) {
                     if ( this.shooter instanceof Player ) {
@@ -116,7 +116,7 @@ public abstract class EntityProjectile extends Entity {
             if ( this instanceof EntityArrow ) {
                 this.getWorld().playSound( this.location, SoundEvent.BOW_HIT );
             }
-            this.updateMovement();
+            this.updateAbsoluteMovement();
             return;
         } else if ( !this.isCollided && this.hadCollision ) {
             this.hadCollision = false;
@@ -128,7 +128,7 @@ public abstract class EntityProjectile extends Entity {
             this.setPitch( (float) ( Math.atan2( this.velocity.getY(), f ) * 180 / Math.PI ) );
         }
 
-        this.updateMovement();
+        this.updateAbsoluteMovement();
     }
 
     @Override

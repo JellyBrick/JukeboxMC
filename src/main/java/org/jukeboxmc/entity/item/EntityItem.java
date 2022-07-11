@@ -50,7 +50,7 @@ public class EntityItem extends Entity {
                 this.velocity = this.velocity.multiply( 0, -0.5f, 0 );
             }
 
-            this.updateMovement();
+            this.updateAbsoluteMovement();
         }
 
         if ( this.isCollided && !this.isReset && this.velocity.squaredLength() < 0.01f ) {

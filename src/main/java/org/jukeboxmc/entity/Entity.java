@@ -24,10 +24,7 @@ import org.jukeboxmc.world.Dimension;
 import org.jukeboxmc.world.World;
 import org.jukeboxmc.world.chunk.Chunk;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static com.nukkitx.protocol.bedrock.data.entity.EntityData.BOUNDING_BOX_HEIGHT;
 import static com.nukkitx.protocol.bedrock.data.entity.EntityData.BOUNDING_BOX_WIDTH;
@@ -699,7 +696,31 @@ public abstract class Entity {
         this.spawned = spawned;
     }
 
-    public void updateMovement() {
+    public void updateAbsoluteMovement() {
+        float diffPosition = ( this.location.getX() - this.lastLocation.getX() ) * ( this.location.getX() - this.lastLocation.getX() ) + ( this.location.getY() - this.lastLocation.getY() ) * ( this.location.getY() - this.lastLocation.getY() ) + ( this.location.getZ() - this.lastLocation.getZ() ) * ( this.location.getZ() - this.lastLocation.getZ() );
+        float diffRotation = ( this.location.getYaw() - this.lastLocation.getYaw() ) * ( this.location.getYaw() - this.lastLocation.getYaw() ) + ( this.location.getPitch() - this.lastLocation.getPitch() ) * ( this.location.getPitch() - this.lastLocation.getPitch() );
+        float diffMotion = ( this.velocity.getX() - this.lastVector.getX() ) * ( this.velocity.getX() - this.lastVector.getX() ) + ( this.velocity.getY() - this.lastVector.getY() ) * ( this.velocity.getY() - this.lastVector.getY() ) + ( this.velocity.getZ() - this.lastVector.getZ() ) * ( this.velocity.getZ() - this.lastVector.getZ() );
+        if ( diffPosition > 0.0001 || diffRotation > 1.0 ) {
+            this.lastLocation.setX( this.location.getX() );
+            this.lastLocation.setY( this.location.getY() );
+            this.lastLocation.setZ( this.location.getZ() );
+            this.lastLocation.setYaw( this.location.getYaw() );
+            this.lastLocation.setPitch( this.location.getPitch() );
+            this.onGround = this.location.getY() - this.lastLocation.getY() <= 0;
+            Location targetLocation = new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension );
+            this.sendEntityMovePacket( targetLocation, this.onGround );
+            this.sendEntityDeltaMovePacket( targetLocation, this.onGround ? Collections.singleton( MoveEntityDeltaPacket.Flag.ON_GROUND ) : new HashSet<>());
+        }
+
+        if ( diffMotion > 0.0025 || ( diffMotion > 0.0001 && this.getVelocity().squaredLength() <= 0.0001 ) ) {
+            this.lastVector.setX( this.velocity.getX() );
+            this.lastVector.setY( this.velocity.getY() );
+            this.lastVector.setZ( this.velocity.getZ() );
+            this.setVelocity( this.velocity, true );
+        }
+    }
+
+    public void updateDeltaMovement( boolean onGround ) {
         float diffPosition = ( this.location.getX() - this.lastLocation.getX() ) * ( this.location.getX() - this.lastLocation.getX() ) + ( this.location.getY() - this.lastLocation.getY() ) * ( this.location.getY() - this.lastLocation.getY() ) + ( this.location.getZ() - this.lastLocation.getZ() ) * ( this.location.getZ() - this.lastLocation.getZ() );
         float diffRotation = ( this.location.getYaw() - this.lastLocation.getYaw() ) * ( this.location.getYaw() - this.lastLocation.getYaw() ) + ( this.location.getPitch() - this.lastLocation.getPitch() ) * ( this.location.getPitch() - this.lastLocation.getPitch() );
         float diffMotion = ( this.velocity.getX() - this.lastVector.getX() ) * ( this.velocity.getX() - this.lastVector.getX() ) + ( this.velocity.getY() - this.lastVector.getY() ) * ( this.velocity.getY() - this.lastVector.getY() ) + ( this.velocity.getZ() - this.lastVector.getZ() ) * ( this.velocity.getZ() - this.lastVector.getZ() );
@@ -710,7 +731,12 @@ public abstract class Entity {
             this.lastLocation.setYaw( this.location.getYaw() );
             this.lastLocation.setPitch( this.location.getPitch() );
             this.onGround = this.location.getY() - this.lastLocation.getY() > 1;
-            this.sendEntityMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), this.onGround );
+            HashSet<MoveEntityDeltaPacket.Flag> flags = new HashSet<>();
+            if ( onGround ) {
+                flags.add( MoveEntityDeltaPacket.Flag.ON_GROUND );
+            }
+            System.out.println( "CALL" );
+            this.sendEntityDeltaMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), flags );
         }
 
         if ( diffMotion > 0.0025 || ( diffMotion > 0.0001 && this.getVelocity().squaredLength() <= 0.0001 ) ) {
@@ -830,6 +856,19 @@ public abstract class Entity {
         moveEntityAbsolutePacket.setPosition( location.toVector3f() );
         moveEntityAbsolutePacket.setRotation( Vector3f.from( location.getPitch(), location.getYaw(), location.getYaw() ) );
         this.getWorld().sendDimensionPacket( moveEntityAbsolutePacket, this.dimension );
+    }
+
+    public void sendEntityDeltaMovePacket( Location location, Set<MoveEntityDeltaPacket.Flag> flags ) {
+        MoveEntityDeltaPacket moveEntityDeltaPacket = new MoveEntityDeltaPacket();
+        moveEntityDeltaPacket.setRuntimeEntityId( this.entityId );
+        moveEntityDeltaPacket.getFlags().addAll( flags );
+        moveEntityDeltaPacket.setX( location.getX() );
+        moveEntityDeltaPacket.setY( location.getY() );
+        moveEntityDeltaPacket.setZ( location.getZ() );
+        moveEntityDeltaPacket.setYaw( location.getYaw() );
+        moveEntityDeltaPacket.setHeadYaw( location.getYaw() );
+        moveEntityDeltaPacket.setPitch( location.getPitch() );
+        this.getWorld().sendDimensionPacket( moveEntityDeltaPacket, this.dimension );
     }
 
     protected boolean isOnLadder() {

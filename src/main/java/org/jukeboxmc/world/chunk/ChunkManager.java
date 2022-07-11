@@ -28,6 +28,7 @@ public class ChunkManager {
             return;
         }
 
+        //TODO Abbrechen bei teleport der alten Chunks
         for ( Iterator<LoadingChunk> chunkIterator = this.chunks.values().iterator(); chunkIterator.hasNext(); ) {
             LoadingChunk loadingChunk = chunkIterator.next();
             Chunk chunk = loadingChunk.getChunk();

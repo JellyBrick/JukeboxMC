@@ -20,7 +20,7 @@ public class EntitySnowball extends EntityProjectile {
         }
 
         if ( this.age > 1200 || this.isCollided ) {
-            this.updateMovement();
+            this.updateAbsoluteMovement();
             this.spawnSnowballParticle( this.location );
             this.closeDelay = true;
         }

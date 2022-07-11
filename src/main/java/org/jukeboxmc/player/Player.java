@@ -12,7 +12,9 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.apache.commons.math3.util.FastMath;
 import org.jukeboxmc.Server;
 import org.jukeboxmc.command.Command;
 import org.jukeboxmc.command.CommandSender;
@@ -593,6 +595,18 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
         this.fallDistance = 0;
         this.inAirTicks = 0;
         this.playerConnection.getChunkLoadQueue().clear();
+
+        LongIterator iterator = this.getPlayerConnection().getLoadedChunks().iterator();
+        while ( iterator.hasNext() ) {
+            long hash = iterator.nextLong();
+            int x = Utils.fromHashX( hash );
+            int z = Utils.fromHashZ( hash );
+
+            if ( FastMath.abs( x - location.getChunkX() ) > viewDistance || FastMath.abs( z - location.getChunkZ() ) > viewDistance ) {
+                this.getWorld().removeChunkLoader( x, z, this.getDimension(), this );
+                iterator.remove();
+            }
+        }
 
         if ( currentWorld != world ) {
             this.despawn();

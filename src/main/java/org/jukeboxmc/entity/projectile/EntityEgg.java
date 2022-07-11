@@ -25,7 +25,7 @@ public class EntityEgg extends EntityProjectile {
         }
 
         if ( this.age > 1200 || this.isCollided ) {
-            this.updateMovement();
+            this.updateAbsoluteMovement();
             this.spawnEggParticle( this.location );
             this.closeDelay = true;
         }

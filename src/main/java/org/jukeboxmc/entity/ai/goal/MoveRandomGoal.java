@@ -1,5 +1,6 @@
 package org.jukeboxmc.entity.ai.goal;
 
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockFence;
 import org.jukeboxmc.block.BlockFenceGate;
@@ -139,8 +140,7 @@ public class MoveRandomGoal extends Goal {
             fromChunk.removeEntity( this.entity );
             toChunk.addEntity( this.entity );
         }
-
-        this.entity.updateMovement();
+        this.entity.updateAbsoluteMovement();
     }
 
     @Override
