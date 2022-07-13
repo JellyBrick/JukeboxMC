@@ -10,7 +10,11 @@ import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockPalette;
 import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.blockentity.BlockEntityType;
+import org.jukeboxmc.entity.Entity;
+import org.jukeboxmc.entity.EntityType;
+import org.jukeboxmc.math.Location;
 import org.jukeboxmc.world.Biome;
+import org.jukeboxmc.world.World;
 import org.jukeboxmc.world.chunk.Chunk;
 import org.jukeboxmc.world.chunk.SubChunk;
 import org.jukeboxmc.world.palette.object.ObjectPalette;
@@ -99,7 +103,7 @@ public class LevelDB {
                 height[i] = buffer.readShortLE();
             }
 
-            if(buffer.readableBytes() <= 0) return;
+            if ( buffer.readableBytes() <= 0 ) return;
 
             int minSectionY = chunk.getMinY() >> 4;
             int fullHeight = Math.abs( chunk.getMinY() ) + Math.abs( chunk.getMaxY() ) + 1;
@@ -115,6 +119,31 @@ public class LevelDB {
         } finally {
             buffer.release();
         }
+    }
+
+    public static void loadEntities( Chunk chunk, byte[] entityData ) {
+        ByteBuf buffer = Unpooled.wrappedBuffer( entityData );
+
+        try ( NBTInputStream reader = NbtUtils.createReaderLE( new ByteBufInputStream( buffer ) ) ) {
+            while ( buffer.readableBytes() > 0 ) {
+                NbtMap nbtMap = (NbtMap) reader.readTag();
+                String identifier = nbtMap.getString( "identifer" );
+                NbtMap postionNBT = nbtMap.getCompound( "Pos" );
+                float x = postionNBT.getFloat( "X" );
+                float y = postionNBT.getFloat( "Y" );
+                float z = postionNBT.getFloat( "Z" );
+
+                EntityType entityType = EntityType.findByIdentifer( identifier );
+                if ( entityType != null ) {
+                    Entity entity = entityType.createEntity();
+                    entity.setLocation( new Location( chunk.getWorld(), x, y, z ) );
+                    //chunk.getEntities().add( entity ); TODO
+                }
+            }
+        } catch ( IOException e ) {
+            throw new RuntimeException( e );
+        }
+
     }
 
 }

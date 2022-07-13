@@ -10,6 +10,8 @@ import org.jukeboxmc.entity.projectile.EntityEgg;
 import org.jukeboxmc.entity.projectile.EntityFishingHook;
 import org.jukeboxmc.entity.projectile.EntitySnowball;
 
+import java.util.Arrays;
+
 /**
  * @author LucGamesYT
  * @version 1.0
@@ -101,6 +103,15 @@ public enum EntityType {
     @SneakyThrows
     public <E extends Entity> E createEntity() {
         return (E) this.entityClass.getConstructor().newInstance();
+    }
+
+    public static EntityType findByIdentifer( String identifier ) {
+        for ( EntityType entityType : EntityType.values() ) {
+            if ( entityType.getIdentifier().equalsIgnoreCase( identifier ) ) {
+                return entityType;
+            }
+        }
+        return null;
     }
 
     public String getIdentifier() {

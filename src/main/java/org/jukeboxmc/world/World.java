@@ -449,6 +449,11 @@ public class World {
             if ( heightAndBiomes != null ) {
                 LevelDB.loadHeightAndBiomes( chunk, heightAndBiomes );
             }
+
+            byte[] entityData = this.db.get( Utils.getKey( chunk.getX(), chunk.getZ(), chunk.getDimension(), (byte) 0x32 ) );
+            if ( entityData != null ) {
+                LevelDB.loadEntities( chunk, entityData );
+            }
             return true;
         } catch ( Throwable e ) {
             e.printStackTrace();
@@ -1057,7 +1062,7 @@ public class World {
         List<CompletableFuture<?>> futures = new ArrayList<>();
 
         for ( Chunk chunk : this.getChunks( Dimension.OVERWORLD ) ) {
-            if ( chunk != null && chunk.isChanged() ) {
+            if ( chunk != null) {
                 futures.add( saveChunk( chunk ) );
             }
         }
@@ -1066,13 +1071,10 @@ public class World {
     }
 
     public CompletableFuture<Boolean> saveChunk( Chunk chunk ) {
-        if ( !chunk.isChanged() ) {
-            return chunk.save( this.db ).exceptionally( throwable -> {
-                throwable.printStackTrace();
-                return null;
-            } );
-        }
-        return CompletableFuture.completedFuture( null );
+        return chunk.save( this.db ).exceptionally( throwable -> {
+            throwable.printStackTrace();
+            return null;
+        } );
     }
 
     public void save0() {

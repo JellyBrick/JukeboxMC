@@ -735,7 +735,6 @@ public abstract class Entity {
             if ( onGround ) {
                 flags.add( MoveEntityDeltaPacket.Flag.ON_GROUND );
             }
-            System.out.println( "CALL" );
             this.sendEntityDeltaMovePacket( new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension ), flags );
         }
 

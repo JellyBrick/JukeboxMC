@@ -2,6 +2,7 @@ package org.jukeboxmc.world.chunk;
 
 import com.nukkitx.nbt.NBTOutputStream;
 import com.nukkitx.nbt.NbtMap;
+import com.nukkitx.nbt.NbtMapBuilder;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
 import io.netty.buffer.ByteBuf;
@@ -503,11 +504,35 @@ public class Chunk {
                     }
                     writeBatch.put( heightAndBiomesKey, Utils.array( heightAndBiomesBuffer ) );
                     heightAndBiomesBuffer.release();
+
+                    byte[] entityData = Utils.getKey( this.x, this.z, this.dimension, (byte) 0x32 );
+                    ByteBuf entityBuffer = Unpooled.buffer();
+
+                    if ( this.getEntities().size() > 0 ) {
+                        try ( NBTOutputStream networkWriter = NbtUtils.createWriterLE( new ByteBufOutputStream( entityBuffer ) ) ) {
+                            for ( Entity entity : this.getEntities() ) {
+                                if ( !( entity instanceof Player ) ) {
+                                    NbtMapBuilder builder = NbtMap.builder();
+                                    builder.putString( "identifer", entity.getEntityType().getIdentifier() );
+                                    NbtMapBuilder positionBuilder = NbtMap.builder();
+                                    positionBuilder.putFloat( "X", entity.getX() );
+                                    positionBuilder.putFloat( "Y", entity.getY() );
+                                    positionBuilder.putFloat( "Z", entity.getZ() );
+                                    builder.putCompound( "Pos", positionBuilder.build() );
+                                    networkWriter.writeTag( builder.build() );
+                                }
+                            }
+                        }
+                        if ( entityBuffer.readableBytes() > 0 ) {
+                            writeBatch.put( entityData, Utils.array( entityBuffer ) );
+                        }
+                    }
                 } finally {
                     this.readLock.unlock();
                 }
                 db.write( writeBatch );
                 writeBatch.close();
+                this.changed = false;
                 return true;
             } catch ( IOException e ) {
                 e.printStackTrace();
