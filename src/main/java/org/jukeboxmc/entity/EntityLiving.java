@@ -55,7 +55,7 @@ public abstract class EntityLiving extends EntityAI {
 
         if ( this.getHealth() < 1 ) {
             if ( this.deadTimer > 0 && this.deadTimer-- > 1 ) {
-                this.close();
+                this.despawn();
                 this.isDead = true;
                 this.deadTimer = 0;
             }

@@ -59,7 +59,6 @@ public abstract class Entity {
     protected boolean closed = false;
     protected boolean onGround = false;
     protected boolean isDead = false;
-    protected boolean spawned = false;
 
     private final Set<Long> spawnedFor = new HashSet<>();
 
@@ -320,7 +319,6 @@ public abstract class Entity {
             Entity entity = entitySpawnEvent.getEntity();
             this.getWorld().addEntity( entity );
             this.getChunk().addEntity( entity );
-            this.spawned = true;
             player.sendPacket( entity.createSpawnPacket() );
             this.spawnedFor.add( player.getEntityId() );
         }
@@ -345,7 +343,6 @@ public abstract class Entity {
             removeEntityPacket.setUniqueEntityId( entityDespawnEvent.getEntity().getEntityId() );
             player.sendPacket( removeEntityPacket );
             this.spawnedFor.remove( player.getEntityId() );
-            this.spawned = false;
         }
         return this;
     }
@@ -688,14 +685,6 @@ public abstract class Entity {
         this.isDead = dead;
     }
 
-    public boolean isSpawned() {
-        return this.spawned;
-    }
-
-    public void setSpawned( boolean spawned ) {
-        this.spawned = spawned;
-    }
-
     public void updateAbsoluteMovement() {
         float diffPosition = ( this.location.getX() - this.lastLocation.getX() ) * ( this.location.getX() - this.lastLocation.getX() ) + ( this.location.getY() - this.lastLocation.getY() ) * ( this.location.getY() - this.lastLocation.getY() ) + ( this.location.getZ() - this.lastLocation.getZ() ) * ( this.location.getZ() - this.lastLocation.getZ() );
         float diffRotation = ( this.location.getYaw() - this.lastLocation.getYaw() ) * ( this.location.getYaw() - this.lastLocation.getYaw() ) + ( this.location.getPitch() - this.lastLocation.getPitch() ) * ( this.location.getPitch() - this.lastLocation.getPitch() );
@@ -706,7 +695,6 @@ public abstract class Entity {
             this.lastLocation.setZ( this.location.getZ() );
             this.lastLocation.setYaw( this.location.getYaw() );
             this.lastLocation.setPitch( this.location.getPitch() );
-            this.onGround = this.location.getY() - this.lastLocation.getY() <= 0;
             Location targetLocation = new Location( this.location.getWorld(), this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.getPitch(), this.dimension );
             this.sendEntityMovePacket( targetLocation, this.onGround );
             this.sendEntityDeltaMovePacket( targetLocation, this.onGround ? Collections.singleton( MoveEntityDeltaPacket.Flag.ON_GROUND ) : new HashSet<>());

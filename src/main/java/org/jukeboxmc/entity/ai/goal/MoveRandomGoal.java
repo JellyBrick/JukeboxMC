@@ -1,6 +1,5 @@
 package org.jukeboxmc.entity.ai.goal;
 
-import com.nukkitx.protocol.bedrock.data.entity.EntityData;
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockFence;
 import org.jukeboxmc.block.BlockFenceGate;
@@ -48,7 +47,7 @@ public class MoveRandomGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI() && this.entity.isSpawned();
+        return new Random().nextFloat() <= this.chance && !this.entity.isNoAI();
     }
 
     @Override
@@ -87,7 +86,6 @@ public class MoveRandomGoal extends Goal {
         Location nextBlockLocation = this.entity.getLocation().clone();
         nextBlockLocation.setX( this.entity.getX() + ( motionX * 5 ) );
         nextBlockLocation.setZ( this.entity.getZ() + ( motionZ * 5 ) );
-
         Block nextBlock = nextBlockLocation.getBlock();
         if ( nextBlock instanceof BlockFence || nextBlock instanceof BlockFenceGate ) {
             Direction opposite = this.entity.getDirection().opposite();
@@ -141,6 +139,7 @@ public class MoveRandomGoal extends Goal {
             toChunk.addEntity( this.entity );
         }
         this.entity.updateAbsoluteMovement();
+        this.entity.setOnGround( this.entity.getY() - this.entity.getLastLocation().getY() <= 0 );
     }
 
     @Override

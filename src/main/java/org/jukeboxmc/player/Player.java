@@ -990,8 +990,6 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
             this.teleport( playerRespawnEvent.getRespawnLocation() );
             this.respawnLocation = null;
 
-            this.spawn();
-
             this.setBurning( false );
             this.setVelocity( Vector.zero() );
 
