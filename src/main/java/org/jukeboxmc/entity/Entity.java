@@ -59,6 +59,7 @@ public abstract class Entity {
     protected boolean closed = false;
     protected boolean onGround = false;
     protected boolean isDead = false;
+    protected boolean spawned = false;
 
     private final Set<Long> spawnedFor = new HashSet<>();
 
@@ -320,6 +321,7 @@ public abstract class Entity {
             this.getWorld().addEntity( entity );
             this.getChunk().addEntity( entity );
             player.sendPacket( entity.createSpawnPacket() );
+            this.spawned = true;
             this.spawnedFor.add( player.getEntityId() );
         }
         return this;
@@ -342,6 +344,7 @@ public abstract class Entity {
             RemoveEntityPacket removeEntityPacket = new RemoveEntityPacket();
             removeEntityPacket.setUniqueEntityId( entityDespawnEvent.getEntity().getEntityId() );
             player.sendPacket( removeEntityPacket );
+            this.spawned = false;
             this.spawnedFor.remove( player.getEntityId() );
         }
         return this;
@@ -683,6 +686,14 @@ public abstract class Entity {
 
     public void setDead( boolean dead ) {
         this.isDead = dead;
+    }
+
+    public boolean isSpawned() {
+        return this.spawned;
+    }
+
+    public void setSpawned( boolean spawned ) {
+        this.spawned = spawned;
     }
 
     public void updateAbsoluteMovement() {

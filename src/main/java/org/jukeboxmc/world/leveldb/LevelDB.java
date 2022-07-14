@@ -137,7 +137,7 @@ public class LevelDB {
                 if ( entityType != null ) {
                     Entity entity = entityType.createEntity();
                     entity.setLocation( new Location( chunk.getWorld(), x, y, z ) );
-                    //chunk.getEntities().add( entity ); TODO
+                    chunk.getEntities().add( entity );
                 }
             }
         } catch ( IOException e ) {

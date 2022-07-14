@@ -87,6 +87,7 @@ public class MoveRandomGoal extends Goal {
         nextBlockLocation.setX( this.entity.getX() + ( motionX * 5 ) );
         nextBlockLocation.setZ( this.entity.getZ() + ( motionZ * 5 ) );
         Block nextBlock = nextBlockLocation.getBlock();
+
         if ( nextBlock instanceof BlockFence || nextBlock instanceof BlockFenceGate ) {
             Direction opposite = this.entity.getDirection().opposite();
             Location location = this.entity.getLocation().clone().getSide( opposite, this.radius * 2 );

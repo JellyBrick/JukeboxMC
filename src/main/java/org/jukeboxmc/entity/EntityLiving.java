@@ -54,10 +54,19 @@ public abstract class EntityLiving extends EntityAI {
         }
 
         if ( this.getHealth() < 1 ) {
-            if ( this.deadTimer > 0 && this.deadTimer-- > 1 ) {
+            if ( this.deadTimer >= 1 ) {
+                this.deadTimer--;
+            }
+            if ( this.deadTimer <= 0 ) {
                 this.despawn();
                 this.isDead = true;
                 this.deadTimer = 0;
+
+                if ( !( this instanceof Player ) ) {
+                    this.getChunk().removeEntity( this );
+                    this.getWorld().removeEntity( this );
+                    this.closed = true;
+                }
             }
         } else {
             this.deadTimer = 0;
@@ -286,7 +295,7 @@ public abstract class EntityLiving extends EntityAI {
     }
 
     protected void kill() {
-        this.deadTimer = 20;
+        this.deadTimer = 30;
 
         EntityEventPacket entityEventPacket = new EntityEventPacket();
         entityEventPacket.setRuntimeEntityId( this.entityId );

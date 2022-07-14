@@ -27,7 +27,6 @@ public class ChunkManager {
         if ( this.chunks.isEmpty() ) {
             return;
         }
-
         //TODO Abbrechen bei teleport der alten Chunks
         for ( Iterator<LoadingChunk> chunkIterator = this.chunks.values().iterator(); chunkIterator.hasNext(); ) {
             LoadingChunk loadingChunk = chunkIterator.next();
@@ -44,14 +43,15 @@ public class ChunkManager {
                             player.sendChunk( chunk );
                         }
                     }
-
                     chunk.setDirty( false );
                 }
                 continue;
             }
+            /*
             if ( chunk.getLoaders() != null && this.unloadChunk0( chunk, true, true ) ) {
                 chunkIterator.remove();
             }
+             */
         }
     }
 
@@ -140,6 +140,7 @@ public class ChunkManager {
     private synchronized boolean unloadChunk0( Chunk chunk, boolean safe, boolean save ) {
         if ( safe ) {
             if ( chunk.getPlayers().size() <= 0 ) {
+                //chunk.getEntities().forEach( Entity::despawn );
                 if ( save ) {
                     this.world.saveChunk( chunk );
                     return true;
@@ -148,6 +149,7 @@ public class ChunkManager {
                 return false;
             }
         } else {
+            chunk.getEntities().forEach( Entity::despawn );
             if ( save ) {
                 this.world.saveChunk( chunk );
                 return true;

@@ -102,6 +102,7 @@ public class EntityItem extends Entity {
 
     @Override
     public void onCollideWithPlayer( Player player ) {
+        if ( this.item == null ) return;
         if ( Server.getInstance().getCurrentTick() > this.pickupDelay && !this.isClosed() && !player.isDead() ) {
             PlayerPickupItemEvent playerPickupItemEvent = new PlayerPickupItemEvent( player, this.item );
             Server.getInstance().getPluginManager().callEvent( playerPickupItemEvent );

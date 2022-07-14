@@ -331,6 +331,15 @@ public class PlayerConnection {
                 if ( FastMath.abs( x - currentXChunk ) > viewDistance || FastMath.abs( z - currentZChunk ) > viewDistance ) {
                     this.player.getWorld().removeChunkLoader( x, z, this.player.getDimension(), this.player );
                     iterator.remove();
+                    Chunk loadedChunk = this.player.getWorld().getLoadedChunk( x, z, this.player.getDimension() );
+                    if ( loadedChunk != null ) {
+                        for ( Entity entity : loadedChunk.getEntities() ) {
+                            if ( this.player != entity ) {
+                                entity.despawn( this.player );
+                            }
+                        }
+                        //System.out.println( "UNLOAD X:" + x + " Z: " + z );
+                    }
                 }
             }
         } catch ( Exception e ) {
@@ -364,6 +373,14 @@ public class PlayerConnection {
         try {
             this.sendNetworkPublisher();
             this.sendPacket( chunk.createLevelChunkPacket() );
+
+            if ( this.isSpawned() ) {
+                for ( Entity entity : chunk.getEntities() ) {
+                    if ( this.player != entity && !entity.isClosed() && !entity.isDead() ) {
+                        entity.spawn( this.player );
+                    }
+                }
+            }
           /*
             if ( !chunk.getBlockEntities().isEmpty() ) {
                 for ( BlockEntity blockEntity : chunk.getBlockEntities() ) {
@@ -443,7 +460,7 @@ public class PlayerConnection {
     }
 
     public boolean isSpawned() {
-        return this.loggedIn.get();
+        return this.spawned.get();
     }
 
     public Server getServer() {

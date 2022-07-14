@@ -92,6 +92,11 @@ public class Chunk {
         this.entities = new HashSet<>();
     }
 
+    public boolean canSave() {
+        long entityCount = this.entities.stream().filter( entity -> !( entity instanceof Player ) ).count();
+        return this.changed || entityCount > 0;
+    }
+
     public void setDirty( boolean dirty ) {
         this.dirty = dirty;
     }
@@ -463,7 +468,11 @@ public class Chunk {
 
                     ByteBuf buffer = Unpooled.buffer();
                     List<BlockEntity> blockEntities = this.getBlockEntities();
-                    if ( !blockEntities.isEmpty() ) {
+
+                    byte[] blockEntityKey = Utils.getKey( this.x, this.z, this.dimension, (byte) 0x31 );
+                    if ( blockEntities.isEmpty() ) {
+                        db.delete( blockEntityKey );
+                    } else {
                         try ( NBTOutputStream networkWriter = NbtUtils.createWriterLE( new ByteBufOutputStream( buffer ) ) ) {
                             for ( BlockEntity blockEntity : blockEntities ) {
                                 try {
@@ -478,7 +487,6 @@ public class Chunk {
                         }
 
                         if ( buffer.readableBytes() > 0 ) {
-                            byte[] blockEntityKey = Utils.getKey( this.x, this.z, this.dimension, (byte) 0x31 );
                             writeBatch.put( blockEntityKey, Utils.array( buffer ) );
                         }
                         buffer.release();
@@ -508,9 +516,12 @@ public class Chunk {
                     byte[] entityData = Utils.getKey( this.x, this.z, this.dimension, (byte) 0x32 );
                     ByteBuf entityBuffer = Unpooled.buffer();
 
-                    if ( this.getEntities().size() > 0 ) {
+                    Collection<Entity> entities = this.getEntities();
+                    if ( entities.isEmpty() ) {
+                        db.delete( entityData );
+                    } else {
                         try ( NBTOutputStream networkWriter = NbtUtils.createWriterLE( new ByteBufOutputStream( entityBuffer ) ) ) {
-                            for ( Entity entity : this.getEntities() ) {
+                            for ( Entity entity : entities ) {
                                 if ( !( entity instanceof Player ) ) {
                                     NbtMapBuilder builder = NbtMap.builder();
                                     builder.putString( "identifer", entity.getEntityType().getIdentifier() );
@@ -526,6 +537,7 @@ public class Chunk {
                         if ( entityBuffer.readableBytes() > 0 ) {
                             writeBatch.put( entityData, Utils.array( entityBuffer ) );
                         }
+                        entityBuffer.release();
                     }
                 } finally {
                     this.readLock.unlock();

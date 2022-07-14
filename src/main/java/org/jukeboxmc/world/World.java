@@ -1060,13 +1060,14 @@ public class World {
 
     public synchronized CompletableFuture<Void> saveChunks() {
         List<CompletableFuture<?>> futures = new ArrayList<>();
-
+        long amountOfChunks = 0;
         for ( Chunk chunk : this.getChunks( Dimension.OVERWORLD ) ) {
-            if ( chunk != null) {
+            if ( chunk != null && chunk.canSave() ) {
                 futures.add( saveChunk( chunk ) );
+                amountOfChunks++;
             }
         }
-
+        System.out.println("Es wurden " + amountOfChunks + " Chunkss gespeichert.");
         return CompletableFuture.allOf( futures.toArray( new CompletableFuture[0] ) );
     }
 

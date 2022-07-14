@@ -133,7 +133,9 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
         Collection<Entity> nearbyEntities = this.getWorld().getNearbyEntities( this.getBoundingBox().grow( 1, 0.5f, 1 ), this.dimension, null );
         if ( nearbyEntities != null ) {
             for ( Entity nearbyEntity : nearbyEntities ) {
-                nearbyEntity.onCollideWithPlayer( this );
+                if ( !nearbyEntity.isClosed() ) {
+                    nearbyEntity.onCollideWithPlayer( this );
+                }
             }
         }
 
@@ -918,15 +920,18 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
     @Override
     protected void kill() {
         if ( !this.isDead ) {
-            super.kill();
+            this.deadTimer = 10;
             EntityEventPacket entityEventPacket = new EntityEventPacket();
             entityEventPacket.setRuntimeEntityId( this.entityId );
             entityEventPacket.setType( EntityEventType.DEATH );
-            this.playerConnection.sendPacket( entityEventPacket );
+            Server.getInstance().broadcastPacket( entityEventPacket );
 
             this.fallDistance = 0;
             this.highestPosition = 0;
             this.inAirTicks = 0;
+            this.fireTicks = 0;
+
+            this.setBurning( false );
 
             String deathMessage = switch ( this.lastDamageSource ) {
                 case ENTITY_ATTACK -> this.getNameTag() + " was slain by " + this.getLastDamageEntity().getNameTag();
@@ -949,8 +954,10 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
             this.server.getPluginManager().callEvent( playerDeathEvent );
 
             if ( playerDeathEvent.isDropInventory() ) {
-                for ( Item drop : playerDeathEvent.getDrops() ) {
-                    this.getWorld().dropItem( drop, this.location, null ).spawn();
+                for ( Item dropItem : playerDeathEvent.getDrops() ) {
+                    if ( dropItem != null ) {
+                        this.getWorld().dropItem( dropItem, this.location, null ).spawn();
+                    }
                 }
 
                 this.playerInventory.clear();
@@ -986,6 +993,8 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
                 attribute.reset();
             }
             this.updateAttributes();
+
+            this.spawn();
 
             this.teleport( playerRespawnEvent.getRespawnLocation() );
             this.respawnLocation = null;
