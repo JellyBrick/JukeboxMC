@@ -6,6 +6,7 @@ import com.nukkitx.nbt.NbtUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
+import org.jukeboxmc.JukeboxMC;
 import org.jukeboxmc.block.Block;
 import org.jukeboxmc.block.BlockPalette;
 import org.jukeboxmc.blockentity.BlockEntity;
@@ -137,7 +138,7 @@ public class LevelDB {
                 if ( entityType != null ) {
                     Entity entity = entityType.createEntity();
                     entity.setLocation( new Location( chunk.getWorld(), x, y, z ) );
-                    chunk.getEntities().add( entity );
+                    chunk.addEntity( entity );
                 }
             }
         } catch ( IOException e ) {

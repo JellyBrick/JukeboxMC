@@ -11,7 +11,9 @@ import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings;
 import com.nukkitx.protocol.bedrock.packet.*;
 import it.unimi.dsi.fastutil.longs.*;
 import org.apache.commons.math3.util.FastMath;
+import org.jukeboxmc.JukeboxMC;
 import org.jukeboxmc.Server;
+import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.crafting.CraftingManager;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.entity.attribute.Attribute;
@@ -374,14 +376,11 @@ public class PlayerConnection {
             this.sendNetworkPublisher();
             this.sendPacket( chunk.createLevelChunkPacket() );
 
-            if ( this.isSpawned() ) {
-                for ( Entity entity : chunk.getEntities() ) {
-                    if ( this.player != entity && !entity.isClosed() && !entity.isDead() ) {
-                        entity.spawn( this.player );
-                    }
+            for ( Entity entity : chunk.getEntities() ) {
+                if ( this.player != entity && !entity.isClosed() && !entity.isDead() ) {
+                    entity.spawn( this.player );
                 }
             }
-          /*
             if ( !chunk.getBlockEntities().isEmpty() ) {
                 for ( BlockEntity blockEntity : chunk.getBlockEntities() ) {
                     BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
@@ -390,7 +389,6 @@ public class PlayerConnection {
                     this.sendPacket( blockEntityDataPacket );
                 }
             }
-           */
             long chunkHash = chunk.toChunkHash();
             this.loadedChunks.add( chunkHash );
         } catch ( Throwable e ) {

@@ -910,4 +910,9 @@ public abstract class Entity {
         Server.getInstance().getPluginManager().callEvent( event );
         return !event.isCancelled();
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + this.getName() + " Location: " + location.toString();
+    }
 }

@@ -52,6 +52,7 @@ public class Chunk {
 
     private volatile boolean dirty;
     private volatile boolean changed = false;
+    public boolean test = false;
 
     private boolean initiating = true;
     private boolean generated = false;
@@ -61,6 +62,7 @@ public class Chunk {
     private final Lock writeLock;
 
     private final Set<Entity> entities;
+    public final Set<Entity> entitiyToSpawn;
     private final ObjectPalette<Biome>[] biomes;
 
     public Chunk( World world, int x, int z, Dimension dimension ) {
@@ -90,6 +92,7 @@ public class Chunk {
         this.writeLock = lock.writeLock();
 
         this.entities = new HashSet<>();
+        this.entitiyToSpawn = new HashSet<>();
     }
 
     public boolean canSave() {
