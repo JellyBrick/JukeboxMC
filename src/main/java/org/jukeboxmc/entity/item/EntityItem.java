@@ -1,5 +1,7 @@
 package org.jukeboxmc.entity.item;
 
+import com.nukkitx.nbt.NbtMap;
+import com.nukkitx.nbt.NbtMapBuilder;
 import com.nukkitx.protocol.bedrock.packet.AddItemEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.TakeItemEntityPacket;
 import org.jukeboxmc.Server;
@@ -7,6 +9,8 @@ import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.entity.EntityType;
 import org.jukeboxmc.event.player.PlayerPickupItemEvent;
 import org.jukeboxmc.item.Item;
+import org.jukeboxmc.item.ItemDiamondSword;
+import org.jukeboxmc.item.ItemType;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
 
@@ -89,15 +93,44 @@ public class EntityItem extends Entity {
     }
 
     @Override
+    public void saveEntity( NbtMapBuilder builder ) {
+        super.saveEntity( builder );
+        NbtMapBuilder itemBuilder = NbtMap.builder();
+        itemBuilder.putString( "Name", this.getItem().getIdentifier() );
+        itemBuilder.putShort( "Damage", (short) this.getItem().getMeta() );
+        itemBuilder.putByte( "Count", (byte) this.getItem().getAmount() );
+
+        builder.putCompound( "Item", itemBuilder.build() );
+    }
+
+    @Override
+    public void loadEntity( NbtMap compound ) {
+        super.loadEntity( compound );
+
+        NbtMap itemCompound = compound.getCompound( "Item" );
+        String identifier = itemCompound.getString( "Name" );
+        short damage = itemCompound.getShort( "Damage" );
+        byte amount = itemCompound.getByte( "Count" );
+        this.item = ItemType.get( identifier ).setMeta( damage ).setAmount( amount ).setNBT( itemCompound );
+        this.setPickupDelay( 1, TimeUnit.SECONDS );
+        this.setPlayerHasThrown( null );
+    }
+
+    @Override
     public AddItemEntityPacket createSpawnPacket() {
-        AddItemEntityPacket addItemEntityPacket = new AddItemEntityPacket();
-        addItemEntityPacket.setRuntimeEntityId( this.entityId );
-        addItemEntityPacket.setUniqueEntityId( this.entityId );
-        addItemEntityPacket.setItemInHand( this.item.toNetwork() );
-        addItemEntityPacket.setPosition( this.location.toVector3f() );
-        addItemEntityPacket.setMotion( this.velocity.toVector3f() );
-        addItemEntityPacket.getMetadata().putAll( this.metadata.getEntityDataMap() );
-        return addItemEntityPacket;
+        try {
+            AddItemEntityPacket addItemEntityPacket = new AddItemEntityPacket();
+            addItemEntityPacket.setRuntimeEntityId( this.entityId );
+            addItemEntityPacket.setUniqueEntityId( this.entityId );
+            addItemEntityPacket.setItemInHand( this.item.toNetwork() );
+            addItemEntityPacket.setPosition( this.location.toVector3f() );
+            addItemEntityPacket.setMotion( this.velocity.toVector3f() );
+            addItemEntityPacket.getMetadata().putAll( this.metadata.getEntityDataMap() );
+            return addItemEntityPacket;
+        } catch ( Throwable e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

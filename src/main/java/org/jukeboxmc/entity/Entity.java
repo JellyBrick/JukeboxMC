@@ -1,6 +1,8 @@
 package org.jukeboxmc.entity;
 
 import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.NbtMap;
+import com.nukkitx.nbt.NbtMapBuilder;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.entity.EntityData;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
@@ -113,6 +115,23 @@ public abstract class Entity {
 
     }
 
+    public void saveEntity( NbtMapBuilder builder ) {
+        builder.putString( "identifer", this.getEntityType().getIdentifier() );
+        NbtMapBuilder positionBuilder = NbtMap.builder();
+        positionBuilder.putFloat( "X", this.getX() );
+        positionBuilder.putFloat( "Y", this.getY() );
+        positionBuilder.putFloat( "Z", this.getZ() );
+        builder.putCompound( "Pos", positionBuilder.build() );
+    }
+
+    public void loadEntity( NbtMap compound ) {
+        NbtMap postionNBT = compound.getCompound( "Pos" );
+        this.location.setX( postionNBT.getFloat( "X" ) );
+        this.location.setY( postionNBT.getFloat( "Y" ) );
+        this.location.setZ( postionNBT.getFloat( "Z" ) );
+        this.recalculateBoundingBox();
+    }
+
     public BedrockPacket createSpawnPacket() {
         AddEntityPacket addEntityPacket = new AddEntityPacket();
         addEntityPacket.setRuntimeEntityId( this.entityId );
@@ -183,6 +202,10 @@ public abstract class Entity {
 
     public World getWorld() {
         return this.location.getWorld();
+    }
+
+    public void setWorld( World world ) {
+        this.location.setWorld( world );
     }
 
     public float getX() {
@@ -612,6 +635,13 @@ public abstract class Entity {
                 this.location.setX( ( this.boundingBox.getMinX() + this.boundingBox.getMaxX() ) / 2 );
                 this.location.setY( this.boundingBox.getMinY() - this.ySize );
                 this.location.setZ( ( this.boundingBox.getMinZ() + this.boundingBox.getMaxZ() ) / 2 );
+            }
+
+            Chunk fromChunk = this.lastLocation.getChunk();
+            Chunk toChunk = this.location.getChunk();
+            if ( toChunk.getX() != fromChunk.getX() || toChunk.getZ() != fromChunk.getZ() ) {
+                fromChunk.removeEntity( this );
+                toChunk.addEntity( this );
             }
 
             this.checkGroundState( movX, movY, movZ, velocity.getX(), velocity.getY(), velocity.getZ() );

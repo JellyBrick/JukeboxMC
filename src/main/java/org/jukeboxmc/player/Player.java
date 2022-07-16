@@ -130,11 +130,13 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
         }
         super.update( currentTick );
 
-        Collection<Entity> nearbyEntities = this.getWorld().getNearbyEntities( this.getBoundingBox().grow( 1, 0.5f, 1 ), this.dimension, null );
-        if ( nearbyEntities != null ) {
-            for ( Entity nearbyEntity : nearbyEntities ) {
-                if ( !nearbyEntity.isClosed() ) {
-                    nearbyEntity.onCollideWithPlayer( this );
+        if ( this.isSpawned() ) {
+            Collection<Entity> nearbyEntities = this.getWorld().getNearbyEntities( this.getBoundingBox().grow( 1, 0.5f, 1 ), this.dimension, this );
+            if ( nearbyEntities != null ) {
+                for ( Entity nearbyEntity : nearbyEntities ) {
+                    if ( !nearbyEntity.isClosed() ) {
+                        nearbyEntity.onCollideWithPlayer( this );
+                    }
                 }
             }
         }

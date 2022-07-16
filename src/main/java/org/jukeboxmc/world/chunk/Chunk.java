@@ -17,6 +17,7 @@ import org.jukeboxmc.block.BlockPalette;
 import org.jukeboxmc.block.BlockType;
 import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.entity.Entity;
+import org.jukeboxmc.entity.item.EntityItem;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
@@ -527,12 +528,7 @@ public class Chunk {
                             for ( Entity entity : entities ) {
                                 if ( !( entity instanceof Player ) ) {
                                     NbtMapBuilder builder = NbtMap.builder();
-                                    builder.putString( "identifer", entity.getEntityType().getIdentifier() );
-                                    NbtMapBuilder positionBuilder = NbtMap.builder();
-                                    positionBuilder.putFloat( "X", entity.getX() );
-                                    positionBuilder.putFloat( "Y", entity.getY() );
-                                    positionBuilder.putFloat( "Z", entity.getZ() );
-                                    builder.putCompound( "Pos", positionBuilder.build() );
+                                    entity.saveEntity( builder );
                                     networkWriter.writeTag( builder.build() );
                                 }
                             }

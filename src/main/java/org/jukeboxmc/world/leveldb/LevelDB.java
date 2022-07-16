@@ -13,6 +13,8 @@ import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.blockentity.BlockEntityType;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.entity.EntityType;
+import org.jukeboxmc.entity.item.EntityItem;
+import org.jukeboxmc.item.ItemDiamondSword;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.world.Biome;
 import org.jukeboxmc.world.World;
@@ -22,6 +24,7 @@ import org.jukeboxmc.world.palette.object.ObjectPalette;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author LucGamesYT
@@ -127,17 +130,13 @@ public class LevelDB {
 
         try ( NBTInputStream reader = NbtUtils.createReaderLE( new ByteBufInputStream( buffer ) ) ) {
             while ( buffer.readableBytes() > 0 ) {
-                NbtMap nbtMap = (NbtMap) reader.readTag();
-                String identifier = nbtMap.getString( "identifer" );
-                NbtMap postionNBT = nbtMap.getCompound( "Pos" );
-                float x = postionNBT.getFloat( "X" );
-                float y = postionNBT.getFloat( "Y" );
-                float z = postionNBT.getFloat( "Z" );
+                NbtMap compound = (NbtMap) reader.readTag();
+                String identifier = compound.getString( "identifer" );
 
                 EntityType entityType = EntityType.findByIdentifer( identifier );
                 if ( entityType != null ) {
                     Entity entity = entityType.createEntity();
-                    entity.setLocation( new Location( chunk.getWorld(), x, y, z ) );
+                    entity.loadEntity( compound );
                     chunk.addEntity( entity );
                 }
             }
