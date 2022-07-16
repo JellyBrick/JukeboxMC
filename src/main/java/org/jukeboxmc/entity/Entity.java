@@ -641,7 +641,9 @@ public abstract class Entity {
             Chunk toChunk = this.location.getChunk();
             if ( toChunk.getX() != fromChunk.getX() || toChunk.getZ() != fromChunk.getZ() ) {
                 fromChunk.removeEntity( this );
+                fromChunk.setChanged( true );
                 toChunk.addEntity( this );
+                toChunk.setChanged( true );
             }
 
             this.checkGroundState( movX, movY, movZ, velocity.getX(), velocity.getY(), velocity.getZ() );

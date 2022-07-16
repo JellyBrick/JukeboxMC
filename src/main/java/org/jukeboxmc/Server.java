@@ -235,6 +235,10 @@ public class Server {
         this.logger.info( "Shutdown server..." );
         this.runningState.set( false );
 
+        for ( Player onlinePlayer : this.getOnlinePlayers() ) {
+            onlinePlayer.getPlayerConnection().disconnect( "Server Shutdown" );
+        }
+
         this.logger.info( "Save all worlds..." );
         for ( World world : this.worlds.values() ) {
             world.save(true);
@@ -251,8 +255,8 @@ public class Server {
 
         this.terminalConsole.stopConsole();
 
-        this.network.getBedrockServer().close( true );
         this.scheduler.shutdown();
+        this.network.getBedrockServer().close( true );
         this.logger.info( "Server shutdown successfully!" );
         System.exit( -1 );
     }

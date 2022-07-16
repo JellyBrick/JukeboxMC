@@ -205,7 +205,6 @@ public class PlayerConnection {
         this.player.getWorld().removeEntity( this.player );
         this.player.getChunk().removeEntity( this.player );
 
-        //Remove inventory viewers
         this.player.getInventory().removeViewer( this.player );
         this.player.getArmorInventory().removeViewer( this.player );
         this.player.getCursorInventory().removeViewer( this.player );
@@ -213,7 +212,7 @@ public class PlayerConnection {
         this.server.removeFromTablist( this.player );
 
         this.player.close();
-        this.close( "Disconect" );
+        this.close( ( this.disconnectMessage == null ? reason : this.disconnectMessage ));
         this.server.removePlayer( this.player );
 
         for ( Long hash : this.loadedChunks ) {

@@ -5,6 +5,7 @@ import com.nukkitx.nbt.NbtMapBuilder;
 import com.nukkitx.protocol.bedrock.packet.AddItemEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.TakeItemEntityPacket;
 import org.jukeboxmc.Server;
+import org.jukeboxmc.block.Block;
 import org.jukeboxmc.entity.Entity;
 import org.jukeboxmc.entity.EntityType;
 import org.jukeboxmc.event.player.PlayerPickupItemEvent;
@@ -99,8 +100,12 @@ public class EntityItem extends Entity {
         itemBuilder.putString( "Name", this.getItem().getIdentifier() );
         itemBuilder.putShort( "Damage", (short) this.getItem().getMeta() );
         itemBuilder.putByte( "Count", (byte) this.getItem().getAmount() );
-
         builder.putCompound( "Item", itemBuilder.build() );
+
+       if ( !this.item.getBlock().getBlockStates().isEmpty() ) {
+           NbtMap blockStates = this.item.getBlock().getBlockStates();
+           builder.putCompound( "Block", blockStates );
+       }
     }
 
     @Override
@@ -114,23 +119,24 @@ public class EntityItem extends Entity {
         this.item = ItemType.get( identifier ).setMeta( damage ).setAmount( amount ).setNBT( itemCompound );
         this.setPickupDelay( 1, TimeUnit.SECONDS );
         this.setPlayerHasThrown( null );
+
+        if ( compound.containsKey( "Block" ) ) {
+            NbtMap blockCompound = compound.getCompound( "Block" );
+            int blockRuntimeId = Block.STATES.get( identifier ).get( blockCompound );
+            this.item.setBlockRuntimeId( blockRuntimeId );
+        }
     }
 
     @Override
     public AddItemEntityPacket createSpawnPacket() {
-        try {
-            AddItemEntityPacket addItemEntityPacket = new AddItemEntityPacket();
-            addItemEntityPacket.setRuntimeEntityId( this.entityId );
-            addItemEntityPacket.setUniqueEntityId( this.entityId );
-            addItemEntityPacket.setItemInHand( this.item.toNetwork() );
-            addItemEntityPacket.setPosition( this.location.toVector3f() );
-            addItemEntityPacket.setMotion( this.velocity.toVector3f() );
-            addItemEntityPacket.getMetadata().putAll( this.metadata.getEntityDataMap() );
-            return addItemEntityPacket;
-        } catch ( Throwable e ) {
-            e.printStackTrace();
-        }
-        return null;
+        AddItemEntityPacket addItemEntityPacket = new AddItemEntityPacket();
+        addItemEntityPacket.setRuntimeEntityId( this.entityId );
+        addItemEntityPacket.setUniqueEntityId( this.entityId );
+        addItemEntityPacket.setItemInHand( this.item.toNetwork() );
+        addItemEntityPacket.setPosition( this.location.toVector3f() );
+        addItemEntityPacket.setMotion( this.velocity.toVector3f() );
+        addItemEntityPacket.getMetadata().putAll( this.metadata.getEntityDataMap() );
+        return addItemEntityPacket;
     }
 
     @Override
@@ -147,7 +153,7 @@ public class EntityItem extends Entity {
             takeItemEntityPacket.setRuntimeEntityId( player.getEntityId() );
             takeItemEntityPacket.setItemRuntimeEntityId( this.entityId );
             Server.getInstance().broadcastPacket( takeItemEntityPacket );
-
+            this.getChunk().setChanged( true );
             this.close();
             player.getInventory().addItem( this.item );
             player.getInventory().sendContents( player );

@@ -17,7 +17,6 @@ import org.jukeboxmc.block.BlockPalette;
 import org.jukeboxmc.block.BlockType;
 import org.jukeboxmc.blockentity.BlockEntity;
 import org.jukeboxmc.entity.Entity;
-import org.jukeboxmc.entity.item.EntityItem;
 import org.jukeboxmc.math.Location;
 import org.jukeboxmc.math.Vector;
 import org.jukeboxmc.player.Player;
@@ -74,20 +73,10 @@ public class Chunk {
 
         this.fullHeight = Math.abs( this.getMinY() ) + Math.abs( this.getMaxY() ) + 1;
         this.subChunks = new SubChunk[fullHeight >> 4];
-        /*
-        for ( int y = this.getMinY(); y < this.getMaxY(); y++ ) {
-            int subY = this.getSubY( y );
-            this.subChunks[subY] = new SubChunk( subY );
-        }
-         */
+
         this.height = new short[16 * 16];
         this.biomes = new ObjectPalette[fullHeight >> 4];
-        /*
-        for ( int y = this.getMinY(); y < this.getMaxY(); y++ ) {
-            int subY = this.getSubY( y );
-            this.biomes[subY] = new ObjectPalette<>( Biome.PLAINS );
-        }
-         */
+
         ReadWriteLock lock = new ReentrantReadWriteLock();
         this.readLock = lock.readLock();
         this.writeLock = lock.writeLock();
@@ -525,6 +514,11 @@ public class Chunk {
                         db.delete( entityData );
                     } else {
                         try ( NBTOutputStream networkWriter = NbtUtils.createWriterLE( new ByteBufOutputStream( entityBuffer ) ) ) {
+                            if ( this.x == 0 && this.z == -1 ) {
+                                for ( Entity entity : this.entities ) {
+                                    System.out.println( entity );
+                                }
+                            }
                             for ( Entity entity : entities ) {
                                 if ( !( entity instanceof Player ) ) {
                                     NbtMapBuilder builder = NbtMap.builder();
