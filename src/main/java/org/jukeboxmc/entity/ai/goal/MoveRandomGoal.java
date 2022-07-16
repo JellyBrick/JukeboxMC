@@ -102,8 +102,12 @@ public class MoveRandomGoal extends Goal {
         }
 
         Block nextBlockAbove = nextBlock.getSide( BlockFace.UP );
-        Block nextBlockAboveAbove = nextBlock.getSide( BlockFace.UP ).getSide( BlockFace.UP );
+        if ( nextBlockAbove.isSolid() && this.entity.getHeight() > 1.0f ) {
+            this.cancel = true;
+            return;
+        }
 
+        Block nextBlockAboveAbove = nextBlock.getSide( BlockFace.UP ).getSide( BlockFace.UP );
         if ( nextBlock.isSolid() && this.entity.getLocation().getSide( BlockFace.UP ).getBlock().isSolid() ) {
             this.cancel = true;
             return;
