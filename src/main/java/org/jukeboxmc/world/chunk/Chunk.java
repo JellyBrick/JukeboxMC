@@ -514,11 +514,6 @@ public class Chunk {
                         db.delete( entityData );
                     } else {
                         try ( NBTOutputStream networkWriter = NbtUtils.createWriterLE( new ByteBufOutputStream( entityBuffer ) ) ) {
-                            if ( this.x == 0 && this.z == -1 ) {
-                                for ( Entity entity : this.entities ) {
-                                    System.out.println( entity );
-                                }
-                            }
                             for ( Entity entity : entities ) {
                                 if ( !( entity instanceof Player ) ) {
                                     NbtMapBuilder builder = NbtMap.builder();

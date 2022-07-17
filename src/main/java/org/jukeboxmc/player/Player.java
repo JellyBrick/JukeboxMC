@@ -920,9 +920,8 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
     }
 
     @Override
-    protected void kill() {
+    protected void killEntity() {
         if ( !this.isDead ) {
-            this.deadTimer = 10;
             EntityEventPacket entityEventPacket = new EntityEventPacket();
             entityEventPacket.setRuntimeEntityId( this.entityId );
             entityEventPacket.setType( EntityEventType.DEATH );
@@ -934,23 +933,27 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
             this.fireTicks = 0;
 
             this.setBurning( false );
-
-            String deathMessage = switch ( this.lastDamageSource ) {
-                case ENTITY_ATTACK -> this.getNameTag() + " was slain by " + this.getLastDamageEntity().getNameTag();
-                case FALL -> this.getNameTag() + " fell from a high place";
-                case LAVA -> this.getNameTag() + " tried to swim in lava";
-                case FIRE -> this.getNameTag() + " went up in flames";
-                case VOID -> this.getNameTag() + " fell out of the world";
-                case CACTUS -> this.getNameTag() + " was pricked to death";
-                case STARVE -> this.getNameTag() + " starved to death";
-                case ON_FIRE -> this.getNameTag() + " burned to death";
-                case DROWNING -> this.getNameTag() + " drowned";
-                case HARM_EFFECT -> this.getNameTag() + " was killed by magic";
-                case ENTITY_EXPLODE -> this.getNameTag() + " blew up";
-                case PROJECTILE -> this.getNameTag() + " has been shot";
-                case API -> this.getNameTag() + " was killed by setting health to 0";
-                case COMMAND -> this.getNameTag() + " died";
-            };
+            String deathMessage;
+            if ( this.lastDamageSource != null ) {
+                deathMessage = switch ( this.lastDamageSource ) {
+                    case ENTITY_ATTACK -> this.getNameTag() + " was slain by " + this.getLastDamageEntity().getNameTag();
+                    case FALL -> this.getNameTag() + " fell from a high place";
+                    case LAVA -> this.getNameTag() + " tried to swim in lava";
+                    case FIRE -> this.getNameTag() + " went up in flames";
+                    case VOID -> this.getNameTag() + " fell out of the world";
+                    case CACTUS -> this.getNameTag() + " was pricked to death";
+                    case STARVE -> this.getNameTag() + " starved to death";
+                    case ON_FIRE -> this.getNameTag() + " burned to death";
+                    case DROWNING -> this.getNameTag() + " drowned";
+                    case HARM_EFFECT -> this.getNameTag() + " was killed by magic";
+                    case ENTITY_EXPLODE -> this.getNameTag() + " blew up";
+                    case PROJECTILE -> this.getNameTag() + " has been shot";
+                    case API -> this.getNameTag() + " was killed by setting health to 0";
+                    case COMMAND -> this.getNameTag() + " died";
+                };
+            } else {
+                deathMessage = this.getNameTag() + " died";
+            }
 
             PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent( this, deathMessage, true, this.getDrops() );
             this.server.getPluginManager().callEvent( playerDeathEvent );
@@ -998,7 +1001,10 @@ public class Player extends EntityHuman implements ChunkLoader, CommandSender, I
 
             this.spawn();
 
-            this.teleport( playerRespawnEvent.getRespawnLocation() );
+            if ( playerRespawnEvent.getRespawnLocation() != null ) {
+                this.teleport( playerRespawnEvent.getRespawnLocation() );
+            }
+
             this.respawnLocation = null;
 
             this.setBurning( false );

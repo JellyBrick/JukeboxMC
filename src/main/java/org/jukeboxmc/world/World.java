@@ -1067,7 +1067,7 @@ public class World {
                 amountOfChunks++;
             }
         }
-        System.out.println("Es wurden " + amountOfChunks + " Chunkss gespeichert.");
+        //System.out.println("Es wurden " + amountOfChunks + " Chunkss gespeichert.");
         return CompletableFuture.allOf( futures.toArray( new CompletableFuture[0] ) );
     }
 

@@ -235,7 +235,7 @@ public abstract class EntityLiving extends EntityAI {
 
     public void setHealth( float value ) {
         if ( value < 1 ) {
-            this.kill();
+            this.killEntity();
         }
         Attribute attribute = this.getAttribute( AttributeType.HEALTH );
         attribute.setCurrentValue( value );
@@ -294,7 +294,7 @@ public abstract class EntityLiving extends EntityAI {
         this.setAttributes( AttributeType.KNOCKBACK_RESISTENCE, value );
     }
 
-    protected void kill() {
+    protected void killEntity() {
         this.deadTimer = 30;
 
         EntityEventPacket entityEventPacket = new EntityEventPacket();
@@ -306,5 +306,8 @@ public abstract class EntityLiving extends EntityAI {
         this.setBurning( false );
     }
 
+    public void kill() {
+        this.setHeal( 0 );
+    }
 
 }
