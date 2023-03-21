@@ -1,5 +1,11 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+
 plugins {
+    kotlin("jvm") version "1.8.20-RC"
     application
+    id("org.jmailen.kotlinter") version "3.14.0"
     id("com.github.johnrengelman.shadow") version "8.1.0"
 }
 
@@ -21,6 +27,8 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation("org.ow2.asm:asm:9.4")
     implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.apache.commons:commons-lang3:3.12.0")
@@ -65,8 +73,24 @@ tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
 }
 
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_17.toString()
+}
+
+tasks.create<LintTask>("ktLint") {
+    group = "verification"
+    source(files("src"))
+}
+
+tasks.create<FormatTask>("ktFormat") {
+    group = "formatting"
+    source(files("src"))
+}
+
 tasks {
     shadowJar {
+        dependsOn("ktLint")
         archiveClassifier.set("")
         manifest {
             attributes(
