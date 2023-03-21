@@ -1,15 +1,17 @@
 package org.jukeboxmc.scoreboard
 
 import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.data.ScoreInfo
+import com.nukkitx.protocol.bedrock.packet.RemoveObjectivePacket
+import com.nukkitx.protocol.bedrock.packet.SetDisplayObjectivePacket
+import com.nukkitx.protocol.bedrock.packet.SetScorePacket
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongList
-import java.util.Locale
-import lombok.AllArgsConstructor
-import lombok.Data
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.player.Player
+import java.util.Locale
 
 /**
  * @author GoMint
@@ -19,19 +21,17 @@ class Scoreboard {
     private var scoreIdCounter: Long = 0
     private val scoreboardLines: Long2ObjectMap<ScoreboardLine> = Long2ObjectArrayMap()
     private val viewers: MutableSet<Player> = HashSet()
-    private val displays: MutableMap<DisplaySlot, ScoreboardDisplay> = EnumMap<DisplaySlot, ScoreboardDisplay>(
-        DisplaySlot::class.java
-    )
+    private val displays: MutableMap<DisplaySlot, ScoreboardDisplay> = HashMap()
 
-    fun addDisplay(slot: DisplaySlot, objectiveName: String?, displayName: String?): ScoreboardDisplay {
+    fun addDisplay(slot: DisplaySlot, objectiveName: String, displayName: String): ScoreboardDisplay {
         return this.addDisplay(slot, objectiveName, displayName, SortOrder.ASCENDING)
     }
 
     fun addDisplay(
         slot: DisplaySlot,
-        objectiveName: String?,
-        displayName: String?,
-        sortOrder: SortOrder?
+        objectiveName: String,
+        displayName: String,
+        sortOrder: SortOrder,
     ): ScoreboardDisplay {
         var scoreboardDisplay = displays[slot]
         if (scoreboardDisplay == null) {
@@ -64,11 +64,11 @@ class Scoreboard {
 
     private fun constructDisplayPacket(slot: DisplaySlot, display: ScoreboardDisplay): SetDisplayObjectivePacket {
         val packetSetObjective = SetDisplayObjectivePacket()
-        packetSetObjective.setCriteria("dummy")
-        packetSetObjective.setDisplayName(display.displayName)
-        packetSetObjective.setObjectiveId(display.objectiveName)
-        packetSetObjective.setDisplaySlot(slot.name.lowercase(Locale.getDefault()))
-        packetSetObjective.setSortOrder(display.sortOrder.ordinal)
+        packetSetObjective.criteria = "dummy"
+        packetSetObjective.displayName = display.displayName
+        packetSetObjective.objectiveId = display.objectiveName
+        packetSetObjective.displaySlot = slot.name.lowercase(Locale.getDefault())
+        packetSetObjective.sortOrder = display.sortOrder.ordinal
         return packetSetObjective
     }
 
@@ -114,14 +114,14 @@ class Scoreboard {
 
     private fun constructSetScore(newId: Long, line: ScoreboardLine): SetScorePacket {
         val setScorePacket = SetScorePacket()
-        setScorePacket.setAction(SetScorePacket.Action.SET)
-        setScorePacket.getInfos().add(ScoreInfo(newId, line.objective, line.score, line.line))
+        setScorePacket.action = SetScorePacket.Action.SET
+        setScorePacket.infos.add(ScoreInfo(newId, line.objective, line.score, line.line))
         return setScorePacket
     }
 
     private fun constructSetScore(): SetScorePacket {
         val setScorePacket = SetScorePacket()
-        setScorePacket.setAction(SetScorePacket.Action.SET)
+        setScorePacket.action = SetScorePacket.Action.SET
         val entries: MutableList<ScoreInfo> = ArrayList<ScoreInfo>()
         val fastEntrySet = scoreboardLines.long2ObjectEntrySet() as Long2ObjectMap.FastEntrySet<ScoreboardLine>
         val fastIterator = fastEntrySet.fastIterator()
@@ -129,7 +129,7 @@ class Scoreboard {
             val entry = fastIterator.next()
             entries.add(ScoreInfo(entry.longKey, entry.value.objective, entry.value.score, entry.value.line))
         }
-        setScorePacket.getInfos().addAll(entries)
+        setScorePacket.infos.addAll(entries)
         return setScorePacket
     }
 
@@ -159,25 +159,25 @@ class Scoreboard {
 
     private fun constructRemoveScores(scoreIDs: LongList): SetScorePacket {
         val setScorePacket = SetScorePacket()
-        setScorePacket.setAction(SetScorePacket.Action.REMOVE)
+        setScorePacket.action = SetScorePacket.Action.REMOVE
         val entries: MutableList<ScoreInfo> = ArrayList<ScoreInfo>()
         for (scoreID in scoreIDs) {
             entries.add(ScoreInfo(scoreID, "", 0))
         }
-        setScorePacket.getInfos().addAll(entries)
+        setScorePacket.infos.addAll(entries)
         return setScorePacket
     }
 
     private fun constructRemoveDisplayPacket(display: ScoreboardDisplay): RemoveObjectivePacket {
         val removeObjectivePacket = RemoveObjectivePacket()
-        removeObjectivePacket.setObjectiveId(display.objectiveName)
+        removeObjectivePacket.objectiveId = display.objectiveName
         return removeObjectivePacket
     }
 
     fun updateScore(scoreId: Long, score: Int) {
         val line = scoreboardLines[scoreId]
         if (line != null) {
-            line.setScore(score)
+            line.score = score
             broadcast(this.constructSetScore(scoreId, line))
         }
     }
@@ -191,25 +191,25 @@ class Scoreboard {
 
     private fun constructRemoveScores(scoreId: Long): SetScorePacket {
         val setScorePacket = SetScorePacket()
-        setScorePacket.setAction(SetScorePacket.Action.REMOVE)
-        setScorePacket.getInfos().add(ScoreInfo(scoreId, "", 0))
+        setScorePacket.action = SetScorePacket.Action.REMOVE
+        setScorePacket.infos.add(ScoreInfo(scoreId, "", 0))
         return setScorePacket
     }
 
     fun getScore(scoreId: Long): Int {
         val line = scoreboardLines.remove(scoreId)
         return if (line != null) {
-            line.getScore()
-        } else 0
+            line.score
+        } else {
+            0
+        }
     }
 
-    @Data
-    @AllArgsConstructor
-    private class ScoreboardLine {
-        val type: Byte = 0
-        val entityId: Long = 0
-        val line: String = null
-        val objective: String = null
-        val score = 0
-    }
+    private data class ScoreboardLine(
+        val type: Byte = 0,
+        val entityId: Long = 0,
+        val line: String,
+        val objective: String,
+        var score: Int,
+    )
 }
