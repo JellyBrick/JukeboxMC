@@ -8,21 +8,10 @@ import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import java.io.IOException
-import java.util.Collections
-import java.util.IdentityHashMap
-import java.util.concurrent.CopyOnWriteArraySet
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReadWriteLock
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.function.Function
-import lombok.Synchronized
 import org.iq80.leveldb.WriteBatch
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.palette.Palette
-import org.jukeboxmc.block.palette.PersistentDataSerializer
-import org.jukeboxmc.block.palette.RuntimeDataSerializer
 import org.jukeboxmc.blockentity.BlockEntity
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.math.Location
@@ -34,6 +23,16 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
+import org.jukeboxmc.world.chunk.util.SimplePersistentDataSerializer
+import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataSerializer
+import java.io.IOException
+import java.util.Collections
+import java.util.IdentityHashMap
+import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReadWriteLock
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -44,8 +43,8 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     val maxY: Int
     val fullHeight: Int
     private val entities: MutableSet<Entity>
-    private val players: MutableSet<Player>
-    private val blockEntities: Int2ObjectMap<BlockEntity>
+    val players: MutableSet<Player>
+    val blockEntities: Int2ObjectMap<BlockEntity>
     val subChunks: Array<SubChunk?>
     val height: ShortArray
     val writeLock: Lock
@@ -83,17 +82,14 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     val isFinished: Boolean
         get() = chunkState.ordinal >= 3
 
-    @Synchronized("loaders")
     fun addLoader(chunkLoader: ChunkLoader) {
         loaders.add(chunkLoader)
     }
 
-    @Synchronized("loaders")
     fun removeLoader(chunkLoader: ChunkLoader) {
         loaders.remove(chunkLoader)
     }
 
-    @Synchronized("loaders")
     fun getLoaders(): Set<ChunkLoader> {
         return ImmutableSet.copyOf(loaders)
     }
@@ -116,7 +112,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     fun removeEntity(entity: Entity) {
         entities.removeIf { target: Entity -> target.entityId == entity.entityId }
         if (entity is Player) {
-            players.removeIf { target: Player -> target.entityId == entity.getEntityId() }
+            players.removeIf { target: Player -> target.entityId == entity.entityId }
         }
     }
 
@@ -137,7 +133,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         return blockEntities.values
     }
 
-    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block?) {
+    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block) {
         writeLock.lock()
         try {
             if (isHeightOutOfBounds(y)) return
@@ -148,7 +144,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         }
     }
 
-    fun setBlock(position: Vector, layer: Int, block: Block?) {
+    fun setBlock(position: Vector, layer: Int, block: Block) {
         this.setBlock(position.blockX, position.blockY, position.blockZ, layer, block)
     }
 
@@ -163,8 +159,8 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
                 subChunks[subY] = SubChunk(subY)
             }
             val block = subChunks[subY]!!.getBlock(x, y, z, layer)
-            block!!.location = Location(world, x, y, z, dimension)
-            block.layer = layer
+            block.setLocation(Location(world, x, y, z, dimension))
+            block.setLayer(layer)
             block
         } finally {
             readLock.unlock()
@@ -195,11 +191,11 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         return null
     }
 
-    fun setBiome(x: Int, y: Int, z: Int, biome: Biome?) {
+    fun setBiome(x: Int, y: Int, z: Int, biome: Biome) {
         writeLock.lock()
         try {
             if (isHeightOutOfBounds(y)) return
-            this.getOrCreateSubChunk(getSubY(y))!!.setBiome(x, y, z, biome)
+            this.getOrCreateSubChunk(getSubY(y)).setBiome(x, y, z, biome)
             isDirty = true
         } finally {
             writeLock.unlock()
@@ -209,7 +205,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     fun getBiome(x: Int, y: Int, z: Int): Biome? {
         readLock.lock()
         return try {
-            if (isHeightOutOfBounds(y)) null else this.getOrCreateSubChunk(getSubY(y))!!.getBiome(x, y, z)
+            if (isHeightOutOfBounds(y)) null else this.getOrCreateSubChunk(getSubY(y)).getBiome(x, y, z)
         } finally {
             readLock.unlock()
         }
@@ -219,11 +215,11 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         return y < minY || y > maxY
     }
 
-    fun getOrCreateSubChunk(subY: Int): SubChunk? {
+    fun getOrCreateSubChunk(subY: Int): SubChunk {
         return this.getOrCreateSubChunk(subY, false)
     }
 
-    fun getOrCreateSubChunk(subY: Int, lock: Boolean): SubChunk? {
+    fun getOrCreateSubChunk(subY: Int, lock: Boolean): SubChunk {
         if (lock) writeLock.lock()
         return try {
             for (y in 0..subY) {
@@ -231,18 +227,18 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
                     subChunks[y] = SubChunk(y + (Math.abs(minY) shr 4))
                 }
             }
-            subChunks[subY]
+            subChunks[subY]!!
         } finally {
             if (lock) writeLock.unlock()
         }
     }
 
     fun getSubY(y: Int): Int {
-        return (y shr 4) + (Math.abs(minY) shr 4)
+        return (y shr 4) + (abs(minY) shr 4)
     }
 
     val availableSubChunks: Int
-        get() = NonStream.Companion.sum<SubChunk?>(subChunks, Function { o: SubChunk? -> if (o == null) 0 else 1 })
+        get() = NonStream.sum(subChunks) { o: SubChunk? -> if (o == null) 0 else 1 }
 
     private fun writeTo(byteBuf: ByteBuf) {
         var lastBiomes = Palette(Biome.PLAINS)
@@ -252,10 +248,10 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         }
         for (subChunk in subChunks) {
             if (subChunk == null) {
-                lastBiomes.writeToNetwork(byteBuf, RuntimeDataSerializer { obj: V -> obj.getId() }, lastBiomes)
+                lastBiomes.writeToNetwork(byteBuf, SimpleRuntimeDataSerializer { obj -> obj.id }, lastBiomes)
                 continue
             }
-            subChunk.biomes.writeToNetwork(byteBuf) { obj: V -> obj.getId() }
+            subChunk.biomes.writeToNetwork(byteBuf, SimpleRuntimeDataSerializer { obj -> obj.id })
             lastBiomes = subChunk.biomes
         }
         byteBuf.writeByte(0) // edu - border blocks
@@ -293,7 +289,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         }
     }
 
-    fun saveChunkSlice(blockPalettes: Array<Palette<Block?>?>, subY: Int, writeBatch: WriteBatch) {
+    fun saveChunkSlice(blockPalettes: Array<Palette<Block>>, subY: Int, writeBatch: WriteBatch) {
         val buffer = Unpooled.buffer()
         buffer.writeByte(SUB_CHUNK_VERSION.toByte().toInt())
         buffer.writeByte(blockPalettes.size.toByte().toInt())
@@ -301,14 +297,15 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         for (blockPalette in blockPalettes) {
             blockPalette!!.writeToStoragePersistent(
                 buffer,
-                PersistentDataSerializer { value: Block -> BlockPalette.getBlockNbt(value.runtimeId) })
+                SimplePersistentDataSerializer { value: Block -> BlockPalette.getBlockNbt(value.runtimeId) },
+            )
         }
         val subChunkKey = Utils.getSubChunkKey(x, z, dimension, 0x2f.toByte(), subY.toByte())
         writeBatch.put(subChunkKey, Utils.array(buffer))
     }
 
     override fun toString(): String {
-        return "X: " + x + "; Z: " + z
+        return "X: $x; Z: $z"
     }
 
     companion object {
