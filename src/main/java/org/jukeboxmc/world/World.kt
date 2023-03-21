@@ -9,22 +9,19 @@ import com.nukkitx.nbt.util.stream.LittleEndianDataOutputStream
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.data.LevelEventType
 import com.nukkitx.protocol.bedrock.data.SoundEvent
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket
+import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket
+import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
+import com.nukkitx.protocol.bedrock.packet.SetTimePacket
 import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.util.Locale
-import java.util.Objects
-import java.util.Queue
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
+import org.jukeboxmc.block.BlockUpdateList
+import org.jukeboxmc.block.BlockUpdateNormal
 import org.jukeboxmc.block.data.UpdateReason
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.blockentity.BlockEntity
@@ -39,16 +36,31 @@ import org.jukeboxmc.player.Player
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.ChunkManager
 import org.jukeboxmc.world.gamerule.GameRule
+import org.jukeboxmc.world.gamerule.GameRules
 import org.jukeboxmc.world.generator.Generator
 import org.jukeboxmc.world.generator.NormalGenerator
 import org.jukeboxmc.world.leveldb.LevelDB
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.util.Locale
+import java.util.Objects
+import java.util.Queue
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.stream.Collectors
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-class World(var name: String, val server: Server, generatorMap: Map<Dimension?, String?>) {
-    private val BLOCK_AIR: Block = Block.Companion.create<Block>(BlockType.AIR)
+class World(var name: String, val server: Server, generatorMap: Map<Dimension, String>) {
+    private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
     private val STORAGE_VERSION = 9
     private val gameRules: GameRules
     private val blockUpdateList: BlockUpdateList
@@ -56,14 +68,14 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     private val worldFile: File
     private val levelDB: LevelDB
     private val chunkManagers: MutableMap<Dimension?, ChunkManager>
-    private val generators: MutableMap<Dimension?, ThreadLocal<Generator?>>
-    var difficulty: Difficulty?
+    private val generators: MutableMap<Dimension?, ThreadLocal<Generator>>
+    var difficulty: Difficulty
         private set
     private var spawnLocation: Location
     var seed: Long = 0
     private var worldTime = 0
     private var nextTimeSendTick: Long = 0
-    private val entities: MutableMap<Long, Entity?>
+    private val entities: MutableMap<Long, Entity>
     private val blockUpdateNormals: Queue<BlockUpdateNormal>
 
     init {
@@ -75,29 +87,27 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
             worldFolder.mkdirs()
         }
         levelDB = LevelDB(this)
-        chunkManagers = EnumMap<Dimension, ChunkManager>(Dimension::class.java)
+        chunkManagers = Object2ObjectOpenHashMap()
         for (dimension in Dimension.values()) {
             chunkManagers[dimension] = ChunkManager(this, dimension)
         }
         val sendWarning = AtomicBoolean(false)
-        generators = EnumMap<Dimension, ThreadLocal<Generator>>(
-            Dimension::class.java
-        )
+        generators = Object2ObjectOpenHashMap()
         for (dimension in Dimension.values()) {
             val generatorName = generatorMap[dimension]
             generators[dimension] = ThreadLocal.withInitial {
                 val generator = server.createGenerator(generatorName!!, this, dimension)
                 if (generator != null && generator.javaClass == NormalGenerator::class.java && !sendWarning.get()) {
-                    Server.Companion.getInstance().getLogger()
+                    Server.instance.logger
                         .warn("§cYou are currently using the Normal Generator, it may cause strong peformance problems!")
                     sendWarning.set(true)
                 }
                 generator
             }
         }
-        val generator = getGenerator(Dimension.OVERWORLD)
+        val generator = getGenerator(Dimension.OVERWORLD)!!
         difficulty = server.difficulty
-        spawnLocation = Location(this, generator.getSpawnLocation())
+        spawnLocation = Location(this, generator.spawnLocation)
         entities = ConcurrentHashMap<Long, Entity>()
         blockUpdateNormals = ConcurrentLinkedQueue<BlockUpdateNormal>()
         loadLevelFile()
@@ -118,7 +128,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
                                 this,
                                 nbtTag.getInt("SpawnX"),
                                 nbtTag.getInt("SpawnY"),
-                                nbtTag.getInt("SpawnZ")
+                                nbtTag.getInt("SpawnZ"),
                             )
                         }
                         nbtTag.listenForLong("RandomSeed") { seed: Long -> this.seed = seed }
@@ -126,7 +136,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
                         for (value in GameRule.values()) {
                             val identifer = value.identifier.lowercase(Locale.getDefault())
                             if (nbtTag.containsKey(identifer)) {
-                                gameRules.set(value, nbtTag[identifer])
+                                gameRules[value] = nbtTag[identifer]!!
                             }
                         }
                     }
@@ -150,7 +160,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         val nbtTag = NbtMap.builder()
         nbtTag.putInt("StorageVersion", STORAGE_VERSION)
         nbtTag.putString("LevelName", name)
-        nbtTag.putInt("Difficulty", difficulty!!.ordinal)
+        nbtTag.putInt("Difficulty", difficulty.ordinal)
         nbtTag["SpawnX"] = spawnLocation.blockX
         nbtTag["SpawnY"] = spawnLocation.blockY
         nbtTag["SpawnZ"] = spawnLocation.blockZ
@@ -198,16 +208,16 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         }
         if (currentTick >= nextTimeSendTick) {
             setWorldTime(worldTime)
-            nextTimeSendTick = currentTick + 12 * 20 //Client send the time every 12 seconds
+            nextTimeSendTick = currentTick + 12 * 20 // Client send the time every 12 seconds
         }
-        if (!entities.isEmpty()) {
+        if (entities.isNotEmpty()) {
             for (entity in entities.values) {
-                entity!!.update(currentTick)
+                entity.update(currentTick)
             }
         }
         for (dimension in Dimension.values()) {
             val blockEntities = getBlockEntities(dimension)
-            if (blockEntities.size > 0) {
+            if (blockEntities.isNotEmpty()) {
                 for (blockEntity in blockEntities) {
                     blockEntity?.update(currentTick)
                 }
@@ -215,16 +225,14 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         }
         while (!blockUpdateNormals.isEmpty()) {
             val updateNormal: BlockUpdateNormal = blockUpdateNormals.poll()
-            updateNormal.getBlock().onUpdate(UpdateReason.NORMAL)
+            updateNormal.block.onUpdate(UpdateReason.NORMAL)
         }
-        while (blockUpdateList.getNextTaskTime() < currentTick) {
-            val blockPosition: Vector = blockUpdateList.getNextElement() ?: break
+        while (blockUpdateList.nextTaskTime < currentTick) {
+            val blockPosition: Vector = blockUpdateList.nextElement ?: break
             val block = this.getBlock(blockPosition)
-            if (block != null) {
-                val nextTime = block.onUpdate(UpdateReason.SCHEDULED)
-                if (nextTime > currentTick) {
-                    blockUpdateList.addElement(nextTime, blockPosition)
-                }
+            val nextTime = block.onUpdate(UpdateReason.SCHEDULED)
+            if (nextTime > currentTick) {
+                blockUpdateList.addElement(nextTime, blockPosition)
             }
         }
     }
@@ -234,13 +242,13 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     }
 
     fun <V> getGameRule(gameRule: GameRule): V {
-        return gameRules.get<V>(gameRule)
+        return gameRules[gameRule]
     }
 
-    fun setGameRule(gameRule: GameRule?, value: Any?) {
-        gameRules.set(gameRule, value)
+    fun setGameRule(gameRule: GameRule, value: Any) {
+        gameRules[gameRule] = value
         for (player in players) {
-            player.getPlayerConnection().sendPacket(gameRules.updatePacket())
+            player.playerConnection.sendPacket(gameRules.updatePacket())
         }
     }
 
@@ -277,7 +285,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         this.worldTime = worldTime
         val setTimePacket = SetTimePacket()
         setTimePacket.setTime(worldTime)
-        Server.Companion.getInstance().broadcastPacket(setTimePacket)
+        Server.instance.broadcastPacket(setTimePacket)
     }
 
     fun addEntity(entity: Entity) {
@@ -288,13 +296,13 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         entities.remove(entity.entityId)
     }
 
-    val entitys: Collection<Entity?>
+    val entitys: Collection<Entity>
         get() = entities.values
-    val players: Collection<Player?>
-        get() = entities.values.stream().filter { entity: Entity? -> entity is Player }
-            .map { entity: Entity? -> entity as Player? }.collect(Collectors.toSet())
+    val players: Collection<Player>
+        get() = entities.values.stream().filter { entity: Entity -> entity is Player }
+            .map { entity: Entity -> entity as Player }.collect(Collectors.toSet())
 
-    fun getBlock(vector: Vector, layer: Int, dimension: Dimension?): Block {
+    fun getBlock(vector: Vector, layer: Int, dimension: Dimension): Block {
         val chunk = this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension) ?: return BLOCK_AIR
         return chunk.getBlock(vector.blockX, vector.blockY, vector.blockZ, layer)
     }
@@ -307,11 +315,11 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         return this.getBlock(vector, 0, vector.dimension)
     }
 
-    fun getBlock(vector: Vector, dimension: Dimension?): Block {
+    fun getBlock(vector: Vector, dimension: Dimension): Block {
         return this.getBlock(vector, 0, dimension)
     }
 
-    fun getBlock(x: Int, y: Int, z: Int, layer: Int, dimension: Dimension?): Block {
+    fun getBlock(x: Int, y: Int, z: Int, layer: Int, dimension: Dimension): Block {
         return this.getBlock(Vector(x, y, z), layer, dimension)
     }
 
@@ -323,13 +331,13 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         return this.getBlock(x, y, z, 0)
     }
 
-    fun setBlock(vector: Vector, block: Block, layer: Int, dimension: Dimension?, updateBlock: Boolean) {
+    fun setBlock(vector: Vector, block: Block, layer: Int, dimension: Dimension, updateBlock: Boolean) {
         val chunk = this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension) ?: return
         chunk.setBlock(vector.blockX, vector.blockY, vector.blockZ, layer, block)
         chunk.isDirty = true
         val location = Location(this, vector, dimension)
-        block.location = location
-        block.layer = layer
+        block.setLocation(location)
+        block.setLayer(layer)
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.blockPosition = vector.toVector3i()
         updateBlockPacket.runtimeId = block.runtimeId
@@ -346,14 +354,14 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
             var next: Long
             for (blockFace in BlockFace.values()) {
                 val blockSide = block.getSide(blockFace)
-                if (blockSide!!.onUpdate(UpdateReason.NEIGHBORS).also { next = it } > server.currentTick) {
-                    scheduleBlockUpdate(blockSide.location, next)
+                if (blockSide.onUpdate(UpdateReason.NEIGHBORS).also { next = it } > server.currentTick) {
+                    scheduleBlockUpdate(blockSide.getLocation(), next)
                 }
             }
         }
     }
 
-    fun setBlock(vector: Vector, block: Block, layer: Int, dimension: Dimension?) {
+    fun setBlock(vector: Vector, block: Block, layer: Int, dimension: Dimension) {
         this.setBlock(vector, block, layer, dimension, true)
     }
 
@@ -365,7 +373,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         this.setBlock(vector, block, 0, vector.dimension)
     }
 
-    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block, dimension: Dimension?) {
+    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block, dimension: Dimension) {
         this.setBlock(Vector(x, y, z), block, layer, dimension)
     }
 
@@ -378,64 +386,64 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     }
 
     @Synchronized
-    fun getBlockEntity(vector: Vector, dimension: Dimension?): BlockEntity? {
+    fun getBlockEntity(vector: Vector, dimension: Dimension): BlockEntity? {
         val chunk = this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension) ?: return null
         return chunk.getBlockEntity(vector.blockX, vector.blockY, vector.blockZ)
     }
 
     @Synchronized
-    fun getBlockEntity(x: Int, y: Int, z: Int, dimension: Dimension?): BlockEntity? {
+    fun getBlockEntity(x: Int, y: Int, z: Int, dimension: Dimension): BlockEntity? {
         val chunk = this.getLoadedChunk(x shr 4, z shr 4, dimension) ?: return null
         return chunk.getBlockEntity(x, y, z)
     }
 
     @Synchronized
-    fun setBlockEntity(x: Int, y: Int, z: Int, blockEntity: BlockEntity, dimension: Dimension?) {
+    fun setBlockEntity(x: Int, y: Int, z: Int, blockEntity: BlockEntity, dimension: Dimension) {
         val chunk = this.getLoadedChunk(x shr 4, z shr 4, dimension) ?: return
         chunk.setBlockEntity(x, y, z, blockEntity)
     }
 
     @Synchronized
-    fun setBlockEntity(vector: Vector, blockEntity: BlockEntity, dimension: Dimension?) {
+    fun setBlockEntity(vector: Vector, blockEntity: BlockEntity, dimension: Dimension) {
         val chunk = this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension) ?: return
         chunk.setBlockEntity(vector.blockX, vector.blockY, vector.blockZ, blockEntity)
     }
 
     @Synchronized
-    fun removeBlockEntity(vector: Vector, dimension: Dimension?) {
+    fun removeBlockEntity(vector: Vector, dimension: Dimension) {
         val chunk = this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension) ?: return
         chunk.removeBlockEntity(vector.blockX, vector.blockY, vector.blockZ)
     }
 
     @Synchronized
-    fun removeBlockEntity(x: Int, y: Int, z: Int, dimension: Dimension?) {
+    fun removeBlockEntity(x: Int, y: Int, z: Int, dimension: Dimension) {
         val chunk = this.getLoadedChunk(x shr 4, z shr 4, dimension) ?: return
         chunk.removeBlockEntity(x, y, z)
     }
 
     @Synchronized
-    fun getBlockEntities(dimension: Dimension?): Collection<BlockEntity?> {
-        val blockEntities: MutableSet<BlockEntity?> = LinkedHashSet()
-        for (loadedChunk in chunkManagers[dimension].getLoadedChunks()) {
-            blockEntities.addAll(loadedChunk!!.blockEntities)
+    fun getBlockEntities(dimension: Dimension): Collection<BlockEntity> {
+        val blockEntities: MutableSet<BlockEntity> = LinkedHashSet()
+        for (loadedChunk in chunkManagers[dimension]!!.loadedChunks) {
+            blockEntities.addAll(loadedChunk.blockEntities.values)
         }
         return blockEntities
     }
 
     @Synchronized
-    fun getBiome(vector: Vector, dimension: Dimension?): Biome? {
+    fun getBiome(vector: Vector, dimension: Dimension): Biome? {
         val chunk = Objects.requireNonNull(getChunk(vector.chunkX, vector.chunkZ, dimension))
         return chunk!!.getBiome(vector.blockX, vector.blockY, vector.blockZ)
     }
 
     @Synchronized
-    fun setBiome(vector: Vector, dimension: Dimension?, biome: Biome?) {
+    fun setBiome(vector: Vector, dimension: Dimension, biome: Biome?) {
         val chunk = Objects.requireNonNull(getChunk(vector.chunkX, vector.chunkZ, dimension))
         chunk!!.setBiome(vector.blockX, vector.blockY, vector.blockZ, biome)
     }
 
     @Synchronized
-    fun setBiome(x: Int, y: Int, z: Int, dimension: Dimension?, biome: Biome?) {
+    fun setBiome(x: Int, y: Int, z: Int, dimension: Dimension, biome: Biome?) {
         this.setBiome(Vector(x, y, z), dimension, biome)
     }
 
@@ -448,61 +456,61 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     }
 
     @Synchronized
-    fun isChunkLoaded(chunkX: Int, chunkZ: Int, dimension: Dimension?): Boolean {
+    fun isChunkLoaded(chunkX: Int, chunkZ: Int, dimension: Dimension): Boolean {
         return chunkManagers[dimension]!!.isChunkLoaded(chunkX, chunkZ)
     }
 
     @Synchronized
-    fun getChunk(chunkX: Int, chunkZ: Int, dimension: Dimension?): Chunk? {
+    fun getChunk(chunkX: Int, chunkZ: Int, dimension: Dimension): Chunk? {
         return chunkManagers[dimension]!!.getChunk(chunkX, chunkZ)
     }
 
     @Synchronized
-    fun getLoadedChunk(chunkX: Int, chunkZ: Int, dimension: Dimension?): Chunk? {
+    fun getLoadedChunk(chunkX: Int, chunkZ: Int, dimension: Dimension): Chunk? {
         return chunkManagers[dimension]!!.getLoadedChunk(chunkX, chunkZ)
     }
 
     @Synchronized
-    fun getLoadedChunk(vector: Vector, dimension: Dimension?): Chunk? {
+    fun getLoadedChunk(vector: Vector, dimension: Dimension): Chunk? {
         return this.getLoadedChunk(vector.chunkX, vector.chunkZ, dimension)
     }
 
     @Synchronized
-    fun getLoadedChunk(hash: Long, dimension: Dimension?): Chunk? {
+    fun getLoadedChunk(hash: Long, dimension: Dimension): Chunk? {
         return chunkManagers[dimension]!!.getLoadedChunk(hash)
     }
 
     @Synchronized
-    fun getLoadedChunks(dimension: Dimension?): Set<Chunk?> {
-        return chunkManagers[dimension].getLoadedChunks()
+    fun getLoadedChunks(dimension: Dimension): Set<Chunk> {
+        return chunkManagers[dimension]!!.loadedChunks
     }
 
-    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension?): CompletableFuture<Chunk?>? {
+    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension): CompletableFuture<Chunk?>? {
         return chunkManagers[dimension]!!.getChunkFuture(chunkX, chunkZ)
     }
 
-    fun getChunks(dimension: Dimension?): Set<Chunk?> {
-        return chunkManagers[dimension].getLoadedChunks()
+    fun getChunks(dimension: Dimension): Set<Chunk> {
+        return chunkManagers[dimension]!!.loadedChunks
     }
 
-    fun saveChunk(chunk: Chunk): CompletableFuture<Void?> {
+    fun saveChunk(chunk: Chunk): CompletableFuture<Void> {
         return levelDB.saveChunk(chunk)
     }
 
-    fun saveChunks(dimension: Dimension?): CompletableFuture<Void?> {
+    fun saveChunks(dimension: Dimension): CompletableFuture<Void> {
         return chunkManagers[dimension]!!.saveChunks()
     }
 
-    fun readChunk(chunk: Chunk): CompletableFuture<Chunk?> {
+    fun readChunk(chunk: Chunk): CompletableFuture<Chunk> {
         return levelDB.readChunk(chunk)
     }
 
-    fun getChunkPlayers(chunkX: Int, chunkZ: Int, dimension: Dimension?): Set<Player> {
+    fun getChunkPlayers(chunkX: Int, chunkZ: Int, dimension: Dimension): Set<Player> {
         val chunk = this.getLoadedChunk(chunkX, chunkZ, dimension)
         return if (chunk == null) ImmutableSet.of() else HashSet(chunk.players)
     }
 
-    fun sendChunkPacket(chunkX: Int, chunkZ: Int, packet: BedrockPacket?) {
+    fun sendChunkPacket(chunkX: Int, chunkZ: Int, packet: BedrockPacket) {
         for (entity in entities.values) {
             if (entity is Player) {
                 if (entity.isChunkLoaded(chunkX, chunkZ)) {
@@ -512,33 +520,33 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         }
     }
 
-    fun playSound(location: Location, soundEvent: SoundEvent?) {
+    fun playSound(location: Location, soundEvent: SoundEvent) {
         this.playSound(null, location, soundEvent, -1, ":", false, false)
     }
 
-    fun playSound(position: Vector, soundEvent: SoundEvent?) {
+    fun playSound(position: Vector, soundEvent: SoundEvent) {
         this.playSound(null, position, soundEvent, -1, ":", false, false)
     }
 
-    fun playSound(player: Player, soundEvent: SoundEvent?) {
-        this.playSound(player, player.location, soundEvent, -1, ":", false, false)
+    fun playSound(player: Player, soundEvent: SoundEvent) {
+        this.playSound(player, player.getLocation(), soundEvent, -1, ":", false, false)
     }
 
-    fun playSound(position: Vector, soundEvent: SoundEvent?, data: Int) {
+    fun playSound(position: Vector, soundEvent: SoundEvent, data: Int) {
         this.playSound(null, position, soundEvent, data, ":", false, false)
     }
 
-    fun playSound(position: Vector, soundEvent: SoundEvent?, data: Int, entityIdentifier: String?) {
+    fun playSound(position: Vector, soundEvent: SoundEvent, data: Int, entityIdentifier: String?) {
         this.playSound(null, position, soundEvent, data, entityIdentifier, false, false)
     }
 
     fun playSound(
         position: Vector,
-        soundEvent: SoundEvent?,
+        soundEvent: SoundEvent,
         data: Int,
         entityIdentifier: String?,
         isBaby: Boolean,
-        isGlobal: Boolean
+        isGlobal: Boolean,
     ) {
         this.playSound(null, position, soundEvent, data, entityIdentifier, isBaby, isGlobal)
     }
@@ -546,19 +554,19 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     fun playSound(
         player: Player?,
         position: Vector,
-        soundEvent: SoundEvent?,
+        soundEvent: SoundEvent,
         data: Int,
         entityIdentifier: String?,
         isBaby: Boolean,
-        isGlobal: Boolean
+        isGlobal: Boolean,
     ) {
         val levelSoundEventPacket = LevelSoundEventPacket()
-        levelSoundEventPacket.setSound(soundEvent)
-        levelSoundEventPacket.setPosition(position.toVector3f())
-        levelSoundEventPacket.setExtraData(data)
-        levelSoundEventPacket.setIdentifier(entityIdentifier)
-        levelSoundEventPacket.setBabySound(isBaby)
-        levelSoundEventPacket.setRelativeVolumeDisabled(isGlobal)
+        levelSoundEventPacket.sound = soundEvent
+        levelSoundEventPacket.position = position.toVector3f()
+        levelSoundEventPacket.extraData = data
+        levelSoundEventPacket.identifier = entityIdentifier
+        levelSoundEventPacket.isBabySound = isBaby
+        levelSoundEventPacket.isRelativeVolumeDisabled = isGlobal
         if (player == null) {
             sendChunkPacket(position.chunkX, position.chunkZ, levelSoundEventPacket)
         } else {
@@ -580,9 +588,9 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
 
     fun spawnParticle(player: Player?, particle: Particle, position: Vector, data: Int) {
         val levelEventPacket = LevelEventPacket()
-        levelEventPacket.setType(particle.toLevelEvent())
-        levelEventPacket.setData(data)
-        levelEventPacket.setPosition(position.toVector3f())
+        levelEventPacket.type = particle.toLevelEvent()
+        levelEventPacket.data = data
+        levelEventPacket.position = position.toVector3f()
         if (player != null) {
             player.playerConnection.sendPacket(levelEventPacket)
         } else {
@@ -590,23 +598,23 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         }
     }
 
-    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType?) {
+    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType) {
         this.sendLevelEvent(null, position, levelEventType, 0)
     }
 
-    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType?) {
+    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType) {
         this.sendLevelEvent(player, position, levelEventType, 0)
     }
 
-    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType?, data: Int) {
+    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType, data: Int) {
         this.sendLevelEvent(null, position, levelEventType, data)
     }
 
-    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType?, data: Int) {
+    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType, data: Int) {
         val levelEventPacket = LevelEventPacket()
-        levelEventPacket.setPosition(position.toVector3f())
-        levelEventPacket.setType(levelEventType)
-        levelEventPacket.setData(data)
+        levelEventPacket.position = position.toVector3f()
+        levelEventPacket.type = levelEventType
+        levelEventPacket.data = data
         if (player != null) {
             player.playerConnection.sendPacket(levelEventPacket)
         } else {
@@ -615,9 +623,9 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
     }
 
     private fun getRelative(blockPosition: Vector, position: Vector): Vector {
-        val x = blockPosition.x + position.x
-        val y = blockPosition.y + position.y
-        val z = blockPosition.z + position.z
+        val x = blockPosition.getX() + position.getZ()
+        val y = blockPosition.getY() + position.getY()
+        val z = blockPosition.getZ() + position.getZ()
         return Vector(x, y, z, blockPosition.dimension)
     }
 
@@ -637,14 +645,18 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         saveLevelFile()
     }
 
-    fun save() {
+    fun save(immediately: Boolean) {
         for (dimension in Dimension.values()) {
-            saveChunks(dimension).whenComplete { unused: Void?, throwable: Throwable? -> }
+            if (!immediately) {
+                saveChunks(dimension).whenComplete { _: Void?, _: Throwable? -> }
+            } else {
+                saveChunks(dimension).get()
+            }
         }
         saveLevelFile()
     }
 
-    fun getNearbyEntities(boundingBox: AxisAlignedBB, dimension: Dimension?, entity: Entity?): Collection<Entity> {
+    fun getNearbyEntities(boundingBox: AxisAlignedBB, dimension: Dimension, entity: Entity?): Collection<Entity> {
         val targetEntity: MutableSet<Entity> = HashSet()
         val minX = FastMath.floor(((boundingBox.minX - 2) / 16).toDouble()).toInt()
         val maxX = FastMath.ceil(((boundingBox.maxX + 2) / 16).toDouble()).toInt()
@@ -654,10 +666,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
             for (z in minZ..maxZ) {
                 val chunk = this.getLoadedChunk(x, z, dimension)
                 if (chunk != null) {
-                    for (iterateEntities in chunk.entities) {
-                        if (iterateEntities == null) {
-                            continue
-                        }
+                    for (iterateEntities in chunk.getEntities()) {
                         if (iterateEntities != entity) {
                             val bb = iterateEntities.boundingBox
                             if (bb.intersectsWith(boundingBox)) {
@@ -677,14 +686,14 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         return targetEntity
     }
 
-    fun getCollisionCubes(entity: Entity, boundingBox: AxisAlignedBB, includeEntities: Boolean): List<AxisAlignedBB?> {
+    fun getCollisionCubes(entity: Entity, boundingBox: AxisAlignedBB, includeEntities: Boolean): List<AxisAlignedBB> {
         val minX = FastMath.floor(boundingBox.minX.toDouble()).toInt()
         val minY = FastMath.floor(boundingBox.minY.toDouble()).toInt()
         val minZ = FastMath.floor(boundingBox.minZ.toDouble()).toInt()
         val maxX = FastMath.ceil(boundingBox.maxX.toDouble()).toInt()
         val maxY = FastMath.ceil(boundingBox.maxY.toDouble()).toInt()
         val maxZ = FastMath.ceil(boundingBox.maxZ.toDouble()).toInt()
-        val collides: MutableList<AxisAlignedBB?> = ArrayList()
+        val collides: MutableList<AxisAlignedBB> = ArrayList()
         for (z in minZ..maxZ) {
             for (x in minX..maxX) {
                 for (y in minY..maxY) {
@@ -705,7 +714,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         return collides
     }
 
-    fun scheduleBlockUpdate(location: Location?, delay: Long) {
+    fun scheduleBlockUpdate(location: Location, delay: Long) {
         blockUpdateList.addElement(server.currentTick + delay, location)
     }
 
@@ -724,27 +733,28 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension?, 
         if (velocity == null) {
             velocity = Vector(
                 (ThreadLocalRandom.current().nextDouble() * 0.2f - 0.1f).toFloat(),
-                0.2f, (ThreadLocalRandom.current().nextDouble() * 0.2f - 0.1f).toFloat()
+                0.2f,
+                (ThreadLocalRandom.current().nextDouble() * 0.2f - 0.1f).toFloat(),
             )
         }
-        val entityItem = Objects.requireNonNull<EntityItem>(Entity.Companion.create<EntityItem>(EntityType.ITEM))
-        entityItem.item = item
+        val entityItem = Objects.requireNonNull(Entity.create<EntityItem>(EntityType.ITEM)!!)
+        entityItem.setItem(item)
         entityItem.setVelocity(velocity, false)
-        entityItem.location = Location(this, location)
+        entityItem.setLocation(Location(this, location))
         entityItem.setPickupDelay(1, TimeUnit.SECONDS)
         return entityItem
     }
 
-    fun sendWorldPacket(packet: BedrockPacket?) {
+    fun sendWorldPacket(packet: BedrockPacket) {
         for (player in players) {
-            player.getPlayerConnection().sendPacket(packet)
+            player.playerConnection.sendPacket(packet)
         }
     }
 
-    fun sendDimensionPacket(packet: BedrockPacket?, dimension: Dimension?) {
+    fun sendDimensionPacket(packet: BedrockPacket, dimension: Dimension) {
         for (player in players) {
-            if (player.getDimension() == dimension) {
-                player.getPlayerConnection().sendPacket(packet)
+            if (player.dimension == dimension) {
+                player.playerConnection.sendPacket(packet)
             }
         }
     }
