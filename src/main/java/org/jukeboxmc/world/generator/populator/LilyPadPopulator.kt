@@ -1,11 +1,11 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -14,13 +14,13 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 class LilyPadPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_LILLYPAD: Block = Block.Companion.create<Block>(BlockType.WATERLILY)
+    private val BLOCK_LILLYPAD: Block = Block.create<Block>(BlockType.WATERLILY)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)

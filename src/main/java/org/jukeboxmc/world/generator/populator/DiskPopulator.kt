@@ -1,12 +1,12 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import org.jukeboxmc.world.generator.NormalGenerator
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -18,7 +18,7 @@ class DiskPopulator(
     private val radiusMin: Int,
     private val radiusMax: Int,
     private val radiusY: Int,
-    private val replaceBlocks: List<BlockType>
+    private val replaceBlocks: List<BlockType>,
 ) : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
@@ -27,10 +27,10 @@ class DiskPopulator(
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
-        val chunk = chunkManager.getChunk(chunkX, chunkZ)
+        val chunk = chunkManager.getChunk(chunkX, chunkZ) ?: return // FIXME
         for (i in 0 until amount) {
             if (random.nextDouble() >= probability) {
                 return
@@ -63,7 +63,7 @@ class DiskPopulator(
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
         var y: Int
-        y = NormalGenerator.Companion.WATER_HEIGHT - 1
+        y = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {

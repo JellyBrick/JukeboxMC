@@ -1,11 +1,11 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import org.jukeboxmc.world.generator.`object`.tree.Tree
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -32,7 +32,7 @@ class TreePopulator : Populator {
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
         val amount = random.nextInt(randomAmount + 1) + baseAmount

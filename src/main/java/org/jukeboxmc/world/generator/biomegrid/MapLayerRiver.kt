@@ -18,7 +18,9 @@ class MapLayerRiver
     override fun generateValues(x: Int, z: Int, sizeX: Int, sizeZ: Int): IntArray {
         return if (mergeLayer == null) {
             generateRivers(x, z, sizeX, sizeZ)
-        } else mergeRivers(x, z, sizeX, sizeZ)
+        } else {
+            mergeRivers(x, z, sizeX, sizeZ)
+        }
     }
 
     private fun generateRivers(x: Int, z: Int, sizeX: Int, sizeZ: Int): IntArray {

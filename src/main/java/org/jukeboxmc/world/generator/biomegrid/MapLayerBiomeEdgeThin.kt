@@ -28,19 +28,23 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
                         val lowerVal = values[j + 1 + (i + 2) * gridSizeX]
                         val leftVal = values[j + (i + 1) * gridSizeX]
                         val rightVal = values[j + 2 + (i + 1) * gridSizeX]
-                        if (entryValue == null && (!OCEANS.contains(upperVal) && !map.containsKey(upperVal) || !OCEANS.contains(
-                                lowerVal
-                            ) && !map.containsKey(lowerVal) || !OCEANS.contains(leftVal) && !map.containsKey(leftVal) || !OCEANS.contains(
-                                rightVal
-                            ) && !map.containsKey(rightVal))
+                        if (entryValue == null && (
+                                !OCEANS.contains(upperVal) && !map.containsKey(upperVal) || !OCEANS.contains(
+                                    lowerVal,
+                                ) && !map.containsKey(lowerVal) || !OCEANS.contains(leftVal) && !map.containsKey(leftVal) || !OCEANS.contains(
+                                    rightVal,
+                                ) && !map.containsKey(rightVal)
+                                )
                         ) {
                             `val` = map[centerVal]
                             break
-                        } else if (entryValue != null && (!OCEANS.contains(upperVal) && !entryValue.contains(upperVal) || !OCEANS.contains(
-                                lowerVal
-                            ) && !entryValue.contains(lowerVal) || !OCEANS.contains(leftVal) && !entryValue.contains(
-                                leftVal
-                            ) || !OCEANS.contains(rightVal) && !entryValue.contains(rightVal))
+                        } else if (entryValue != null && (
+                                !OCEANS.contains(upperVal) && !entryValue.contains(upperVal) || !OCEANS.contains(
+                                    lowerVal,
+                                ) && !entryValue.contains(lowerVal) || !OCEANS.contains(leftVal) && !entryValue.contains(
+                                    leftVal,
+                                ) || !OCEANS.contains(rightVal) && !entryValue.contains(rightVal)
+                                )
                         ) {
                             `val` = map[centerVal]
                             break
@@ -63,18 +67,18 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
             OCEANS.add(Biome.OCEAN.id)
             OCEANS.add(Biome.DEEP_OCEAN.id)
 
-            //MESA_EDGES.put( Biome.MESA.getId(), Biome.DESERT.getId() );
-            //MESA_EDGES.put( Biome.MESA_BRYCE.getId(), Biome.DESERT.getId() );
-            //MESA_EDGES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.DESERT.getId() );
-            //.put( Biome.MESA_PLATEAU_STONE_MUTATED.getId(), Biome.DESERT.getId() );
-            //MESA_EDGES.put( Biome.MESA_PLATEAU.getId(), Biome.DESERT.getId() );
-            //MESA_EDGES.put( Biome.MESA_PLATEAU_MUTATED.getId(), Biome.DESERT.getId() );
+            // MESA_EDGES.put( Biome.MESA.getId(), Biome.DESERT.getId() );
+            // MESA_EDGES.put( Biome.MESA_BRYCE.getId(), Biome.DESERT.getId() );
+            // MESA_EDGES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.DESERT.getId() );
+            // .put( Biome.MESA_PLATEAU_STONE_MUTATED.getId(), Biome.DESERT.getId() );
+            // MESA_EDGES.put( Biome.MESA_PLATEAU.getId(), Biome.DESERT.getId() );
+            // MESA_EDGES.put( Biome.MESA_PLATEAU_MUTATED.getId(), Biome.DESERT.getId() );
             JUNGLE_EDGES.put(Biome.JUNGLE.id, Biome.JUNGLE_EDGE.id)
             JUNGLE_EDGES.put(Biome.JUNGLE_HILLS.id, Biome.JUNGLE_EDGE.id)
             JUNGLE_EDGES.put(Biome.JUNGLE_MUTATED.id, Biome.JUNGLE_EDGE.id)
             JUNGLE_EDGES.put(Biome.JUNGLE_EDGE_MUTATED.id, Biome.JUNGLE_EDGE.id)
 
-            //EDGES.put( MESA_EDGES, null );
+            // EDGES.put( MESA_EDGES, null );
             EDGES[JUNGLE_EDGES] = IntArrayList.wrap(
                 intArrayOf(
                     Biome.JUNGLE.id,
@@ -82,8 +86,8 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
                     Biome.JUNGLE_MUTATED.id,
                     Biome.JUNGLE_EDGE_MUTATED.id,
                     Biome.FOREST.id,
-                    Biome.TAIGA.id
-                )
+                    Biome.TAIGA.id,
+                ),
             )
         }
     }

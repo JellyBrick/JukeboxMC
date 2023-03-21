@@ -1,16 +1,16 @@
 package org.jukeboxmc.world.generator.noise
 
-import java.util.Arrays
-import java.util.Random
 import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import org.jukeboxmc.world.generator.noise.bukkit.OctaveGenerator
+import java.util.Arrays
+import java.util.Random
 
 open class PerlinOctaveGenerator(
     octaves: Array<NoiseGenerator?>,
     rand: Random?,
     val sizeX: Int,
     val sizeY: Int,
-    val sizeZ: Int
+    val sizeZ: Int,
 ) : OctaveGenerator(octaves) {
     protected var noise: DoubleArray?
 
@@ -20,7 +20,7 @@ open class PerlinOctaveGenerator(
         rand,
         sizeX,
         sizeY,
-        sizeZ
+        sizeZ,
     )
 
     /**
@@ -68,7 +68,7 @@ open class PerlinOctaveGenerator(
         y: Double,
         z: Double,
         lacunarity: Double,
-        persistence: Double
+        persistence: Double,
     ): DoubleArray? {
         var x = x
         var y = y
@@ -111,7 +111,7 @@ open class PerlinOctaveGenerator(
                 xScale * freq,
                 yScale * freq,
                 zScale * freq,
-                amp
+                amp,
             )
             freq *= lacunarity
             amp *= persistence

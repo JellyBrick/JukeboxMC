@@ -11,8 +11,8 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
  */
 class EmptyGenerator(world: World?) : Generator() {
     override fun generate(chunk: Chunk, chunkX: Int, chunkZ: Int) {}
-    override fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZr: Int) {}
-    override fun finish(manager: PopulationChunkManager?, chunkX: Int, chunkZ: Int) {}
+    override fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {}
+    override fun finish(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {}
     override val spawnLocation: Vector
         get() = Vector(0, 64, 0)
 }

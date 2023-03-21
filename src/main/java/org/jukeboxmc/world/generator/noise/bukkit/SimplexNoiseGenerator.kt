@@ -40,9 +40,9 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
 
         // Skew the input space to determine which simplex cell we're in
         val s = (xin + yin + zin) * F3 // Very nice and simple skew factor for 3D
-        val i: Int = NoiseGenerator.Companion.floor(xin + s)
-        val j: Int = NoiseGenerator.Companion.floor(yin + s)
-        val k: Int = NoiseGenerator.Companion.floor(zin + s)
+        val i: Int = floor(xin + s)
+        val j: Int = floor(yin + s)
+        val k: Int = floor(zin + s)
         val t = (i + j + k) * G3
         val X0 = i - t // Unskew the cell origin back to (x,y,z) space
         val Y0 = j - t
@@ -141,28 +141,28 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
             n0 = 0.0
         } else {
             t0 *= t0
-            n0 = t0 * t0 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi0), x0, y0, z0)
+            n0 = t0 * t0 * dot(grad3[gi0], x0, y0, z0)
         }
         var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1
         if (t1 < 0) {
             n1 = 0.0
         } else {
             t1 *= t1
-            n1 = t1 * t1 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi1), x1, y1, z1)
+            n1 = t1 * t1 * dot(grad3[gi1], x1, y1, z1)
         }
         var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2
         if (t2 < 0) {
             n2 = 0.0
         } else {
             t2 *= t2
-            n2 = t2 * t2 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi2), x2, y2, z2)
+            n2 = t2 * t2 * dot(grad3[gi2], x2, y2, z2)
         }
         var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3
         if (t3 < 0) {
             n3 = 0.0
         } else {
             t3 *= t3
-            n3 = t3 * t3 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi3), x3, y3, z3)
+            n3 = t3 * t3 * dot(grad3[gi3], x3, y3, z3)
         }
 
         // Add contributions from each corner to get the final noise value.
@@ -181,8 +181,8 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
 
         // Skew the input space to determine which simplex cell we're in
         val s = (xin + yin) * F2 // Hairy factor for 2D
-        val i: Int = NoiseGenerator.Companion.floor(xin + s)
-        val j: Int = NoiseGenerator.Companion.floor(yin + s)
+        val i: Int = floor(xin + s)
+        val j: Int = floor(yin + s)
         val t = (i + j) * G2
         val X0 = i - t // Unskew the cell origin back to (x,y) space
         val Y0 = j - t
@@ -225,9 +225,9 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
         } else {
             t0 *= t0
             n0 = t0 * t0 * dot(
-                PerlinNoiseGenerator.Companion.grad3.get(gi0),
+                grad3.get(gi0),
                 x0,
-                y0
+                y0,
             ) // (x,y) of grad3 used for 2D gradient
         }
         var t1 = 0.5 - x1 * x1 - y1 * y1
@@ -235,14 +235,14 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
             n1 = 0.0
         } else {
             t1 *= t1
-            n1 = t1 * t1 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi1), x1, y1)
+            n1 = t1 * t1 * dot(grad3.get(gi1), x1, y1)
         }
         var t2 = 0.5 - x2 * x2 - y2 * y2
         if (t2 < 0) {
             n2 = 0.0
         } else {
             t2 *= t2
-            n2 = t2 * t2 * dot(PerlinNoiseGenerator.Companion.grad3.get(gi2), x2, y2)
+            n2 = t2 * t2 * dot(grad3.get(gi2), x2, y2)
         }
 
         // Add contributions from each corner to get the final noise value.
@@ -277,10 +277,10 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
 
         // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
         val s = (x + y + z + w) * F4 // Factor for 4D skewing
-        val i: Int = NoiseGenerator.Companion.floor(x + s)
-        val j: Int = NoiseGenerator.Companion.floor(y + s)
-        val k: Int = NoiseGenerator.Companion.floor(z + s)
-        val l: Int = NoiseGenerator.Companion.floor(w + s)
+        val i: Int = floor(x + s)
+        val j: Int = floor(y + s)
+        val k: Int = floor(z + s)
+        val l: Int = floor(w + s)
         val t = (i + j + k + l) * G4 // Factor for 4D unskewing
         val X0 = i - t // Unskew the cell origin back to (x,y,z,w) space
         val Y0 = j - t
@@ -457,7 +457,7 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
             intArrayOf(-1, 1, 1, 0),
             intArrayOf(-1, 1, -1, 0),
             intArrayOf(-1, -1, 1, 0),
-            intArrayOf(-1, -1, -1, 0)
+            intArrayOf(-1, -1, -1, 0),
         )
         protected val simplex = arrayOf(
             intArrayOf(0, 1, 2, 3),
@@ -523,7 +523,7 @@ class SimplexNoiseGenerator : PerlinNoiseGenerator {
             intArrayOf(3, 1, 0, 2),
             intArrayOf(0, 0, 0, 0),
             intArrayOf(3, 2, 0, 1),
-            intArrayOf(3, 2, 1, 0)
+            intArrayOf(3, 2, 1, 0),
         )
 
         /**

@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.`object`.tree
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockLeaves
@@ -12,6 +11,7 @@ import org.jukeboxmc.block.data.LeafType2
 import org.jukeboxmc.block.data.LogType
 import org.jukeboxmc.block.data.LogType2
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -43,43 +43,44 @@ open class Tree(protected var treeHeight: Int) {
 
     enum class TreeType(val blockLog: Block, val blockLeave: Block) {
         OAK(
-            Block.Companion.create<BlockLog>(BlockType.LOG).setLogType(LogType.OAK),
-            Block.Companion.create<BlockLeaves>(
-                BlockType.LEAVES
-            ).setLeafType(LeafType.OAK)
+            Block.create<BlockLog>(BlockType.LOG).setLogType(LogType.OAK),
+            Block.create<BlockLeaves>(
+                BlockType.LEAVES,
+            ).setLeafType(LeafType.OAK),
         ),
         SPRUCE(
-            Block.Companion.create<BlockLog>(BlockType.LOG).setLogType(
-                LogType.SPRUCE
-            ), Block.Companion.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.SPRUCE)
+            Block.create<BlockLog>(BlockType.LOG).setLogType(
+                LogType.SPRUCE,
+            ),
+            Block.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.SPRUCE),
         ),
         BIRCH(
-            Block.Companion.create<BlockLog>(BlockType.LOG).setLogType(LogType.BIRCH),
-            Block.Companion.create<BlockLeaves>(
-                BlockType.LEAVES
-            ).setLeafType(LeafType.BIRCH)
+            Block.create<BlockLog>(BlockType.LOG).setLogType(LogType.BIRCH),
+            Block.create<BlockLeaves>(
+                BlockType.LEAVES,
+            ).setLeafType(LeafType.BIRCH),
         ),
         JUNGLE(
-            Block.Companion.create<BlockLog>(BlockType.LOG).setLogType(
-                LogType.JUNGLE
-            ), Block.Companion.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE)
+            Block.create<BlockLog>(BlockType.LOG).setLogType(
+                LogType.JUNGLE,
+            ),
+            Block.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE),
         ),
         ACACIA(
-            Block.Companion.create<BlockLog2>(BlockType.LOG2).setLogType(LogType2.ACACIA),
-            Block.Companion.create<BlockLeaves2>(
-                BlockType.LEAVES2
-            ).setLeafType(LeafType2.ACACIA)
+            Block.create<BlockLog2>(BlockType.LOG2).setLogType(LogType2.ACACIA),
+            Block.create<BlockLeaves2>(
+                BlockType.LEAVES2,
+            ).setLeafType(LeafType2.ACACIA),
         ),
         DARK_OAK(
-            Block.Companion.create<BlockLog2>(
-                BlockType.LOG2
+            Block.create<BlockLog2>(
+                BlockType.LOG2,
             ).setLogType(LogType2.DARK_OAK),
-            Block.Companion.create<BlockLeaves2>(BlockType.LEAVES2).setLeafType(LeafType2.DARK_OAK)
+            Block.create<BlockLeaves2>(BlockType.LEAVES2).setLeafType(LeafType2.DARK_OAK),
         ),
         MANGROVE(
-            Block.Companion.create<Block>(BlockType.MANGROVE_LOG),
-            Block.Companion.create<Block>(BlockType.MANGROVE_LEAVES)
-        )
-
+            Block.create<Block>(BlockType.MANGROVE_LOG),
+            Block.create<Block>(BlockType.MANGROVE_LEAVES),
+        ),
     }
 }

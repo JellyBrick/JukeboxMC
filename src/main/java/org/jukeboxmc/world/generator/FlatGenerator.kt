@@ -18,9 +18,9 @@ class FlatGenerator(world: World?) : Generator() {
     private val blockBedrock: Block
 
     init {
-        blockGrass = Block.Companion.create<Block>(BlockType.GRASS)
-        blockDirt = Block.Companion.create<Block>(BlockType.DIRT)
-        blockBedrock = Block.Companion.create<Block>(BlockType.BEDROCK)
+        blockGrass = Block.create(BlockType.GRASS)
+        blockDirt = Block.create(BlockType.DIRT)
+        blockBedrock = Block.create(BlockType.BEDROCK)
     }
 
     override fun generate(chunk: Chunk, chunkX: Int, chunkZ: Int) {
@@ -38,7 +38,7 @@ class FlatGenerator(world: World?) : Generator() {
     }
 
     override fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {}
-    override fun finish(manager: PopulationChunkManager?, chunkX: Int, chunkZ: Int) {}
+    override fun finish(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {}
     override val spawnLocation: Vector
         get() = Vector(0.5f, 5f, 0.5f)
 }

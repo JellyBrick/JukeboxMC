@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.`object`.tree
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockLeaves2
@@ -10,6 +9,7 @@ import org.jukeboxmc.block.data.LogType2
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -17,18 +17,18 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
  */
 class SavannaTree {
     private val BLOCK_ACACIA_LEAVES: Block =
-        Block.Companion.create<BlockLeaves2>(BlockType.LEAVES2).setLeafType(LeafType2.ACACIA)
-    private val BLOCK_ACACIA_LOG: Block = Block.Companion.create<BlockLog2>(BlockType.LOG2).setLogType(LogType2.ACACIA)
-    private val BLOCK_DIRT: Block = Block.Companion.create<Block>(BlockType.DIRT)
+        Block.create<BlockLeaves2>(BlockType.LEAVES2).setLeafType(LeafType2.ACACIA)
+    private val BLOCK_ACACIA_LOG: Block = Block.create<BlockLog2>(BlockType.LOG2).setLogType(LogType2.ACACIA)
+    private val BLOCK_DIRT: Block = Block.create(BlockType.DIRT)
     fun create(random: Random, manager: PopulationChunkManager, position: Vector) {
         val i = random.nextInt(3) + random.nextInt(3) + 5
-        if (position.y >= 1 && position.y + i + 1 <= 256) {
+        if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
             val down = position.down()
             val block = manager.getBlock(down).type
-            if ((block == BlockType.GRASS || block == BlockType.DIRT) && position.y < 256 - i - 1) {
+            if ((block == BlockType.GRASS || block == BlockType.DIRT) && position.getY() < 256 - i - 1) {
                 manager.setBlock(position.down(), BLOCK_DIRT)
                 val blockFace: BlockFace =
-                    BlockFace.Companion.getHorizontal().get(random.nextInt(BlockFace.Companion.getHorizontal().size))
+                    BlockFace.horizontal.get(random.nextInt(BlockFace.horizontal.size))
                 val k2 = i - random.nextInt(4) - 1
                 var l2 = 3 - random.nextInt(3)
                 var i3 = position.blockX
@@ -69,7 +69,7 @@ class SavannaTree {
                 i3 = position.blockX
                 j1 = position.blockZ
                 val face1: BlockFace =
-                    BlockFace.Companion.getHorizontal().get(random.nextInt(BlockFace.Companion.getHorizontal().size))
+                    BlockFace.horizontal.get(random.nextInt(BlockFace.horizontal.size))
                 if (face1 != blockFace) {
                     val l3 = k2 - random.nextInt(2) - 1
                     var k4 = 1 + random.nextInt(3)

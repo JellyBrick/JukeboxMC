@@ -72,7 +72,7 @@ class MapLayerWhittaker
     private class Climate(val value: Int, val crossTypes: IntArray, val finalValue: Int)
     companion object {
         private val MAP: MutableMap<ClimateType, Climate> = Maps.newEnumMap(
-            ClimateType::class.java
+            ClimateType::class.java,
         )
 
         init {

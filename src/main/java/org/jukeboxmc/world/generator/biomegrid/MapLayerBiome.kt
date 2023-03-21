@@ -34,7 +34,7 @@ class MapLayerBiome(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
             Biome.DESERT.id,
             Biome.SAVANNA.id,
             Biome.SAVANNA.id,
-            Biome.PLAINS.id
+            Biome.PLAINS.id,
         )
         private val WET = intArrayOf(
             Biome.PLAINS.id,
@@ -43,12 +43,12 @@ class MapLayerBiome(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
             Biome.BIRCH_FOREST.id,
             Biome.ROOFED_FOREST.id,
             Biome.EXTREME_HILLS.id,
-            Biome.SWAMPLAND.id
+            Biome.SWAMPLAND.id,
         )
         private val DRY = intArrayOf(Biome.PLAINS.id, Biome.FOREST.id, Biome.TAIGA.id, Biome.EXTREME_HILLS.id)
         private val COLD = intArrayOf(Biome.ICE_PLAINS.id, Biome.ICE_PLAINS.id, Biome.COLD_TAIGA.id)
 
-        //private static final int[] WARM_LARGE = new int[]{ Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU.getId() };
+        // private static final int[] WARM_LARGE = new int[]{ Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU.getId() };
         private val DRY_LARGE = intArrayOf(Biome.MEGA_TAIGA.id)
         private val WET_LARGE = intArrayOf(Biome.JUNGLE.id)
     }

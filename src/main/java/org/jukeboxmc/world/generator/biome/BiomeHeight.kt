@@ -9,7 +9,6 @@ class BiomeHeight(height: Double, scale: Double) {
     val scale: Double
 
     init {
-        this.player = player
         this.height = height
         this.scale = scale
     }

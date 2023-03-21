@@ -1,10 +1,11 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
+import org.jukeboxmc.world.generator.`object`.tree.SwampTree
 
 /**
  * @author LucGamesYT
@@ -18,7 +19,7 @@ class SwampTreePopulator : Populator() {
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)

@@ -10,7 +10,7 @@ import org.jukeboxmc.world.generator.biome.GroundGenerator
  */
 class GroundGeneratorSandy : GroundGenerator() {
     init {
-        topMaterial = Block.Companion.create<Block>(BlockType.SAND)
-        groundMaterial = Block.Companion.create<Block>(BlockType.SAND)
+        topMaterial = Block.create<Block>(BlockType.SAND)
+        groundMaterial = Block.create<Block>(BlockType.SAND)
     }
 }

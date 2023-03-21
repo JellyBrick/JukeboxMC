@@ -10,7 +10,7 @@ class MapLayerZoom
  */ @JvmOverloads constructor(
     seed: Long,
     private val belowLayer: MapLayer,
-    private val zoomType: ZoomType = ZoomType.NORMAL
+    private val zoomType: ZoomType = ZoomType.NORMAL,
 ) : MapLayer(seed) {
     override fun generateValues(x: Int, z: Int, sizeX: Int, sizeZ: Int): IntArray {
         val gridX = x shr 1

@@ -13,7 +13,7 @@ class MapLayerBiomeVariation
  */ @JvmOverloads constructor(
     seed: Long,
     private val belowLayer: MapLayer,
-    private val variationLayer: MapLayer? = null
+    private val variationLayer: MapLayer? = null,
 ) : MapLayer(seed) {
     /**
      * Creates an instance with the given variation layer.
@@ -25,7 +25,9 @@ class MapLayerBiomeVariation
     override fun generateValues(x: Int, z: Int, sizeX: Int, sizeZ: Int): IntArray {
         return if (variationLayer == null) {
             generateRandomValues(x, z, sizeX, sizeZ)
-        } else mergeValues(x, z, sizeX, sizeZ)
+        } else {
+            mergeValues(x, z, sizeX, sizeZ)
+        }
     }
 
     /**
@@ -78,7 +80,7 @@ class MapLayerBiomeVariation
                 val variationValue = variationValues!![j + 1 + (i + 1) * gridSizeX]
                 if (centerValue != 0 && variationValue == 3 && centerValue < 128) {
                     finalValues[j + i * sizeX] =
-                        if (Biome.Companion.findById(centerValue + 128) != null) centerValue + 128 else centerValue
+                        if (Biome.findById(centerValue + 128) != null) centerValue + 128 else centerValue
                 } else if (variationValue == 2 || nextInt(3) == 0) {
                     var `val` = centerValue
                     if (VARIATIONS.containsKey(centerValue)) {
@@ -87,7 +89,7 @@ class MapLayerBiomeVariation
                         `val` = ISLANDS[nextInt(ISLANDS.size)]
                     }
                     if (variationValue == 2 && `val` != centerValue) {
-                        `val` = if (Biome.Companion.findById(`val` + 128) != null) `val` + 128 else centerValue
+                        `val` = if (Biome.findById(`val` + 128) != null) `val` + 128 else centerValue
                     }
                     if (`val` != centerValue) {
                         var count = 0
@@ -129,14 +131,14 @@ class MapLayerBiomeVariation
             VARIATIONS.put(Biome.MEGA_TAIGA.id, intArrayOf(Biome.MEGA_TAIGA_HILLS.id))
             VARIATIONS.put(Biome.COLD_TAIGA.id, intArrayOf(Biome.COLD_TAIGA_HILLS.id))
             VARIATIONS.put(Biome.PLAINS.id, intArrayOf(Biome.FOREST.id, Biome.FOREST.id, Biome.FOREST_HILLS.id))
-            //VARIATIONS.put(Biome.ICE_PLAINS.id, new int[]{Biome.ICE_MOUNTAINS.id});
+            // VARIATIONS.put(Biome.ICE_PLAINS.id, new int[]{Biome.ICE_MOUNTAINS.id});
             VARIATIONS.put(Biome.JUNGLE.id, intArrayOf(Biome.JUNGLE_HILLS.id))
             VARIATIONS.put(Biome.OCEAN.id, intArrayOf(Biome.DEEP_OCEAN.id))
             VARIATIONS.put(Biome.EXTREME_HILLS.id, intArrayOf(Biome.EXTREME_HILLS_PLUS_TREES.id))
             VARIATIONS.put(Biome.SAVANNA.id, intArrayOf(Biome.SAVANNA_PLATEAU.id))
-            //VARIATIONS.put( Biome.MESA_PLATEAU_STONE.getId(), new int[]{ Biome.MESA.getId() } );
-            //VARIATIONS.put( Biome.MESA_PLATEAU.getId(), new int[]{ Biome.MESA.getId() } );
-            //VARIATIONS.put( Biome.MESA.getId(), new int[]{ Biome.MESA.getId() } );
+            // VARIATIONS.put( Biome.MESA_PLATEAU_STONE.getId(), new int[]{ Biome.MESA.getId() } );
+            // VARIATIONS.put( Biome.MESA_PLATEAU.getId(), new int[]{ Biome.MESA.getId() } );
+            // VARIATIONS.put( Biome.MESA.getId(), new int[]{ Biome.MESA.getId() } );
         }
     }
 }

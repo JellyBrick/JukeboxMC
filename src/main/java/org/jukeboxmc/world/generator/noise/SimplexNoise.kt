@@ -37,7 +37,7 @@ class SimplexNoise(rand: Random) : PerlinNoise(rand) {
         sizeY: Int,
         scaleX: Double,
         scaleY: Double,
-        amplitude: Double
+        amplitude: Double,
     ): DoubleArray? {
         var index = 0
         for (i in 0 until sizeY) {
@@ -61,7 +61,7 @@ class SimplexNoise(rand: Random) : PerlinNoise(rand) {
         scaleX: Double,
         scaleY: Double,
         scaleZ: Double,
-        amplitude: Double
+        amplitude: Double,
     ): DoubleArray? {
         var index = 0
         for (i in 0 until sizeZ) {
@@ -320,7 +320,7 @@ class SimplexNoise(rand: Random) : PerlinNoise(rand) {
             Grad(0.0, 1.0, 1.0),
             Grad(0.0, -1.0, 1.0),
             Grad(0.0, 1.0, -1.0),
-            Grad(0.0, -1.0, -1.0)
+            Grad(0.0, -1.0, -1.0),
         )
 
         fun floor(x: Double): Int {

@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockRedFlower
@@ -8,6 +7,7 @@ import org.jukeboxmc.block.data.FlowerType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -17,13 +17,13 @@ class FlowerPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
     private var flowerTypes: List<FlowerType>? = null
-    private val BLOCK_FLOWER: Block = Block.Companion.create<Block>(BlockType.RED_FLOWER)
+    private val BLOCK_FLOWER: Block = Block.create<Block>(BlockType.RED_FLOWER)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)

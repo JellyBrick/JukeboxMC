@@ -26,15 +26,19 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
                         val lowerVal = values[j + 1 + (i + 2) * gridSizeX]
                         val leftVal = values[j + (i + 1) * gridSizeX]
                         val rightVal = values[j + 2 + (i + 1) * gridSizeX]
-                        if (entryValue == null && (!map.containsKey(upperVal) || !map.containsKey(lowerVal) || !map.containsKey(
-                                leftVal
-                            ) || !map.containsKey(rightVal))
+                        if (entryValue == null && (
+                                !map.containsKey(upperVal) || !map.containsKey(lowerVal) || !map.containsKey(
+                                    leftVal,
+                                ) || !map.containsKey(rightVal)
+                                )
                         ) {
                             `val` = map[centerVal]
                             break
-                        } else if (entryValue != null && (entryValue.contains(upperVal) || entryValue.contains(lowerVal) || entryValue.contains(
-                                leftVal
-                            ) || entryValue.contains(rightVal))
+                        } else if (entryValue != null && (
+                                entryValue.contains(upperVal) || entryValue.contains(lowerVal) || entryValue.contains(
+                                    leftVal,
+                                ) || entryValue.contains(rightVal)
+                                )
                         ) {
                             `val` = map[centerVal]
                             break
@@ -56,14 +60,14 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
         private val EDGES: MutableMap<Int2IntMap, IntList?> = Maps.newHashMap()
 
         init {
-            //MESA_EDGES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA.getId() );
-            //MESA_EDGES.put( Biome.MESA_PLATEAU.getId(), Biome.MESA.getId() );
+            // MESA_EDGES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA.getId() );
+            // MESA_EDGES.put( Biome.MESA_PLATEAU.getId(), Biome.MESA.getId() );
             MEGA_TAIGA_EDGES.put(Biome.MEGA_TAIGA.id, Biome.TAIGA.id)
             DESERT_EDGES.put(Biome.DESERT.id, Biome.EXTREME_HILLS_PLUS_TREES.id)
             SWAMP1_EDGES.put(Biome.SWAMPLAND.id, Biome.PLAINS.id)
             SWAMP2_EDGES.put(Biome.SWAMPLAND.id, Biome.JUNGLE_EDGE.id)
 
-            //EDGES.put( MESA_EDGES, null );
+            // EDGES.put( MESA_EDGES, null );
             EDGES[MEGA_TAIGA_EDGES] = null
             EDGES[DESERT_EDGES] = IntArrayList.wrap(intArrayOf(Biome.ICE_PLAINS.id))
             EDGES[SWAMP1_EDGES] =
@@ -71,8 +75,8 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
                     intArrayOf(
                         Biome.DESERT.id,
                         Biome.COLD_TAIGA.id,
-                        Biome.ICE_PLAINS.id
-                    )
+                        Biome.ICE_PLAINS.id,
+                    ),
                 )
             EDGES[SWAMP2_EDGES] =
                 IntArrayList.wrap(intArrayOf(Biome.JUNGLE.id))

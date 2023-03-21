@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockSeagrass
@@ -9,6 +8,7 @@ import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import org.jukeboxmc.world.generator.NormalGenerator
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -17,14 +17,14 @@ import org.jukeboxmc.world.generator.NormalGenerator
 class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_SEAGRASS: Block = Block.Companion.create<Block>(BlockType.SEAGRASS)
-    private val BLOCK_WATER: Block = Block.Companion.create<Block>(BlockType.WATER)
+    private val BLOCK_SEAGRASS: Block = Block.create(BlockType.SEAGRASS)
+    private val BLOCK_WATER: Block = Block.create(BlockType.WATER)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
         val amount = random.nextInt(randomAmount + 1) + baseAmount
@@ -40,7 +40,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
                             y,
                             z,
                             0,
-                            (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DOUBLE_BOT)
+                            (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DOUBLE_BOT),
                         )
                         chunk.setBlock(x, y, z, 1, BLOCK_WATER)
                         chunk.setBlock(
@@ -48,7 +48,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
                             y + 1,
                             z,
                             0,
-                            (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DOUBLE_TOP)
+                            (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DOUBLE_TOP),
                         )
                         chunk.setBlock(x, y + 1, z, 1, BLOCK_WATER)
                     }
@@ -58,7 +58,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
                         y,
                         z,
                         0,
-                        (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DEFAULT)
+                        (BLOCK_SEAGRASS.clone() as BlockSeagrass).setSeaGrassType(SeaGrassType.DEFAULT),
                     )
                     chunk.setBlock(x, y, z, 1, BLOCK_WATER)
                 }
@@ -68,7 +68,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
         var y: Int
-        y = NormalGenerator.Companion.WATER_HEIGHT - 1
+        y = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {
@@ -87,7 +87,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
                 x,
                 y - 1,
                 z,
-                0
+                0,
             ).isSolid
         }
     }

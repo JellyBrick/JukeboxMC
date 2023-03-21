@@ -1,8 +1,10 @@
 package org.jukeboxmc.world.generator.biomegrid
 
-import java.util.Random
 import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Dimension
+import org.jukeboxmc.world.generator.biomegrid.MapLayerWhittaker.ClimateType
+import org.jukeboxmc.world.generator.biomegrid.MapLayerZoom.ZoomType
+import java.util.Random
 
 abstract class MapLayer(private val seed: Long) {
     private val random = Random()

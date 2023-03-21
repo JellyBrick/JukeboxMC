@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockKelp
@@ -8,6 +7,7 @@ import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import org.jukeboxmc.world.generator.NormalGenerator
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -16,14 +16,14 @@ import org.jukeboxmc.world.generator.NormalGenerator
 class KelpPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_KELP: Block = Block.Companion.create<Block>(BlockType.KELP)
-    private val BLOCK_WATER: Block = Block.Companion.create<Block>(BlockType.WATER)
+    private val BLOCK_KELP: Block = Block.create<Block>(BlockType.KELP)
+    private val BLOCK_WATER: Block = Block.create<Block>(BlockType.WATER)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
@@ -49,7 +49,7 @@ class KelpPopulator : Populator() {
                                 y + h,
                                 z,
                                 0,
-                                (BLOCK_KELP.clone() as BlockKelp).setKelpAge(20 + random.nextInt(4))
+                                (BLOCK_KELP.clone() as BlockKelp).setKelpAge(20 + random.nextInt(4)),
                             )
                             chunk.setBlock(x, y + h, z, 1, BLOCK_WATER)
                             return
@@ -67,7 +67,7 @@ class KelpPopulator : Populator() {
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
         var y: Int
-        y = NormalGenerator.Companion.WATER_HEIGHT - 1
+        y = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {

@@ -7,15 +7,6 @@ import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectFunction
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
-import java.util.Objects
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-import java.util.function.BiConsumer
-import javax.annotation.ParametersAreNonnullByDefault
-import lombok.ToString
-import lombok.extern.log4j.Log4j2
 import org.jukeboxmc.Server
 import org.jukeboxmc.event.world.ChunkLoadEvent
 import org.jukeboxmc.event.world.ChunkUnloadEvent
@@ -23,14 +14,21 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
+import java.util.Objects
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+import javax.annotation.ParametersAreNonnullByDefault
 
-@Log4j2
 @ParametersAreNonnullByDefault
 class ChunkManager(private val world: World, val dimension: Dimension) {
     private val chunks: Long2ObjectMap<LoadingChunk> = Long2ObjectOpenHashMap()
     private val chunkLoadedTimes: Long2LongMap = Long2LongOpenHashMap()
     private val chunkLastAccessTimes: Long2LongMap = Long2LongOpenHashMap()
     private val executor: Executor
+
+    val log = Server.instance.logger
 
     init {
         executor = world.server.scheduler.chunkExecutor
@@ -51,7 +49,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
 
     @get:Synchronized
     val loadedCount: Int
-        get() = chunks.size()
+        get() = chunks.size
 
     @Synchronized
     fun getLoadedChunk(key: Long): Chunk? {
@@ -77,7 +75,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         return null
     }
 
-    fun getChunkFuture(x: Int, z: Int): CompletableFuture<Chunk?>? {
+    fun getChunkFuture(x: Int, z: Int): CompletableFuture<Chunk>? {
         return this.getChunkFuture(x, z, true, true, true)
     }
 
@@ -87,15 +85,20 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         chunkZ: Int,
         generate: Boolean,
         populate: Boolean,
-        finish: Boolean
-    ): CompletableFuture<Chunk?>? {
+        finish: Boolean,
+    ): CompletableFuture<Chunk>? {
         val chunkKey = Utils.toLong(chunkX, chunkZ)
         chunkLastAccessTimes.put(chunkKey, System.currentTimeMillis())
-        val chunk = chunks.computeIfAbsent(chunkKey, Long2ObjectFunction { key: Long ->
-            LoadingChunk(
-                dimension, key, true
-            )
-        })
+        val chunk = chunks.computeIfAbsent(
+            chunkKey,
+            Long2ObjectFunction { key: Long ->
+                LoadingChunk(
+                    dimension,
+                    key,
+                    true,
+                )
+            },
+        )
         if (finish) {
             chunk.finish()
         } else if (populate) {
@@ -103,8 +106,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         } else if (generate) {
             chunk.generate()
         }
-        Server.Companion.getInstance().getPluginManager().callEvent(ChunkLoadEvent(world, chunk.getChunk()))
-        return chunk.getFuture()
+        Server.instance.pluginManager.callEvent(ChunkLoadEvent(world, chunk.getChunk()))
+        return chunk.future
     }
 
     @Synchronized
@@ -131,7 +134,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     fun unloadChunk(chunkKey: Long, save: Boolean, safe: Boolean): Boolean {
         val loadedChunk = this.getLoadedChunk(chunkKey) ?: return false
         val chunkUnloadEvent = ChunkUnloadEvent(world, loadedChunk, save)
-        Server.Companion.getInstance().getPluginManager().callEvent(chunkUnloadEvent)
+        Server.instance.pluginManager.callEvent(chunkUnloadEvent)
         if (chunkUnloadEvent.isCancelled) return false
         val result = unloadChunk0(chunkKey, chunkUnloadEvent.isSaveChunk, safe)
         if (result) {
@@ -144,7 +147,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     private fun unloadChunk0(chunkKey: Long, save: Boolean, safe: Boolean): Boolean {
         val loadingChunk = chunks[chunkKey] ?: return false
         val chunk = loadingChunk.getChunk() ?: return false
-        if (!chunk.loaders.isEmpty()) {
+        if (chunk.getLoaders().isNotEmpty()) {
             return false
         }
         if (save) {
@@ -173,10 +176,12 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     fun saveChunk(chunk: Chunk): CompletableFuture<Void?> {
         return if (chunk.isDirty) {
             world.saveChunk(chunk).exceptionally { throwable: Throwable? ->
-                ChunkManager.log.warn("Unable to save chunk", throwable)
+                log.error("Unable to save chunk", throwable)
                 null
             }
-        } else COMPLETED_VOID_FUTURE
+        } else {
+            COMPLETED_VOID_FUTURE
+        }
     }
 
     @Synchronized
@@ -187,9 +192,9 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         val time = System.currentTimeMillis()
 
         // Spawn chunk
-        val spawnX = world.spawnLocation.chunkX
-        val spawnZ = world.spawnLocation.chunkZ
-        val spawnRadius: Int = Server.Companion.getInstance().getViewDistance()
+        val spawnX = world.getSpawnLocation().chunkX
+        val spawnZ = world.getSpawnLocation().chunkZ
+        val spawnRadius: Int = Server.instance.viewDistance
 
         // Do chunk garbage collection
         val iterator = chunks.long2ObjectEntrySet().iterator()
@@ -198,11 +203,11 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             val chunkKey = entry.longKey
             val loadingChunk = entry.value
             val chunk = loadingChunk.getChunk()
-                ?: continue  // Chunk hasn't loaded
+                ?: continue // Chunk hasn't loaded
             if (Math.abs(chunk.x - spawnX) <= spawnRadius && Math.abs(chunk.z - spawnZ) <= spawnRadius ||
-                !chunk.loaders.isEmpty()
+                !chunk.getLoaders().isEmpty()
             ) {
-                continue  // Spawn protection or is loaded
+                continue // Spawn protection or is loaded
             }
             val loadedTime = chunkLoadedTimes[chunkKey]
             if (time - loadedTime <= TimeUnit.SECONDS.toMillis(30)) {
@@ -213,7 +218,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                 continue
             }
             val chunkUnloadEvent = ChunkUnloadEvent(world, chunk, true)
-            Server.Companion.getInstance().getPluginManager().callEvent(chunkUnloadEvent)
+            Server.instance.pluginManager.callEvent(chunkUnloadEvent)
             if (chunkUnloadEvent.isCancelled) {
                 return
             }
@@ -223,11 +228,10 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         }
     }
 
-    @ToString
     private inner class LoadingChunk(dimension: Dimension, key: Long, load: Boolean) {
         private val x: Int
         private val z: Int
-        var future: CompletableFuture<Chunk?>? = null
+        var future: CompletableFuture<Chunk>? = null
             private set
 
         @Volatile
@@ -238,7 +242,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
 
         @Volatile
         var finishRunning = 0
-        private val chunk: Chunk? = null
+        private var chunk: Chunk? = null
 
         init {
             x = Utils.fromHashX(key)
@@ -248,43 +252,48 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                     .thenApply { chunk: Chunk? ->
                         Objects.requireNonNullElseGet(chunk) {
                             Chunk(
-                                world, dimension, x, z
+                                world,
+                                dimension,
+                                x,
+                                z,
                             )
                         }
                     }
-                future.whenComplete(BiConsumer { chunk: Chunk?, throwable: Throwable? ->
+                future!!.whenComplete { chunk: Chunk?, throwable: Throwable? ->
                     if (throwable != null) {
-                        Server.Companion.getInstance().getLogger().error("Unable to load chunk $x:$z", throwable)
+                        log.error("Unable to load chunk $x:$z", throwable)
                         synchronized(this@ChunkManager) { chunks.remove(key) }
                     } else {
                         val currentTime = System.currentTimeMillis()
                         synchronized(this@ChunkManager) { chunkLoadedTimes.put(key, currentTime) }
                     }
-                })
+                }
             } else {
                 future = CompletableFuture.completedFuture(Chunk(world, dimension, x, z))
             }
-            future.whenComplete(BiConsumer { chunk: Chunk?, throwable: Throwable? -> this.chunk = chunk })
+            future!!.whenComplete { chunk: Chunk?, throwable: Throwable? -> this.chunk = chunk }
         }
 
         fun getChunk(): Chunk? {
-            return if (chunk != null && chunk.isGenerated && chunk.isPopulated && chunk.isFinished) {
+            return if (chunk != null && chunk!!.isGenerated && chunk!!.isPopulated && chunk!!.isFinished) {
                 chunk
-            } else null
+            } else {
+                null
+            }
         }
 
         fun generate() {
-            if ((chunk == null || !chunk.isGenerated) && GENERATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
-                future = future!!.thenApplyAsync(GenerationTask.Companion.INSTANCE, executor)
-                future.thenRun(Runnable { GENERATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) })
+            if ((chunk == null || !chunk!!.isGenerated) && GENERATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+                future = future!!.thenApplyAsync(GenerationTask.INSTANCE, executor)
+                future!!.thenRun { GENERATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
             }
         }
 
         fun populate() {
             generate()
-            if ((chunk == null || !chunk.isPopulated) && POPULATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+            if ((chunk == null || !chunk!!.isPopulated) && POPULATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
                 // Load and generate chunks around the chunk to be populated.
-                val chunksToLoad: MutableList<CompletableFuture<Chunk?>?> = ArrayList(8)
+                val chunksToLoad: MutableList<CompletableFuture<Chunk>?> = ArrayList(8)
                 run {
                     var z = this.z - 1
                     val maxZ = this.z + 1
@@ -305,15 +314,15 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                     }
                 }
                 val aroundFuture = CompletableFutures.allAsList(chunksToLoad)
-                future = future!!.thenCombineAsync(aroundFuture, PopulationTask.Companion.INSTANCE, executor)
-                future.thenRun(Runnable { POPULATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) })
+                future = future!!.thenCombineAsync(aroundFuture, PopulationTask.INSTANCE, executor)
+                future!!.thenRun { POPULATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
             }
         }
 
         fun finish() {
             populate()
-            if ((chunk == null || !chunk.isFinished) && FINISH_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
-                val chunksToLoad: MutableList<CompletableFuture<Chunk?>?> = ArrayList(8)
+            if ((chunk == null || !chunk!!.isFinished) && FINISH_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+                val chunksToLoad: MutableList<CompletableFuture<Chunk>?> = ArrayList(8)
                 run {
                     var z = this.z - 1
                     val maxZ = this.z + 1
@@ -334,8 +343,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                     }
                 }
                 val aroundFuture = CompletableFutures.allAsList(chunksToLoad)
-                future = future!!.thenCombineAsync(aroundFuture, FinishingTask.Companion.INSTANCE, executor)
-                future.thenRun(Runnable { FINISH_RUNNING_UPDATER.compareAndSet(this, 1, 0) })
+                future = future!!.thenCombineAsync(aroundFuture, FinishingTask.INSTANCE, executor)
+                future!!.thenRun(Runnable { FINISH_RUNNING_UPDATER.compareAndSet(this, 1, 0) })
             }
         }
 
@@ -352,13 +361,16 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     companion object {
         private val COMPLETED_VOID_FUTURE = CompletableFuture.completedFuture<Void?>(null)
         private val GENERATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
-            LoadingChunk::class.java, "generationRunning"
+            LoadingChunk::class.java,
+            "generationRunning",
         )
         private val POPULATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
-            LoadingChunk::class.java, "populationRunning"
+            LoadingChunk::class.java,
+            "populationRunning",
         )
         private val FINISH_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
-            LoadingChunk::class.java, "finishRunning"
+            LoadingChunk::class.java,
+            "finishRunning",
         )
     }
 }

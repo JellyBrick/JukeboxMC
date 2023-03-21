@@ -3,6 +3,12 @@ package org.jukeboxmc.world.generator.populator.biome
 import java.util.List
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
+import org.jukeboxmc.world.generator.populator.DiskPopulator
+import org.jukeboxmc.world.generator.populator.LilyPadPopulator
+import org.jukeboxmc.world.generator.populator.SeagrassPopulator
+import org.jukeboxmc.world.generator.populator.SwampTreePopulator
+import org.jukeboxmc.world.generator.populator.TallGrassPopulator
+import org.jukeboxmc.world.generator.populator.YellowFlowerPopulator
 
 /**
  * @author LucGamesYT
@@ -11,7 +17,7 @@ import org.jukeboxmc.block.BlockType
 class SwamplandBiome : BiomePopulator() {
     init {
         val diskPopulator = DiskPopulator(
-            1.0, Block.Companion.create<Block>(BlockType.CLAY), 1, 2, 1, List.of(
+            1.0, Block.create<Block>(BlockType.CLAY), 1, 2, 1, List.of(
                 BlockType.DIRT, BlockType.CLAY
             )
         )

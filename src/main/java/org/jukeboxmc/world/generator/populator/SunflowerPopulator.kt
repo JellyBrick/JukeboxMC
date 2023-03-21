@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockDoublePlant
@@ -8,6 +7,7 @@ import org.jukeboxmc.block.data.PlantType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -16,13 +16,13 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 class SunflowerPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_SUNFLOWER: Block = Block.Companion.create<Block>(BlockType.DOUBLE_PLANT)
+    private val BLOCK_SUNFLOWER: Block = Block.create<Block>(BlockType.DOUBLE_PLANT)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
@@ -36,14 +36,14 @@ class SunflowerPopulator : Populator() {
                     y,
                     z,
                     0,
-                    (BLOCK_SUNFLOWER.clone() as BlockDoublePlant).setPlantType(PlantType.SUNFLOWER).setUpperBlock(false)
+                    (BLOCK_SUNFLOWER.clone() as BlockDoublePlant).setPlantType(PlantType.SUNFLOWER).setUpperBlock(false),
                 )
                 chunk.setBlock(
                     x,
                     y + 1,
                     z,
                     0,
-                    (BLOCK_SUNFLOWER.clone() as BlockDoublePlant).setPlantType(PlantType.SUNFLOWER).setUpperBlock(true)
+                    (BLOCK_SUNFLOWER.clone() as BlockDoublePlant).setPlantType(PlantType.SUNFLOWER).setUpperBlock(true),
                 )
             }
         }

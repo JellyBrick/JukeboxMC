@@ -15,7 +15,7 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 class SugarcanePopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_SUGAR_CANE: Block = Block.Companion.create<Block>(BlockType.SUGAR_CANE)
+    private val BLOCK_SUGAR_CANE: Block = Block.create<Block>(BlockType.SUGAR_CANE)
     override fun populate(
         random: Random,
         world: World?,

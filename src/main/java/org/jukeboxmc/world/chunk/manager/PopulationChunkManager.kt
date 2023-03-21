@@ -29,7 +29,7 @@ class PopulationChunkManager(chunk: Chunk, chunks: List<Chunk>) {
             relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3,
             "Chunk position (%s,%s) out of population bounds",
             chunkX,
-            chunkZ
+            chunkZ,
         )
         return relativeX * 3 + relativeZ
     }
@@ -41,7 +41,7 @@ class PopulationChunkManager(chunk: Chunk, chunks: List<Chunk>) {
             relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3,
             "Block position (%s,%s) out of population bounds",
             blockX,
-            blockZ
+            blockZ,
         )
         return chunks[relativeX * 3 + relativeZ]
     }
@@ -62,21 +62,21 @@ class PopulationChunkManager(chunk: Chunk, chunks: List<Chunk>) {
         return this.getBlock(x, y, z, 0)
     }
 
-    fun setBlock(vector: Vector, layer: Int, block: Block?) {
+    fun setBlock(vector: Vector, layer: Int, block: Block) {
         chunkFromBlock(vector.blockX, vector.blockZ)!!
             .setBlock(vector.blockX, vector.blockY, vector.blockZ, layer, block)
     }
 
-    fun setBlock(vector: Vector, block: Block?) {
+    fun setBlock(vector: Vector, block: Block) {
         chunkFromBlock(vector.blockX, vector.blockZ)!!
             .setBlock(vector.blockX, vector.blockY, vector.blockZ, 0, block)
     }
 
-    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block?) {
+    fun setBlock(x: Int, y: Int, z: Int, layer: Int, block: Block) {
         chunkFromBlock(x, z)!!.setBlock(x, y, z, layer, block)
     }
 
-    fun setBlock(x: Int, y: Int, z: Int, block: Block?) {
+    fun setBlock(x: Int, y: Int, z: Int, block: Block) {
         this.setBlock(x, y, z, 0, block)
     }
 }

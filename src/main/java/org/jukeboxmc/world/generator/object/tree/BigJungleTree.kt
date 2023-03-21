@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.`object`.tree
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockLeaves
@@ -10,28 +9,29 @@ import org.jukeboxmc.block.data.LeafType
 import org.jukeboxmc.block.data.LogType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: Int) {
-    private val BLOCK_LOG: Block = Block.Companion.create<BlockLog>(BlockType.LOG).setLogType(LogType.JUNGLE)
-    private val BLOCK_LEAVES: Block = Block.Companion.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE)
-    private val BLOCK_VINE: Block = Block.Companion.create<Block>(BlockType.VINE)
-    private val BLOCK_DIRT: Block = Block.Companion.create<Block>(BlockType.DIRT)
+    private val BLOCK_LOG: Block = Block.create<BlockLog>(BlockType.LOG).setLogType(LogType.JUNGLE)
+    private val BLOCK_LEAVES: Block = Block.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE)
+    private val BLOCK_VINE: Block = Block.create<Block>(BlockType.VINE)
+    private val BLOCK_DIRT: Block = Block.create<Block>(BlockType.DIRT)
     fun create(random: Random, manager: PopulationChunkManager, position: Vector) {
         val height = getHeight(random)
         if (ensureGrowable(manager, random, position, height)) {
             createCrown(manager, position.add(0f, height.toFloat(), 0f), 2)
-            var j = position.y.toInt() + height - 2 - random.nextInt(4)
-            while (j > position.y + height / 2) {
+            var j = position.getY().toInt() + height - 2 - random.nextInt(4)
+            while (j > position.getY() + height / 2) {
                 val f = random.nextFloat() * (Math.PI.toFloat() * 2f)
-                var k = (position.x + (0.5f + Math.cos(f.toDouble()) * 4.0f)).toInt()
-                var l = (position.z + (0.5f + Math.sin(f.toDouble()) * 4.0f)).toInt()
+                var k = (position.getX() + (0.5f + Math.cos(f.toDouble()) * 4.0f)).toInt()
+                var l = (position.getZ() + (0.5f + Math.sin(f.toDouble()) * 4.0f)).toInt()
                 for (i1 in 0..4) {
-                    k = (position.x + (1.5f + Math.cos(f.toDouble()) * i1.toFloat())).toInt()
-                    l = (position.z + (1.5f + Math.sin(f.toDouble()) * i1.toFloat())).toInt()
+                    k = (position.getX() + (1.5f + Math.cos(f.toDouble()) * i1.toFloat())).toInt()
+                    l = (position.getZ() + (1.5f + Math.sin(f.toDouble()) * i1.toFloat())).toInt()
                     manager.setBlock(Vector(k, j - 3 + i1 / 2, l), BLOCK_LOG)
                 }
                 val j2 = 1 + random.nextInt(2)
@@ -87,7 +87,7 @@ class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: 
     private fun ensureDirtsUnderneath(pos: Vector, manager: PopulationChunkManager): Boolean {
         val blockpos = pos.down()
         val block = manager.getBlock(blockpos).type
-        return if ((block == BlockType.GRASS || block == BlockType.DIRT) && pos.y >= 2) {
+        return if ((block == BlockType.GRASS || block == BlockType.DIRT) && pos.getY() >= 2) {
             manager.setBlock(blockpos, BLOCK_DIRT)
             manager.setBlock(blockpos.east(), BLOCK_DIRT)
             manager.setBlock(blockpos.south(), BLOCK_DIRT)
@@ -100,7 +100,7 @@ class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: 
 
     private fun isSpaceAt(manager: PopulationChunkManager, leavesPos: Vector, height: Int): Boolean {
         var flag = true
-        return if (leavesPos.y >= 1 && leavesPos.y + height + 1 <= 256) {
+        return if (leavesPos.getY() >= 1 && leavesPos.getY() + height + 1 <= 256) {
             for (i in 0..1 + height) {
                 var j = 2
                 if (i == 0) {
@@ -113,10 +113,10 @@ class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: 
                     var l = -j
                     while (l <= j && flag) {
                         val blockPos = leavesPos.add(k.toFloat(), i.toFloat(), l.toFloat())
-                        if (leavesPos.y + i < 0 || leavesPos.y + i >= 256 || !canPlace(
+                        if (leavesPos.getY() + i < 0 || leavesPos.getY() + i >= 256 || !canPlace(
                                 manager.getBlock(
-                                    blockPos!!
-                                ).type
+                                    blockPos!!,
+                                ).type,
                             )
                         ) {
                             flag = false
@@ -138,7 +138,7 @@ class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: 
         }
     }
 
-    fun canPlace(blockType: BlockType): Boolean {
+    fun canPlace(blockType: BlockType?): Boolean {
         return blockType == BlockType.AIR || blockType == BlockType.LEAVES || blockType == BlockType.GRASS || blockType == BlockType.DIRT || blockType == BlockType.LOG || blockType == BlockType.LOG2 || blockType == BlockType.SAPLING || blockType == BlockType.VINE
     }
 

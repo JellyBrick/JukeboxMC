@@ -117,6 +117,7 @@ abstract class OctaveGenerator protected constructor(protected val octaves: Arra
     fun noise(x: Double, y: Double, frequency: Double, amplitude: Double, normalized: Boolean): Double {
         return this.noise(x, y, 0.0, frequency, amplitude, normalized)
     }
+
     /**
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
@@ -147,7 +148,7 @@ abstract class OctaveGenerator protected constructor(protected val octaves: Arra
         z: Double,
         frequency: Double,
         amplitude: Double,
-        normalized: Boolean = false
+        normalized: Boolean = false,
     ): Double {
         var x = x
         var y = y

@@ -1,8 +1,11 @@
 package org.jukeboxmc.world.generator.populator.biome
 
-import java.util.Arrays
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
+import java.util.Arrays
+import org.jukeboxmc.world.generator.populator.DiskPopulator
+import org.jukeboxmc.world.generator.populator.SeagrassPopulator
+import org.jukeboxmc.world.generator.populator.SugarcanePopulator
 
 /**
  * @author LucGamesYT
@@ -11,23 +14,41 @@ import org.jukeboxmc.block.BlockType
 class RiverBiome : BiomePopulator() {
     init {
         val populatorDiskSand = DiskPopulator(
-            1.0, Block.Companion.create<Block>(BlockType.SAND), 2, 4, 2, Arrays.asList(
-                BlockType.GRASS, BlockType.DIRT
-            )
+            1.0,
+            Block.create<Block>(BlockType.SAND),
+            2,
+            4,
+            2,
+            Arrays.asList(
+                BlockType.GRASS,
+                BlockType.DIRT,
+            ),
         )
         populatorDiskSand.setBaseAmount(3)
         addPopulator(populatorDiskSand)
         val populatorDiskClay = DiskPopulator(
-            1.0, Block.Companion.create<Block>(BlockType.CLAY), 1, 2, 1, Arrays.asList(
-                BlockType.DIRT, BlockType.CLAY
-            )
+            1.0,
+            Block.create<Block>(BlockType.CLAY),
+            1,
+            2,
+            1,
+            Arrays.asList(
+                BlockType.DIRT,
+                BlockType.CLAY,
+            ),
         )
         populatorDiskClay.setBaseAmount(1)
         addPopulator(populatorDiskClay)
         val populatorDiskGravel = DiskPopulator(
-            1.0, Block.Companion.create<Block>(BlockType.GRAVEL), 2, 3, 2, Arrays.asList(
-                BlockType.GRASS, BlockType.DIRT
-            )
+            1.0,
+            Block.create<Block>(BlockType.GRAVEL),
+            2,
+            3,
+            2,
+            Arrays.asList(
+                BlockType.GRASS,
+                BlockType.DIRT,
+            ),
         )
         populatorDiskGravel.setBaseAmount(1)
         addPopulator(populatorDiskGravel)

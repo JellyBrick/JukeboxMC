@@ -1,5 +1,8 @@
 package org.jukeboxmc.world.generator.populator.biome
 
+import org.jukeboxmc.world.generator.populator.CactusPopulator
+import org.jukeboxmc.world.generator.populator.DeadBushPopulator
+
 /**
  * @author LucGamesYT
  * @version 1.0

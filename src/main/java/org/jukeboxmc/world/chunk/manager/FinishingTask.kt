@@ -1,17 +1,14 @@
 package org.jukeboxmc.world.chunk.manager
 
-import java.util.concurrent.locks.Lock
-import java.util.function.BiFunction
-import lombok.AccessLevel
-import lombok.NoArgsConstructor
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.ChunkState
+import java.util.concurrent.locks.Lock
+import java.util.function.BiFunction
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class FinishingTask : BiFunction<Chunk, MutableList<Chunk>, Chunk> {
     override fun apply(chunk: Chunk, chunks: MutableList<Chunk>): Chunk {
         if (chunk.isFinished) {
@@ -25,7 +22,7 @@ class FinishingTask : BiFunction<Chunk, MutableList<Chunk>, Chunk> {
             locks.add(lock)
         }
         try {
-            chunk.world.getGenerator(chunk.dimension).finish(PopulationChunkManager(chunk, chunks), chunk.x, chunk.z)
+            chunk.world.getGenerator(chunk.dimension)?.finish(PopulationChunkManager(chunk, chunks), chunk.x, chunk.z)
             chunk.chunkState = ChunkState.FINISHED
             chunk.isDirty = true
         } finally {

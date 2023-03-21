@@ -1,5 +1,8 @@
 package org.jukeboxmc.world.generator.populator.biome
 
+import org.jukeboxmc.world.generator.populator.BigJungleTreePopulator
+import org.jukeboxmc.world.generator.populator.SmallJungleTreePopulator
+
 /**
  * @author LucGamesYT
  * @version 1.0

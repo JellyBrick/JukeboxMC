@@ -99,6 +99,7 @@ abstract class NoiseGenerator {
     fun noise(x: Double, y: Double, octaves: Int, frequency: Double, amplitude: Double, normalized: Boolean): Double {
         return this.noise(x, y, 0.0, octaves, frequency, amplitude, normalized)
     }
+
     /**
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
@@ -132,7 +133,7 @@ abstract class NoiseGenerator {
         octaves: Int,
         frequency: Double,
         amplitude: Double,
-        normalized: Boolean = false
+        normalized: Boolean = false,
     ): Double {
         var result = 0.0
         var amp = 1.0
@@ -161,14 +162,17 @@ abstract class NoiseGenerator {
             return if (x >= 0) x.toInt() else x.toInt() - 1
         }
 
+        @JvmStatic
         protected fun fade(x: Double): Double {
             return x * x * x * (x * (x * 6 - 15) + 10)
         }
 
+        @JvmStatic
         protected fun lerp(x: Double, y: Double, z: Double): Double {
             return y + x * (z - y)
         }
 
+        @JvmStatic
         protected fun grad(hash: Int, x: Double, y: Double, z: Double): Double {
             var hash = hash
             hash = hash and 15

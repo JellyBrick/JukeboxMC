@@ -9,6 +9,6 @@ import org.jukeboxmc.world.Biome
 class BiomeGrid {
     val biomes = ByteArray(256)
     fun getBiome(x: Int, z: Int): Biome? {
-        return Biome.Companion.findById(biomes[x or (z shl 4)].toInt() and 0xff)
+        return Biome.findById(biomes[x or (z shl 4)].toInt() and 0xff)
     }
 }

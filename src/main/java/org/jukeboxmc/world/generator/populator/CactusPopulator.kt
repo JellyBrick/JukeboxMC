@@ -1,11 +1,11 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -14,13 +14,13 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 class CactusPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_CACTUS: Block = Block.Companion.create<Block>(BlockType.CACTUS)
+    private val BLOCK_CACTUS: Block = Block.create(BlockType.CACTUS)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
         val amount = random.nextInt(randomAmount + 1) + baseAmount

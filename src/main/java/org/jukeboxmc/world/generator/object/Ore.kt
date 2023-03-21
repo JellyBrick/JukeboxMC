@@ -1,8 +1,8 @@
 package org.jukeboxmc.world.generator.`object`
 
-import java.util.Random
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT

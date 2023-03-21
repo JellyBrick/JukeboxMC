@@ -12,7 +12,7 @@ class SimplexOctaveGenerator
  * @param rand    Random object to construct this generator for
  * @param octaves Amount of octaves to create
  */
-    (rand: Random, octaves: Int) : OctaveGenerator(createOctaves(rand, octaves)) {
+(rand: Random, octaves: Int) : OctaveGenerator(createOctaves(rand, octaves)) {
     /**
      * Gets the scale used for each W-coordinates passed
      *
@@ -37,6 +37,7 @@ class SimplexOctaveGenerator
         super.setScale(scale)
         wScale = scale
     }
+
     /**
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
@@ -70,7 +71,7 @@ class SimplexOctaveGenerator
         w: Double,
         frequency: Double,
         amplitude: Double,
-        normalized: Boolean = false
+        normalized: Boolean = false,
     ): Double {
         var x = x
         var y = y

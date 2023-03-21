@@ -15,8 +15,8 @@ object BiomePopulatorRegistry {
         register(Biome.PLAINS, PlainsBiome())
         register(Biome.SUNFLOWER_PLAINS, SunflowerPlainsBiome())
 
-        //register( Biome.ICE_PLAINS, new IcePlainsBiome() );
-        //register( Biome.ICE_PLAINS_SPIKES, new IcePlainsSpikesBiome() );
+        // register( Biome.ICE_PLAINS, new IcePlainsBiome() );
+        // register( Biome.ICE_PLAINS_SPIKES, new IcePlainsSpikesBiome() );
         register(Biome.JUNGLE, JungleBiome())
         register(Biome.JUNGLE_EDGE, JungleBiome())
         register(Biome.JUNGLE_HILLS, JungleBiome())

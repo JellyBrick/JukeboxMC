@@ -1,17 +1,21 @@
 package org.jukeboxmc.world.generator.noise
 
+import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import java.util.Arrays
 import java.util.Random
-import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 
 class SimplexOctaveGenerator @JvmOverloads constructor(
     rand: Random,
     octaves: Int,
     sizeX: Int = 0,
     sizeY: Int = 0,
-    sizeZ: Int = 0
+    sizeZ: Int = 0,
 ) : PerlinOctaveGenerator(
-    createOctaves(rand, octaves), rand, sizeX, sizeY, sizeZ
+    createOctaves(rand, octaves),
+    rand,
+    sizeX,
+    sizeY,
+    sizeZ,
 ) {
     constructor(rand: Random, octaves: Int, sizeX: Int, sizeZ: Int) : this(rand, octaves, sizeX, 1, sizeZ)
 
@@ -20,7 +24,7 @@ class SimplexOctaveGenerator @JvmOverloads constructor(
         y: Double,
         z: Double,
         lacunarity: Double,
-        persistence: Double
+        persistence: Double,
     ): DoubleArray? {
         Arrays.fill(noise, 0.0)
         var freq = 1.0
@@ -39,7 +43,7 @@ class SimplexOctaveGenerator @JvmOverloads constructor(
                 xScale * freq,
                 yScale * freq,
                 zScale * freq,
-                0.55 / amp
+                0.55 / amp,
             )
             freq *= lacunarity
             amp *= persistence

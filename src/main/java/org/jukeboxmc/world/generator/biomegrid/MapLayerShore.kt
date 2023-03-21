@@ -28,9 +28,11 @@ class MapLayerShore(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
                 val leftVal = values[j + (i + 1) * gridSizeX]
                 val rightVal = values[j + 2 + (i + 1) * gridSizeX]
                 val centerVal = values[j + 1 + (i + 1) * gridSizeX]
-                if (!OCEANS.contains(centerVal) && (OCEANS.contains(upperVal) || OCEANS.contains(lowerVal) || OCEANS.contains(
-                        leftVal
-                    ) || OCEANS.contains(rightVal))
+                if (!OCEANS.contains(centerVal) && (
+                        OCEANS.contains(upperVal) || OCEANS.contains(lowerVal) || OCEANS.contains(
+                            leftVal,
+                        ) || OCEANS.contains(rightVal)
+                        )
                 ) {
                     finalValues[j + i * sizeX] =
                         if (SPECIAL_SHORES.containsKey(centerVal)) SPECIAL_SHORES[centerVal] else Biome.BEACH.id
@@ -54,19 +56,19 @@ class MapLayerShore(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
             SPECIAL_SHORES.put(Biome.EXTREME_HILLS_MUTATED.id, Biome.STONE_BEACH.id)
             SPECIAL_SHORES.put(Biome.EXTREME_HILLS_PLUS_TREES_MUTATED.id, Biome.STONE_BEACH.id)
             SPECIAL_SHORES.put(Biome.ICE_PLAINS.id, Biome.COLD_BEACH.id)
-            //SPECIAL_SHORES.put(Biome.ICE_MOUNTAINS.id, Biome.COLD_BEACH.id);
+            // SPECIAL_SHORES.put(Biome.ICE_MOUNTAINS.id, Biome.COLD_BEACH.id);
             SPECIAL_SHORES.put(Biome.ICE_PLAINS_SPIKES.id, Biome.COLD_BEACH.id)
             SPECIAL_SHORES.put(Biome.COLD_TAIGA.id, Biome.COLD_BEACH.id)
             SPECIAL_SHORES.put(Biome.COLD_TAIGA_HILLS.id, Biome.COLD_BEACH.id)
             SPECIAL_SHORES.put(Biome.COLD_TAIGA_MUTATED.id, Biome.COLD_BEACH.id)
             SPECIAL_SHORES.put(Biome.MUSHROOM_ISLAND.id, Biome.MUSHROOM_ISLAND_SHORE.id)
             SPECIAL_SHORES.put(Biome.SWAMPLAND.id, Biome.SWAMPLAND.id)
-            //SPECIAL_SHORES.put( Biome.MESA.getId(), Biome.MESA.getId() );
-            //SPECIAL_SHORES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU_STONE.getId() );
-            //SPECIAL_SHORES.put( Biome.MESA_PLATEAU_STONE_MUTATED.getId(), Biome.MESA_PLATEAU_STONE_MUTATED.getId() );
-            //SPECIAL_SHORES.put( Biome.MESA_PLATEAU.getId(), Biome.MESA_PLATEAU.getId() );
-            //SPECIAL_SHORES.put( Biome.MESA_PLATEAU_MUTATED.getId(), Biome.MESA_PLATEAU_MUTATED.getId() );
-            //SPECIAL_SHORES.put( Biome.MESA_BRYCE.getId(), Biome.MESA_BRYCE.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA.getId(), Biome.MESA.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA_PLATEAU_STONE.getId(), Biome.MESA_PLATEAU_STONE.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA_PLATEAU_STONE_MUTATED.getId(), Biome.MESA_PLATEAU_STONE_MUTATED.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA_PLATEAU.getId(), Biome.MESA_PLATEAU.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA_PLATEAU_MUTATED.getId(), Biome.MESA_PLATEAU_MUTATED.getId() );
+            // SPECIAL_SHORES.put( Biome.MESA_BRYCE.getId(), Biome.MESA_BRYCE.getId() );
         }
     }
 }

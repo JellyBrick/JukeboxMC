@@ -1,23 +1,23 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 class EmeraldOrePopulator : Populator() {
-    private val BLOCK_EMERALD_ORE: Block = Block.Companion.create<Block>(BlockType.EMERALD_ORE)
+    private val BLOCK_EMERALD_ORE: Block = Block.create<Block>(BlockType.EMERALD_ORE)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
         for (i in 0..10) {

@@ -11,6 +11,6 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 abstract class Generator {
     abstract fun generate(chunk: Chunk, chunkX: Int, chunkZ: Int)
     abstract fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int)
-    abstract fun finish(manager: PopulationChunkManager?, chunkX: Int, chunkZ: Int)
+    abstract fun finish(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int)
     abstract val spawnLocation: Vector
 }

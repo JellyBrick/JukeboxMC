@@ -22,7 +22,7 @@ class MapLayerNoise(seed: Long) : MapLayer(seed) {
                     if (nextInt(2) == 0) 3 else 0
                 }
                 values[j + i * sizeX] = `val`
-                //values[j + i * sizeX] = noise >= -0.5D ? (double) noise >= 0.57D ? 2 : noise <= 0.2D ? 3 : 2 : nextInt(2) == 0 ? 3 : 0;
+                // values[j + i * sizeX] = noise >= -0.5D ? (double) noise >= 0.57D ? 2 : noise <= 0.2D ? 3 : 2 : nextInt(2) == 0 ? 3 : 0;
             }
         }
         return values

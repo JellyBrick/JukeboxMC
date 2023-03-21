@@ -312,6 +312,6 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         const val CHUNK_LAYERS = 2
         const val CHUNK_VERSION = 40
         const val SUB_CHUNK_VERSION = 9
-        private val BLOCK_AIR: Block = Block.Companion.create<Block>(BlockType.AIR)
+        private val BLOCK_AIR: Block = Block.create<Block>(BlockType.AIR)
     }
 }

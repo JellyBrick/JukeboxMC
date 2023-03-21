@@ -1,5 +1,8 @@
 package org.jukeboxmc.world.generator.populator.biome
 
+import org.jukeboxmc.world.generator.populator.KelpPopulator
+import org.jukeboxmc.world.generator.populator.SeagrassPopulator
+
 /**
  * @author LucGamesYT
  * @version 1.0

@@ -10,6 +10,6 @@ import org.jukeboxmc.world.generator.biome.GroundGenerator
  */
 class GroundGeneratorSnowy : GroundGenerator() {
     init {
-        topMaterial = Block.Companion.create<Block>(BlockType.SNOW)
+        topMaterial = Block.create<Block>(BlockType.SNOW)
     }
 }

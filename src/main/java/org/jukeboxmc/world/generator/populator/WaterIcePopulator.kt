@@ -1,23 +1,23 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 class WaterIcePopulator : Populator() {
-    private val BLOCK_ICE: Block = Block.Companion.create<Block>(BlockType.ICE)
+    private val BLOCK_ICE: Block = Block.create(BlockType.ICE)
     override fun populate(
         random: Random,
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val chunk = chunkManager.getChunk(chunkX, chunkZ)
         for (x in 0..15) {

@@ -28,7 +28,7 @@ open class PerlinNoiseGenerator : NoiseGenerator {
             193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249,
             14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204,
             176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222,
-            114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
+            114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180,
         )
         for (i in 0..511) {
             perm[i] = p[i and 255]
@@ -64,9 +64,9 @@ open class PerlinNoiseGenerator : NoiseGenerator {
         x += offsetX
         y += offsetY
         z += offsetZ
-        val floorX: Int = NoiseGenerator.Companion.floor(x)
-        val floorY: Int = NoiseGenerator.Companion.floor(y)
-        val floorZ: Int = NoiseGenerator.Companion.floor(z)
+        val floorX: Int = floor(x)
+        val floorY: Int = floor(y)
+        val floorZ: Int = floor(z)
 
         // Find unit cube containing the point
         val X = floorX and 255
@@ -79,9 +79,9 @@ open class PerlinNoiseGenerator : NoiseGenerator {
         z -= floorZ.toDouble()
 
         // Compute fade curves for xyz
-        val fX: Double = NoiseGenerator.Companion.fade(x)
-        val fY: Double = NoiseGenerator.Companion.fade(y)
-        val fZ: Double = NoiseGenerator.Companion.fade(z)
+        val fX: Double = fade(x)
+        val fY: Double = fade(y)
+        val fZ: Double = fade(z)
 
         // Hash coordinates of the cube corners
         val A = perm[X] + Y
@@ -90,32 +90,59 @@ open class PerlinNoiseGenerator : NoiseGenerator {
         val B = perm[X + 1] + Y
         val BA = perm[B] + Z
         val BB = perm[B + 1] + Z
-        return NoiseGenerator.Companion.lerp(
-            fZ, NoiseGenerator.Companion.lerp(
-                fY, NoiseGenerator.Companion.lerp(
-                    fX, NoiseGenerator.Companion.grad(
-                        perm[AA], x, y, z
-                    ), NoiseGenerator.Companion.grad(perm[BA], x - 1, y, z)
-                ), NoiseGenerator.Companion.lerp(
-                    fX, NoiseGenerator.Companion.grad(
-                        perm[AB], x, y - 1, z
-                    ), NoiseGenerator.Companion.grad(perm[BB], x - 1, y - 1, z)
-                )
-            ), NoiseGenerator.Companion.lerp(
-                fY, NoiseGenerator.Companion.lerp(
-                    fX, NoiseGenerator.Companion.grad(
-                        perm[AA + 1], x, y, z - 1
-                    ), NoiseGenerator.Companion.grad(perm[BA + 1], x - 1, y, z - 1)
-                ), NoiseGenerator.Companion.lerp(
-                    fX, NoiseGenerator.Companion.grad(
-                        perm[AB + 1], x, y - 1, z - 1
-                    ), NoiseGenerator.Companion.grad(perm[BB + 1], x - 1, y - 1, z - 1)
-                )
-            )
+        return lerp(
+            fZ,
+            lerp(
+                fY,
+                lerp(
+                    fX,
+                    grad(
+                        perm[AA],
+                        x,
+                        y,
+                        z,
+                    ),
+                    grad(perm[BA], x - 1, y, z),
+                ),
+                lerp(
+                    fX,
+                    grad(
+                        perm[AB],
+                        x,
+                        y - 1,
+                        z,
+                    ),
+                    grad(perm[BB], x - 1, y - 1, z),
+                ),
+            ),
+            lerp(
+                fY,
+                lerp(
+                    fX,
+                    grad(
+                        perm[AA + 1],
+                        x,
+                        y,
+                        z - 1,
+                    ),
+                    grad(perm[BA + 1], x - 1, y, z - 1),
+                ),
+                lerp(
+                    fX,
+                    grad(
+                        perm[AB + 1],
+                        x,
+                        y - 1,
+                        z - 1,
+                    ),
+                    grad(perm[BB + 1], x - 1, y - 1, z - 1),
+                ),
+            ),
         )
     }
 
     companion object {
+        @JvmStatic
         protected val grad3 = arrayOf(
             intArrayOf(1, 1, 0),
             intArrayOf(-1, 1, 0),
@@ -128,7 +155,7 @@ open class PerlinNoiseGenerator : NoiseGenerator {
             intArrayOf(0, 1, 1),
             intArrayOf(0, -1, 1),
             intArrayOf(0, 1, -1),
-            intArrayOf(0, -1, -1)
+            intArrayOf(0, -1, -1),
         )
 
         /**

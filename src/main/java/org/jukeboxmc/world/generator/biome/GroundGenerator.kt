@@ -1,10 +1,10 @@
 package org.jukeboxmc.world.generator.biome
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.generator.NormalGenerator
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -13,18 +13,18 @@ import org.jukeboxmc.world.generator.NormalGenerator
 open class GroundGenerator {
     protected var topMaterial: Block
     protected var groundMaterial: Block
-    private val BLOCK_AIR: Block = Block.Companion.create<Block>(BlockType.AIR)
-    private val BLOCK_STONE: Block = Block.Companion.create<Block>(BlockType.STONE)
-    private val BLOCK_GRAVEL: Block = Block.Companion.create<Block>(BlockType.GRAVEL)
-    private val BLOCK_SANDSTONE: Block = Block.Companion.create<Block>(BlockType.SANDSTONE)
+    private val BLOCK_AIR: Block = Block.create<Block>(BlockType.AIR)
+    private val BLOCK_STONE: Block = Block.create<Block>(BlockType.STONE)
+    private val BLOCK_GRAVEL: Block = Block.create<Block>(BlockType.GRAVEL)
+    private val BLOCK_SANDSTONE: Block = Block.create<Block>(BlockType.SANDSTONE)
 
     init {
-        topMaterial = Block.Companion.create<Block>(BlockType.GRASS)
-        groundMaterial = Block.Companion.create<Block>(BlockType.DIRT)
+        topMaterial = Block.create<Block>(BlockType.GRASS)
+        groundMaterial = Block.create<Block>(BlockType.DIRT)
     }
 
     open fun generateTerrainColumn(chunk: Chunk, random: Random, chunkX: Int, chunkZ: Int, surfaceNoise: Double) {
-        val seaLevel: Int = NormalGenerator.Companion.WATER_HEIGHT
+        val seaLevel: Int = NormalGenerator.WATER_HEIGHT
         var topMaterial = topMaterial
         var groundMaterial = groundMaterial
         val x = chunkX and 0xF

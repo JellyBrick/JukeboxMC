@@ -12,17 +12,32 @@ import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import org.jukeboxmc.world.generator.biome.BiomeGrid
 import org.jukeboxmc.world.generator.biome.BiomeHeight
 import org.jukeboxmc.world.generator.biome.GroundGenerator
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorMycel
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorPatchDirt
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorPatchDirtAndStone
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorPatchGravel
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorPatchStone
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorRocky
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorSandy
+import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorSnowy
+import org.jukeboxmc.world.generator.biomegrid.MapLayer
 import org.jukeboxmc.world.generator.noise.PerlinOctaveGenerator
 import org.jukeboxmc.world.generator.noise.SimplexOctaveGenerator
+import org.jukeboxmc.world.generator.`object`.OreType
+import org.jukeboxmc.world.generator.populator.OrePopulator
+import org.jukeboxmc.world.generator.populator.Populator
+import org.jukeboxmc.world.generator.populator.biome.BiomePopulator
+import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 class NormalGenerator(private val world: World) : Generator() {
-    private val biomeGrid: Array<MapLayer>
+    private val biomeGrid: Array<MapLayer?>
     private val random: Random
     private val blockStone: Block
     private val blockWater: Block
@@ -41,7 +56,7 @@ class NormalGenerator(private val world: World) : Generator() {
     init {
         random = Random()
         random.setSeed(world.seed)
-        biomeGrid = MapLayer.Companion.initialize(world.seed, Dimension.OVERWORLD, 1)
+        biomeGrid = MapLayer.initialize(world.seed, Dimension.OVERWORLD, 1)
         localSeed1 = ThreadLocalRandom.current().nextLong()
         localSeed2 = ThreadLocalRandom.current().nextLong()
         heightGenerator = PerlinOctaveGenerator(random, 16, 5, 5)
@@ -61,36 +76,36 @@ class NormalGenerator(private val world: World) : Generator() {
         detailGenerator.zScale = 684.412 / 80.0
         surfaceGenerator = SimplexOctaveGenerator(random, 4, 16, 16)
         surfaceGenerator.setScale(0.0625)
-        blockStone = Block.Companion.create<Block>(BlockType.STONE)
-        blockWater = Block.Companion.create<Block>(BlockType.WATER)
-        blockBedrock = Block.Companion.create<Block>(BlockType.BEDROCK)
+        blockStone = Block.create(BlockType.STONE)
+        blockWater = Block.create(BlockType.WATER)
+        blockBedrock = Block.create(BlockType.BEDROCK)
         populators.add(
             OrePopulator(
-                arrayOf<OreType>(
-                    OreType(Block.Companion.create<Block>(BlockType.COAL_ORE), 20, 17, 0, 128),
-                    OreType(Block.Companion.create<Block>(BlockType.IRON_ORE), 20, 9, 0, 64),
-                    OreType(Block.Companion.create<Block>(BlockType.REDSTONE_ORE), 8, 8, 0, 16),
-                    OreType(Block.Companion.create<Block>(BlockType.LAPIS_ORE), 1, 7, 0, 16),
-                    OreType(Block.Companion.create<Block>(BlockType.GOLD_ORE), 2, 9, 0, 32),
-                    OreType(Block.Companion.create<Block>(BlockType.DIAMOND_ORE), 1, 8, 0, 16),
-                    OreType(Block.Companion.create<Block>(BlockType.DIRT), 10, 33, 0, 128),
-                    OreType(Block.Companion.create<Block>(BlockType.GRAVEL), 8, 33, 0, 128),
+                arrayOf(
+                    OreType(Block.create(BlockType.COAL_ORE), 20, 17, 0, 128),
+                    OreType(Block.create(BlockType.IRON_ORE), 20, 9, 0, 64),
+                    OreType(Block.create(BlockType.REDSTONE_ORE), 8, 8, 0, 16),
+                    OreType(Block.create(BlockType.LAPIS_ORE), 1, 7, 0, 16),
+                    OreType(Block.create(BlockType.GOLD_ORE), 2, 9, 0, 32),
+                    OreType(Block.create(BlockType.DIAMOND_ORE), 1, 8, 0, 16),
+                    OreType(Block.create(BlockType.DIRT), 10, 33, 0, 128),
+                    OreType(Block.create(BlockType.GRAVEL), 8, 33, 0, 128),
                     OreType(
-                        Block.Companion.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.GRANITE),
+                        Block.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.GRANITE),
                         10,
                         33,
                         0,
                         80
                     ),
                     OreType(
-                        Block.Companion.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.ANDESITE),
+                        Block.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.ANDESITE),
                         10,
                         33,
                         0,
                         80
                     ),
                     OreType(
-                        Block.Companion.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.DIORITE),
+                        Block.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.DIORITE),
                         10,
                         33,
                         0,
@@ -105,7 +120,7 @@ class NormalGenerator(private val world: World) : Generator() {
         random.setSeed(chunkX * localSeed1 xor chunkZ * localSeed2 xor world.seed)
         val x = chunkX shl 2
         val z = chunkZ shl 2
-        val biomeGrid: IntArray = biomeGrid[1].generateValues(x - 2, z - 2, 10, 10)
+        val biomeGrid: IntArray = biomeGrid[1]?.generateValues(x - 2, z - 2, 10, 10) ?: return // FIXME
         val heightNoise = heightGenerator.getFractalBrownianMotion(x.toDouble(), z.toDouble(), 0.5, 2.0)
         val roughnessNoise = roughnessGenerator.getFractalBrownianMotion(x.toDouble(), 0.0, z.toDouble(), 0.5, 2.0)
         val roughnessNoise2 = roughness2Generator.getFractalBrownianMotion(x.toDouble(), 0.0, z.toDouble(), 0.5, 2.0)
@@ -117,13 +132,13 @@ class NormalGenerator(private val world: World) : Generator() {
                 var avgHeightScale = 0.0
                 var avgHeightBase = 0.0
                 var totalWeight = 0.0
-                val biome: Biome = Biome.Companion.findById(biomeGrid[xSeg + 2 + (zSeg + 2) * 10])
-                val biomeHeight = HEIGHT_MAP.getOrDefault(biome, BiomeHeight.Companion.DEFAULT)
+                val biome: Biome = Biome.findById(biomeGrid[xSeg + 2 + (zSeg + 2) * 10])!!
+                val biomeHeight = HEIGHT_MAP.getOrDefault(biome, BiomeHeight.DEFAULT)
                 for (xSmooth in 0..4) {
                     for (zSmooth in 0..4) {
                         val nearBiome: Biome =
-                            Biome.Companion.findById(biomeGrid[xSeg + xSmooth + (zSeg + zSmooth) * 10])
-                        val nearBiomeHeight = HEIGHT_MAP.getOrDefault(nearBiome, BiomeHeight.Companion.DEFAULT)
+                            Biome.findById(biomeGrid[xSeg + xSmooth + (zSeg + zSmooth) * 10])!!
+                        val nearBiomeHeight = HEIGHT_MAP.getOrDefault(nearBiome, BiomeHeight.DEFAULT)
                         val heightBase = nearBiomeHeight.height
                         val heightScale = nearBiomeHeight.scale
                         var weight = ELEVATION_WEIGHT[xSmooth][zSmooth] / (heightBase + 2.0)
@@ -209,9 +224,9 @@ class NormalGenerator(private val world: World) : Generator() {
         val cx = chunkX shl 4
         val cz = chunkZ shl 4
         val biomes = BiomeGrid()
-        val biomeValues: IntArray = this.biomeGrid[0].generateValues(cx, cz, 16, 16)
+        val biomeValues: IntArray = this.biomeGrid[0]?.generateValues(cx, cz, 16, 16) ?: return // FIXME
         for (i in biomeValues.indices) {
-            biomes.biomes.get(i) = biomeValues[i].toByte()
+            biomes.biomes[i] = biomeValues[i].toByte()
         }
         val octaveGenerator = surfaceGenerator
         val sizeX = octaveGenerator.sizeX
@@ -222,7 +237,7 @@ class NormalGenerator(private val world: World) : Generator() {
                 GROUND_MAP.getOrDefault(biomes.getBiome(sx, sz), groundGenerator)
                     .generateTerrainColumn(chunk, random, cx + sx, cz + sz, surfaceNoise!![sx or (sz shl 4)])
                 for (y in chunk.minY until chunk.maxY) {
-                    chunk.setBiome(sx, y, sz, biomes.getBiome(sx, sz))
+                    chunk.setBiome(sx, y, sz, biomes.getBiome(sx, sz)!!)
                 }
                 chunk.setBlock(sx, 0, sz, 0, blockBedrock)
             }
@@ -232,12 +247,12 @@ class NormalGenerator(private val world: World) : Generator() {
     override fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {
         try {
             random.setSeed(0XDEADBEEFL xor (chunkX.toLong() shl 8) xor chunkZ.toLong() xor world.seed)
-            val chunk = manager.getChunk(chunkX, chunkZ)
+            val chunk = manager.getChunk(chunkX, chunkZ) ?: return
             for (populator in populators) {
                 populator.populate(random, chunk.world, manager, chunkX, chunkZ)
             }
-            val biome = chunk!!.getBiome(7, 7, 7)
-            val biomePopulator: BiomePopulator = BiomePopulatorRegistry.getBiomePopulator(biome) ?: return
+            val biome = chunk.getBiome(7, 7, 7)
+            val biomePopulator: BiomePopulator = BiomePopulatorRegistry.getBiomePopulator(biome!!) ?: return
             for (populator in biomePopulator.getPopulators()) {
                 populator.populate(random, chunk.world, manager, chunkX, chunkZ)
             }
@@ -246,7 +261,7 @@ class NormalGenerator(private val world: World) : Generator() {
         }
     }
 
-    override fun finish(manager: PopulationChunkManager?, chunkX: Int, chunkZ: Int) {}
+    override fun finish(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {}
     override val spawnLocation: Vector
         get() = Vector(0, 100, 0)
 
@@ -284,24 +299,24 @@ class NormalGenerator(private val world: World) : Generator() {
             //setBiomeGround( new GroundGeneratorMesa(), Biome.MESA, Biome.MESA_PLATEAU, Biome.MESA_PLATEAU_STONE );
             //setBiomeGround( new GroundGeneratorMesa( GroundGeneratorMesa.MesaType.BRYCE ), Biome.MESA_BRYCE );
             // setBiomeGround( new GroundGeneratorMesa( GroundGeneratorMesa.MesaType.FOREST ), Biome.MESA_PLATEAU_STONE, Biome.MESA_PLATEAU_STONE_MUTATED );
-            setBiomeHeight(BiomeHeight.Companion.OCEAN, Biome.OCEAN, Biome.FROZEN_OCEAN)
-            setBiomeHeight(BiomeHeight.Companion.DEEP_OCEAN, Biome.DEEP_OCEAN)
-            setBiomeHeight(BiomeHeight.Companion.RIVER, Biome.RIVER, Biome.FROZEN_RIVER)
-            setBiomeHeight(BiomeHeight.Companion.FLAT_SHORE, Biome.BEACH, Biome.COLD_BEACH, Biome.MUSHROOM_ISLAND_SHORE)
-            setBiomeHeight(BiomeHeight.Companion.ROCKY_SHORE, Biome.STONE_BEACH)
-            setBiomeHeight(BiomeHeight.Companion.FLATLANDS, Biome.DESERT, Biome.ICE_PLAINS, Biome.SAVANNA, Biome.PLAINS)
+            setBiomeHeight(BiomeHeight.OCEAN, Biome.OCEAN, Biome.FROZEN_OCEAN)
+            setBiomeHeight(BiomeHeight.DEEP_OCEAN, Biome.DEEP_OCEAN)
+            setBiomeHeight(BiomeHeight.RIVER, Biome.RIVER, Biome.FROZEN_RIVER)
+            setBiomeHeight(BiomeHeight.FLAT_SHORE, Biome.BEACH, Biome.COLD_BEACH, Biome.MUSHROOM_ISLAND_SHORE)
+            setBiomeHeight(BiomeHeight.ROCKY_SHORE, Biome.STONE_BEACH)
+            setBiomeHeight(BiomeHeight.FLATLANDS, Biome.DESERT, Biome.ICE_PLAINS, Biome.SAVANNA, Biome.PLAINS)
             setBiomeHeight(
-                BiomeHeight.Companion.EXTREME_HILLS,
+                BiomeHeight.EXTREME_HILLS,
                 Biome.EXTREME_HILLS,
                 Biome.EXTREME_HILLS_PLUS_TREES,
                 Biome.EXTREME_HILLS_MUTATED,
                 Biome.EXTREME_HILLS_PLUS_TREES_MUTATED
             )
-            setBiomeHeight(BiomeHeight.Companion.MID_PLAINS, Biome.TAIGA, Biome.COLD_TAIGA, Biome.MEGA_TAIGA)
-            setBiomeHeight(BiomeHeight.Companion.SWAMPLAND, Biome.SWAMPLAND)
-            setBiomeHeight(BiomeHeight.Companion.LOW_HILLS, Biome.MUSHROOM_ISLAND)
+            setBiomeHeight(BiomeHeight.MID_PLAINS, Biome.TAIGA, Biome.COLD_TAIGA, Biome.MEGA_TAIGA)
+            setBiomeHeight(BiomeHeight.SWAMPLAND, Biome.SWAMPLAND)
+            setBiomeHeight(BiomeHeight.LOW_HILLS, Biome.MUSHROOM_ISLAND)
             setBiomeHeight(
-                BiomeHeight.Companion.HILLS,
+                BiomeHeight.HILLS,
                 Biome.DESERT_HILLS,
                 Biome.FOREST_HILLS,
                 Biome.TAIGA_HILLS,
@@ -314,31 +329,31 @@ class NormalGenerator(private val world: World) : Generator() {
                 Biome.MESA_PLATEAU_MUTATED
             ) //, Biome.ICE_MOUNTAINS
             setBiomeHeight(
-                BiomeHeight.Companion.HIGH_PLATEAU,
+                BiomeHeight.HIGH_PLATEAU,
                 Biome.SAVANNA_PLATEAU,
                 Biome.MESA_PLATEAU_STONE,
                 Biome.MESA_PLATEAU
             )
-            setBiomeHeight(BiomeHeight.Companion.FLATLANDS_HILLS, Biome.DESERT_MUTATED)
-            setBiomeHeight(BiomeHeight.Companion.BIG_HILLS, Biome.ICE_PLAINS_SPIKES)
-            setBiomeHeight(BiomeHeight.Companion.BIG_HILLS2, Biome.BIRCH_FOREST_HILLS_MUTATED)
-            setBiomeHeight(BiomeHeight.Companion.SWAMPLAND_HILLS, Biome.SWAMPLAND_MUTATED)
+            setBiomeHeight(BiomeHeight.FLATLANDS_HILLS, Biome.DESERT_MUTATED)
+            setBiomeHeight(BiomeHeight.BIG_HILLS, Biome.ICE_PLAINS_SPIKES)
+            setBiomeHeight(BiomeHeight.BIG_HILLS2, Biome.BIRCH_FOREST_HILLS_MUTATED)
+            setBiomeHeight(BiomeHeight.SWAMPLAND_HILLS, Biome.SWAMPLAND_MUTATED)
             setBiomeHeight(
-                BiomeHeight.Companion.DEFAULT_HILLS,
+                BiomeHeight.DEFAULT_HILLS,
                 Biome.JUNGLE_MUTATED,
                 Biome.JUNGLE_EDGE_MUTATED,
                 Biome.BIRCH_FOREST_MUTATED,
                 Biome.ROOFED_FOREST_MUTATED
             )
             setBiomeHeight(
-                BiomeHeight.Companion.MID_HILLS,
+                BiomeHeight.MID_HILLS,
                 Biome.TAIGA_MUTATED,
                 Biome.COLD_TAIGA_MUTATED,
                 Biome.REDWOOD_TAIGA_MUTATED
             )
-            setBiomeHeight(BiomeHeight.Companion.MID_HILLS2, Biome.FLOWER_FOREST)
-            setBiomeHeight(BiomeHeight.Companion.LOW_SPIKES, Biome.SAVANNA_MUTATED)
-            setBiomeHeight(BiomeHeight.Companion.HIGH_SPIKES, Biome.SAVANNA_PLATEAU_MUTATED)
+            setBiomeHeight(BiomeHeight.MID_HILLS2, Biome.FLOWER_FOREST)
+            setBiomeHeight(BiomeHeight.LOW_SPIKES, Biome.SAVANNA_MUTATED)
+            setBiomeHeight(BiomeHeight.HIGH_SPIKES, Biome.SAVANNA_PLATEAU_MUTATED)
             for (x in 0..4) {
                 for (z in 0..4) {
                     var sqX = x - 2

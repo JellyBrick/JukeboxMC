@@ -1,8 +1,8 @@
 package org.jukeboxmc.world.generator.noise
 
-import java.util.Random
 import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import org.jukeboxmc.world.generator.noise.bukkit.PerlinNoiseGenerator
+import java.util.Random
 
 open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
     /**
@@ -62,7 +62,7 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
         scaleX: Double,
         scaleY: Double,
         scaleZ: Double,
-        amplitude: Double
+        amplitude: Double,
     ): DoubleArray? {
         return if (sizeY == 1) {
             get2dNoise(noise, x, z, sizeX, sizeZ, scaleX, scaleZ, amplitude)
@@ -79,7 +79,7 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
         sizeZ: Int,
         scaleX: Double,
         scaleZ: Double,
-        amplitude: Double
+        amplitude: Double,
     ): DoubleArray? {
         var index = 0
         for (i in 0 until sizeX) {
@@ -87,29 +87,39 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
             val floorX = floor(dx)
             val ix = floorX and 255
             dx -= floorX.toDouble()
-            val fx: Double = NoiseGenerator.Companion.fade(dx)
+            val fx: Double = fade(dx)
             for (j in 0 until sizeZ) {
                 var dz = z + offsetZ + j * scaleZ
                 val floorZ = floor(dz)
                 val iz = floorZ and 255
                 dz -= floorZ.toDouble()
-                val fz: Double = NoiseGenerator.Companion.fade(dz)
+                val fz: Double = fade(dz)
                 // Hash coordinates of the square corners
                 val a = perm[ix]
                 val aa = perm[a] + iz
                 val b = perm[ix + 1]
                 val ba = perm[b] + iz
-                val x1: Double = NoiseGenerator.Companion.lerp(
-                    fx, NoiseGenerator.Companion.grad(perm[aa], dx, 0.0, dz), NoiseGenerator.Companion.grad(
-                        perm[ba], dx - 1, 0.0, dz
-                    )
+                val x1: Double = lerp(
+                    fx,
+                    grad(perm[aa], dx, 0.0, dz),
+                    grad(
+                        perm[ba],
+                        dx - 1,
+                        0.0,
+                        dz,
+                    ),
                 )
-                val x2: Double = NoiseGenerator.Companion.lerp(
-                    fx, NoiseGenerator.Companion.grad(perm[aa + 1], dx, 0.0, dz - 1), NoiseGenerator.Companion.grad(
-                        perm[ba + 1], dx - 1, 0.0, dz - 1
-                    )
+                val x2: Double = lerp(
+                    fx,
+                    grad(perm[aa + 1], dx, 0.0, dz - 1),
+                    grad(
+                        perm[ba + 1],
+                        dx - 1,
+                        0.0,
+                        dz - 1,
+                    ),
                 )
-                noise!![index++] += NoiseGenerator.Companion.lerp(fz, x1, x2) * amplitude
+                noise!![index++] += lerp(fz, x1, x2) * amplitude
             }
         }
         return noise
@@ -126,7 +136,7 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
         scaleX: Double,
         scaleY: Double,
         scaleZ: Double,
-        amplitude: Double
+        amplitude: Double,
     ): DoubleArray? {
         var n = -1
         var x1 = 0.0
@@ -139,19 +149,19 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
             val floorX = floor(dx)
             val ix = floorX and 255
             dx -= floorX.toDouble()
-            val fx: Double = NoiseGenerator.Companion.fade(dx)
+            val fx: Double = fade(dx)
             for (j in 0 until sizeZ) {
                 var dz = z + offsetZ + j * scaleZ
                 val floorZ = floor(dz)
                 val iz = floorZ and 255
                 dz -= floorZ.toDouble()
-                val fz: Double = NoiseGenerator.Companion.fade(dz)
+                val fz: Double = fade(dz)
                 for (k in 0 until sizeY) {
                     var dy = y + offsetY + k * scaleY
                     val floorY = floor(dy)
                     val iy = floorY and 255
                     dy -= floorY.toDouble()
-                    val fy: Double = NoiseGenerator.Companion.fade(dy)
+                    val fy: Double = fade(dy)
                     if (k == 0 || iy != n) {
                         n = iy
                         // Hash coordinates of the cube corners
@@ -161,34 +171,50 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
                         val b = perm[ix + 1] + iy
                         val ba = perm[b] + iz
                         val bb = perm[b + 1] + iz
-                        x1 = NoiseGenerator.Companion.lerp(
-                            fx, NoiseGenerator.Companion.grad(perm[aa], dx, dy, dz), NoiseGenerator.Companion.grad(
-                                perm[ba], dx - 1, dy, dz
-                            )
-                        )
-                        x2 = NoiseGenerator.Companion.lerp(
-                            fx, NoiseGenerator.Companion.grad(perm[ab], dx, dy - 1, dz), NoiseGenerator.Companion.grad(
-                                perm[bb], dx - 1, dy - 1, dz
-                            )
-                        )
-                        x3 = NoiseGenerator.Companion.lerp(
+                        x1 = lerp(
                             fx,
-                            NoiseGenerator.Companion.grad(perm[aa + 1], dx, dy, dz - 1),
-                            NoiseGenerator.Companion.grad(
-                                perm[ba + 1], dx - 1, dy, dz - 1
-                            )
+                            grad(perm[aa], dx, dy, dz),
+                            grad(
+                                perm[ba],
+                                dx - 1,
+                                dy,
+                                dz,
+                            ),
                         )
-                        x4 = NoiseGenerator.Companion.lerp(
+                        x2 = lerp(
                             fx,
-                            NoiseGenerator.Companion.grad(perm[ab + 1], dx, dy - 1, dz - 1),
-                            NoiseGenerator.Companion.grad(
-                                perm[bb + 1], dx - 1, dy - 1, dz - 1
-                            )
+                            grad(perm[ab], dx, dy - 1, dz),
+                            grad(
+                                perm[bb],
+                                dx - 1,
+                                dy - 1,
+                                dz,
+                            ),
+                        )
+                        x3 = lerp(
+                            fx,
+                            grad(perm[aa + 1], dx, dy, dz - 1),
+                            grad(
+                                perm[ba + 1],
+                                dx - 1,
+                                dy,
+                                dz - 1,
+                            ),
+                        )
+                        x4 = lerp(
+                            fx,
+                            grad(perm[ab + 1], dx, dy - 1, dz - 1),
+                            grad(
+                                perm[bb + 1],
+                                dx - 1,
+                                dy - 1,
+                                dz - 1,
+                            ),
                         )
                     }
-                    val y1: Double = NoiseGenerator.Companion.lerp(fy, x1, x2)
-                    val y2: Double = NoiseGenerator.Companion.lerp(fy, x3, x4)
-                    noise!![index++] += NoiseGenerator.Companion.lerp(fz, y1, y2) * amplitude
+                    val y1: Double = lerp(fy, x1, x2)
+                    val y2: Double = lerp(fy, x3, x4)
+                    noise!![index++] += lerp(fz, y1, y2) * amplitude
                 }
             }
         }
