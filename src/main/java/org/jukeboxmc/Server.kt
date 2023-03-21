@@ -251,7 +251,7 @@ class Server(logger: Logger) {
         worlds.values.forEach(Consumer { obj: World -> obj.close() })
         terminalConsole.stopConsole()
         scheduler.shutdown()
-        network.bedrockServer.close(true)
+        network.getBedrockServer().close(true)
         logger.info("Stopping other threads")
         for (thread in Thread.getAllStackTraces().keys) {
             if (thread.isAlive) {
