@@ -8,17 +8,19 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
+import lombok.SneakyThrows
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.lang.reflect.Type
 import java.util.Objects
 import java.util.Properties
-import lombok.SneakyThrows
-import org.yaml.snakeyaml.DumperOptions
-import org.yaml.snakeyaml.Yaml
 
 /**
  * @author LucGamesYT
@@ -28,9 +30,26 @@ class Config {
     private val configType: ConfigType
     var configSection: ConfigSection
         private set
-    private var gson: Gson? = null
-    private var yaml: Yaml? = null
-    private var properties: Properties? = null
+    private val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
+        .registerTypeAdapter(
+            Double::class.java,
+            JsonSerializer { src: Double, typeOfSrc: Type?, context: JsonSerializationContext? ->
+                if (src.toInt() == src.toInt()) {
+                    return@JsonSerializer JsonPrimitive(src.toInt())
+                } else if (src.toLong() == src.toLong()) {
+                    return@JsonSerializer JsonPrimitive(src.toLong())
+                }
+                JsonPrimitive(src)
+            } as JsonSerializer<Double>,
+        )
+        .create()
+    private val yaml: Yaml = Yaml(
+        DumperOptions().apply {
+            defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        },
+    )
+    private var properties: Properties = Properties()
     private val file: File?
     private val inputStream: InputStream?
 
@@ -57,44 +76,36 @@ class Config {
 
     @SneakyThrows
     fun load() {
-        InputStreamReader(
-            if (file == null) Objects.requireNonNull(inputStream) else FileInputStream(
-                file
-            )
-        ).use { reader ->
-            when (configType) {
-                ConfigType.JSON -> {
-                    val gson = GsonBuilder()
-                    gson.setPrettyPrinting()
-                    gson.registerTypeAdapter(
-                        Double::class.java,
-                        JsonSerializer { src: Double, typeOfSrc: Type?, context: JsonSerializationContext? ->
-                            if (src == src.toInt()) {
-                                return@JsonSerializer JsonPrimitive(src.toInt())
-                            } else if (src == src.toLong()) {
-                                return@JsonSerializer JsonPrimitive(src.toLong())
-                            }
-                            JsonPrimitive(src)
-                        } as JsonSerializer<Double>)
-                    this.gson = gson.create()
-                    configSection = ConfigSection(
-                        this.gson.fromJson(
-                            reader,
-                            object : TypeToken<LinkedHashMap<String?, Any?>?>() {}.type
+        (
+            if (file == null) {
+                Objects.requireNonNull(inputStream)
+            } else {
+                FileInputStream(
+                    file,
+                )
+            }
+            )?.let {
+            InputStreamReader(
+                it,
+            ).use { reader ->
+                when (configType) {
+                    ConfigType.JSON -> {
+                        val gson = GsonBuilder()
+                        configSection = ConfigSection(
+                            this.gson.fromJson(
+                                reader,
+                                object : TypeToken<LinkedHashMap<String?, Any?>?>() {}.type,
+                            ),
                         )
-                    )
-                }
+                    }
 
-                ConfigType.YAML -> {
-                    val dumperOptions = DumperOptions()
-                    dumperOptions.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-                    yaml = Yaml(dumperOptions)
-                    configSection = ConfigSection(yaml!!.loadAs(reader, LinkedHashMap::class.java))
-                }
+                    ConfigType.YAML -> {
+                        configSection = ConfigSection(yaml.loadAs(reader, LinkedHashMap::class.java))
+                    }
 
-                ConfigType.PROPERTIES -> {
-                    properties = Properties()
-                    properties!!.load(reader)
+                    ConfigType.PROPERTIES -> {
+                        properties.load(reader)
+                    }
                 }
             }
         }
@@ -103,14 +114,14 @@ class Config {
     fun exists(key: String): Boolean {
         return when (configType) {
             ConfigType.JSON, ConfigType.YAML -> configSection.exists(key)
-            ConfigType.PROPERTIES -> properties!!.getProperty(key) != null
+            ConfigType.PROPERTIES -> properties.getProperty(key) != null
         }
     }
 
     operator fun set(key: String, `object`: Any?) {
         when (configType) {
             ConfigType.JSON, ConfigType.YAML -> configSection[key] = `object`
-            ConfigType.PROPERTIES -> properties!!.setProperty(key, `object`.toString())
+            ConfigType.PROPERTIES -> properties.setProperty(key, `object`.toString())
         }
     }
 
@@ -122,7 +133,7 @@ class Config {
             }
 
             ConfigType.PROPERTIES -> {
-                properties!!.remove(key)
+                properties.remove(key)
                 save()
             }
         }
@@ -138,19 +149,19 @@ class Config {
     operator fun get(key: String?): Any {
         return when (configType) {
             ConfigType.JSON, ConfigType.YAML -> configSection[key]
-            ConfigType.PROPERTIES -> properties!!.getProperty(key)
+            ConfigType.PROPERTIES -> properties.getProperty(key)
         }!!
     }
 
-    fun getStringList(key: String?): MutableList<String?> {
+    fun getStringList(key: String?): MutableList<String> {
         return configSection.getStringList(key)
     }
 
-    fun getString(key: String?): String? {
+    fun getString(key: String?): String {
         return configSection.getString(key)
     }
 
-    fun getIntegerList(key: String?): List<Int?> {
+    fun getIntegerList(key: String?): List<Int> {
         return configSection.getIntegerList(key)
     }
 
@@ -158,7 +169,7 @@ class Config {
         return configSection.getInt(key)
     }
 
-    fun getLongList(key: String?): List<Long?> {
+    fun getLongList(key: String?): List<Long> {
         return configSection.getLongList(key)
     }
 
@@ -166,7 +177,7 @@ class Config {
         return configSection.getLong(key)
     }
 
-    fun getDoubleList(key: String?): List<Double?> {
+    fun getDoubleList(key: String?): List<Double> {
         return configSection.getDoubleList(key)
     }
 
@@ -174,7 +185,7 @@ class Config {
         return configSection.getDouble(key)
     }
 
-    fun getFloatList(key: String?): List<Float?> {
+    fun getFloatList(key: String?): List<Float> {
         return configSection.getFloatList(key)
     }
 
@@ -182,7 +193,7 @@ class Config {
         return configSection.getFloat(key)
     }
 
-    fun getByteList(key: String?): List<Byte?> {
+    fun getByteList(key: String?): List<Byte> {
         return configSection.getByteList(key)
     }
 
@@ -190,7 +201,7 @@ class Config {
         return configSection.getByte(key)
     }
 
-    fun getShortList(key: String?): List<Short?> {
+    fun getShortList(key: String?): List<Short> {
         return configSection.getShortList(key)
     }
 
@@ -198,7 +209,7 @@ class Config {
         return configSection.getShort(key)
     }
 
-    fun getBooleanList(key: String?): List<Boolean?> {
+    fun getBooleanList(key: String?): List<Boolean> {
         return configSection.getBooleanList(key)
     }
 
@@ -233,10 +244,11 @@ class Config {
         OutputStreamWriter(FileOutputStream(file)).use { writer ->
             when (configType) {
                 ConfigType.JSON -> gson.toJson(
-                    configSection, writer
+                    configSection,
+                    writer,
                 )
 
-                ConfigType.YAML -> yaml!!.dump(configSection, writer)
+                ConfigType.YAML -> yaml.dump(configSection, writer)
                 ConfigType.PROPERTIES -> properties.store(writer, "")
             }
         }

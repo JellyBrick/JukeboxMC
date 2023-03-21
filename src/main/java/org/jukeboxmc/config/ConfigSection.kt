@@ -1,7 +1,6 @@
 package org.jukeboxmc.config
 
 import java.util.Locale
-import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 /**
@@ -9,11 +8,11 @@ import java.util.function.Consumer
  * @version 1.0
  */
 class ConfigSection() : LinkedHashMap<String?, Any?>() {
-    constructor(map: LinkedHashMap<String?, Any>?) : this() {
+    constructor(map: LinkedHashMap<String?, Any?>?) : this() {
         if (map == null || map.isEmpty()) return
         for ((key, value) in map) {
             if (value is LinkedHashMap<*, *>) {
-                super.put(key, ConfigSection(value as LinkedHashMap<String?, Any>))
+                super.put(key, ConfigSection(value as LinkedHashMap<String?, Any?>))
             } else if (value is List<*>) {
                 super.put(key, parseList(value as List<Any>))
             } else {
@@ -26,7 +25,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         val newList: MutableList<Any> = ArrayList()
         for (o in list) {
             if (o is LinkedHashMap<*, *>) {
-                newList.add(ConfigSection(o as LinkedHashMap<String?, Any>))
+                newList.add(ConfigSection(o as LinkedHashMap<String?, Any?>))
             } else {
                 newList.add(o)
             }
@@ -34,7 +33,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         return newList
     }
 
-    val allMap: Map<String, Any>
+    val allMap: LinkedHashMap<String?, Any?>
         get() = LinkedHashMap(this)
     val all: ConfigSection
         get() = ConfigSection(this)
@@ -53,7 +52,9 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         val value = super.get(keys[0])
         return if (value is ConfigSection) {
             value.get<T?>(keys[1], defaultValue)
-        } else defaultValue
+        } else {
+            defaultValue
+        }
     }
 
     override fun get(key: String?): Any? {
@@ -69,7 +70,9 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
             }
             childSection!![subKeys[1]] = value
             super.put(subKeys[0], childSection)
-        } else super.put(subKeys[0], value)
+        } else {
+            super.put(subKeys[0], value)
+        }
     }
 
     fun isSection(key: String?): Boolean {
@@ -78,7 +81,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getSection(key: String?): ConfigSection {
-        return this.get(key, ConfigSection())!!
+        return this[key, ConfigSection()]!!
     }
 
     val sections: ConfigSection
@@ -86,13 +89,12 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
 
     fun getSections(key: String?): ConfigSection {
         val sections = ConfigSection()
-        val parent = (if (key == null || key.isEmpty()) all else getSection(key)) ?: return sections
-        parent.forEach(BiConsumer { key1: String, value: Any? ->
-            if (value is ConfigSection) sections.put(
-                key1,
-                value
-            )
-        })
+        val parent = (if (key.isNullOrEmpty()) all else getSection(key))
+        parent.forEach { key1, value ->
+            if (value is ConfigSection) {
+                sections[key1] = value
+            }
+        }
         return sections
     }
 
@@ -101,7 +103,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getInt(key: String?, defaultValue: Int): Int {
-        return this.get(key, defaultValue as Number)!!.toInt()
+        return this[key, defaultValue as Number]!!.toInt()
     }
 
     fun isInt(key: String?): Boolean {
@@ -127,7 +129,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getDouble(key: String?, defaultValue: Double): Double {
-        return this.get(key, defaultValue as Number)!!.toDouble()
+        return this[key, defaultValue]!!.toDouble()
     }
 
     fun isDouble(key: String?): Boolean {
@@ -140,7 +142,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getString(key: String?, defaultValue: String): String {
-        val result: Any = this.get(key, defaultValue)!!
+        val result: Any = this[key, defaultValue]!!
         return result.toString()
     }
 
@@ -154,7 +156,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getBoolean(key: String?, defaultValue: Boolean): Boolean {
-        return this.get(key, defaultValue)!!
+        return this[key, defaultValue]!!
     }
 
     fun isBoolean(key: String?): Boolean {
@@ -215,7 +217,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getStringList(key: String?): MutableList<String> {
-        val value = this.getList(key) ?: return ArrayList(0)
+        val value = this.getList(key)
         val result: MutableList<String> = ArrayList()
         for (o in value) {
             if (o is String || o is Number || o is Boolean || o is Char) {
@@ -226,7 +228,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getIntegerList(key: String?): List<Int> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Int> = ArrayList()
         for (`object` in list) {
             if (`object` is Int) {
@@ -235,7 +237,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(Integer.valueOf(`object` as String?))
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code)
@@ -247,7 +249,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getBooleanList(key: String?): List<Boolean> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Boolean> = ArrayList()
         for (`object` in list) {
             if (`object` is Boolean) {
@@ -264,7 +266,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getDoubleList(key: String?): List<Double> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Double> = ArrayList()
         for (`object` in list) {
             if (`object` is Double) {
@@ -273,7 +275,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(java.lang.Double.valueOf(`object` as String?))
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code.toDouble())
@@ -285,7 +287,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getFloatList(key: String?): List<Float> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Float> = ArrayList()
         for (`object` in list) {
             if (`object` is Float) {
@@ -294,7 +296,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(java.lang.Float.valueOf(`object` as String?))
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code.toFloat())
@@ -306,7 +308,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getLongList(key: String?): List<Long> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Long> = ArrayList()
         for (`object` in list) {
             if (`object` is Long) {
@@ -315,7 +317,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(java.lang.Long.valueOf(`object` as String?))
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code.toLong())
@@ -327,7 +329,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getByteList(key: String?): List<Byte> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Byte> = ArrayList()
         for (`object` in list) {
             if (`object` is Byte) {
@@ -336,7 +338,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(java.lang.Byte.valueOf(`object` as String?))
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code.toByte())
@@ -348,7 +350,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getCharacterList(key: String?): List<Char> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Char> = ArrayList()
         for (`object` in list) {
             if (`object` is Char) {
@@ -365,7 +367,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
     }
 
     fun getShortList(key: String?): List<Short> {
-        val list = getList(key) ?: return ArrayList(0)
+        val list = getList(key)
         val result: MutableList<Short> = ArrayList()
         for (`object` in list) {
             if (`object` is Short) {
@@ -374,7 +376,7 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
                 try {
                     result.add(`object`.toShort())
                 } catch (ex: Exception) {
-                    //ignore
+                    // ignore
                 }
             } else if (`object` is Char) {
                 result.add(`object`.code.toShort())
@@ -404,37 +406,45 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         var key = key
         if (ignoreCase) key = key.lowercase(Locale.getDefault())
         for (existKey in getKeys(true)) {
-            if (ignoreCase) existKey = existKey.lowercase(Locale.getDefault())
+            var existKey = existKey
+            if (ignoreCase) existKey = existKey?.lowercase(Locale.getDefault())
             if (existKey == key) return true
         }
         return false
     }
 
     override fun remove(key: String?) {
-        if (key == null || key.isEmpty()) return
-        if (super.containsKey(key)) super.remove(key) else if (this.containsKey(".")) {
+        if (key.isNullOrEmpty()) return
+        if (super.containsKey(key)) {
+            super.remove(key)
+        } else if (this.containsKey(".")) {
             val keys = key.split("\\.".toRegex(), limit = 2).toTypedArray()
             if (super.get(keys[0]) is ConfigSection) {
+                val section = super.get(keys[0]) as ConfigSection
                 section.remove(keys[1])
             }
         }
     }
 
-    fun getKeys(child: Boolean): Set<String> {
-        val keys: MutableSet<String> = LinkedHashSet()
-        this.forEach(BiConsumer { key: String, value: Any? ->
+    fun getKeys(child: Boolean): Set<String?> {
+        val keys: MutableSet<String?> = LinkedHashSet()
+        this.forEach { key, value ->
             keys.add(key)
             if (value is ConfigSection) {
-                if (child) value.getKeys(true).forEach(Consumer { childKey: String ->
-                    keys.add(
-                        "$key.$childKey"
+                if (child) {
+                    value.getKeys(true).forEach(
+                        Consumer { childKey: String? ->
+                            keys.add(
+                                "$key.$childKey",
+                            )
+                        },
                     )
-                })
+                }
             }
-        })
+        }
         return keys
     }
 
-    override val keys: Set<String>
-        get() = getKeys(true)
+    override val keys: MutableSet<String?>
+        get() = getKeys(true).toMutableSet()
 }
