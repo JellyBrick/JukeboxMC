@@ -1,12 +1,9 @@
 package org.jukeboxmc.plugin
 
-import lombok.ToString
-
 /**
  * @author WaterdogPE
  * @version 1.0
  */
-@ToString
 class PluginYAML {
     var name: String? = null
     var version: String? = null

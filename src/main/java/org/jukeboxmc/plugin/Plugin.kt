@@ -1,20 +1,19 @@
 package org.jukeboxmc.plugin
 
 import com.google.common.base.Preconditions
+import org.jukeboxmc.Server
+import org.jukeboxmc.logger.Logger
+import org.jukeboxmc.util.Utils
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.jar.JarEntry
-import lombok.NoArgsConstructor
-import org.jukeboxmc.Server
-import org.jukeboxmc.logger.Logger
-import org.jukeboxmc.util.Utils
+import java.util.jar.JarFile
 
 /**
  * @author WaterdogPE
  * @version 1.0
  */
-@NoArgsConstructor
 abstract class Plugin {
     protected var enabled = false
     var description: PluginYAML? = null
@@ -34,7 +33,7 @@ abstract class Plugin {
         this.server = server
         logger = server.logger
         this.pluginFile = pluginFile
-        dataFolder = File(server.pluginFolder.toString() + "/" + description.getName() + "/")
+        dataFolder = File(server.pluginFolder.toString() + "/" + description.name + "/")
         if (!dataFolder!!.exists()) {
             dataFolder!!.mkdirs()
         }
@@ -91,7 +90,7 @@ abstract class Plugin {
     fun saveResource(filename: String, outputName: String, replace: Boolean): Boolean {
         Preconditions.checkArgument(
             filename != null && !filename.trim { it <= ' ' }.isEmpty(),
-            "Filename can not be null!"
+            "Filename can not be null!",
         )
         val file = File(dataFolder, outputName)
         if (file.exists() && !replace) {
@@ -139,20 +138,20 @@ abstract class Plugin {
             }
         } catch (e: Exception) {
             throw RuntimeException(
-                "Can not " + (if (enabled) "enable" else "disable") + " plugin " + description.getName() + "!",
-                e
+                "Can not " + (if (enabled) "enable" else "disable") + " plugin " + description!!.name + "!",
+                e,
             )
         }
     }
 
     val name: String?
-        get() = description.getName()
+        get() = description!!.name
     val version: String?
-        get() = description.getVersion()
+        get() = description!!.version
     val author: String?
-        get() = description.getAuthor()
+        get() = description!!.author
     val authors: List<String?>?
-        get() = description.getAuthors()
-    val loadOrder: PluginLoadOrder?
-        get() = description.getLoadOrder()
+        get() = description!!.authors
+    val loadOrder: PluginLoadOrder
+        get() = description!!.loadOrder
 }

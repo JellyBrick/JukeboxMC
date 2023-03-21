@@ -2,17 +2,20 @@ package org.jukeboxmc.plugin
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import java.io.File
+import java.net.URLClassLoader
 
 /**
  * @author WaterdogPE
  * @version 1.0
  */
 class PluginClassLoader(private val pluginManager: PluginManager, parent: ClassLoader?, file: File) : URLClassLoader(
-    arrayOf(file.toURI().toURL()), parent
+    arrayOf(file.toURI().toURL()),
+    parent,
 ) {
     private val classes = Object2ObjectOpenHashMap<String, Class<*>?>()
+
     @Throws(ClassNotFoundException::class)
-    protected override fun findClass(name: String): Class<*>? {
+    override fun findClass(name: String): Class<*>? {
         return this.findClass(name, true)
     }
 

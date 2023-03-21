@@ -1,19 +1,23 @@
 package org.jukeboxmc.plugin
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import org.jukeboxmc.Server
+import org.jukeboxmc.command.CommandManager
+import org.jukeboxmc.event.Event
+import org.jukeboxmc.event.EventHandler
+import org.jukeboxmc.event.EventPriority
+import org.jukeboxmc.event.Listener
+import org.jukeboxmc.event.RegisteredListener
+import org.jukeboxmc.logger.Logger
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.LinkedList
-import org.jukeboxmc.Server
-import org.jukeboxmc.event.Event
-import org.jukeboxmc.event.EventHandler
-import org.jukeboxmc.event.EventPriority
-import org.jukeboxmc.event.Listener
-import org.jukeboxmc.logger.Logger
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 
 /**
  * @author WaterdogPE
@@ -23,13 +27,13 @@ class PluginManager(val server: Server) {
     private val logger: Logger?
     private val pluginLoader: PluginLoader
     private val commandManager: CommandManager
-    private val yamlLoader: Yaml = Yaml(CustomClassLoaderConstructor(this.javaClass.classLoader))
-    private val pluginMap: Object2ObjectMap<String?, Plugin?> = Object2ObjectArrayMap<String, Plugin>()
+    private val yamlLoader: Yaml = Yaml(CustomClassLoaderConstructor(this.javaClass.classLoader, LoaderOptions()))
+    private val pluginMap: Object2ObjectMap<String, Plugin> = Object2ObjectArrayMap()
     private val cachedClasses: Object2ObjectMap<String, Class<*>?> = Object2ObjectArrayMap<String, Class<*>>()
     val pluginClassLoaders: Object2ObjectMap<String?, PluginClassLoader?> =
         Object2ObjectArrayMap<String, PluginClassLoader>()
-    val listeners: MutableMap<Class<out Event?>, Map<EventPriority, MutableList<RegisteredListener>>> =
-        HashMap<Class<out Event?>, Map<EventPriority, MutableList<RegisteredListener>>>()
+    val listeners: MutableMap<Class<out Event?>, MutableMap<EventPriority, MutableList<RegisteredListener>>> =
+        HashMap()
 
     init {
         logger = server.logger
@@ -43,7 +47,7 @@ class PluginManager(val server: Server) {
         try {
             Files.walk(folderPath).use { pluginPaths ->
                 pluginPaths.filter { path: Path? -> Files.isRegularFile(path) }
-                    .filter { file: Path -> PluginLoader.Companion.isJarFile(file) }
+                    .filter { file: Path -> PluginLoader.isJarFile(file) }
                     .forEach { jarPath: Path -> this.loadPlugin(jarPath, directStartup) }
             }
         } catch (e: IOException) {
@@ -56,7 +60,7 @@ class PluginManager(val server: Server) {
     }
 
     fun loadPlugin(path: Path, directStartup: Boolean): Plugin? {
-        if (!Files.isRegularFile(path) || !PluginLoader.Companion.isJarFile(path)) {
+        if (!Files.isRegularFile(path) || !PluginLoader.isJarFile(path)) {
             logger!!.warn("Cannot load plugin: Provided file is no jar file: " + path.fileName)
             return null
         }
@@ -65,16 +69,16 @@ class PluginManager(val server: Server) {
             return null
         }
         val config = pluginLoader.loadPluginData(pluginFile, yamlLoader) ?: return null
-        if (getPluginByName(config.getName()) != null) {
-            logger!!.warn("Plugin is already loaded: " + config.getName())
+        if (getPluginByName(config.name) != null) {
+            logger!!.warn("Plugin is already loaded: " + config.name)
             return null
         }
         val plugin = pluginLoader.loadPluginJAR(config, pluginFile) ?: return null
-        pluginMap[config.getName()] = plugin
+        pluginMap[config.name] = plugin
         plugin.onStartup()
         if (directStartup) {
             try {
-                plugin.isEnabled = true
+                plugin.setEnabled(true)
             } catch (e: Exception) {
                 logger!!.error("Direct startup failed!" + e.message)
             }
@@ -83,7 +87,7 @@ class PluginManager(val server: Server) {
     }
 
     fun enableAllPlugins(pluginLoadOrder: PluginLoadOrder) {
-        val failed = LinkedList<Plugin?>()
+        val failed = LinkedList<Plugin>()
         for (plugin in pluginMap.values) {
             if (plugin.loadOrder == pluginLoadOrder) {
                 if (!enablePlugin(plugin, null)) {
@@ -95,7 +99,7 @@ class PluginManager(val server: Server) {
             val builder = StringBuilder("§cFailed to load plugins: §e")
             while (failed.peek() != null) {
                 val plugin = failed.poll()
-                builder.append(plugin.getName())
+                builder.append(plugin.name)
                 if (failed.peek() != null) {
                     builder.append(", ")
                 }
@@ -105,10 +109,10 @@ class PluginManager(val server: Server) {
     }
 
     fun enablePlugin(plugin: Plugin, parent: String?): Boolean {
-        if (plugin.isEnabled) return true
+        if (plugin.isEnabled()) return true
         val pluginName = plugin.name
-        if (plugin.description.getDepends() != null) {
-            for (depend in plugin.description.getDepends()) {
+        if (plugin.description!!.depends != null) {
+            for (depend in plugin.description!!.depends!!) {
                 if (depend == parent) {
                     logger!!.warn("§cCan not enable plugin $pluginName circular dependency $parent!")
                     return false
@@ -118,13 +122,13 @@ class PluginManager(val server: Server) {
                     logger!!.warn("§cCan not enable plugin $pluginName missing dependency $depend!")
                     return false
                 }
-                if (!dependPlugin.isEnabled && !enablePlugin(dependPlugin, pluginName)) {
+                if (!dependPlugin.isEnabled() && !enablePlugin(dependPlugin, pluginName)) {
                     return false
                 }
             }
         }
         try {
-            plugin.isEnabled = true
+            plugin.setEnabled(true)
             logger!!.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
         } catch (e: RuntimeException) {
             e.printStackTrace()
@@ -135,9 +139,9 @@ class PluginManager(val server: Server) {
 
     fun disableAllPlugins() {
         for (plugin in pluginMap.values) {
-            logger!!.info("Disabling plugin " + plugin.getName() + "")
+            logger!!.info("Disabling plugin " + plugin.name + "")
             try {
-                plugin!!.isEnabled = false
+                plugin!!.setEnabled(false)
             } catch (e: RuntimeException) {
                 e.printStackTrace()
             }
@@ -155,7 +159,7 @@ class PluginManager(val server: Server) {
                     return clazz
                 }
             } catch (e: ClassNotFoundException) {
-                //ignore
+                // ignore
             }
         }
         return null
@@ -180,15 +184,15 @@ class PluginManager(val server: Server) {
         val listenerClass: Class<out Listener> = listener.javaClass
         for (method in listenerClass.declaredMethods) {
             val eventHandler = method.getAnnotation(
-                EventHandler::class.java
+                EventHandler::class.java,
             ) ?: continue
             val eventPriority = eventHandler.priority
             if (method.parameterTypes.size != 1 || !Event::class.java.isAssignableFrom(method.parameterTypes[0])) {
                 continue
             }
             val eventClass = method.parameterTypes[0] as Class<out Event?>
-            listeners.putIfAbsent(eventClass, LinkedHashMap<EventPriority, MutableList<RegisteredListener>>())
-            listeners[eventClass].putIfAbsent(eventPriority, ArrayList<RegisteredListener>())
+            listeners.putIfAbsent(eventClass, LinkedHashMap())
+            listeners[eventClass]!!.putIfAbsent(eventPriority, ArrayList())
             listeners[eventClass]!![eventPriority]!!.add(RegisteredListener(method, listener))
         }
     }
@@ -201,7 +205,7 @@ class PluginManager(val server: Server) {
                 if (methods != null) {
                     for (registeredListener in methods) {
                         try {
-                            registeredListener.getMethod().invoke(registeredListener.getListener(), event)
+                            registeredListener.method.invoke(registeredListener.listener, event)
                         } catch (e: IllegalAccessException) {
                             e.printStackTrace()
                         } catch (e: InvocationTargetException) {

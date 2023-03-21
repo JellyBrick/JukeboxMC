@@ -1,5 +1,7 @@
 package org.jukeboxmc.plugin.annotation
 
+import org.jukeboxmc.plugin.PluginLoadOrder
+
 /**
  * @author LucGamesYT
  * @version 1.0
