@@ -1,5 +1,6 @@
 package org.jukeboxmc.potion
 
+import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
 
 /**

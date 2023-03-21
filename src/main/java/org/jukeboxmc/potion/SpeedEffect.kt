@@ -1,6 +1,7 @@
 package org.jukeboxmc.potion
 
 import java.awt.Color
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.attribute.AttributeType
 
 /**
@@ -17,10 +18,10 @@ class SpeedEffect : Effect() {
 
     override fun update(currentTick: Long) {}
     override fun apply(entityLiving: EntityLiving) {
-        entityLiving.setMovement((amplifier + 1) * 0.2f)
+        entityLiving.movement = (amplifier + 1) * 0.2f
     }
 
     override fun remove(entityLiving: EntityLiving) {
-        entityLiving.getAttribute(AttributeType.MOVEMENT).reset()
+        entityLiving.getAttribute(AttributeType.MOVEMENT)?.reset()
     }
 }

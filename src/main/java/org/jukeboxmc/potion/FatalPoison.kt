@@ -1,8 +1,9 @@
 package org.jukeboxmc.potion
 
-import java.awt.Color
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
+import java.awt.Color
 
 /**
  * @author LucGamesYT
@@ -18,7 +19,7 @@ class FatalPoison : Effect() {
 
     override fun apply(entityLiving: EntityLiving) {
         if (canExecute()) {
-            if (entityLiving.getHealth() > 2) {
+            if (entityLiving.health > 2) {
                 entityLiving.damage(EntityDamageEvent(entityLiving, 1f, DamageSource.MAGIC_EFFECT))
             }
         }
@@ -28,7 +29,9 @@ class FatalPoison : Effect() {
         var interval: Int
         return if ((25 shr amplifier).also { interval = it } > 0) {
             duration % interval == 0
-        } else false
+        } else {
+            false
+        }
     }
 
     override fun update(currentTick: Long) {}

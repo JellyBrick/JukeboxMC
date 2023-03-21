@@ -1,5 +1,6 @@
 package org.jukeboxmc.potion
 
+import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
 
 /**
@@ -16,13 +17,13 @@ class AbsorptionEffect : Effect() {
 
     override fun apply(entityLiving: EntityLiving) {
         val value = (amplifier + 1) * 4
-        if (value > entityLiving.getAbsorption()) {
-            entityLiving.setAbsorption(value.toFloat())
+        if (value > entityLiving.absorption) {
+            entityLiving.absorption = value.toFloat()
         }
     }
 
     override fun update(currentTick: Long) {}
     override fun remove(entityLiving: EntityLiving) {
-        entityLiving.setAbsorption(0f)
+        entityLiving.absorption = 0f
     }
 }

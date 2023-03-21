@@ -1,5 +1,6 @@
 package org.jukeboxmc.potion
 
+import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
 
 /**
@@ -16,10 +17,10 @@ class SlownessEffect : Effect() {
 
     override fun update(currentTick: Long) {}
     override fun apply(entityLiving: EntityLiving) {
-        entityLiving.setMovement(entityLiving.getMovement() * (1 - 0.15f * (amplifier + 1)))
+        entityLiving.movement = (entityLiving.movement * (1 - 0.15f * (amplifier + 1)))
     }
 
     override fun remove(entityLiving: EntityLiving) {
-        entityLiving.setMovement(entityLiving.getMovement() / (1 - 0.15f * (amplifier + 1)))
+        entityLiving.movement = (entityLiving.movement / (1 - 0.15f * (amplifier + 1)))
     }
 }

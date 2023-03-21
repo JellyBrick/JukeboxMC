@@ -1,15 +1,14 @@
 package org.jukeboxmc.potion
 
+import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
-import lombok.ToString
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
 abstract class Effect {
     var amplifier = 0
         protected set

@@ -1,7 +1,8 @@
 package org.jukeboxmc.potion
 
-import java.awt.Color
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.event.entity.EntityHealEvent
+import java.awt.Color
 
 /**
  * @author LucGamesYT
@@ -25,7 +26,9 @@ class RegenerationEffect : Effect() {
         var interval: Int
         return if ((40 shr amplifier).also { interval = it } > 0) {
             duration % interval == 0
-        } else false
+        } else {
+            false
+        }
     }
 
     override fun update(currentTick: Long) {}

@@ -1,5 +1,7 @@
 package org.jukeboxmc.potion
 
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
+import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
 
 /**
@@ -15,11 +17,11 @@ class InvisibilityEffect : Effect() {
         get() = Color(127, 131, 146)
 
     override fun apply(entityLiving: EntityLiving) {
-        entityLiving.updateMetadata(entityLiving.getMetadata().setFlag(EntityFlag.INVISIBLE, true))
+        entityLiving.updateMetadata(entityLiving.metadata.setFlag(EntityFlag.INVISIBLE, true))
     }
 
     override fun update(currentTick: Long) {}
     override fun remove(entityLiving: EntityLiving) {
-        entityLiving.updateMetadata(entityLiving.getMetadata().setFlag(EntityFlag.INVISIBLE, false))
+        entityLiving.updateMetadata(entityLiving.metadata.setFlag(EntityFlag.INVISIBLE, false))
     }
 }
