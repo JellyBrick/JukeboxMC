@@ -5,17 +5,12 @@ import com.nukkitx.nbt.NbtUtils
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
-import java.io.File
-import java.io.IOException
-import java.util.concurrent.CompletableFuture
 import net.daporkchop.ldbjni.LevelDB
 import org.iq80.leveldb.CompressionType
 import org.iq80.leveldb.DB
 import org.iq80.leveldb.Options
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.palette.Palette
-import org.jukeboxmc.block.palette.RuntimeDataDeserializer
-import org.jukeboxmc.block.palette.RuntimeDataSerializer
 import org.jukeboxmc.blockentity.BlockEntity
 import org.jukeboxmc.blockentity.BlockEntityRegistry
 import org.jukeboxmc.util.BlockPalette
@@ -26,13 +21,19 @@ import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.ChunkState
 import org.jukeboxmc.world.chunk.SubChunk
+import org.jukeboxmc.world.chunk.util.SimplePersistentDataDeserializer
+import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataDeserializer
+import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataSerializer
+import java.io.File
+import java.io.IOException
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 class LevelDB(private val world: World) {
-    private var db: DB? = null
+    private var db: DB
 
     init {
         try {
@@ -48,7 +49,7 @@ class LevelDB(private val world: World) {
 
     fun readChunk(chunk: Chunk): CompletableFuture<Chunk> {
         return CompletableFuture.supplyAsync({
-            var version = db!![Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2C.toByte())]
+            var version = db[Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2C.toByte())]
             if (version == null) {
                 version = db[Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x76.toByte())]
             }
@@ -63,13 +64,15 @@ class LevelDB(private val world: World) {
                     ChunkState.values()[Unpooled.wrappedBuffer(finalized).readIntLE() + 1]
             }
             for (subChunkIndex in chunk.minY shr 4 until (chunk.maxY shr 4)) {
-                val chunkData = db[Utils.getSubChunkKey(
-                    chunk.x,
-                    chunk.z,
-                    chunk.dimension,
-                    0x2f.toByte(),
-                    subChunkIndex.toByte()
-                )]
+                val chunkData = db[
+                    Utils.getSubChunkKey(
+                        chunk.x,
+                        chunk.z,
+                        chunk.dimension,
+                        0x2f.toByte(),
+                        subChunkIndex.toByte(),
+                    ),
+                ]
                 val arrayIndex = subChunkIndex + (Math.abs(chunk.minY) shr 4)
                 if (chunkData != null) {
                     loadSection(chunk.getOrCreateSubChunk(arrayIndex, true)!!, chunkData)
@@ -84,7 +87,7 @@ class LevelDB(private val world: World) {
                 loadBlockEntities(chunk, blockEntities)
             }
             chunk
-        }, Server.Companion.getInstance().getScheduler().getChunkExecutor())
+        }, Server.instance.scheduler.chunkExecutor)
     }
 
     private fun loadSection(chunk: SubChunk, chunkData: ByteArray) {
@@ -94,7 +97,7 @@ class LevelDB(private val world: World) {
             chunk.subChunkVersion = subChunkVersion.toInt()
             var storages = 1
             when (subChunkVersion) {
-                9, 8 -> {
+                9.toByte(), 8.toByte() -> {
                     storages = buffer.readByte().toInt()
                     chunk.layer = storages
                     if (subChunkVersion.toInt() == 9) {
@@ -104,39 +107,53 @@ class LevelDB(private val world: World) {
                     while (layer < storages) {
                         try {
                             buffer.markReaderIndex()
-                            chunk.blocks[layer].readFromStoragePersistent(buffer) { compound: NbtMap ->
-                                val identifier = compound.getString("name")
-                                val states = compound.getCompound("states")
-                                BlockPalette.getBlock(Identifier.Companion.fromString(identifier), states)
-                            }
+                            chunk.blocks[layer].readFromStoragePersistent(
+                                buffer,
+                                SimplePersistentDataDeserializer { compound: NbtMap ->
+                                    val identifier = compound.getString("name")
+                                    val states = compound.getCompound("states")
+                                    BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                },
+                            )
                         } catch (e: IllegalArgumentException) {
                             buffer.resetReaderIndex()
                             chunk.blocks[layer].readFromStorageRuntime(
                                 buffer,
-                                { runtimeId: Int -> BlockPalette.getBlockByNBT(BlockPalette.getBlockNbt(runtimeId)) },
-                                null
+                                SimpleRuntimeDataDeserializer { runtimeId: Int ->
+                                    BlockPalette.getBlockByNBT(
+                                        BlockPalette.getBlockNbt(runtimeId),
+                                    )
+                                },
+                                null,
                             )
                         }
                         layer++
                     }
                 }
 
-                1 -> {
+                1.toByte() -> {
                     var layer = 0
                     while (layer < storages) {
                         try {
                             buffer.markReaderIndex()
-                            chunk.blocks[layer].readFromStoragePersistent(buffer) { compound: NbtMap ->
-                                val identifier = compound.getString("name")
-                                val states = compound.getCompound("states")
-                                BlockPalette.getBlock(Identifier.Companion.fromString(identifier), states)
-                            }
+                            chunk.blocks[layer].readFromStoragePersistent(
+                                buffer,
+                                SimplePersistentDataDeserializer { compound: NbtMap ->
+                                    val identifier = compound.getString("name")
+                                    val states = compound.getCompound("states")
+                                    BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                },
+                            )
                         } catch (e: IllegalArgumentException) {
                             buffer.resetReaderIndex()
                             chunk.blocks[layer].readFromStorageRuntime(
                                 buffer,
-                                { runtimeId: Int -> BlockPalette.getBlockByNBT(BlockPalette.getBlockNbt(runtimeId)) },
-                                null
+                                SimpleRuntimeDataDeserializer { runtimeId: Int ->
+                                    BlockPalette.getBlockByNBT(
+                                        BlockPalette.getBlockNbt(runtimeId),
+                                    )
+                                },
+                                null,
                             )
                         }
                         layer++
@@ -152,19 +169,19 @@ class LevelDB(private val world: World) {
         val buffer = Unpooled.wrappedBuffer(heightAndBiomes)
         try {
             val height = chunk.height
-            for (i in height!!.indices) {
+            for (i in height.indices) {
                 height[i] = buffer.readShortLE()
             }
             if (buffer.readableBytes() <= 0) return
-            var last: Palette<Biome?>? = null
-            var biomePalette: Palette<Biome?>
+            var last: Palette<Biome>? = null
+            var biomePalette: Palette<Biome>
             for (y in chunk.minY shr 4 until (chunk.maxY + 1 shr 4)) {
                 try {
                     biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
                     biomePalette.readFromStorageRuntime(
                         buffer,
-                        RuntimeDataDeserializer { id: Int -> Biome.Companion.findById(id) },
-                        last
+                        SimpleRuntimeDataDeserializer { id: Int -> Biome.findById(id)!! },
+                        last,
                     )
                     last = biomePalette
                 } catch (ignored: Exception) {
@@ -186,17 +203,13 @@ class LevelDB(private val world: World) {
                     val y = nbtMap.getInt("y", 0)
                     val z = nbtMap.getInt("z", 0)
                     val block = chunk.getBlock(x, y, z, 0)
-                    if (block != null) {
-                        val blockEntityType = BlockEntityRegistry.getBlockEntityTypeById(nbtMap.getString("id"))
-                        if (blockEntityType != null) {
-                            val blockEntity: BlockEntity =
-                                BlockEntity.Companion.create<BlockEntity>(blockEntityType, block)
-                            if (blockEntity != null) {
-                                blockEntity.fromCompound(nbtMap)
-                                chunk.setBlockEntity(x, y, z, blockEntity)
-                                blockEntity.isSpawned = true
-                            }
-                        }
+                    val blockEntityType = BlockEntityRegistry.getBlockEntityTypeById(nbtMap.getString("id"))
+                    if (blockEntityType != null) {
+                        val blockEntity: BlockEntity =
+                            BlockEntity.create(blockEntityType, block)
+                        blockEntity.fromCompound(nbtMap)
+                        chunk.setBlockEntity(x, y, z, blockEntity)
+                        blockEntity.isSpawned = true
                     }
                 } catch (e: IOException) {
                     break
@@ -213,29 +226,29 @@ class LevelDB(private val world: World) {
                 return@supplyAsync null
             }
             try {
-                db!!.createWriteBatch().use { writeBatch ->
-                    //Write subChunks
+                db.createWriteBatch().use { writeBatch ->
+                    // Write subChunks
                     val minY = chunk.minY shr 4
                     for (subY in 0 until chunk.availableSubChunks) {
                         if (chunk.subChunks[subY] == null) {
                             continue
                         }
                         val subChunkIndex = subY + minY
-                        chunk.saveChunkSlice(chunk.subChunks[subY].blocks, subChunkIndex, writeBatch)
+                        chunk.saveChunkSlice(chunk.subChunks[subY]!!.blocks, subChunkIndex, writeBatch)
                     }
 
-                    //Write chunkVersion
+                    // Write chunkVersion
                     val chunkVersion = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2c.toByte())
-                    writeBatch.put(chunkVersion, byteArrayOf(Chunk.Companion.CHUNK_VERSION.toByte()))
+                    writeBatch.put(chunkVersion, byteArrayOf(Chunk.CHUNK_VERSION.toByte()))
 
-                    //Write blockEntities
+                    // Write blockEntities
                     val blockEntitiesKey = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x31.toByte())
                     val buffer = Unpooled.buffer()
                     val blockEntities = chunk.blockEntities
                     if (!blockEntities.isEmpty()) {
                         try {
                             NbtUtils.createWriterLE(ByteBufOutputStream(buffer)).use { networkWriter ->
-                                for (blockEntity in blockEntities) {
+                                for ((_, blockEntity) in blockEntities) {
                                     try {
                                         val build = blockEntity!!.toCompound().build()
                                         networkWriter.writeTag(build)
@@ -253,20 +266,20 @@ class LevelDB(private val world: World) {
                         buffer.release()
                     }
 
-                    //Write biomeAndHeight
+                    // Write biomeAndHeight
                     val biomeAndHeight = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2b.toByte())
                     val heightAndBiomesBuffer = Unpooled.buffer()
                     for (height in chunk.height) {
                         heightAndBiomesBuffer.writeShortLE(height.toInt())
                     }
-                    var last: Palette<Biome?>? = null
-                    var biomePalette: Palette<Biome?>
+                    var last: Palette<Biome>? = null
+                    var biomePalette: Palette<Biome>
                     for (y in chunk.minY shr 4 until (chunk.maxY + 1 shr 4)) {
                         biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
                         biomePalette.writeToStorageRuntime(
                             heightAndBiomesBuffer,
-                            RuntimeDataSerializer { obj: V -> obj.getId() },
-                            last
+                            SimpleRuntimeDataSerializer { obj -> obj.id },
+                            last,
                         )
                         last = biomePalette
                     }
@@ -277,7 +290,7 @@ class LevelDB(private val world: World) {
             } catch (e: IOException) {
                 throw RuntimeException(e)
             }
-        }, Server.Companion.getInstance().getScheduler().getChunkExecutor())
+        }, Server.instance.scheduler.chunkExecutor)
     }
 
     fun close() {
