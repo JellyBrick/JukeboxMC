@@ -1,11 +1,13 @@
 package org.jukeboxmc.scheduler
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import org.jukeboxmc.Server
 import java.util.LinkedList
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
-import lombok.Getter
-import org.jukeboxmc.Server
 
 /**
  * @author WaterdogPE
@@ -14,11 +16,9 @@ import org.jukeboxmc.Server
 class Scheduler(server: Server) {
     private val server: Server
 
-    @Getter
     private val threadedExecutor: ExecutorService
 
-    @Getter
-    private val chunkExecutor: ExecutorService
+    val chunkExecutor: ExecutorService
     private val taskHandlerMap: MutableMap<Int, TaskHandler> = ConcurrentHashMap<Int, TaskHandler>()
     private val assignedTasks: MutableMap<Long, LinkedList<TaskHandler>> =
         ConcurrentHashMap<Long, LinkedList<TaskHandler>>()
@@ -137,7 +137,7 @@ class Scheduler(server: Server) {
         get() = server.currentTick
 
     companion object {
-        var instance: Scheduler?
-            private set
+        lateinit var instance: Scheduler
+            internal set
     }
 }

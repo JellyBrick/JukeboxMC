@@ -23,11 +23,11 @@ abstract class Task : Runnable {
     abstract fun onRun(currentTick: Long)
     abstract fun onCancel()
     override fun run() {
-        onRun(if (handler == null) -1 else handler.getLastRunTick())
+        onRun(if (handler == null) -1 else handler!!.lastRunTick)
     }
 
     val taskId: Int
-        get() = if (handler == null) -1 else handler.getTaskId()
+        get() = if (handler == null) -1 else handler!!.taskId
 
     fun cancel() {
         if (handler != null) {

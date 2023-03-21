@@ -16,13 +16,12 @@ class SchedulerFuture<V> : Runnable, Future<V> {
     private val scheduler: Scheduler
     private val callable: Callable<V>?
     private val consumers: MutableSet<BiConsumer<V, Throwable?>>?
-    private val waiting: Any?
+    private val waiting: Object?
 
     @Volatile
     private var runner: Thread? = null
 
-    @Volatile
-    private var value: V? = null
+    var value: V? = null
 
     @Volatile
     private var throwable: Throwable? = null
@@ -37,9 +36,9 @@ class SchedulerFuture<V> : Runnable, Future<V> {
         this.scheduler = scheduler
         callable = null
         consumers = null
-        waiting = null
         runner = Thread.currentThread()
         this.value = value
+        waiting = null
         finished = true
         cancelled = false
     }
@@ -48,8 +47,8 @@ class SchedulerFuture<V> : Runnable, Future<V> {
         this.scheduler = scheduler
         this.callable = callable
         consumers = LinkedHashSet()
-        waiting = Any()
         finished = false
+        waiting = Object()
         cancelled = false
     }
 
@@ -57,17 +56,16 @@ class SchedulerFuture<V> : Runnable, Future<V> {
         if (runner != null) return
         runner = Thread.currentThread()
         try {
-            value = Objects.requireNonNull(callable).call()
+            value = Objects.requireNonNull(callable)?.call()!!
         } catch (throwable: Throwable) {
             this.throwable = throwable
         } finally {
             finished = true
-            synchronized(Objects.requireNonNull(waiting)) { waiting.notifyAll() }
+            synchronized(waiting!!) { waiting.notifyAll() }
+
             scheduler.execute {
-                for (consumer in Objects.requireNonNull<Set<BiConsumer<V, Throwable?>>?>(
-                    consumers
-                )) consumer.accept(value, throwable)
-                consumers!!.clear()
+                for (consumer in consumers!!) value?.let { consumer.accept(it, throwable) }
+                consumers.clear()
             }
         }
     }
@@ -81,23 +79,29 @@ class SchedulerFuture<V> : Runnable, Future<V> {
     @Synchronized
     fun onFinish(consumer: BiConsumer<V, Throwable?>): SchedulerFuture<V> {
         scheduler.execute {
-            if (finished) consumer.accept(value, throwable) else Objects.requireNonNull(
-                consumers
-            ).add(consumer)
+            if (finished) {
+                value?.let { consumer.accept(it, throwable) }
+            } else {
+                    consumers!!.add(consumer)
+            }
         }
         return this
     }
 
     override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
         if (finished) return false
-        return if (runner == null) false else try {
-            if (mayInterruptIfRunning) {
-                runner!!.interrupt()
-                return true
-            }
+        return if (runner == null) {
             false
-        } finally {
-            cancelled = true
+        } else {
+            try {
+                if (mayInterruptIfRunning) {
+                    runner!!.interrupt()
+                    return true
+                }
+                false
+            } finally {
+                cancelled = true
+            }
         }
     }
 
@@ -110,12 +114,12 @@ class SchedulerFuture<V> : Runnable, Future<V> {
     }
 
     @Throws(InterruptedException::class, ExecutionException::class)
-    override fun get(): V {
+    override fun get(): V? {
         if (finished) {
             if (throwable != null) throw ExecutionException(throwable)
             return value
         }
-        synchronized(Objects.requireNonNull(waiting)) {
+        synchronized(waiting!!) {
             waiting.wait()
             if (throwable != null) throw ExecutionException(throwable)
             return value
@@ -123,12 +127,12 @@ class SchedulerFuture<V> : Runnable, Future<V> {
     }
 
     @Throws(InterruptedException::class, ExecutionException::class, TimeoutException::class)
-    override fun get(timeout: Long, timeUnit: TimeUnit): V {
+    override fun get(timeout: Long, timeUnit: TimeUnit): V? {
         if (finished) {
             if (throwable != null) throw ExecutionException(throwable)
             return value
         }
-        synchronized(Objects.requireNonNull(waiting)) {
+        synchronized(waiting!!) {
             waiting.wait(timeUnit.toMillis(timeout))
             if (!finished) throw TimeoutException()
             if (throwable != null) throw ExecutionException(throwable)
