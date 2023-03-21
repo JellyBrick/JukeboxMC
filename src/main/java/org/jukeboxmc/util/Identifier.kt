@@ -1,9 +1,6 @@
 package org.jukeboxmc.util
 
-import lombok.Getter
-
-@Getter
-class Identifier(private val namespace: String, private val name: String, private val fullName: String) {
+class Identifier(val namespace: String, val name: String, val fullName: String) {
     private val hashCode: Int
 
     init {
@@ -30,9 +27,13 @@ class Identifier(private val namespace: String, private val name: String, privat
             var str = str
             if (str.isBlank()) return EMPTY
             str = str.trim { it <= ' ' }
-            val nameParts = if (str.indexOf(SEPARATOR) != -1) str.split(SEPARATOR.toString().toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .toTypedArray() else arrayOf(str)
+            val nameParts = if (str.indexOf(SEPARATOR) != -1) {
+                str.split(SEPARATOR.toString().toRegex())
+                    .dropLastWhile { it.isEmpty() }
+                    .toTypedArray()
+            } else {
+                arrayOf(str)
+            }
             val namespace = if (nameParts.size > 1) nameParts[0] else DEFAULT_NAMESPACE
             val name = if (nameParts.size > 1) nameParts[1] else str
             val fullName = namespace + SEPARATOR + name

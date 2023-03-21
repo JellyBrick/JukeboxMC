@@ -1,7 +1,8 @@
 package org.jukeboxmc.util
 
-import java.util.concurrent.TimeUnit
 import org.jukeboxmc.logger.Logger
+import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 /**
  * @author LucGamesYT
@@ -14,7 +15,7 @@ class ServerKiller(private val logger: Logger) : Thread() {
         } catch (e: InterruptedException) {
             throw RuntimeException(e)
         }
-        System.exit(1)
         logger.info("Server shutdown successfully!")
+        exitProcess(1)
     }
 }

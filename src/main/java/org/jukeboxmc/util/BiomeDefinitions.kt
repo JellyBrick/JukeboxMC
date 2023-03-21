@@ -2,6 +2,7 @@ package org.jukeboxmc.util
 
 import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtUtils
+import org.jukeboxmc.Bootstrap
 
 /**
  * @author LucGamesYT
@@ -13,7 +14,7 @@ object BiomeDefinitions {
 
     fun init() {
         try {
-            Bootstrap::class.java.getClassLoader().getResourceAsStream("biome_definitions.dat").use { inputStream ->
+            Bootstrap::class.java.classLoader.getResourceAsStream("biome_definitions.dat").use { inputStream ->
                 if (inputStream == null) {
                     throw AssertionError("Could not find biome_definitions.dat")
                 }

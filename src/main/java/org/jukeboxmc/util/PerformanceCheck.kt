@@ -28,7 +28,7 @@ class PerformanceCheck {
         val stop = System.currentTimeMillis()
         val result = stop - start
         if (result >= startAt) {
-            Server.Companion.getInstance().getLogger()
+            Server.instance.logger
                 .info(name + " -> " + result + "ms Thread: " + Thread.currentThread().name)
         }
     }

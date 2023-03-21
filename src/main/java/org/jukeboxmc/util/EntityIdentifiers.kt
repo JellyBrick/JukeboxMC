@@ -3,6 +3,7 @@ package org.jukeboxmc.util
 import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtUtils
 import java.io.InputStream
+import org.jukeboxmc.Bootstrap
 
 /**
  * @author LucGamesYT
@@ -14,7 +15,7 @@ object EntityIdentifiers {
 
     fun init() {
         val inputStream: InputStream =
-            Bootstrap::class.java.getClassLoader().getResourceAsStream("entity_identifiers.dat")
+            Bootstrap::class.java.classLoader.getResourceAsStream("entity_identifiers.dat")
                 ?: throw AssertionError("Could not find entity_identifiers.dat")
         try {
             NbtUtils.createNetworkReader(inputStream)

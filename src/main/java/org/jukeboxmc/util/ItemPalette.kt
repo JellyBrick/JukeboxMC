@@ -2,12 +2,14 @@ package org.jukeboxmc.util
 
 import com.google.gson.Gson
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
+import org.jukeboxmc.Bootstrap
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.Collections
 import java.util.Objects
 import java.util.function.Function
+import java.util.stream.Collectors
 
 /**
  * @author LucGamesYT
@@ -15,137 +17,137 @@ import java.util.function.Function
  */
 object ItemPalette {
     private val GSON = Gson()
-    val IDENTIFIER_TO_RUNTIME: MutableMap<Identifier?, Short> = LinkedHashMap()
+    val IDENTIFIER_TO_RUNTIME: MutableMap<Identifier, Short> = LinkedHashMap()
     val RUNTIME_TO_IDENTIFIER: MutableMap<Short, Identifier> = LinkedHashMap()
     val MAPPING_IDENTIEFER: MutableMap<Identifier, Identifier> = LinkedHashMap()
     fun init() {
         try {
-            Objects.requireNonNull<InputStream>(
-                Bootstrap::class.java.getClassLoader().getResourceAsStream("runtime_item_states.json")
+            Objects.requireNonNull(
+                Bootstrap::class.java.classLoader.getResourceAsStream("runtime_item_states.json"),
             ).use { inputStream ->
                 val parseItem =
                     GSON.fromJson<List<Map<String, Any>>>(InputStreamReader(inputStream), MutableList::class.java)
                 for (entry in parseItem) {
-                    val name: Identifier = Identifier.Companion.fromString((entry["name"] as String?)!!)
-                    val runtimeId = (entry["id"] as Double).toShort()
+                    val name: Identifier = Identifier.fromString((entry["name"] as String?)!!)
+                    val runtimeId = (entry["id"] as Double).toInt().toShort()
                     IDENTIFIER_TO_RUNTIME[name] = runtimeId
                     RUNTIME_TO_IDENTIFIER[runtimeId] = name
                 }
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:acacia_door"),
-                    Identifier.Companion.fromString("minecraft:item.acacia_door")
+                    Identifier.fromString("minecraft:acacia_door"),
+                    Identifier.fromString("minecraft:item.acacia_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:bed"),
-                    Identifier.Companion.fromString("minecraft:item.bed")
+                    Identifier.fromString("minecraft:bed"),
+                    Identifier.fromString("minecraft:item.bed"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:beetroot"),
-                    Identifier.Companion.fromString("minecraft:item.beetroot")
+                    Identifier.fromString("minecraft:beetroot"),
+                    Identifier.fromString("minecraft:item.beetroot"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:birch_door"),
-                    Identifier.Companion.fromString("minecraft:item.birch_door")
+                    Identifier.fromString("minecraft:birch_door"),
+                    Identifier.fromString("minecraft:item.birch_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:brewing_stand"),
-                    Identifier.Companion.fromString("minecraft:item.brewing_stand")
+                    Identifier.fromString("minecraft:brewing_stand"),
+                    Identifier.fromString("minecraft:item.brewing_stand"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:cake"),
-                    Identifier.Companion.fromString("minecraft:item.cake")
+                    Identifier.fromString("minecraft:cake"),
+                    Identifier.fromString("minecraft:item.cake"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:camera"),
-                    Identifier.Companion.fromString("minecraft:item.camera")
+                    Identifier.fromString("minecraft:camera"),
+                    Identifier.fromString("minecraft:item.camera"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:campfire"),
-                    Identifier.Companion.fromString("minecraft:item.campfire")
+                    Identifier.fromString("minecraft:campfire"),
+                    Identifier.fromString("minecraft:item.campfire"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:cauldron"),
-                    Identifier.Companion.fromString("minecraft:item.cauldron")
+                    Identifier.fromString("minecraft:cauldron"),
+                    Identifier.fromString("minecraft:item.cauldron"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:chain"),
-                    Identifier.Companion.fromString("minecraft:item.chain")
+                    Identifier.fromString("minecraft:chain"),
+                    Identifier.fromString("minecraft:item.chain"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:crimson_door"),
-                    Identifier.Companion.fromString("minecraft:item.crimson_door")
+                    Identifier.fromString("minecraft:crimson_door"),
+                    Identifier.fromString("minecraft:item.crimson_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:dark_oak_door"),
-                    Identifier.Companion.fromString("minecraft:item.dark_oak_door")
+                    Identifier.fromString("minecraft:dark_oak_door"),
+                    Identifier.fromString("minecraft:item.dark_oak_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:flower_pot"),
-                    Identifier.Companion.fromString("minecraft:item.flower_pot")
+                    Identifier.fromString("minecraft:flower_pot"),
+                    Identifier.fromString("minecraft:item.flower_pot"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:frame"),
-                    Identifier.Companion.fromString("minecraft:item.frame")
+                    Identifier.fromString("minecraft:frame"),
+                    Identifier.fromString("minecraft:item.frame"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:glow_frame"),
-                    Identifier.Companion.fromString("minecraft:item.glow_frame")
+                    Identifier.fromString("minecraft:glow_frame"),
+                    Identifier.fromString("minecraft:item.glow_frame"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:hopper"),
-                    Identifier.Companion.fromString("minecraft:item.hopper")
+                    Identifier.fromString("minecraft:hopper"),
+                    Identifier.fromString("minecraft:item.hopper"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:iron_door"),
-                    Identifier.Companion.fromString("minecraft:item.iron_door")
+                    Identifier.fromString("minecraft:iron_door"),
+                    Identifier.fromString("minecraft:item.iron_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:jungle_door"),
-                    Identifier.Companion.fromString("minecraft:item.jungle_door")
+                    Identifier.fromString("minecraft:jungle_door"),
+                    Identifier.fromString("minecraft:item.jungle_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:kelp"),
-                    Identifier.Companion.fromString("minecraft:item.kelp")
+                    Identifier.fromString("minecraft:kelp"),
+                    Identifier.fromString("minecraft:item.kelp"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:mangrove_door"),
-                    Identifier.Companion.fromString("minecraft:item.mangrove_door")
+                    Identifier.fromString("minecraft:mangrove_door"),
+                    Identifier.fromString("minecraft:item.mangrove_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:nether_sprouts"),
-                    Identifier.Companion.fromString("minecraft:item.nether_sprouts")
+                    Identifier.fromString("minecraft:nether_sprouts"),
+                    Identifier.fromString("minecraft:item.nether_sprouts"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:nether_wart"),
-                    Identifier.Companion.fromString("minecraft:item.nether_wart")
+                    Identifier.fromString("minecraft:nether_wart"),
+                    Identifier.fromString("minecraft:item.nether_wart"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:reeds"),
-                    Identifier.Companion.fromString("minecraft:item.reeds")
+                    Identifier.fromString("minecraft:reeds"),
+                    Identifier.fromString("minecraft:item.reeds"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:skull"),
-                    Identifier.Companion.fromString("minecraft:item.skull")
+                    Identifier.fromString("minecraft:skull"),
+                    Identifier.fromString("minecraft:item.skull"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:soul_campfire"),
-                    Identifier.Companion.fromString("minecraft:item.soul_campfire")
+                    Identifier.fromString("minecraft:soul_campfire"),
+                    Identifier.fromString("minecraft:item.soul_campfire"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:spruce_door"),
-                    Identifier.Companion.fromString("minecraft:item.spruce_door")
+                    Identifier.fromString("minecraft:spruce_door"),
+                    Identifier.fromString("minecraft:item.spruce_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:warped_door"),
-                    Identifier.Companion.fromString("minecraft:item.warped_door")
+                    Identifier.fromString("minecraft:warped_door"),
+                    Identifier.fromString("minecraft:item.warped_door"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:wheat"),
-                    Identifier.Companion.fromString("minecraft:item.wheat")
+                    Identifier.fromString("minecraft:wheat"),
+                    Identifier.fromString("minecraft:item.wheat"),
                 )
                 mappingIdentifier(
-                    Identifier.Companion.fromString("minecraft:wooden_door"),
-                    Identifier.Companion.fromString("minecraft:item.wooden_door")
+                    Identifier.fromString("minecraft:wooden_door"),
+                    Identifier.fromString("minecraft:item.wooden_door"),
                 )
             }
         } catch (e: IOException) {
@@ -161,22 +163,20 @@ object ItemPalette {
         return MAPPING_IDENTIEFER.getOrDefault(blockIdentifier, blockIdentifier)
     }
 
+    @JvmStatic
     fun getRuntimeId(identifier: Identifier?): Int {
-        return IDENTIFIER_TO_RUNTIME[identifier]
+        return IDENTIFIER_TO_RUNTIME[identifier]!!.toInt()
     }
 
+    @JvmStatic
     fun getIdentifier(runtimeId: Short): Identifier {
-        return RUNTIME_TO_IDENTIFIER.getOrDefault(runtimeId, Identifier.Companion.fromString("minecraft:air"))
+        return RUNTIME_TO_IDENTIFIER.getOrDefault(runtimeId, Identifier.fromString("minecraft:air"))
     }
 
-    val entries: List<StartGamePacket.ItemEntry>
-        get() = NonStream.Companion.map<Map.Entry<Identifier, Short>, java.util.ArrayList<StartGamePacket.ItemEntry>, List<StartGamePacket.ItemEntry>, StartGamePacket.ItemEntry>(
-            IDENTIFIER_TO_RUNTIME.entries,
-            Function { obj: Map.Entry<Identifier?, Short?>? -> toEntry() },
-            NonStream.CollectionFactory<java.util.ArrayList<StartGamePacket.ItemEntry>, StartGamePacket.ItemEntry> { ArrayList() },
-            Function<java.util.ArrayList<StartGamePacket.ItemEntry?>, List<StartGamePacket.ItemEntry>> { list: java.util.ArrayList<StartGamePacket.ItemEntry?>? ->
-                Collections.unmodifiableList(list)
-            })
+    @JvmStatic
+    val entries: MutableList<StartGamePacket.ItemEntry> = IDENTIFIER_TO_RUNTIME.entries.stream()
+        .map { entry: Map.Entry<Identifier, Short> -> toEntry(entry) }
+        .collect(Collectors.toList())
 
     private fun toEntry(entry: Map.Entry<Identifier, Short>): StartGamePacket.ItemEntry {
         return StartGamePacket.ItemEntry(entry.key.fullName, entry.value, false)

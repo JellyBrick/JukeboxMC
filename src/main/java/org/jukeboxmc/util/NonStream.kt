@@ -14,7 +14,7 @@ class NonStream private constructor() {
         throw UnsupportedOperationException()
     }
 
-    interface CollectionFactory<C : Collection<R>?, R> {
+    interface CollectionFactory<C : MutableCollection<R>?, R> {
         fun create(): C
     }
 
@@ -38,7 +38,7 @@ class NonStream private constructor() {
             return true
         }
 
-        fun <E> filterOptional(iterable: Iterable<E>, predicate: Predicate<E>): Optional<E> {
+        fun <E : Any> filterOptional(iterable: Iterable<E>, predicate: Predicate<E>): Optional<E> {
             for (e in iterable) if (predicate.test(e)) return Optional.of(e)
             return Optional.empty()
         }
@@ -54,18 +54,18 @@ class NonStream private constructor() {
             return list
         }
 
-        fun <E, C : Collection<R>?, R> filterAndMap(
+        fun <E, C : MutableCollection<R>, R> filterAndMap(
             array: Array<E>,
             predicate: Predicate<E>,
             mapper: Function<E, R>,
-            factory: CollectionFactory<C, R>
+            factory: CollectionFactory<C, R>,
         ): C {
             val collection = factory.create()
             for (e in array) if (predicate.test(e)) collection.add(mapper.apply(e))
             return collection
         }
 
-        fun <E> findFirst(iterable: Iterable<E>): Optional<E> {
+        fun <E : Any> findFirst(iterable: Iterable<E>): Optional<E> {
             for (e in iterable) return Optional.of(e)
             return Optional.empty()
         }
@@ -76,29 +76,31 @@ class NonStream private constructor() {
             return sum
         }
 
-        fun <E, C : Collection<R>?, R> map(
+        fun <E, C : MutableCollection<R>, R> map(
             array: Array<E>,
             mapper: Function<E, R>,
-            factory: CollectionFactory<C, R>
+            factory: CollectionFactory<C, R>,
         ): C {
             val collection = factory.create()
             for (e in array) collection.add(mapper.apply(e))
             return collection
         }
 
-        fun <E, C : Collection<R>?, R> map(
+        fun <E, C : MutableCollection<R>, R> map(
             iterable: Iterable<E>,
             mapper: Function<E, R>,
-            factory: CollectionFactory<C, R>
+            factory: CollectionFactory<C, R>,
         ): C {
             val collection = factory.create()
             for (e in iterable) collection.add(mapper.apply(e))
             return collection
         }
 
-        fun <E, C : Collection<R>?, UC : Collection<R>?, R> map(
-            iterable: Iterable<E>, mapper: Function<E, R>,
-            factory: CollectionFactory<C, R>, unmodifiableFunc: Function<C, UC>
+        fun <E, C : MutableCollection<R>, UC : Collection<R>?, R> map(
+            iterable: Iterable<E>,
+            mapper: Function<E, R>,
+            factory: CollectionFactory<C, R>,
+            unmodifiableFunc: Function<C, UC>,
         ): UC {
             val collection = factory.create()
             for (e in iterable) collection.add(mapper.apply(e))
@@ -118,7 +120,7 @@ class NonStream private constructor() {
             iterable: Iterable<E>,
             keyMapper: Function<E, K>,
             valueMapper: Function<E, V>,
-            mapFactory: MapFactory<K, V>
+            mapFactory: MapFactory<K, V>,
         ): Map<K, V> {
             val map = mapFactory.create()
             for (e in iterable) map[keyMapper.apply(e)] = valueMapper.apply(e)
