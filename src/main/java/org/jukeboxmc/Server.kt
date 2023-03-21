@@ -1,28 +1,35 @@
 package org.jukeboxmc
 
 import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.data.PacketCompressionAlgorithm
+import com.nukkitx.protocol.bedrock.packet.PlayerListPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
-import java.io.File
-import java.lang.reflect.InvocationTargetException
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Consumer
 import org.jukeboxmc.block.BlockRegistry
 import org.jukeboxmc.blockentity.BlockEntityRegistry
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.config.Config
+import org.jukeboxmc.config.ConfigType
+import org.jukeboxmc.console.ConsoleSender
+import org.jukeboxmc.console.TerminalConsole
+import org.jukeboxmc.crafting.CraftingManager
+import org.jukeboxmc.entity.EntityRegistry
+import org.jukeboxmc.event.server.TpsChangeEvent
+import org.jukeboxmc.event.world.WorldLoadEvent
 import org.jukeboxmc.event.world.WorldLoadEvent.LoadType
+import org.jukeboxmc.event.world.WorldUnloadEvent
 import org.jukeboxmc.item.ItemRegistry
 import org.jukeboxmc.item.enchantment.EnchantmentRegistry
 import org.jukeboxmc.logger.Logger
 import org.jukeboxmc.network.Network
+import org.jukeboxmc.network.handler.HandlerRegistry
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
+import org.jukeboxmc.player.info.DeviceInfo
 import org.jukeboxmc.player.skin.Skin
+import org.jukeboxmc.plugin.PluginLoadOrder
 import org.jukeboxmc.plugin.PluginManager
+import org.jukeboxmc.potion.EffectRegistry
 import org.jukeboxmc.resourcepack.ResourcePackManager
 import org.jukeboxmc.scheduler.Scheduler
 import org.jukeboxmc.util.BiomeDefinitions
@@ -31,12 +38,25 @@ import org.jukeboxmc.util.CreativeItems
 import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.IdentifierMapping
 import org.jukeboxmc.util.ItemPalette
+import org.jukeboxmc.util.ServerKiller
 import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Difficulty
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
+import org.jukeboxmc.world.generator.FlatGenerator
 import org.jukeboxmc.world.generator.Generator
 import org.jukeboxmc.world.generator.NormalGenerator
+import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
+import java.io.File
+import java.lang.reflect.InvocationTargetException
+import java.net.InetSocketAddress
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.LockSupport
+import java.util.function.Consumer
+import kotlin.math.roundToInt
 
 /**
  * @author LucGamesYT
@@ -55,7 +75,7 @@ class Server(logger: Logger) {
     private val terminalConsole: TerminalConsole
     val pluginManager: PluginManager
     private val craftingManager: CraftingManager
-    private var operatorConfig: Config? = null
+    private lateinit var operatorConfig: Config
     val pluginFolder: File
     var serverAddress: String? = null
         private set
@@ -65,37 +85,38 @@ class Server(logger: Logger) {
         private set
     var viewDistance = 0
         private set
-    var motd: String? = null
+    var motd: String = ""
         private set
-    var subMotd: String? = null
+    var subMotd: String = ""
         private set
-    var gameMode: GameMode? = null
+    lateinit var gameMode: GameMode
         private set
-    private var difficulty: Difficulty? = null
-    var defaultWorldName: String? = null
+    lateinit var difficulty: Difficulty
+
+    var defaultWorldName: String = ""
         private set
-    var generatorName: String? = null
+    var generatorName: String = ""
         private set
     var isOnlineMode = false
         private set
     var isForceResourcePacks = false
         private set
-    private var compressionAlgorithm: PacketCompressionAlgorithm? = null
+    lateinit var compressionAlgorithm: PacketCompressionAlgorithm
     val defaultWorld: World?
-    private val players: MutableSet<Player?> = HashSet()
+    private val players: MutableSet<Player> = HashSet()
     private val worlds: MutableMap<String, World> = HashMap()
-    private val playerListEntry: Object2ObjectMap<UUID?, PlayerListPacket.Entry> =
-        Object2ObjectOpenHashMap<UUID?, PlayerListPacket.Entry>()
+    private val playerListEntry: Object2ObjectMap<UUID, PlayerListPacket.Entry> =
+        Object2ObjectOpenHashMap()
     private val generators: MutableMap<Dimension?, Object2ObjectMap<String, Class<out Generator>>> =
-        EnumMap<Dimension, Object2ObjectMap<String, Class<out Generator>>>(
-            Dimension::class.java
-        )
+        Object2ObjectOpenHashMap()
     var currentTick: Long
         private set
     private var lastTps = TICKS
     var currentTps: Long
         private set
     private var sleepBalance: Long = 0
+
+    private val lock = Object()
 
     init {
         instance = this
@@ -125,7 +146,7 @@ class Server(logger: Logger) {
         EntityIdentifiers.init()
         EntityRegistry.init()
         BiomeDefinitions.init()
-        Biome.Companion.init()
+        Biome.init()
         BlockEntityRegistry.init()
         EnchantmentRegistry.init()
         EffectRegistry.init()
@@ -160,13 +181,17 @@ class Server(logger: Logger) {
             while (runningState.get()) {
                 val startTimeMillis = System.currentTimeMillis()
                 if (nextTickTime - startTimeMillis > 25) {
-                    synchronized(this) { this.wait(Math.max(5, nextTickTime - startTimeMillis - 25)) }
+                    synchronized(lock) {
+                        lock.wait(
+                            5.coerceAtLeast((nextTickTime - startTimeMillis - 25).toInt()).toLong(),
+                        )
+                    }
                 }
                 tick()
                 nextTickTime += 50
             }
         } catch (e: InterruptedException) {
-            Logger.Companion.getInstance().error("Error whilst waiting for next tick!", e)
+            Logger.instance.error("Error whilst waiting for next tick!", e)
         }
     }
 
@@ -201,7 +226,7 @@ class Server(logger: Logger) {
                 System.gc()
             }
             lastTickTime = diff.toFloat() / TimeUnit.SECONDS.toNanos(1)
-            currentTps = Math.round(1 / lastTickTime.toDouble()).toInt().toLong()
+            currentTps = (1 / lastTickTime.toDouble()).roundToInt().toInt().toLong()
             if (currentTps != lastTps) {
                 pluginManager.callEvent(TpsChangeEvent(this, lastTps, currentTick))
             }
@@ -277,29 +302,29 @@ class Server(logger: Logger) {
 
     private fun initOperatorConfig() {
         operatorConfig = Config(File(System.getProperty("user.dir"), "operators.json"), ConfigType.JSON)
-        operatorConfig!!.addDefault("operators", ArrayList<String>())
+        operatorConfig.addDefault("operators", ArrayList<String>())
         operatorConfig!!.save()
     }
 
-    fun isOperatorInFile(playerName: String?): Boolean {
-        return operatorConfig!!.exists("operators") && operatorConfig!!.getStringList("operators").contains(playerName)
+    fun isOperatorInFile(playerName: String): Boolean {
+        return operatorConfig.exists("operators") && operatorConfig.getStringList("operators").contains(playerName)
     }
 
-    fun addOperatorToFile(playerName: String?) {
-        if (operatorConfig!!.exists("operators") && !operatorConfig!!.getStringList("operators").contains(playerName)) {
-            val operators = operatorConfig!!.getStringList("operators")
-            operators!!.add(playerName)
-            operatorConfig!!["operators"] = operators
-            operatorConfig!!.save()
+    fun addOperatorToFile(playerName: String) {
+        if (operatorConfig.exists("operators") && !operatorConfig.getStringList("operators").contains(playerName)) {
+            val operators = operatorConfig.getStringList("operators")
+            operators.add(playerName)
+            operatorConfig["operators"] = operators
+            operatorConfig.save()
         }
     }
 
     fun removeOperatorFromFile(playerName: String?) {
-        if (operatorConfig!!.exists("operators") && operatorConfig!!.getStringList("operators").contains(playerName)) {
-            val operators = operatorConfig!!.getStringList("operators")
-            operators!!.remove(playerName)
-            operatorConfig!!["operators"] = operators
-            operatorConfig!!.save()
+        if (operatorConfig.exists("operators") && operatorConfig.getStringList("operators").contains(playerName)) {
+            val operators = operatorConfig.getStringList("operators")
+            operators.remove(playerName)
+            operatorConfig["operators"] = operators
+            operatorConfig.save()
         }
     }
 
@@ -319,50 +344,46 @@ class Server(logger: Logger) {
         return mainThread
     }
 
-    fun getDifficulty(): Difficulty? {
+    fun getDifficulty(): Difficulty {
         return difficulty
     }
 
-    fun getCompressionAlgorithm(): PacketCompressionAlgorithm? {
+    fun getCompressionAlgorithm(): PacketCompressionAlgorithm {
         return compressionAlgorithm
     }
 
-    fun addPlayer(player: Player?) {
+    fun addPlayer(player: Player) {
         players.add(player)
     }
 
     fun removePlayer(player: Player) {
-        players.removeIf { target: Player? -> target.getUUID() == player.uuid }
+        players.removeIf { target: Player -> target.uUID == player.uUID }
     }
 
-    val onlinePlayers: Collection<Player?>
+    val onlinePlayers: Collection<Player>
         get() = players
 
-    fun getWorld(name: String?): World? {
+    fun getWorld(name: String): World? {
         var name = name
-        if (name == null || name.isEmpty()) {
+        if (name.isEmpty()) {
             return null
         }
         name = name.lowercase(Locale.getDefault())
         if (worlds.containsKey(name)) {
             return worlds[name]
         }
-        val generatorMap: MutableMap<Dimension?, String?> = EnumMap<Dimension, String>(
-            Dimension::class.java
-        )
+        val generatorMap: MutableMap<Dimension, String> = Object2ObjectOpenHashMap()
         generatorMap[Dimension.OVERWORLD] = generatorName
         return this.loadWorld(name, generatorMap)
     }
 
     fun loadWorld(name: String?): World? {
-        val generatorMap: MutableMap<Dimension?, String?> = EnumMap<Dimension, String>(
-            Dimension::class.java
-        )
+        val generatorMap: MutableMap<Dimension, String> = Object2ObjectOpenHashMap()
         generatorMap[Dimension.OVERWORLD] = generatorName
         return this.loadWorld(name, generatorMap)
     }
 
-    fun loadWorld(name: String?, generatorMap: Map<Dimension?, String?>): World? {
+    fun loadWorld(name: String?, generatorMap: Map<Dimension, String>): World? {
         var name = name
         if (name == null || name.isEmpty()) {
             return null
@@ -376,7 +397,7 @@ class Server(logger: Logger) {
         val world = World(name, this, generatorMap)
         val worldLoadEvent = WorldLoadEvent(world, if (worldExists) LoadType.LOAD else LoadType.CREATE)
         pluginManager.callEvent(worldLoadEvent)
-        if (worldLoadEvent.isCancelled()) {
+        if (worldLoadEvent.isCancelled) {
             return null
         }
         if (!worlds.containsKey(name)) {
@@ -388,33 +409,30 @@ class Server(logger: Logger) {
 
     @JvmOverloads
     fun unloadWorld(
-        worldName: String, consumer: Consumer<Player> = Consumer { player: Player ->
+        worldName: String,
+        consumer: Consumer<Player> = Consumer { player: Player ->
             val world = getWorld(worldName)
             if (world != null) {
                 if (world === defaultWorld || defaultWorld == null) {
                     player.playerConnection.disconnect("World was unloaded")
                 } else {
-                    player.teleport(defaultWorld.spawnLocation)
+                    player.teleport(defaultWorld.getSpawnLocation())
                 }
             }
-        }
+        },
     ) {
-        val world = getWorld(worldName)
+        val world = getWorld(worldName) ?: return
         val unloadWorldEvent = WorldUnloadEvent(world)
         pluginManager.callEvent(unloadWorldEvent)
-        if (unloadWorldEvent.isCancelled()) {
+        if (unloadWorldEvent.isCancelled) {
             return
         }
-        if (unloadWorldEvent.getWorld() != null) {
-            for (player in unloadWorldEvent.getWorld().getPlayers()) {
-                consumer.accept(player)
-            }
-            unloadWorldEvent.getWorld().close()
-            worlds.remove(worldName.lowercase(Locale.getDefault()))
-            logger.info("World \"$worldName\" was unloaded")
-        } else {
-            logger.warn("The world \"$worldName\" was not found")
+        for (player in unloadWorldEvent.world.players) {
+            consumer.accept(player)
         }
+        unloadWorldEvent.world.close()
+        worlds.remove(worldName.lowercase(Locale.getDefault()))
+        logger.info("World \"$worldName\" was unloaded")
     }
 
     fun getWorlds(): Collection<World> {
@@ -426,7 +444,7 @@ class Server(logger: Logger) {
     }
 
     @Synchronized
-    fun createGenerator(generatorName: String, world: World?, dimension: Dimension?): Generator? {
+    fun createGenerator(generatorName: String, world: World, dimension: Dimension): Generator? {
         val generators = generators[dimension]!!
         val generator = generators[generatorName.lowercase(Locale.getDefault())]
         return if (generator != null) {
@@ -441,7 +459,9 @@ class Server(logger: Logger) {
             } catch (e: NoSuchMethodException) {
                 throw RuntimeException(e)
             }
-        } else null
+        } else {
+            null
+        }
     }
 
     fun registerGenerator(name: String, clazz: Class<out Generator>, vararg dimensions: Dimension) {
@@ -468,54 +488,61 @@ class Server(logger: Logger) {
     }
 
     fun addToTabList(player: Player) {
-        this.addToTabList(player.uuid, player.entityId, player.name, player.deviceInfo, player.xuid, player.skin)
+        this.addToTabList(
+            player.uUID,
+            player.entityId,
+            player.getName(),
+            player.getDeviceInfo(),
+            player.xuid,
+            player.skin!!,
+        )
     }
 
     fun addToTabList(uuid: UUID?, entityId: Long, name: String?, deviceInfo: DeviceInfo, xuid: String?, skin: Skin) {
         val playerListPacket = PlayerListPacket()
         playerListPacket.setAction(PlayerListPacket.Action.ADD)
         val entry: PlayerListPacket.Entry = PlayerListPacket.Entry(uuid)
-        entry.setEntityId(entityId)
-        entry.setName(name)
-        entry.setXuid(xuid)
-        entry.setPlatformChatId(deviceInfo.getDeviceName())
-        entry.setBuildPlatform(deviceInfo.getDevice().getId())
-        entry.setSkin(skin.toNetwork())
-        playerListPacket.getEntries().add(entry)
+        entry.entityId = entityId
+        entry.name = name
+        entry.xuid = xuid
+        entry.platformChatId = deviceInfo.deviceName
+        entry.buildPlatform = deviceInfo.device.id
+        entry.skin = skin.toNetwork()
+        playerListPacket.entries.add(entry)
         playerListEntry[uuid] = entry
         this.broadcastPacket(playerListPacket)
     }
 
     fun removeFromTabList(player: Player) {
         val playerListPacket = PlayerListPacket()
-        playerListPacket.setAction(PlayerListPacket.Action.REMOVE)
-        playerListPacket.getEntries().add(PlayerListPacket.Entry(player.uuid))
+        playerListPacket.action = PlayerListPacket.Action.REMOVE
+        playerListPacket.entries.add(PlayerListPacket.Entry(player.uUID))
         this.broadcastPacket(playerListPacket)
-        playerListEntry.remove(player.uuid)
+        playerListEntry.remove(player.uUID)
     }
 
-    fun getPlayerListEntry(): Object2ObjectMap<UUID?, PlayerListPacket.Entry> {
+    fun getPlayerListEntry(): Object2ObjectMap<UUID, PlayerListPacket.Entry> {
         return playerListEntry
     }
 
-    fun broadcastPacket(packet: BedrockPacket?) {
-        players.forEach(Consumer { player: Player? -> player.getPlayerConnection().sendPacket(packet) })
+    fun broadcastPacket(packet: BedrockPacket) {
+        players.forEach { player: Player -> player.playerConnection.sendPacket(packet) }
     }
 
-    fun broadcastPacket(players: Set<Player?>, packet: BedrockPacket?) {
-        players.forEach(Consumer { player: Player? -> player.getPlayerConnection().sendPacket(packet) })
+    fun broadcastPacket(players: Set<Player>, packet: BedrockPacket) {
+        players.forEach { player: Player -> player.playerConnection.sendPacket(packet) }
     }
 
     fun broadcastMessage(message: String?) {
         for (player in onlinePlayers) {
-            player!!.sendMessage(message)
+            player.sendMessage(message)
         }
         logger.info(message)
     }
 
     fun getPlayer(playerName: String?): Player? {
         for (player in ArrayList(players)) {
-            if (player!!.name.equals(playerName, ignoreCase = true)) {
+            if (player.getName().equals(playerName, ignoreCase = true)) {
                 return player
             }
         }
@@ -524,7 +551,7 @@ class Server(logger: Logger) {
 
     fun getPlayer(uuid: UUID): Player? {
         for (player in ArrayList(players)) {
-            if (player.getUUID() == uuid) {
+            if (player.uUID == uuid) {
                 return player
             }
         }
@@ -532,12 +559,12 @@ class Server(logger: Logger) {
     }
 
     fun dispatchCommand(commandSender: CommandSender, command: String) {
-        pluginManager.commandManager.handleCommandInput(commandSender, "/$command")
+        pluginManager.getCommandManager().handleCommandInput(commandSender, "/$command")
     }
 
     companion object {
         private const val TICKS: Long = 20
-        var instance: Server
-            private set
+        lateinit var instance: Server
+            internal set
     }
 }
