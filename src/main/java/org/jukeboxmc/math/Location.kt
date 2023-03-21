@@ -146,7 +146,7 @@ class Location @JvmOverloads constructor(
                 ", z=" + z +
                 ", yaw=" + yaw +
                 ", pitch=" + pitch +
-                ", dimension=" + dimension!!.name +
+                ", dimension=" + dimension!!.dimensionName +
                 '}'
     }
 }

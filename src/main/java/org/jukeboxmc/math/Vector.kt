@@ -4,10 +4,9 @@ import com.nukkitx.math.vector.Vector3d
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.math.vector.Vector3l
-import java.util.Objects
-import lombok.SneakyThrows
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.world.Dimension
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -17,20 +16,20 @@ open class Vector : Cloneable {
     protected var x: Float
     protected var y: Float
     protected var z: Float
-    var dimension: Dimension? = Dimension.OVERWORLD
+    var dimension: Dimension = Dimension.OVERWORLD
 
     constructor(x: Float, y: Float, z: Float, dimension: Dimension?) {
         this.x = x
         this.y = y
         this.z = z
-        this.dimension = dimension
+        this.dimension = dimension ?: Dimension.OVERWORLD
     }
 
     constructor(x: Int, y: Int, z: Int, dimension: Dimension?) {
         this.x = x.toFloat()
         this.y = y.toFloat()
         this.z = z.toFloat()
-        this.dimension = dimension
+        this.dimension = dimension ?: Dimension.OVERWORLD
     }
 
     constructor(x: Float, y: Float, z: Float) {
@@ -172,8 +171,10 @@ open class Vector : Cloneable {
     }
 
     fun distanceSquared(vector: Vector): Float {
-        return (FastMath.pow((x - vector.getX()).toDouble(), 2) + FastMath.pow((y - vector.getY()).toDouble(), 2) +
-                FastMath.pow((z - vector.getZ()).toDouble(), 2)).toFloat()
+        return (
+            FastMath.pow((x - vector.getX()).toDouble(), 2) + FastMath.pow((y - vector.getY()).toDouble(), 2) +
+                FastMath.pow((z - vector.getZ()).toDouble(), 2)
+            ).toFloat()
     }
 
     fun squaredLength(): Float {
@@ -202,7 +203,7 @@ open class Vector : Cloneable {
         val vector = o as Vector
         return java.lang.Float.compare(vector.x, x) == 0 && java.lang.Float.compare(
             vector.y,
-            y
+            y,
         ) == 0 && java.lang.Float.compare(vector.z, z) == 0 && dimension == vector.dimension
     }
 
@@ -210,7 +211,6 @@ open class Vector : Cloneable {
         return Objects.hash(x, y, z, dimension)
     }
 
-    @SneakyThrows
     public override fun clone(): Vector {
         val clone = super.clone() as Vector
         clone.x = x
@@ -221,11 +221,11 @@ open class Vector : Cloneable {
 
     override fun toString(): String {
         return "Vector{" +
-                "x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                ", dimension=" + dimension +
-                '}'
+            "x=" + x +
+            ", y=" + y +
+            ", z=" + z +
+            ", dimension=" + dimension +
+            '}'
     }
 
     fun round(): Vector {
