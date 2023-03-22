@@ -105,8 +105,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             field = value
             val setSpawnPositionPacket = SetSpawnPositionPacket()
             setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.WORLD_SPAWN
-            setSpawnPositionPacket.blockPosition = spawnLocation.toVector3i()
-            setSpawnPositionPacket.dimensionId = spawnLocation.dimension.ordinal
+            setSpawnPositionPacket.blockPosition = value.toVector3i()
+            setSpawnPositionPacket.dimensionId = value.dimension.ordinal
             server.broadcastPacket(setSpawnPositionPacket)
         }
     var seed: Long = 0

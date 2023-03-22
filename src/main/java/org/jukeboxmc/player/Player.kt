@@ -137,8 +137,8 @@ open class Player(
             field = value
             val setSpawnPositionPacket = SetSpawnPositionPacket()
             setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
-            setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
-            setSpawnPositionPacket.spawnPosition = spawnLocation.toVector3i()
+            setSpawnPositionPacket.dimensionId = value.dimension.ordinal
+            setSpawnPositionPacket.spawnPosition = value.toVector3i()
             setSpawnPositionPacket.blockPosition = location.world!!.spawnLocation.toVector3i()
             playerConnection.sendPacket(setSpawnPositionPacket)
         }
