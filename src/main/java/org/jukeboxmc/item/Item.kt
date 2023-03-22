@@ -7,11 +7,6 @@ import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
-import java.io.IOException
-import java.util.Base64
-import java.util.LinkedList
-import java.util.Random
-import lombok.ToString
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
@@ -27,12 +22,15 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.ItemPalette
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
+import java.io.IOException
+import java.util.Base64
+import java.util.LinkedList
+import java.util.Random
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
 open class Item : Cloneable {
     var type: ItemType?
         protected set
@@ -59,7 +57,7 @@ open class Item : Cloneable {
         protected set
     var canBreak: List<String>
         protected set
-    protected var enchantments: MutableMap<EnchantmentType?, Enchantment?>
+    protected var enchantments: MutableMap<EnchantmentType, Enchantment>
     var isEmptyEnchanted = false
         protected set
     var isUnbreakable = false
@@ -72,7 +70,7 @@ open class Item : Cloneable {
     constructor(identifier: Identifier?, withNetworkId: Boolean = true) {
         type = ItemRegistry.getItemType(identifier)
         val itemRegistryData = ItemRegistry.getItemRegistryData(type)
-        this.identifier = itemRegistryData.identifier
+        this.identifier = itemRegistryData?.identifier
         runtimeId = ItemPalette.getRuntimeId(this.identifier)
         blockRuntimeId = 0
         if (withNetworkId) {
@@ -95,13 +93,13 @@ open class Item : Cloneable {
     constructor(itemType: ItemType, withNetworkId: Boolean = true) {
         type = itemType
         val itemRegistryData = ItemRegistry.getItemRegistryData(itemType)
-        identifier = itemRegistryData.identifier
+        identifier = itemRegistryData?.identifier
         runtimeId = ItemPalette.getRuntimeId(identifier)
         if (withNetworkId) {
             stackNetworkId = stackNetworkCount++
         }
         try {
-            blockRuntimeId = Block.Companion.create<Block>(BlockType.valueOf(itemType.name)).getRuntimeId()
+            blockRuntimeId = Block.create<Block>(BlockType.valueOf(itemType.name)).runtimeId
         } catch (ignored: Exception) {
             blockRuntimeId = 0
         }
@@ -122,7 +120,7 @@ open class Item : Cloneable {
     constructor(itemData: ItemData, withNetworkId: Boolean = true) {
         type = ItemRegistry.getItemType(ItemPalette.getIdentifier(itemData.id.toShort()))
         val itemRegistryData = ItemRegistry.getItemRegistryData(type)
-        identifier = itemRegistryData.identifier
+        identifier = itemRegistryData?.identifier
         runtimeId = ItemPalette.getRuntimeId(identifier)
         blockRuntimeId = itemData.blockRuntimeId
         if (withNetworkId) {
@@ -211,15 +209,15 @@ open class Item : Cloneable {
     }
 
     val maxStackSize: Int
-        get() = itemProperties.getMaxStackSize()
+        get() = itemProperties?.maxStackSize ?: 1
 
     fun decreaseAmount(): Item {
         return setAmount(amount - 1)
     }
 
-    fun addEnchantment(enchantmentType: EnchantmentType?, level: Int): Item {
-        val enchantment: Enchantment = Enchantment.Companion.create<Enchantment>(enchantmentType)
-        enchantments[enchantmentType] = enchantment.setLevel(Math.min(level, enchantment.maxLevel).toShort())
+    fun addEnchantment(enchantmentType: EnchantmentType, level: Int): Item {
+        val enchantment: Enchantment = Enchantment.create(enchantmentType)
+        enchantments[enchantmentType] = enchantment.setLevel(level.coerceAtMost(enchantment.maxLevel).toShort())
         return this
     }
 
@@ -252,9 +250,11 @@ open class Item : Cloneable {
 
     open fun toBlock(): Block {
         return if (blockRuntimeId == 0) {
-            Block.Companion.create<Block>(BlockType.AIR)
+            Block.create<Block>(BlockType.AIR)
                 .clone()
-        } else BlockPalette.getBlockByNBT(BlockPalette.getBlockNbt(blockRuntimeId)).clone()
+        } else {
+            BlockPalette.getBlockByNBT(BlockPalette.getBlockNbt(blockRuntimeId)).clone()
+        }
     }
 
     fun toNbt(): NbtMap? {
@@ -277,9 +277,9 @@ open class Item : Cloneable {
             for (enchantment in enchantments.values) {
                 enchantmentNBT.add(
                     NbtMap.builder()
-                        .putShort("id", enchantment.getId())
-                        .putShort("lvl", enchantment.getLevel())
-                        .build()
+                        .putShort("id", enchantment.id)
+                        .putShort("lvl", enchantment.level)
+                        .build(),
                 )
             }
             nbtBuilder.putList("ench", NbtType.COMPOUND, enchantmentNBT)
@@ -297,7 +297,7 @@ open class Item : Cloneable {
     protected fun fromNbt(nbtMap: NbtMap) {
         nbtMap.listenForByte("Count") { amount: Byte ->
             setAmount(
-                amount.toInt()
+                amount.toInt(),
             )
         }
         nbtMap.listenForInt("Damage") { durability: Int -> setDurability(durability) }
@@ -305,7 +305,7 @@ open class Item : Cloneable {
             displayTag.listenForString("Name") { displayname: String -> setDisplayname(displayname) }
             displayTag.listenForList("Lore", NbtType.STRING) { c: List<String>? ->
                 lore.addAll(
-                    c!!
+                    c!!,
                 )
             }
         }
@@ -313,11 +313,11 @@ open class Item : Cloneable {
             for (map in compound) {
                 val id = map.getShort("id")
                 val level = map.getShort("lvl")
-                addEnchantment(EnchantmentRegistry.getEnchantmentType(id), level.toInt())
+                addEnchantment(EnchantmentRegistry.getEnchantmentType(id)!!, level.toInt())
             }
         }
         if (nbtMap.containsKey("minecraft:item_lock", NbtType.BYTE)) {
-            nbtMap.listenForByte("minecraft:item_lock") { locktype: Byte -> this.setItemLockType(locktype) }
+            nbtMap.listenForByte("minecraft:item_lock") { locktype: Byte -> this.setItemLockType(locktype.toInt()) }
         }
     }
 
@@ -371,7 +371,8 @@ open class Item : Cloneable {
 
     private fun durabilityAndCheckAmount(durability: Int): Boolean {
         if (this is Durability) {
-            val maxDurability: Int = value.getMaxDurability()
+            val value = this as Durability
+            val maxDurability: Int = value.maxDurability
             var intdurability = durability
             if (intdurability >= maxDurability) {
                 if (--amount <= 0) {
@@ -388,7 +389,7 @@ open class Item : Cloneable {
         return false
     }
 
-    open fun useOnBlock(player: Player, block: Block?, placeLocation: Location?): Boolean {
+    open fun useOnBlock(player: Player, block: Block, placeLocation: Location): Boolean {
         return false
     }
 
@@ -438,7 +439,9 @@ open class Item : Cloneable {
     override fun equals(obj: Any?): Boolean {
         return if (obj is Item) {
             obj.runtimeId == runtimeId && obj.meta == meta && (obj.blockRuntimeId == blockRuntimeId || obj.blockRuntimeId == 0 || blockRuntimeId == 0)
-        } else false
+        } else {
+            false
+        }
     }
 
     companion object {
@@ -464,14 +467,16 @@ open class Item : Cloneable {
                 try {
                     val constructor = ItemRegistry.getItemClass(itemType)!!
                         .getConstructor(
-                            ItemType::class.java
+                            ItemType::class.java,
                         )
                     constructor.isAccessible = true
                     constructor.newInstance(itemType) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Item(itemType!!) as T
+            } else {
+                Item(itemType!!) as T
+            }
         }
 
         fun <T : Item?> create(itemType: ItemType): T {
@@ -479,14 +484,16 @@ open class Item : Cloneable {
                 try {
                     val constructor = ItemRegistry.getItemClass(itemType)!!
                         .getConstructor(
-                            ItemType::class.java
+                            ItemType::class.java,
                         )
                     constructor.isAccessible = true
                     constructor.newInstance(itemType) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Item(itemType) as T
+            } else {
+                Item(itemType) as T
+            }
         }
 
         fun <T : Item?> create(itemType: ItemType, amount: Int): T {
@@ -494,14 +501,16 @@ open class Item : Cloneable {
                 try {
                     val constructor = ItemRegistry.getItemClass(itemType)!!
                         .getConstructor(
-                            ItemType::class.java
+                            ItemType::class.java,
                         )
                     constructor.isAccessible = true
                     constructor.newInstance(itemType).setAmount(amount) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Item(itemType, true).setAmount(amount) as T
+            } else {
+                Item(itemType, true).setAmount(amount) as T
+            }
         }
 
         fun <T : Item?> create(itemType: ItemType, amount: Int, meta: Int): T {
@@ -509,23 +518,25 @@ open class Item : Cloneable {
                 try {
                     val constructor = ItemRegistry.getItemClass(itemType)!!
                         .getConstructor(
-                            ItemType::class.java
+                            ItemType::class.java,
                         )
                     constructor.isAccessible = true
                     constructor.newInstance(itemType).setAmount(amount).setMeta(meta) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Item(itemType, true).setAmount(amount).setMeta(meta) as T
+            } else {
+                Item(itemType, true).setAmount(amount).setMeta(meta) as T
+            }
         }
 
         fun toBase64(item: Item): String {
             val itemNbt = NbtMap.builder()
-                .putString("Name", item.identifier.getFullName())
+                .putString("Name", item.identifier!!.fullName)
                 .putInt("Count", item.amount)
                 .putInt("Meta", item.meta)
                 .putBoolean("Unbreakable", item.isUnbreakable)
-                .putCompound("BlockState", item.toBlock().blockStates)
+                .putCompound("BlockState", item.toBlock().getBlockStates())
                 .putCompound("tag", if (item.toNbt() != null) item.toNbt() else NbtMap.EMPTY)
                 .build()
             val buffer = Unpooled.buffer()
@@ -543,7 +554,7 @@ open class Item : Cloneable {
             try {
                 NbtUtils.createReaderLE(ByteBufInputStream(Unpooled.wrappedBuffer(decode))).use { reader ->
                     val compound = reader.readTag() as NbtMap
-                    val identifier: Identifier = Identifier.Companion.fromString(compound.getString("Name"))
+                    val identifier: Identifier = Identifier.fromString(compound.getString("Name"))
                     val amount = compound.getInt("Count")
                     val meta = compound.getInt("Meta")
                     val unbreakable = compound.getBoolean("Unbreakable")
@@ -553,7 +564,7 @@ open class Item : Cloneable {
                     for (blockNbt in BlockPalette.searchBlocks { nbtMap: NbtMap ->
                         nbtMap.getString("name").equals(identifier.fullName, ignoreCase = true)
                     }) {
-                        if (blockNbt!!.getCompound("states") == blockStates) {
+                        if (blockNbt.getCompound("states") == blockStates) {
                             blockRuntimeId = BlockPalette.getRuntimeId(blockNbt)
                         }
                     }

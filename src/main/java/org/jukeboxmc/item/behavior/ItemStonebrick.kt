@@ -17,18 +17,18 @@ class ItemStonebrick : Item {
     private val block: BlockStonebrick
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockStonebrick>(BlockType.STONEBRICK)
+        block = Block.create<BlockStonebrick>(BlockType.STONEBRICK)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockStonebrick>(BlockType.STONEBRICK)
+        block = Block.create<BlockStonebrick>(BlockType.STONEBRICK)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemStonebrick {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

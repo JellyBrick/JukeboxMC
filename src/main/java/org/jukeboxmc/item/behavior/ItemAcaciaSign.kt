@@ -15,6 +15,6 @@ class ItemAcaciaSign : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.Companion.create<Block>(BlockType.ACACIA_STANDING_SIGN)
+        return Block.create<Block>(BlockType.ACACIA_STANDING_SIGN)
     }
 }

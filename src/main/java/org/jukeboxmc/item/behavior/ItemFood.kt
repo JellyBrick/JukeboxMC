@@ -29,7 +29,7 @@ abstract class ItemFood : Item {
     override fun onUse(player: Player): Boolean {
         if (player.isHungry) {
             val playerConsumeItemEvent = PlayerConsumeItemEvent(player, this)
-            Server.Companion.getInstance().getPluginManager().callEvent(playerConsumeItemEvent)
+            Server.instance.pluginManager.callEvent(playerConsumeItemEvent)
             if (playerConsumeItemEvent.isCancelled) {
                 player.inventory.sendContents(player)
                 return false

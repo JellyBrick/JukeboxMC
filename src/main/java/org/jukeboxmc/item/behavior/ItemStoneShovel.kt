@@ -24,8 +24,8 @@ class ItemStoneShovel : Item, Durability {
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {
         if (clickedBlock.type == BlockType.GRASS) {
-            player.world.setBlock(clickedBlock.location, Block.Companion.create<Block>(BlockType.GRASS_PATH))
-            player.world.playSound(clickedBlock.location, SoundEvent.ITEM_USE_ON, 12259)
+            player.world?.setBlock(clickedBlock.getLocation(), Block.create<Block>(BlockType.GRASS_PATH))
+            player.world?.playSound(clickedBlock.getLocation(), SoundEvent.ITEM_USE_ON, 12259)
             this.updateItem(player, 1)
             return true
         }
@@ -34,12 +34,12 @@ class ItemStoneShovel : Item, Durability {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = 2f
+        attribute?.setCurrentValue(2f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = attribute.minValue
+        attribute?.setCurrentValue(attribute.minValue)
     }
 
     override val maxDurability: Int

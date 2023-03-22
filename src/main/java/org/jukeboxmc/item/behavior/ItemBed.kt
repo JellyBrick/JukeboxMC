@@ -16,12 +16,12 @@ class ItemBed : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     var color: BlockColor
-        get() = BlockColor.values()[getMeta()]
+        get() = BlockColor.values()[meta]
         set(blockColor) {
             setMeta(blockColor.ordinal)
         }
 
     override fun toBlock(): Block {
-        return Block.Companion.create<Block>(BlockType.BED)
+        return Block.create<Block>(BlockType.BED)
     }
 }

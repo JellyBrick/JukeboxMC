@@ -17,18 +17,18 @@ class ItemCoralFanDead : Item {
     private val block: BlockCoralFanDead
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockCoralFanDead>(BlockType.CORAL_FAN_DEAD)
+        block = Block.create<BlockCoralFanDead>(BlockType.CORAL_FAN_DEAD)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockCoralFanDead>(BlockType.CORAL_FAN_DEAD)
+        block = Block.create<BlockCoralFanDead>(BlockType.CORAL_FAN_DEAD)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemCoralFanDead {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

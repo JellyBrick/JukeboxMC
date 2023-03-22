@@ -17,18 +17,18 @@ class ItemDirt : Item {
     private val block: BlockDirt
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockDirt>(BlockType.DIRT)
+        block = Block.create<BlockDirt>(BlockType.DIRT)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockDirt>(BlockType.DIRT)
+        block = Block.create<BlockDirt>(BlockType.DIRT)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemDirt {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

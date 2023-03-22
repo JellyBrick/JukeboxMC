@@ -1,7 +1,6 @@
 package org.jukeboxmc.item.behavior
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import java.time.Duration
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
@@ -15,6 +14,7 @@ import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
+import java.time.Duration
 
 /**
  * @author LucGamesYT
@@ -26,8 +26,8 @@ class ItemWoodenShovel : Item, Durability, Burnable {
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {
         if (clickedBlock.type == BlockType.GRASS) {
-            player.world.setBlock(clickedBlock.location, Block.Companion.create<Block>(BlockType.GRASS_PATH))
-            player.world.playSound(clickedBlock.location, SoundEvent.ITEM_USE_ON, 12259)
+            player.world?.setBlock(clickedBlock.getLocation(), Block.create<Block>(BlockType.GRASS_PATH))
+            player.world?.playSound(clickedBlock.getLocation(), SoundEvent.ITEM_USE_ON, 12259)
             this.updateItem(player, 1)
             return true
         }
@@ -36,12 +36,12 @@ class ItemWoodenShovel : Item, Durability, Burnable {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = 1f
+        attribute?.setCurrentValue(1f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = attribute.minValue
+        attribute?.setCurrentValue(attribute.minValue)
     }
 
     override val burnTime: Duration?

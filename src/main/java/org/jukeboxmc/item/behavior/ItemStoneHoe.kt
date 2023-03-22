@@ -19,12 +19,12 @@ class ItemStoneHoe : Item, Durability {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = 3f
+        attribute?.setCurrentValue(3f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute.currentValue = attribute.minValue
+        attribute?.setCurrentValue(attribute.minValue)
     }
 
     override val maxDurability: Int

@@ -15,6 +15,6 @@ class ItemWaterBucket : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.Companion.create<Block>(BlockType.WATER)
+        return Block.create<Block>(BlockType.WATER)
     }
 }

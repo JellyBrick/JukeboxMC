@@ -1,8 +1,6 @@
 package org.jukeboxmc.item.behavior
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import java.time.Duration
-import java.util.Objects
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.entity.projectile.EntityFishingHook
@@ -14,6 +12,8 @@ import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
+import java.time.Duration
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -26,20 +26,25 @@ class ItemFishingRod : Item, Durability, Burnable {
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         if (player.entityFishingHook == null) {
             val entityFishingHook =
-                Objects.requireNonNull<EntityFishingHook>(Entity.Companion.create<EntityFishingHook>(EntityType.FISHING_HOOK))
+                Objects.requireNonNull<EntityFishingHook>(Entity.create<EntityFishingHook>(EntityType.FISHING_HOOK))
             entityFishingHook.setShooter(player)
-            entityFishingHook.location = player.location.add(0f, player.eyeHeight, 0f)
+            entityFishingHook.setLocation(player.getLocation().add(0f, player.eyeHeight, 0f))
             val force = 1.6f
             entityFishingHook.setVelocity(
                 Vector(
                     (-Math.sin(Math.toRadians(player.yaw.toDouble())) * Math.cos(Math.toRadians(player.pitch.toDouble())) * force * force).toFloat(),
-                    (-Math.sin(
-                        Math.toRadians(player.pitch.toDouble())
-                    ) * force * force + 0.4f).toFloat(),
-                    (Math.cos(Math.toRadians(player.yaw.toDouble())) * Math.cos(
-                        Math.toRadians(player.pitch.toDouble())
-                    ) * force * force).toFloat()
-                ), false
+                    (
+                        -Math.sin(
+                            Math.toRadians(player.pitch.toDouble()),
+                        ) * force * force + 0.4f
+                        ).toFloat(),
+                    (
+                        Math.cos(Math.toRadians(player.yaw.toDouble())) * Math.cos(
+                            Math.toRadians(player.pitch.toDouble()),
+                        ) * force * force
+                        ).toFloat(),
+                ),
+                false,
             )
             val projectileLaunchEvent = ProjectileLaunchEvent(entityFishingHook, ProjectileLaunchEvent.Cause.SNOWBALL)
             player.server.pluginManager.callEvent(projectileLaunchEvent)
@@ -47,12 +52,12 @@ class ItemFishingRod : Item, Durability, Burnable {
                 entityFishingHook.spawn()
                 this.updateItem(player, 1)
                 player.entityFishingHook = entityFishingHook
-                player.world.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
+                player.world?.playSound(player.getLocation(), SoundEvent.THROW, -1, "minecraft:player", false, false)
                 return true
             }
             return false
         } else {
-            player.entityFishingHook.close()
+            player.entityFishingHook?.close()
             player.entityFishingHook = null
         }
         return true
