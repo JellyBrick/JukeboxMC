@@ -1,8 +1,10 @@
 package org.jukeboxmc.command.internal
 
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -17,21 +19,20 @@ import org.jukeboxmc.player.Player
 @Description("Remove player from operator")
 @Permission("jukeboxmc.command.removeoperator")
 class RemoveOperatorCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .setParameters(
-            listOf<Array<CommandParameter>>(
-                arrayOf<CommandParameter>(
-                    CommandParameter("player", CommandParamType.TARGET, false)
-                )
-            )
+            arrayOf(
+                CommandParameter("player", CommandParamType.TARGET, false),
+            ),
+
         )
-        .build()
+        .build(),
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (args.size == 1) {
             val playerName = args[0]
-            if (playerName != null && !playerName.isEmpty()) {
-                val target: Player = Server.Companion.getInstance().getPlayer(playerName)
+            if (playerName.isNotEmpty()) {
+                val target: Player? = Server.instance.getPlayer(playerName)
                 if (target != null) {
                     if (!target.isOp) {
                         commandSender.sendMessage("The player $playerName is not a operator")
@@ -39,10 +40,10 @@ class RemoveOperatorCommand : Command(
                     }
                     target.isOp = false
                     target.sendMessage("You are no longer a operator")
-                    Server.Companion.getInstance().removeOperatorFromFile(playerName)
+                    Server.instance.removeOperatorFromFile(playerName)
                 } else {
-                    if (Server.Companion.getInstance().isOperatorInFile(playerName)) {
-                        Server.Companion.getInstance().removeOperatorFromFile(playerName)
+                    if (Server.instance.isOperatorInFile(playerName)) {
+                        Server.instance.removeOperatorFromFile(playerName)
                     } else {
                         commandSender.sendMessage("The player $playerName is not a operator")
                     }

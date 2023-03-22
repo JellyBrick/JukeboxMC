@@ -1,6 +1,5 @@
 package org.jukeboxmc.command.internal
 
-import java.util.concurrent.TimeUnit
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
@@ -8,6 +7,7 @@ import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
 import org.jukeboxmc.util.Utils
+import java.util.concurrent.TimeUnit
 
 /**
  * @author LucGamesYT
@@ -15,14 +15,14 @@ import org.jukeboxmc.util.Utils
  */
 @Name("status")
 @Description("Show the current status form the server.")
-class StatusCommand : Command(CommandData.Companion.builder().build()) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+class StatusCommand : Command(CommandData.builder().build()) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         val builder = StringBuilder()
         builder.append("§7======== §8| §bServer Status §8| §7========").append("\n")
         builder.append("§7Uptime§8: §b")
-            .append(formatUptime(System.currentTimeMillis() - Server.Companion.getInstance().getStartTime()))
+            .append(formatUptime(System.currentTimeMillis() - Server.instance.startTime))
             .append("\n")
-        val currentTps: Long = Server.Companion.getInstance().getCurrentTps()
+        val currentTps: Long = Server.instance.currentTps
         val tpsColor = if (currentTps < 17) "§e" else if (currentTps < 12) "§c" else "§a"
         builder.append("§7Current TPS§8: ").append(tpsColor).append(currentTps).append("\n")
         val runtime = Runtime.getRuntime()

@@ -1,8 +1,10 @@
 package org.jukeboxmc.command.internal
 
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -18,10 +20,10 @@ import org.jukeboxmc.player.Player
 @Description("Change your gamemode")
 @Permission("jukeboxmc.command.gamemode")
 class GameModeCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .addAlias("gm")
         .setParameters(
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("gamemode", CommandParamType.INT, false),
                 CommandParameter("target", CommandParamType.TARGET, true)
             ), arrayOf<CommandParameter>(
@@ -31,11 +33,11 @@ class GameModeCommand : Command(
         )
         .build()
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (commandSender is Player) {
             if (args.size == 1) {
                 val gamemodeName = args[0]
-                if (gamemodeName == null || gamemodeName.isEmpty()) {
+                if (gamemodeName.isEmpty()) {
                     commandSender.sendMessage("§cYou must specify a gamemode")
                     return
                 }
@@ -49,15 +51,15 @@ class GameModeCommand : Command(
             } else if (args.size == 2) {
                 val gamemodeName = args[0]
                 val targetName = args[1]
-                if (gamemodeName == null || gamemodeName.isEmpty()) {
+                if (gamemodeName.isEmpty()) {
                     commandSender.sendMessage("§cYou must specify a gamemode")
                     return
                 }
-                if (targetName == null || targetName.isEmpty()) {
+                if (targetName.isEmpty()) {
                     commandSender.sendMessage("§cYou must specify a player")
                     return
                 }
-                val target: Player = Server.Companion.getInstance().getPlayer(targetName)
+                val target: Player? = Server.instance.getPlayer(targetName)
                 if (target == null) {
                     commandSender.sendMessage("§cThe player $targetName could not be found")
                     return

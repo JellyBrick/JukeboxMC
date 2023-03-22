@@ -1,13 +1,6 @@
 package org.jukeboxmc.command.internal
 
-import java.lang.Boolean
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.Array
-import kotlin.String
-import kotlin.arrayOf
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.apache.commons.lang3.EnumUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.jukeboxmc.Server
@@ -20,6 +13,15 @@ import org.jukeboxmc.command.annotation.Permission
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
+import java.lang.Boolean
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
+import java.util.stream.Stream
+import kotlin.Array
+import kotlin.String
+import kotlin.arrayOf
+import org.jukeboxmc.command.CommandParameter
 
 /**
  * @author LucGamesYT
@@ -28,26 +30,32 @@ import org.jukeboxmc.potion.EffectType
 @Name("effect")
 @Description("Add or remove status effect.")
 @Permission("jukeboxmc.command.effect")
-class EffectCommand : Command(CommandData.Companion.builder()
-    .setParameters(arrayOf<CommandParameter>(
-        CommandParameter("target", CommandParamType.TARGET, false),
-        CommandParameter(
-            "effect",
-            Stream.of(*EffectType.values())
-                .map { effectType: EffectType -> effectType.name.lowercase(Locale.getDefault()) }
-                .collect(Collectors.toList()),
-            false),
-        CommandParameter("seconds", CommandParamType.INT, true),
-        CommandParameter("amplifier", CommandParamType.INT, true),
-        CommandParameter("visible", mutableListOf("true", "false"), true)
-    ), arrayOf<CommandParameter>(
-        CommandParameter("target", CommandParamType.TARGET, false),
-        CommandParameter("clear", listOf("clear"), false)
-    ))
-    .build()) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+class EffectCommand : Command(
+    CommandData.builder()
+        .setParameters(
+            arrayOf<CommandParameter>(
+                CommandParameter("target", CommandParamType.TARGET, false),
+                CommandParameter(
+                    "effect",
+                    Stream.of(*EffectType.values())
+                        .map { effectType: EffectType -> effectType.name.lowercase(Locale.getDefault()) }
+                        .collect(Collectors.toList()),
+                    false,
+                ),
+                CommandParameter("seconds", CommandParamType.INT, true),
+                CommandParameter("amplifier", CommandParamType.INT, true),
+                CommandParameter("visible", mutableListOf("true", "false"), true),
+            ),
+            arrayOf(
+                CommandParameter("target", CommandParamType.TARGET, false),
+                CommandParameter("clear", mutableListOf("clear"), false),
+            ),
+        )
+        .build(),
+) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (args.size >= 2) {
-            val target: Player = Server.Companion.getInstance().getPlayer(args[0])
+            val target: Player? = Server.instance.getPlayer(args[0])
             val type = args[1]!!.lowercase(Locale.getDefault())
             if (target == null) {
                 commandSender.sendMessage("§cThe player " + args[0] + " could not be found")
@@ -84,8 +92,8 @@ class EffectCommand : Command(CommandData.Companion.builder()
                 }
                 val visible = args.size != 5 || Boolean.parseBoolean(args[4])
                 target.addEffect(
-                    Effect.Companion.create<Effect>(effectType).setDuration(seconds, TimeUnit.SECONDS)
-                        .setAmplifier(amplifier).setVisible(visible)
+                    Effect.create<Effect>(effectType).setDuration(seconds, TimeUnit.SECONDS)
+                        .setAmplifier(amplifier).setVisible(visible),
                 )
                 commandSender.sendMessage("Gave " + effectType.name.lowercase(Locale.getDefault()) + " * " + amplifier + " to " + target.name + " for " + seconds + " seconds.")
             }

@@ -1,6 +1,5 @@
 package org.jukeboxmc.command
 
-import lombok.ToString
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
 import org.jukeboxmc.command.annotation.Permission
@@ -9,7 +8,6 @@ import org.jukeboxmc.command.annotation.Permission
  * @author Kaooot, LucGamesYT
  * @version 1.0
  */
-@ToString
 abstract class Command(var commandData: CommandData) {
     init {
         val clazz: Class<*> = this.javaClass
@@ -22,8 +20,7 @@ abstract class Command(var commandData: CommandData) {
                 clazz.getAnnotation(Description::class.java).value
         }
         if (clazz.isAnnotationPresent(Permission::class.java)) {
-            commandData.permission =
-                clazz.getAnnotation(Permission::class.java).value
+            commandData.setPermission(clazz.getAnnotation(Permission::class.java).value)
         }
         commandData = commandData.rebuild()
     }
@@ -35,5 +32,5 @@ abstract class Command(var commandData: CommandData) {
      * @param command       The command that was executed.
      * @param args          The arguments of the command.
      */
-    abstract fun execute(commandSender: CommandSender, command: String?, args: Array<String?>)
+    abstract fun execute(commandSender: CommandSender, command: String, args: Array<String>)
 }

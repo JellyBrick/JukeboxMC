@@ -1,8 +1,10 @@
 package org.jukeboxmc.command.internal
 
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -17,18 +19,18 @@ import org.jukeboxmc.player.Player
 @Description("Kick a player with reason.")
 @Permission("jukeboxmc.command.kick")
 class KickCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .setParameters(
-            *arrayOf<CommandParameter>(
+            arrayOf<CommandParameter>(
                 CommandParameter("target", CommandParamType.TARGET, false),
-                CommandParameter("reason", CommandParamType.TEXT, true)
-            )
+                CommandParameter("reason", CommandParamType.TEXT, true),
+            ),
         )
-        .build()
+        .build(),
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (args.size == 1 || args.size == 2) {
-            val target: Player = Server.Companion.getInstance().getPlayer(args[0])
+            val target: Player? = Server.instance.getPlayer(args[0])
             if (target != null) {
                 val reason = if (args.size == 2) args[1] else "Kicked by admin."
                 target.kick(reason)

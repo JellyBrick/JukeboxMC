@@ -17,19 +17,19 @@ import org.jukeboxmc.plugin.Plugin
 @Description("Show all enabled plugins.")
 @Permission("jukeboxmc.command.plugins")
 class PluginsCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .addAlias("pl")
-        .build()
+        .build(),
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
-        val plugins: Collection<Plugin?> = Server.Companion.getInstance().getPluginManager().getPlugins()
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
+        val plugins: Collection<Plugin?> = Server.instance.pluginManager.plugins
         if (plugins.isEmpty()) {
             commandSender.sendMessage("No plugins loaded.")
             return
         }
         val stringBuilder = StringBuilder("Plugins (" + plugins.size + "§r): ")
         for (plugin in plugins) {
-            stringBuilder.append(if (plugin!!.isEnabled) "§a" else "§c").append(plugin.name).append(" v")
+            stringBuilder.append(if (plugin!!.isEnabled()) "§a" else "§c").append(plugin.name).append(" v")
                 .append(plugin.version).append("§7, ")
         }
         stringBuilder.setLength(stringBuilder.length - 4)

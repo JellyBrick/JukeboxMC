@@ -1,8 +1,6 @@
 package org.jukeboxmc.command.internal
 
-import java.util.Locale
-import java.util.stream.Collectors
-import java.util.stream.Stream
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.apache.commons.lang3.EnumUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.jukeboxmc.Server
@@ -16,6 +14,10 @@ import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.player.Player
+import java.util.Locale
+import java.util.stream.Collectors
+import java.util.stream.Stream
+import org.jukeboxmc.command.CommandParameter
 
 /**
  * @author LucGamesYT
@@ -24,21 +26,27 @@ import org.jukeboxmc.player.Player
 @Name("enchant")
 @Description("Adds an enchantment to a player's selected item.")
 @Permission("jukeboxmc.command.enchant")
-class EnchantCommand : Command(CommandData.Companion.builder()
-    .setParameters(*arrayOf<CommandParameter>(
-        CommandParameter("player", CommandParamType.TARGET, false),
-        CommandParameter(
-            "enchantment",
-            Stream.of(*EnchantmentType.values())
-                .map { enchantmentType: EnchantmentType -> enchantmentType.name.lowercase(Locale.getDefault()) }
-                .collect(Collectors.toList()),
-            false),
-        CommandParameter("level", CommandParamType.INT, true)))
-    .build()) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+class EnchantCommand : Command(
+    CommandData.builder()
+        .setParameters(
+            arrayOf(
+                CommandParameter("player", CommandParamType.TARGET, false),
+                CommandParameter(
+                    "enchantment",
+                    Stream.of(*EnchantmentType.values())
+                        .map { enchantmentType: EnchantmentType -> enchantmentType.name.lowercase(Locale.getDefault()) }
+                        .collect(Collectors.toList()),
+                    false,
+                ),
+                CommandParameter("level", CommandParamType.INT, true),
+            ),
+        )
+        .build(),
+) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (commandSender is Player) {
             if (args.size >= 2) {
-                val target: Player = Server.Companion.getInstance().getPlayer(args[0])
+                val target: Player? = Server.instance.getPlayer(args[0])
                 if (target == null) {
                     commandSender.sendMessage("§cThe player " + args[0] + " could not be found")
                     return
@@ -46,7 +54,7 @@ class EnchantCommand : Command(CommandData.Companion.builder()
                 val enchantmentValue = args[1]!!.lowercase(Locale.getDefault())
                 if (!EnumUtils.isValidEnum(
                         EnchantmentType::class.java,
-                        enchantmentValue.uppercase(Locale.getDefault())
+                        enchantmentValue.uppercase(Locale.getDefault()),
                     )
                 ) {
                     commandSender.sendMessage("§cEnchantment not found.")

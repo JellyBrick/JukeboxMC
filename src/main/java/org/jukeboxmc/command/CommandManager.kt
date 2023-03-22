@@ -1,8 +1,21 @@
 package org.jukeboxmc.command
 
+import org.jukeboxmc.command.internal.EffectCommand
+import org.jukeboxmc.command.internal.EnchantCommand
+import org.jukeboxmc.command.internal.GameModeCommand
+import org.jukeboxmc.command.internal.GameRuleCommand
+import org.jukeboxmc.command.internal.KickCommand
+import org.jukeboxmc.command.internal.KillCommand
+import org.jukeboxmc.command.internal.OperatorCommand
+import org.jukeboxmc.command.internal.PluginsCommand
+import org.jukeboxmc.command.internal.RemoveOperatorCommand
+import org.jukeboxmc.command.internal.SaveCommand
+import org.jukeboxmc.command.internal.StatusCommand
+import org.jukeboxmc.command.internal.StopCommand
+import org.jukeboxmc.command.internal.TeleportCommand
+import org.jukeboxmc.command.internal.TimeCommand
 import java.lang.reflect.InvocationTargetException
 import java.util.Arrays
-import org.jukeboxmc.command.internal.StatusCommand
 
 /**
  * @author LucGamesYT
@@ -26,7 +39,7 @@ class CommandManager {
             EnchantCommand::class.java,
             GameRuleCommand::class.java,
             StatusCommand::class.java,
-            TimeCommand::class.java
+            TimeCommand::class.java,
         )
         for (commandClass in commands) {
             try {
@@ -51,11 +64,11 @@ class CommandManager {
             var targetCommand: Command? = null
             while (targetCommand == null) {
                 for (command in commands) {
-                    if (command.getCommandData().name.equals(
+                    if (command.commandData.name.equals(
                             commandIdentifier,
-                            ignoreCase = true
-                        ) || command.getCommandData().aliases != null && command.getCommandData().aliases.contains(
-                            commandIdentifier
+                            ignoreCase = true,
+                        ) || command.commandData.getAliases().contains(
+                            commandIdentifier,
                         )
                     ) {
                         targetCommand = command
@@ -73,20 +86,20 @@ class CommandManager {
                 commandSender.sendMessage("The command for $commandIdentifier could not be found")
                 return
             }
-            if (targetCommand.getCommandData().permission != null && !commandSender.hasPermission(targetCommand.getCommandData().permission)) {
-                if (targetCommand.getCommandData().permissionMessage != null && !targetCommand.getCommandData().permissionMessage.isEmpty()) {
-                    commandSender.sendMessage(targetCommand.getCommandData().permissionMessage)
+            if (targetCommand.commandData.getPermission() != null && !commandSender.hasPermission(targetCommand.commandData.getPermission()!!)) {
+                if (targetCommand.commandData.getPermissionMessage().isNotEmpty()) {
+                    commandSender.sendMessage(targetCommand.commandData.getPermissionMessage())
                 } else {
                     commandSender.sendMessage("§cYou don't have permission to do that")
                 }
                 return
             }
-            val params: Array<String?>
+            val params: Array<String>
             if (commandParts.size > consumed) {
-                params = arrayOfNulls(commandParts.size - consumed)
+                params = Array(commandParts.size - consumed) { "" }
                 System.arraycopy(commandParts, consumed, params, 0, commandParts.size - consumed)
             } else {
-                params = arrayOfNulls(0)
+                params = emptyArray()
             }
             targetCommand.execute(commandSender, commandIdentifier, params)
         } catch (e: Throwable) {
@@ -104,7 +117,7 @@ class CommandManager {
 
     fun isCommandRegistered(name: String?): Boolean {
         for (command in commands) {
-            if (command.getCommandData().name.equals(name, ignoreCase = true)) {
+            if (command.commandData.name.equals(name, ignoreCase = true)) {
                 return true
             }
         }
@@ -117,10 +130,10 @@ class CommandManager {
 
     private fun getCommandByNameOrAlias(identifier: String): Command? {
         for (command in commands) {
-            if (command.getCommandData().name.equals(
+            if (command.commandData.name.equals(
                     identifier,
-                    ignoreCase = true
-                ) || command.getCommandData().aliases != null && command.getCommandData().aliases.contains(identifier)
+                    ignoreCase = true,
+                ) || command.commandData.getAliases().contains(identifier)
             ) {
                 return command
             }

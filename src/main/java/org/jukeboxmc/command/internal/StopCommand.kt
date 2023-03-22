@@ -14,8 +14,8 @@ import org.jukeboxmc.command.annotation.Permission
 @Name("stop")
 @Description("Stop the server")
 @Permission("jukeboxmc.command.stop")
-class StopCommand : Command(CommandData.Companion.builder().build()) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+class StopCommand : Command(CommandData.builder().build()) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         commandSender.sendMessage("Stopping the server...")
         commandSender.server.shutdown()
     }

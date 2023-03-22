@@ -1,13 +1,16 @@
 package org.jukeboxmc.command
 
 import com.google.common.collect.ImmutableMap
-import lombok.ToString
+import com.nukkitx.protocol.bedrock.data.command.CommandEnumData
+import com.nukkitx.protocol.bedrock.data.command.CommandParam
+import com.nukkitx.protocol.bedrock.data.command.CommandParamData
+import com.nukkitx.protocol.bedrock.data.command.CommandParamOption
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 
 /**
  * @author Cloudburst
  * @version 1.0
  */
-@ToString
 class CommandParameter {
     var name: String
     var type: CommandParamType
@@ -31,7 +34,7 @@ class CommandParameter {
     }
 
     @JvmOverloads
-    constructor(name: String, enumValues: MutableList<String?>?, optional: Boolean = false) {
+    constructor(name: String, enumValues: MutableList<String>, optional: Boolean = false) {
         this.name = name
         type = CommandParamType.TEXT
         enumData = CommandEnum(name + "Enums", enumValues)
@@ -40,9 +43,12 @@ class CommandParameter {
 
     fun toNetwork(): CommandParamData {
         return CommandParamData(
-            name, optional,
-            if (enumData != null) CommandEnumData(name, enumData.getValues().toTypedArray(), false) else null,
-            PARAM_MAPPINGS[type], postFix, emptyList<CommandParamOption>()
+            name,
+            optional,
+            if (enumData != null) CommandEnumData(name, enumData!!.values.toTypedArray(), false) else null,
+            PARAM_MAPPINGS[type],
+            postFix,
+            emptyList<CommandParamOption>(),
         )
     }
 

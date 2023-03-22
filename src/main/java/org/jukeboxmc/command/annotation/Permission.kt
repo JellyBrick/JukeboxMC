@@ -12,5 +12,6 @@ annotation class Permission(
      *
      * @return a fresh [String]
      */
-    val value: String = "", val showNoPermissionMessage: Boolean = true
+    val value: String = "",
+    val showNoPermissionMessage: Boolean = true,
 )
