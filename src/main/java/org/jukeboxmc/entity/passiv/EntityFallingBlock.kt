@@ -19,12 +19,12 @@ class EntityFallingBlock : EntityMoveable() {
             return
         }
         super.update(currentTick)
-        this.velocity.setY(this.velocity.getY() - gravity)
+        this.velocity.y = this.velocity.y - gravity
         this.move(this.velocity)
         val friction = 1 - drag
-        this.velocity.setX(this.velocity.getX() * friction)
-        this.velocity.setY(this.velocity.getY() * (1 - drag))
-        this.velocity.setZ(this.velocity.getZ() * friction)
+        this.velocity.x = this.velocity.x * friction
+        this.velocity.y = this.velocity.y * (1 - drag)
+        this.velocity.z = this.velocity.z * friction
         val position: Vector = Vector(this.x - 0.5f, this.y, this.z - 0.5f).round()
         if (this.isOnGround) {
             this.close()
@@ -48,7 +48,7 @@ class EntityFallingBlock : EntityMoveable() {
     override val height: Float
         get() = 0.98f
     override var drag: Float = 0.02f
-    override var gravity: Float= 0.04f
+    override var gravity: Float = 0.04f
     override val type: EntityType
         get() = EntityType.FALLING_BLOCK
     override val identifier: Identifier

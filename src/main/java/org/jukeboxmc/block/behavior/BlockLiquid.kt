@@ -60,8 +60,8 @@ abstract class BlockLiquid : Block {
                 adjacentSources = 0
                 smallestFlowDecay = getSmallestFlowDecay(
                     location.world!!.getBlock(
-                        location.getX().toInt(),
-                        location.getY().toInt(),
+                        location.x.toInt(),
+                        location.y.toInt(),
                         location.getZ().toInt() - 1,
                         0,
                         location.dimension,
@@ -70,8 +70,8 @@ abstract class BlockLiquid : Block {
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
                     location.world!!.getBlock(
-                        location.getX().toInt(),
-                        location.getY().toInt(),
+                        location.x.toInt(),
+                        location.y.toInt(),
                         location.getZ().toInt() + 1,
                         0,
                         location.dimension,
@@ -80,8 +80,8 @@ abstract class BlockLiquid : Block {
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
                     location.world!!.getBlock(
-                        location.getY().toInt() - 1,
-                        location.getY().toInt(),
+                        location.y.toInt() - 1,
+                        location.y.toInt(),
                         location.getZ().toInt(),
                         0,
                         location.dimension,
@@ -90,8 +90,8 @@ abstract class BlockLiquid : Block {
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
                     location.world!!.getBlock(
-                        location.getX().toInt() + 1,
-                        location.getY().toInt(),
+                        location.x.toInt() + 1,
+                        location.y.toInt(),
                         location.getZ().toInt(),
                         0,
                         location.dimension,
@@ -104,8 +104,8 @@ abstract class BlockLiquid : Block {
                 }
                 val topFlowDecay = getFlowDecay(
                     location.world!!.getBlock(
-                        location.getX().toInt(),
-                        location.getY().toInt() + 1,
+                        location.x.toInt(),
+                        location.y.toInt() + 1,
                         location.getZ().toInt(),
                         0,
                         location.dimension,
@@ -116,8 +116,8 @@ abstract class BlockLiquid : Block {
                 }
                 if (adjacentSources >= 2 && this is BlockWater) {
                     var bottomBlock = location.world!!.getBlock(
-                        location.getX().toInt(),
-                        location.getY().toInt() - 1,
+                        location.x.toInt(),
+                        location.y.toInt() - 1,
                         location.getZ().toInt(),
                         0,
                         location.dimension,
@@ -154,8 +154,8 @@ abstract class BlockLiquid : Block {
             }
             if (decay >= 0) {
                 val bottomBlock = location.world!!.getBlock(
-                    location.getX().toInt(),
-                    location.getY().toInt() - 1,
+                    location.x.toInt(),
+                    location.y.toInt() - 1,
                     location.getZ().toInt(),
                     0,
                     location.dimension,
@@ -173,8 +173,8 @@ abstract class BlockLiquid : Block {
                         if (flags[0]) {
                             flowIntoBlock(
                                 location.world!!.getBlock(
-                                    location.getX().toInt() - 1,
-                                    location.getY().toInt(),
+                                    location.x.toInt() - 1,
+                                    location.y.toInt(),
                                     location.getZ().toInt(),
                                     0,
                                     location.dimension,
@@ -185,8 +185,8 @@ abstract class BlockLiquid : Block {
                         if (flags[1]) {
                             flowIntoBlock(
                                 location.world!!.getBlock(
-                                    location.getX().toInt() + 1,
-                                    location.getY().toInt(),
+                                    location.x.toInt() + 1,
+                                    location.y.toInt(),
                                     location.getZ().toInt(),
                                     0,
                                     location.dimension,
@@ -197,8 +197,8 @@ abstract class BlockLiquid : Block {
                         if (flags[2]) {
                             flowIntoBlock(
                                 location.world!!.getBlock(
-                                    location.getX().toInt(),
-                                    location.getY().toInt(),
+                                    location.x.toInt(),
+                                    location.y.toInt(),
                                     location.getZ().toInt() - 1,
                                     0,
                                     location.dimension,
@@ -209,8 +209,8 @@ abstract class BlockLiquid : Block {
                         if (flags[3]) {
                             flowIntoBlock(
                                 location.world!!.getBlock(
-                                    location.getX().toInt(),
-                                    location.getY().toInt(),
+                                    location.x.toInt(),
+                                    location.y.toInt(),
                                     location.getZ().toInt() + 1,
                                     0,
                                     location.dimension,
@@ -308,8 +308,8 @@ abstract class BlockLiquid : Block {
             )
             var maxCost = 4 / flowDecayPerBlock
             for (j in 0..3) {
-                var x = location.getX().toInt()
-                val y = location.getY().toInt()
+                var x = location.x.toInt()
+                val y = location.y.toInt()
                 var z = location.getZ().toInt()
                 if (j == 0) {
                     --x

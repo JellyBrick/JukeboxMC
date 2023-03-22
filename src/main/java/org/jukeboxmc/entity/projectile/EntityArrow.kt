@@ -72,14 +72,14 @@ class EntityArrow : EntityProjectile() {
     override fun applyCustomKnockback(hitEntity: Entity) {
         if (punchModifier > 0) {
             val sqrtMotion =
-                Math.sqrt((velocity.getX() * velocity.getX() + velocity.getZ() * velocity.getZ()).toDouble()).toFloat()
+                Math.sqrt((velocity.x * velocity.x + velocity.z * velocity.z).toDouble()).toFloat()
             if (sqrtMotion > 0.0f) {
                 val toAdd = Vector(
-                    velocity.getX() * punchModifier * 0.6f / sqrtMotion,
+                    velocity.x * punchModifier * 0.6f / sqrtMotion,
                     0.1f,
-                    velocity.getZ() * punchModifier * 0.6f / sqrtMotion,
+                    velocity.z * punchModifier * 0.6f / sqrtMotion,
                 )
-                hitEntity.setVelocity(hitEntity.getVelocity().add(toAdd.getX(), toAdd.getY(), toAdd.getZ()))
+                hitEntity.setVelocity(hitEntity.getVelocity().add(toAdd.x, toAdd.y, toAdd.z))
             }
         }
     }

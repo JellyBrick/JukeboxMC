@@ -70,11 +70,11 @@ class BlockPressurePlate : Block {
 
     override val boundingBox: AxisAlignedBB
         get() = AxisAlignedBB(
-            location.getX() + 0.0625f,
-            location.getY(),
+            location.x + 0.0625f,
+            location.y,
             location.getZ() + 0.0625f,
-            location.getX() + 0.9375f,
-            location.getY() + 1f,
+            location.x + 0.9375f,
+            location.y + 1f,
             location.getZ() + 0.9375f,
         )
     var redstoneSignal: Int

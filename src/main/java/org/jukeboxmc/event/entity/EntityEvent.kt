@@ -8,7 +8,7 @@ import org.jukeboxmc.event.Event
  * @version 1.0
  */
 abstract class EntityEvent(private var entity: Entity) : Event() {
-    open fun getEntity(): Entity? {
+    open fun getEntity(): Entity {
         return entity
     }
 

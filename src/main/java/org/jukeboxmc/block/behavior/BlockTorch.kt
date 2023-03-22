@@ -10,7 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.Locale
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -49,44 +49,44 @@ class BlockTorch : Block {
             when (torchFacing) {
                 TorchFacing.EAST -> {
                     return AxisAlignedBB(
-                        location.getX(),
-                        location.getY() + 0.2f,
+                        location.x,
+                        location.y + 0.2f,
                         location.getZ() + 0.5f - size,
-                        location.getX() + size * 2f,
-                        location.getY() + 0.8f,
+                        location.x + size * 2f,
+                        location.y + 0.8f,
                         location.getZ() + 0.5f + size,
                     )
                 }
 
                 TorchFacing.WEST -> {
                     return AxisAlignedBB(
-                        location.getX() + 1.0f - size * 2f,
-                        location.getY() + 0.2f,
+                        location.x + 1.0f - size * 2f,
+                        location.y + 0.2f,
                         location.getZ() + 0.5f - size,
-                        location.getX() + 1f,
-                        location.getY() + 0.8f,
+                        location.x + 1f,
+                        location.y + 0.8f,
                         location.getZ() + 0.5f + size,
                     )
                 }
 
                 TorchFacing.SOUTH -> {
                     return AxisAlignedBB(
-                        location.getX() + 0.5f - size,
-                        location.getY() + 0.2f,
+                        location.x + 0.5f - size,
+                        location.y + 0.2f,
                         location.getZ(),
-                        location.getX() + 0.5f + size,
-                        location.getY() + 0.8f,
+                        location.x + 0.5f + size,
+                        location.y + 0.8f,
                         location.getZ() + size * 2f,
                     )
                 }
 
                 TorchFacing.NORTH -> {
                     return AxisAlignedBB(
-                        location.getX() + 0.5f - size,
-                        location.getY() + 0.2f,
+                        location.x + 0.5f - size,
+                        location.y + 0.2f,
                         location.getZ() + 1f - size * 2f,
-                        location.getX() + 0.5f + size,
-                        location.getY() + 0.8f,
+                        location.x + 0.5f + size,
+                        location.y + 0.8f,
                         location.getZ() + 1f,
                     )
                 }
@@ -95,11 +95,11 @@ class BlockTorch : Block {
             }
             size = 0.1f
             return AxisAlignedBB(
-                location.getX() + 0.5f - size,
-                location.getY() + 0.0f,
+                location.x + 0.5f - size,
+                location.y + 0.0f,
                 location.getZ() + 0.5f - size,
-                location.getX() + 0.5f + size,
-                location.getY() + 0.6f,
+                location.x + 0.5f + size,
+                location.y + 0.6f,
                 location.getZ() + 0.5f + size,
             )
         }

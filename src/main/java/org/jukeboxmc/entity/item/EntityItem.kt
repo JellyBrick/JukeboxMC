@@ -7,12 +7,12 @@ import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityMoveable
 import org.jukeboxmc.entity.EntityType
+import org.jukeboxmc.event.player.PlayerPickupItemEvent
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import java.util.concurrent.TimeUnit
-import org.jukeboxmc.event.player.PlayerPickupItemEvent
 
 /**
  * @author LucGamesYT
@@ -38,21 +38,21 @@ class EntityItem : EntityMoveable() {
                 this.location.dimension,
             ).type!!
             if (blockTypeLayer0 == BlockType.FLOWING_WATER || blockTypeLayer0 == BlockType.WATER) {
-                this.velocity.setY(this.velocity.getY() - gravity * -0.015f)
+                this.velocity.setY(this.velocity.y - gravity * -0.015f)
             } else {
-                this.velocity.setY(this.velocity.getY() - gravity)
+                this.velocity.setY(this.velocity.y - gravity)
             }
-            this.checkObstruction(this.location.getX(), this.location.getY(), this.location.getZ())
+            this.checkObstruction(this.location.x, this.location.y, this.location.z)
             this.move(this.velocity)
             var friction: Double = (1 - this.drag).toDouble()
-            if (this.isOnGround && (Math.abs(this.velocity.getX()) > 0.00001 || Math.abs(this.velocity.getZ()) > 0.00001)) {
+            if (this.isOnGround && (Math.abs(this.velocity.x) > 0.00001 || Math.abs(this.velocity.z) > 0.00001)) {
                 friction *= 0.6
             }
-            this.velocity.setX((this.velocity.getX() * friction).toFloat())
-            this.velocity.setY(this.velocity.getY() * (1 - this.drag))
-            this.velocity.setZ((this.velocity.getZ() * friction).toFloat())
+            this.velocity.x = (this.velocity.x * friction).toFloat()
+            this.velocity.y = this.velocity.y * (1 - this.drag)
+            this.velocity.z = (this.velocity.z * friction).toFloat()
             if (this.isOnGround) {
-                this.velocity.setY(this.velocity.getY() * -0.5f)
+                this.velocity.y = this.velocity.y * -0.5f
             }
             this.updateMovement()
         }
@@ -60,7 +60,7 @@ class EntityItem : EntityMoveable() {
             this.setVelocity(Vector.zero())
             isReset = true
         }
-        if (this.age >= TimeUnit.MINUTES.toMillis(5) / 50 || this.location.getY() <= -64) {
+        if (this.age >= TimeUnit.MINUTES.toMillis(5) / 50 || this.location.y <= -64) {
             this.close()
         }
     }

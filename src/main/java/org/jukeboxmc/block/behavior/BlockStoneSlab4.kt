@@ -9,7 +9,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.Locale
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -76,7 +76,7 @@ class BlockStoneSlab4 : BlockSlab {
                 )
                 return true
             } else {
-                this.setTopSlot(clickedPosition.getY() > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
+                this.setTopSlot(clickedPosition.y > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
             }
         }
         super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)

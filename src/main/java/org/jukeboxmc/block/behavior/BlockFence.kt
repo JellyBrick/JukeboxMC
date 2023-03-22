@@ -25,11 +25,11 @@ open class BlockFence : Block {
             val w: Float = if (west) 0f else 0.375f
             val e: Float = if (east) 1f else 0.625f
             return AxisAlignedBB(
-                location.getX() + w,
-                location.getY(),
+                location.x + w,
+                location.y,
                 location.getZ() + n,
-                location.getX() + e,
-                location.getY() + 1.5f,
+                location.x + e,
+                location.y + 1.5f,
                 location.getZ() + s,
             )
         }

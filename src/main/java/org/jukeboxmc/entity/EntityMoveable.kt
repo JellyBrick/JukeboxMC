@@ -7,7 +7,7 @@ import org.jukeboxmc.Server
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
-import java.util.Random
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -74,7 +74,7 @@ abstract class EntityMoveable : Entity() {
                 return
             }
             if (direction == 1) {
-                velocity.setX(force)
+                velocity.x = force
                 return
             }
             if (direction == 2) {
@@ -82,7 +82,7 @@ abstract class EntityMoveable : Entity() {
                 return
             }
             if (direction == 3) {
-                velocity.setY(force)
+                velocity.y = force
                 return
             }
             if (direction == 4) {
@@ -90,56 +90,56 @@ abstract class EntityMoveable : Entity() {
                 return
             }
             if (direction == 5) {
-                velocity.setZ(force)
+                velocity.z = force
             }
         }
     }
 
     protected fun move(velocity: Vector) {
-        if (velocity.getX() == 0f && velocity.getY() == 0f && velocity.getZ() == 0f) {
+        if (velocity.x == 0f && velocity.y == 0f && velocity.z == 0f) {
             return
         }
         ySize *= 0.4.toFloat()
-        val movX = velocity.getX()
-        val movY = velocity.getY()
-        val movZ = velocity.getZ()
+        val movX = velocity.x
+        val movY = velocity.y
+        val movZ = velocity.z
         val list =
             this.world!!.getCollisionCubes(
                 this,
-                boundingBox.addCoordinates(velocity.getX(), velocity.getY(), velocity.getZ()),
+                boundingBox.addCoordinates(velocity.x, velocity.y, velocity.z),
                 false,
             )
         for (bb in list) {
-            velocity.setX(bb.calculateYOffset(boundingBox, velocity.getY()))
+            velocity.x = bb.calculateYOffset(boundingBox, velocity.y)
         }
-        boundingBox.offset(0f, velocity.getY(), 0f)
+        boundingBox.offset(0f, velocity.y, 0f)
         for (bb in list) {
-            velocity.setX(bb.calculateXOffset(boundingBox, velocity.getX()))
+            velocity.x = bb.calculateXOffset(boundingBox, velocity.x)
         }
-        boundingBox.offset(velocity.getX(), 0f, 0f)
+        boundingBox.offset(velocity.x, 0f, 0f)
         for (bb in list) {
-            velocity.setZ(bb.calculateZOffset(boundingBox, velocity.getZ()))
+            velocity.z = bb.calculateZOffset(boundingBox, velocity.z)
         }
-        boundingBox.offset(0f, 0f, velocity.getZ())
-        location.setX((boundingBox.minX + boundingBox.maxX) / 2)
-        location.setY(boundingBox.minY - ySize)
-        location.setZ((boundingBox.minZ + boundingBox.maxZ) / 2)
-        val fromChunk = lastLocation!!.chunk!!
+        boundingBox.offset(0f, 0f, velocity.z)
+        location.x = (boundingBox.minX + boundingBox.maxX) / 2
+        location.y = boundingBox.minY - ySize
+        location.z = (boundingBox.minZ + boundingBox.maxZ) / 2
+        val fromChunk = lastLocation.chunk!!
         val toChunk = location.chunk!!
         if (fromChunk.x != toChunk.x || fromChunk.z != toChunk.z) {
             fromChunk.removeEntity(this)
             toChunk.addEntity(this)
         }
-        checkGroundState(movX, movY, movZ, velocity.getX(), velocity.getY(), velocity.getZ())
+        checkGroundState(movX, movY, movZ, velocity.x, velocity.y, velocity.z)
         updateFallState(movY)
-        if (movX != velocity.getX()) {
-            velocity.setX(0f)
+        if (movX != velocity.x) {
+            velocity.x = 0f
         }
-        if (movY != velocity.getY()) {
-            velocity.setY(0f)
+        if (movY != velocity.y) {
+            velocity.y = 0f
         }
-        if (movZ != velocity.getZ()) {
-            velocity.setZ(0f)
+        if (movZ != velocity.z) {
+            velocity.z = 0f
         }
     }
 
@@ -163,23 +163,23 @@ abstract class EntityMoveable : Entity() {
 
     protected fun updateMovement() {
         val diffPosition =
-            (location.getX() - lastLocation!!.getX()) * (location.getX() - lastLocation!!.getX()) + (location.getY() - lastLocation!!.getY()) * (location.getY() - lastLocation!!.getY()) + (location.getZ() - lastLocation!!.getZ()) * (location.getZ() - lastLocation!!.getZ())
+            (location.x - lastLocation.x) * (location.x - lastLocation.x) + (location.y - lastLocation.y) * (location.y - lastLocation.y) + (location.z - lastLocation.z) * (location.z - lastLocation.z)
         val diffRotation =
-            (location.yaw - lastLocation!!.yaw) * (location.yaw - lastLocation!!.yaw) + (location.pitch - lastLocation!!.pitch) * (location.pitch - lastLocation!!.pitch)
+            (location.yaw - lastLocation.yaw) * (location.yaw - lastLocation.yaw) + (location.pitch - lastLocation.pitch) * (location.pitch - lastLocation.pitch)
         val diffMotion =
-            (velocity.getX() - lastVector.getX()) * (velocity.getX() - lastVector.getX()) + (velocity.getY() - lastVector.getY()) * (velocity.getY() - lastVector.getY()) + (velocity.getZ() - lastVector.getZ()) * (velocity.getZ() - lastVector.getZ())
+            (velocity.x - lastVector.x) * (velocity.x - lastVector.x) + (velocity.y - lastVector.y) * (velocity.y - lastVector.y) + (velocity.z - lastVector.z) * (velocity.z - lastVector.z)
         if (diffPosition > 0.0001 || diffRotation > 1.0) {
-            lastLocation!!.setX(location.getX())
-            lastLocation!!.setY(location.getY())
-            lastLocation!!.setZ(location.getZ())
-            lastLocation!!.yaw = location.yaw
-            lastLocation!!.pitch = location.pitch
+            lastLocation.x = location.x
+            lastLocation.y = location.y
+            lastLocation.z = location.z
+            lastLocation.yaw = location.yaw
+            lastLocation.pitch = location.pitch
             sendEntityMovePacket(
                 Location(
                     location.world,
-                    location.getX(),
-                    location.getY() + 0,
-                    location.getZ(),
+                    location.x,
+                    location.y + 0,
+                    location.z,
                     location.yaw,
                     location.pitch,
                     location.dimension,
@@ -188,9 +188,9 @@ abstract class EntityMoveable : Entity() {
             )
         }
         if (diffMotion > 0.0025 || diffMotion > 0.0001 && getVelocity().squaredLength() <= 0.0001) {
-            lastVector.setX(velocity.getX())
-            lastVector.setY(velocity.getY())
-            lastVector.setZ(velocity.getZ())
+            lastVector.x = velocity.x
+            lastVector.y = velocity.y
+            lastVector.z = velocity.z
             this.setVelocity(velocity, true)
         }
     }

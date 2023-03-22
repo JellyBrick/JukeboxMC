@@ -29,13 +29,13 @@ class BlockStickyPiston : Block {
     ): Boolean {
         if (FastMath.abs(
                 player.x - getLocation()
-                    .getX(),
+                    .x,
             ) < 2 && FastMath.abs(player.z - getLocation().blockZ) < 2
         ) {
             val y = (player.y + player.eyeHeight).toDouble()
-            if (y - getLocation().getY() > 2) {
+            if (y - getLocation().y > 2) {
                 this.blockFace = BlockFace.UP
-            } else if (getLocation().getY() - y > 0) {
+            } else if (getLocation().y - y > 0) {
                 this.blockFace = BlockFace.DOWN
             } else {
                 this.blockFace = player.direction.toBlockFace()

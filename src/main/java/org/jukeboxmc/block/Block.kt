@@ -34,9 +34,7 @@ import org.jukeboxmc.potion.MiningFatigueEffect
 import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.LinkedList
-import java.util.Locale
-import java.util.Optional
+import java.util.*
 import java.util.function.Consumer
 
 /**
@@ -195,11 +193,11 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
 
     open val boundingBox: AxisAlignedBB
         get() = AxisAlignedBB(
-            location!!.getX(),
-            location!!.getY(),
+            location!!.x,
+            location!!.y,
             location!!.getZ(),
-            location!!.getX() + 1,
-            location!!.getY() + 1,
+            location!!.x + 1,
+            location!!.y + 1,
             location!!.getZ() + 1,
         )
 

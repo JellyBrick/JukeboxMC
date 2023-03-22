@@ -29,7 +29,7 @@ class BlockTrapdoor : Block {
         blockFace: BlockFace,
     ): Boolean {
         val playerDirection = player.direction
-        if (clickedPosition.getY() > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
+        if (clickedPosition.y > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
             isUpsideDown = true
         }
         if (playerDirection == Direction.NORTH) {

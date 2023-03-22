@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.WoodType
 import org.jukeboxmc.block.direction.BlockFace
@@ -12,7 +11,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.Locale
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -79,7 +78,7 @@ class BlockWoodenSlab : BlockSlab {
                 )
                 return true
             } else {
-                this.setTopSlot(clickedPosition.getY() > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
+                this.setTopSlot(clickedPosition.y > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
             }
         }
         super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)

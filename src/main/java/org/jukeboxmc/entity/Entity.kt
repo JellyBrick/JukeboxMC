@@ -28,7 +28,7 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
-import java.util.Objects
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -39,8 +39,12 @@ abstract class Entity {
     var entityId: Long
         protected set
     val metadata: Metadata
-    protected var location: Location = Location(null, Vector(0, 0, 0))
-    var lastLocation: Location?
+    var location: Location = Location(null, Vector(0, 0, 0))
+        set(location) {
+            field = location
+            recalculateBoundingBox()
+        }
+    var lastLocation: Location
     protected var velocity: Vector
     var lastVector: Vector
     val boundingBox: AxisAlignedBB
@@ -216,11 +220,11 @@ abstract class Entity {
             return location.world!!
         }
     val x: Float
-        get() = location.getX()
+        get() = location.x
     val y: Float
-        get() = location.getY()
+        get() = location.y
     val z: Float
-        get() = location.getZ()
+        get() = location.z
     val blockX: Int
         get() = location.blockX
     val blockY: Int
@@ -252,12 +256,12 @@ abstract class Entity {
         val height = height * scale
         val radius = width * scale / 2
         boundingBox.setBounds(
-            location.getX() - radius,
-            location.getY(),
-            location.getZ() - radius,
-            location.getX() + radius,
-            location.getY() + height,
-            location.getZ() + radius,
+            location.x - radius,
+            location.y,
+            location.z - radius,
+            location.x + radius,
+            location.y + height,
+            location.z + radius,
         )
         metadata.setFloat(EntityData.BOUNDING_BOX_HEIGHT, this.height)
         metadata.setFloat(EntityData.BOUNDING_BOX_WIDTH, width)
@@ -411,8 +415,8 @@ abstract class Entity {
                 ?: return false
             val block = loadedChunk.getBlock(eyeLocation.blockX, eyeLocation.blockY, eyeLocation.blockZ, 0)
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {
-                val yLiquid = (block.getLocation().getY() + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
-                return eyeLocation.getY() < yLiquid
+                val yLiquid = (block.getLocation().y + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
+                return eyeLocation.y < yLiquid
             }
             return false
         }

@@ -76,9 +76,7 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Difficulty
 import org.jukeboxmc.world.Sound
 import org.jukeboxmc.world.chunk.ChunkLoader
-import java.util.Locale
-import java.util.Objects
-import java.util.UUID
+import java.util.*
 import java.util.function.Consumer
 
 /**
@@ -154,18 +152,18 @@ class Player(
         if (!isOnGround && !this.isOnLadder) {
             ++inAirTicks
             if (inAirTicks > 5) {
-                if (location.getY() > highestPosition) {
-                    highestPosition = location.getY()
+                if (location.y > highestPosition) {
+                    highestPosition = location.y
                 }
             }
         } else {
             if (inAirTicks > 0) {
                 inAirTicks = 0
             }
-            fallDistance = highestPosition - location.getY()
+            fallDistance = highestPosition - location.y
             if (fallDistance > 0) {
                 fall()
-                highestPosition = location.getY()
+                highestPosition = location.y
                 fallDistance = 0f
             }
         }
@@ -976,7 +974,7 @@ class Player(
                             ),
                         )
                         val ownVelocity = getVelocity()
-                        ownVelocity.setX(ownVelocity.getX() * 0.6f)
+                        ownVelocity.setX(ownVelocity.x * 0.6f)
                         ownVelocity.setZ(ownVelocity.getZ() * 0.6f)
                         this.setVelocity(ownVelocity)
                         this.isSprinting = false

@@ -24,8 +24,8 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
         val toLocation: Location = Location(
             player.world,
             Vector(packet.getPosition().sub(0f, player.eyeHeight, 0f)),
-            packet.getRotation().getY(),
-            packet.getRotation().getX(),
+            packet.getRotation().y,
+            packet.getRotation().x,
             player.location.dimension
         )
         val playerMoveEvent = PlayerMoveEvent(player, player.location, toLocation)
@@ -33,7 +33,7 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
         if (playerMoveEvent.isCancelled()) {
             playerMoveEvent.setTo(playerMoveEvent.getFrom())
         }
-        player.lastLocation = player.location
+        player.lastLocation = player.getLocation()
         player.location = toLocation
         player.isOnGround = packet.isOnGround()
         val to: Location = playerMoveEvent.getTo()

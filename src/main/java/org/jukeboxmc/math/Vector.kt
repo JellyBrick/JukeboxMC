@@ -173,14 +173,11 @@ open class Vector : Cloneable {
         return Vector3i.from(x.toDouble(), y.toDouble(), z.toDouble())
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val vector = o as Vector
-        return java.lang.Float.compare(vector.x, x) == 0 && java.lang.Float.compare(
-            vector.y,
-            y,
-        ) == 0 && java.lang.Float.compare(vector.z, z) == 0 && dimension == vector.dimension
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val vector = other as Vector
+        return vector.x.compareTo(x) == 0 && vector.y.compareTo(y) == 0 && vector.z.compareTo(z) == 0 && dimension == vector.dimension
     }
 
     override fun hashCode(): Int {

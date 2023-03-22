@@ -150,8 +150,8 @@ abstract class EntityLiving : Entity() {
                     baseModifier,
                     diffZ * distance * baseModifier,
                 )
-                if (velocity.getY() > baseModifier) {
-                    velocity.setY(baseModifier)
+                if (velocity.y > baseModifier) {
+                    velocity.y = baseModifier
                 }
                 this.setVelocity(velocity, true)
             }

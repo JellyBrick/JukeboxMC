@@ -13,6 +13,9 @@ import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.world.Sound
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 /**
  * @author LucGamesYT
@@ -34,18 +37,18 @@ abstract class EntityProjectile : EntityMoveable() {
             } else {
                 val location: Location = this.location
                 if (!this.isCollided) {
-                    this.velocity.setY(this.velocity.getY() - this.gravity)
+                    this.velocity.y = this.velocity.y - this.gravity
                 }
                 val moveVector: Vector = Vector(
-                    location.getX() + this.velocity.getX(),
-                    location.getY() + this.velocity.getY(),
-                    location.getZ() + this.velocity.getZ(),
+                    location.x + this.velocity.x,
+                    location.y + this.velocity.y,
+                    location.z + this.velocity.z,
                 )
                 val nearbyEntities = location.world!!.getNearbyEntities(
                     this.boundingBox.addCoordinates(
-                        this.velocity.getX(),
-                        this.velocity.getY(),
-                        this.velocity.getZ(),
+                        this.velocity.x,
+                        this.velocity.y,
+                        this.velocity.z,
                     ).expand(1f, 1f, 1f),
                     location.dimension,
                     this,
@@ -90,30 +93,30 @@ abstract class EntityProjectile : EntityMoveable() {
                 this.move(this.velocity)
                 if (this.isCollided && !hadCollision) {
                     hadCollision = true
-                    this.velocity.setX(0f)
-                    this.velocity.setY(0f)
-                    this.velocity.setZ(0f)
+                    this.velocity.x = 0f
+                    this.velocity.y = 0f
+                    this.velocity.z = 0f
                     (this as? EntityArrow)?.world?.playSound(this.location, SoundEvent.BOW_HIT)
                     this.updateMovement()
                     return
                 } else if (!this.isCollided && hadCollision) {
                     hadCollision = false
                 }
-                if (!hadCollision || Math.abs(this.velocity.getX()) > 0.00001 || Math.abs(this.velocity.getY()) > 0.00001 || Math.abs(
-                        this.velocity.getZ(),
+                if (!hadCollision || abs(this.velocity.x) > 0.00001 || abs(this.velocity.y) > 0.00001 || abs(
+                        this.velocity.z,
                     ) > 0.00001
                 ) {
                     val f =
-                        Math.sqrt((this.velocity.getX() * this.velocity.getX() + this.velocity.getZ() * this.velocity.getZ()).toDouble())
+                        sqrt(this.velocity.x * this.velocity.x + this.velocity.z * this.velocity.z)
                     this.yaw = (
                         (
-                            Math.atan2(
-                                this.velocity.getX().toDouble(),
-                                this.velocity.getZ().toDouble(),
+                            atan2(
+                                this.velocity.x,
+                                this.velocity.z,
                             ) * 180 / Math.PI
                             ).toFloat()
                         )
-                    this.pitch = ((Math.atan2(this.velocity.getY().toDouble(), f) * 180 / Math.PI).toFloat())
+                    this.pitch = (atan2(this.velocity.y, f) * 180 / Math.PI).toFloat()
                 }
                 this.updateMovement()
             }
@@ -133,7 +136,7 @@ abstract class EntityProjectile : EntityMoveable() {
 
     protected open fun applyCustomDamageEffects(hitEntity: Entity) {}
     protected open fun applyCustomKnockback(hitEntity: Entity) {}
-    open fun onCollidedWithEntity(entity: Entity?) {}
+    open fun onCollidedWithEntity(entity: Entity) {}
     fun getShooter(): EntityLiving? {
         return if (shooter == null || shooter!!.isDead) null else shooter
     }

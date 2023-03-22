@@ -13,7 +13,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.Locale
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -61,11 +61,11 @@ open class BlockWall : Block {
                 s = 0.6875f
             }
             return AxisAlignedBB(
-                location.getX() + w,
-                location.getY(),
+                location.x + w,
+                location.y,
                 location.getZ() + n,
-                location.getX() + e,
-                location.getY() + 1.5f,
+                location.x + e,
+                location.y + 1.5f,
                 location.getZ() + s,
             )
         }
