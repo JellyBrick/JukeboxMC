@@ -3,16 +3,22 @@ package org.jukeboxmc.entity
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
+import com.nukkitx.protocol.bedrock.packet.AddEntityPacket
+import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
-import java.util.Objects
-import java.util.concurrent.TimeUnit
+import com.nukkitx.protocol.bedrock.packet.SetEntityMotionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockWater
 import org.jukeboxmc.block.direction.Direction
 import org.jukeboxmc.entity.metadata.Metadata
+import org.jukeboxmc.event.entity.EntityDamageByEntityEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
+import org.jukeboxmc.event.entity.EntityDespawnEvent
+import org.jukeboxmc.event.entity.EntitySpawnEvent
+import org.jukeboxmc.event.entity.EntityVelocityEvent
 import org.jukeboxmc.math.AxisAlignedBB
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
@@ -22,6 +28,8 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
+import java.util.Objects
+import java.util.concurrent.TimeUnit
 
 /**
  * @author LucGamesYT
@@ -31,7 +39,7 @@ abstract class Entity {
     var entityId: Long
         protected set
     val metadata: Metadata
-    protected var location: Location?
+    protected var location: Location = Location(null, Vector(0, 0, 0))
     var lastLocation: Location?
     protected var velocity: Vector
     var lastVector: Vector
@@ -43,7 +51,7 @@ abstract class Entity {
         protected set
     var age = 0
         protected set
-    var fallDistance = 0f
+    open var fallDistance = 0f
         protected set
     var fireTicks: Long = 0
         protected set
@@ -62,10 +70,10 @@ abstract class Entity {
         metadata.setFlag(EntityFlag.HAS_COLLISION, true)
         metadata.setFlag(EntityFlag.CAN_CLIMB, true)
         metadata.setFlag(EntityFlag.BREATHING, true)
-        location = Objects.requireNonNull<World?>(Server.Companion.getInstance().getDefaultWorld()).spawnLocation
-        lastLocation = Objects.requireNonNull<World?>(Server.Companion.getInstance().getDefaultWorld()).spawnLocation
-        velocity = Vector(0, 0, 0, location.getDimension())
-        lastVector = Vector(0, 0, 0, location.getDimension())
+        location = Objects.requireNonNull<World?>(Server.instance.defaultWorld).getSpawnLocation()
+        lastLocation = Objects.requireNonNull<World?>(Server.instance.defaultWorld).getSpawnLocation()
+        velocity = Vector(0, 0, 0, location.dimension)
+        lastVector = Vector(0, 0, 0, location.dimension)
         boundingBox = AxisAlignedBB(0f, 0f, 0f, 0f, 0f, 0f)
         recalculateBoundingBox()
     }
@@ -93,13 +101,13 @@ abstract class Entity {
 
     open fun createSpawnPacket(): BedrockPacket {
         val addEntityPacket = AddEntityPacket()
-        addEntityPacket.setRuntimeEntityId(entityId)
-        addEntityPacket.setUniqueEntityId(entityId)
-        addEntityPacket.setIdentifier(identifier.fullName)
-        addEntityPacket.setPosition(location!!.add(0f, eyeHeight, 0f).toVector3f())
-        addEntityPacket.setMotion(velocity.toVector3f())
-        addEntityPacket.setRotation(Vector3f.from(location.getPitch(), location.getYaw(), location.getYaw()))
-        addEntityPacket.getMetadata().putAll(metadata.entityDataMap)
+        addEntityPacket.runtimeEntityId = entityId
+        addEntityPacket.uniqueEntityId = entityId
+        addEntityPacket.identifier = identifier.fullName
+        addEntityPacket.position = location.add(0f, eyeHeight, 0f).toVector3f()
+        addEntityPacket.motion = velocity.toVector3f()
+        addEntityPacket.rotation = Vector3f.from(location.pitch, location.yaw, location.yaw)
+        addEntityPacket.metadata.putAll(metadata.getEntityDataMap())
         return addEntityPacket
     }
 
@@ -114,46 +122,46 @@ abstract class Entity {
     protected open fun fall() {}
     fun interact(player: Player?, vector: Vector?) {}
     open fun spawn(player: Player): Entity {
-        if (!spawnedFor.contains(player.getEntityId())) {
+        if (!spawnedFor.contains(player.entityId)) {
             val entitySpawnEvent = EntitySpawnEvent(this)
-            Server.Companion.getInstance().getPluginManager().callEvent(entitySpawnEvent)
-            if (entitySpawnEvent.isCancelled()) {
+            Server.instance.pluginManager.callEvent(entitySpawnEvent)
+            if (entitySpawnEvent.isCancelled) {
                 return this
             }
             val entity: Entity = entitySpawnEvent.getEntity()
             world!!.addEntity(entity)
             chunk!!.addEntity(entity)
             player.playerConnection.sendPacket(entity.createSpawnPacket())
-            spawnedFor.add(player.getEntityId())
+            spawnedFor.add(player.entityId)
         }
         return this
     }
 
     open fun spawn(): Entity {
-        for (player in world.getPlayers()) {
-            this.spawn(player!!)
+        for (player in world!!.players) {
+            this.spawn(player)
         }
         return this
     }
 
     open fun despawn(player: Player): Entity {
-        if (spawnedFor.contains(player.getEntityId())) {
+        if (spawnedFor.contains(player.entityId)) {
             val entityDespawnEvent = EntityDespawnEvent(this)
-            Server.Companion.getInstance().getPluginManager().callEvent(entityDespawnEvent)
-            if (entityDespawnEvent.isCancelled()) {
+            Server.instance.pluginManager.callEvent(entityDespawnEvent)
+            if (entityDespawnEvent.isCancelled) {
                 return this
             }
             val removeEntityPacket = RemoveEntityPacket()
-            removeEntityPacket.setUniqueEntityId(entityDespawnEvent.getEntity().getEntityId())
+            removeEntityPacket.uniqueEntityId = entityDespawnEvent.getEntity().entityId
             player.playerConnection.sendPacket(removeEntityPacket)
-            spawnedFor.remove(player.getEntityId())
+            spawnedFor.remove(player.entityId)
         }
         return this
     }
 
     open fun despawn(): Entity {
-        for (player in world.getPlayers()) {
-            this.despawn(player!!)
+        for (player in world!!.players) {
+            this.despawn(player)
         }
         return this
     }
@@ -166,11 +174,11 @@ abstract class Entity {
         isDead = true
     }
 
-    fun getLocation(): Location? {
+    fun getLocation(): Location {
         return location
     }
 
-    fun setLocation(location: Location?) {
+    fun setLocation(location: Location) {
         this.location = location
         recalculateBoundingBox()
     }
@@ -179,70 +187,77 @@ abstract class Entity {
         return velocity
     }
 
-    fun setVelocity(velocity: Vector?, sendVelocity: Boolean) {
+    fun setVelocity(velocity: Vector, sendVelocity: Boolean) {
         val entityVelocityEvent = EntityVelocityEvent(this, velocity)
-        Server.Companion.getInstance().getPluginManager().callEvent(entityVelocityEvent)
-        if (entityVelocityEvent.isCancelled()) {
+        Server.instance.pluginManager.callEvent(entityVelocityEvent)
+        if (entityVelocityEvent.isCancelled) {
             return
         }
-        this.velocity = entityVelocityEvent.getVelocity()
+        this.velocity = entityVelocityEvent.velocity
         if (sendVelocity) {
             val entityVelocityPacket = SetEntityMotionPacket()
-            entityVelocityPacket.setRuntimeEntityId(entityVelocityEvent.getEntity().getEntityId())
-            entityVelocityPacket.setMotion(entityVelocityEvent.getVelocity().toVector3f())
-            Server.Companion.getInstance().broadcastPacket(entityVelocityPacket)
+            entityVelocityPacket.runtimeEntityId = entityVelocityEvent.getEntity().entityId
+            entityVelocityPacket.motion = entityVelocityEvent.velocity.toVector3f()
+            Server.instance.broadcastPacket(entityVelocityPacket)
         }
     }
 
-    fun setVelocity(velocity: Vector?) {
+    fun setVelocity(velocity: Vector) {
         this.setVelocity(velocity, true)
     }
 
     val world: World?
-        get() = location.getWorld()
+        get() = location.world
+    val worldNonNull: World
+        get() {
+            if (location.world == null /*|| !location.world!!.isLoaded TODO*/) {
+                throw IllegalStateException("World is not loaded")
+            }
+            return location.world!!
+        }
     val x: Float
-        get() = location!!.x
+        get() = location.getX()
     val y: Float
-        get() = location!!.y
+        get() = location.getY()
     val z: Float
-        get() = location!!.z
+        get() = location.getZ()
     val blockX: Int
-        get() = location.getBlockX()
+        get() = location.blockX
     val blockY: Int
-        get() = location.getBlockY()
+        get() = location.blockY
     val blockZ: Int
-        get() = location.getBlockZ()
+        get() = location.blockZ
     var yaw: Float
-        get() = location.getYaw()
+        get() = location.yaw
         set(yaw) {
-            location.setYaw(yaw)
+            location.yaw = yaw
         }
     var pitch: Float
-        get() = location.getPitch()
+        get() = location.pitch
         set(pitch) {
-            location.setPitch(pitch)
+            location.pitch = pitch
         }
     val chunkX: Int
-        get() = location.getBlockX() shr 4
+        get() = location.blockX shr 4
     val chunkZ: Int
-        get() = location.getBlockZ() shr 4
+        get() = location.blockZ shr 4
     val chunk: Chunk?
-        get() = location.getWorld().getChunk(location.getChunkX(), location.getChunkZ(), location.getDimension())
+        get() = location.world?.getChunk(location.chunkX, location.chunkZ, location.dimension)
     val loadedChunk: Chunk?
-        get() = location.getWorld().getLoadedChunk(location.getChunkX(), location.getChunkZ(), location.getDimension())
-    val dimension: Dimension?
-        get() = location.getDimension()
+        get() = location.world?.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
+    val dimension: Dimension
+        get() = location.dimension
 
     fun recalculateBoundingBox() {
         val height = height * scale
         val radius = width * scale / 2
         boundingBox.setBounds(
-            location!!.x - radius,
-            location!!.y,
-            location!!.z - radius,
-            location!!.x + radius,
-            location!!.y + height,
-            location!!.z + radius
+            location.getX() - radius,
+            location.getY(),
+            location.getZ() - radius,
+            location.getX() + radius,
+            location.getY() + height,
+            location.getZ() + radius,
         )
         metadata.setFloat(EntityData.BOUNDING_BOX_HEIGHT, this.height)
         metadata.setFloat(EntityData.BOUNDING_BOX_WIDTH, width)
@@ -250,7 +265,7 @@ abstract class Entity {
 
     val direction: Direction
         get() {
-            var rotation = (location.getYaw() % 360).toDouble()
+            var rotation = (location.yaw % 360).toDouble()
             if (rotation < 0) {
                 rotation += 360.0
             }
@@ -265,7 +280,7 @@ abstract class Entity {
             }
         }
     var maxAirSupply: Short
-        //============ Metadata =============
+        // ============ Metadata =============
         get() = metadata.getShort(EntityData.AIR_SUPPLY)
         set(value) {
             if (value != maxAirSupply) {
@@ -300,7 +315,7 @@ abstract class Entity {
         }
     }
 
-    var nameTag: String?
+    var nameTag: String
         get() = metadata.getString(EntityData.NAMETAG)
         set(value) {
             this.updateMetadata(metadata.setString(EntityData.NAMETAG, value))
@@ -367,37 +382,37 @@ abstract class Entity {
     fun updateMetadata(metadata: Metadata) {
         val setEntityDataPacket = SetEntityDataPacket()
         setEntityDataPacket.runtimeEntityId = entityId
-        setEntityDataPacket.metadata.putAll(metadata.entityDataMap)
-        setEntityDataPacket.tick = Server.Companion.getInstance().getCurrentTick()
-        Server.Companion.getInstance().broadcastPacket(setEntityDataPacket)
+        setEntityDataPacket.metadata.putAll(metadata.getEntityDataMap())
+        setEntityDataPacket.tick = Server.instance.currentTick
+        Server.instance.broadcastPacket(setEntityDataPacket)
     }
 
     fun updateMetadata() {
         val setEntityDataPacket = SetEntityDataPacket()
         setEntityDataPacket.runtimeEntityId = entityId
-        setEntityDataPacket.metadata.putAll(metadata.entityDataMap)
-        setEntityDataPacket.tick = Server.Companion.getInstance().getCurrentTick()
-        Server.Companion.getInstance().broadcastPacket(setEntityDataPacket)
+        setEntityDataPacket.metadata.putAll(metadata.getEntityDataMap())
+        setEntityDataPacket.tick = Server.instance.currentTick
+        Server.instance.broadcastPacket(setEntityDataPacket)
     }
 
     protected val isOnLadder: Boolean
         protected get() {
             val location = getLocation()
             val loadedChunk =
-                location.getWorld().getLoadedChunk(location.getChunkX(), location.getChunkZ(), location.getDimension())
+                location.world!!.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
                     ?: return false
-            val block = loadedChunk.getBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0)
+            val block = loadedChunk.getBlock(location.blockX, location.blockY, location.blockZ, 0)
             return block.type == BlockType.LADDER
         }
     val isInWater: Boolean
         get() {
-            val eyeLocation: Vector = location!!.add(0f, eyeHeight, 0f)
-            val loadedChunk = world!!.getLoadedChunk(eyeLocation.chunkX, eyeLocation.chunkZ, location.getDimension())
+            val eyeLocation: Vector = location.add(0f, eyeHeight, 0f)
+            val loadedChunk = world!!.getLoadedChunk(eyeLocation.chunkX, eyeLocation.chunkZ, location.dimension)
                 ?: return false
             val block = loadedChunk.getBlock(eyeLocation.blockX, eyeLocation.blockY, eyeLocation.blockZ, 0)
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {
-                val yLiquid = (block.location!!.y + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
-                return eyeLocation.y < yLiquid
+                val yLiquid = (block.getLocation().getY() + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
+                return eyeLocation.getY() < yLiquid
             }
             return false
         }
@@ -417,12 +432,12 @@ abstract class Entity {
             return false
         }
         if (event is EntityDamageByEntityEvent) {
-            val damager: Entity = (event as EntityDamageByEntityEvent).getDamager()
+            val damager: Entity = (event as EntityDamageByEntityEvent).damager
             if (damager is Player) {
-                return (damager as Player).gameMode != GameMode.SPECTATOR
+                return damager.gameMode != GameMode.SPECTATOR
             }
         }
-        Server.Companion.getInstance().getPluginManager().callEvent(event)
+        Server.instance.pluginManager.callEvent(event)
         return !event.isCancelled
     }
 

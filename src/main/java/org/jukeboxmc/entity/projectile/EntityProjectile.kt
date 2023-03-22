@@ -3,8 +3,12 @@ package org.jukeboxmc.entity.projectile
 import com.nukkitx.protocol.bedrock.data.SoundEvent
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
 import org.jukeboxmc.entity.Entity
+import org.jukeboxmc.entity.EntityLiving
+import org.jukeboxmc.entity.EntityMoveable
+import org.jukeboxmc.event.entity.EntityDamageByEntityEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
+import org.jukeboxmc.event.entity.ProjectileHitEntityEvent
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
@@ -19,30 +23,32 @@ abstract class EntityProjectile : EntityMoveable() {
     protected var hitEntity: Entity? = null
     var hadCollision = false
     override fun update(currentTick: Long) {
-        if (this.isClosed()) {
+        if (this.isClosed) {
             return
         }
         super.update(currentTick)
         if (!this.isDead) {
             if (hitEntity != null) {
-                this.location = hitEntity!!.location!!
-                    .add(0f, hitEntity.getEyeHeight() + this.getHeight(), 0f)
+                this.location = hitEntity!!.getLocation()
+                    .add(0f, hitEntity!!.eyeHeight + this.eyeHeight, 0f)
             } else {
                 val location: Location = this.location
                 if (!this.isCollided) {
-                    this.velocity.setY(this.velocity.getY() - this.getGravity())
+                    this.velocity.setY(this.velocity.getY() - this.gravity)
                 }
                 val moveVector: Vector = Vector(
-                    location.x + this.velocity.getX(),
-                    location.y + this.velocity.getY(),
-                    location.z + this.velocity.getZ()
+                    location.getX() + this.velocity.getX(),
+                    location.getY() + this.velocity.getY(),
+                    location.getZ() + this.velocity.getZ(),
                 )
-                val nearbyEntities = location.world.getNearbyEntities(
+                val nearbyEntities = location.world!!.getNearbyEntities(
                     this.boundingBox.addCoordinates(
                         this.velocity.getX(),
                         this.velocity.getY(),
-                        this.velocity.getZ()
-                    ).expand(1f, 1f, 1f), location.dimension, this
+                        this.velocity.getZ(),
+                    ).expand(1f, 1f, 1f),
+                    location.dimension,
+                    this,
                 )
                 var nearDistance = Int.MAX_VALUE.toFloat()
                 var hitEntity: Entity? = null
@@ -60,15 +66,16 @@ abstract class EntityProjectile : EntityMoveable() {
                 }
                 if (hitEntity != null) {
                     val projectileHitEntityEvent = ProjectileHitEntityEvent(hitEntity, this)
-                    this.getWorld().getServer().getPluginManager().callEvent(projectileHitEntityEvent)
-                    if (!projectileHitEntityEvent.isCancelled()) {
+                    this.world!!.server.pluginManager.callEvent(projectileHitEntityEvent)
+                    if (!projectileHitEntityEvent.isCancelled) {
                         val damage = damage
-                        val event = EntityDamageByEntityEvent(hitEntity, shooter, damage, DamageSource.PROJECTILE)
+                        val event = EntityDamageByEntityEvent(hitEntity, shooter!!, damage, DamageSource.PROJECTILE)
                         if (hitEntity.damage(event)) {
                             applyCustomKnockback(hitEntity)
                             applyCustomDamageEffects(hitEntity)
                             if (this is EntityArrow) {
                                 if (shooter is Player) {
+                                    val player = shooter as Player
                                     player.playSound(Sound.RANDOM_BOWHIT)
                                 }
                             }
@@ -93,18 +100,20 @@ abstract class EntityProjectile : EntityMoveable() {
                     hadCollision = false
                 }
                 if (!hadCollision || Math.abs(this.velocity.getX()) > 0.00001 || Math.abs(this.velocity.getY()) > 0.00001 || Math.abs(
-                        this.velocity.getZ()
+                        this.velocity.getZ(),
                     ) > 0.00001
                 ) {
                     val f =
                         Math.sqrt((this.velocity.getX() * this.velocity.getX() + this.velocity.getZ() * this.velocity.getZ()).toDouble())
-                    this.setYaw(
-                        (Math.atan2(
-                            this.velocity.getX().toDouble(),
-                            this.velocity.getZ().toDouble()
-                        ) * 180 / Math.PI).toFloat()
-                    )
-                    this.setPitch((Math.atan2(this.velocity.getY().toDouble(), f) * 180 / Math.PI).toFloat())
+                    this.yaw = (
+                        (
+                            Math.atan2(
+                                this.velocity.getX().toDouble(),
+                                this.velocity.getZ().toDouble(),
+                            ) * 180 / Math.PI
+                            ).toFloat()
+                        )
+                    this.pitch = ((Math.atan2(this.velocity.getY().toDouble(), f) * 180 / Math.PI).toFloat())
                 }
                 this.updateMovement()
             }
@@ -116,21 +125,21 @@ abstract class EntityProjectile : EntityMoveable() {
     }
 
     override fun canCollideWith(entity: Entity?): Boolean {
-        return entity is EntityLiving && !this.onGround
+        return entity is EntityLiving && !this.isOnGround
     }
 
     open val damage: Float
-        get() = 0
+        get() = 0f
 
     protected open fun applyCustomDamageEffects(hitEntity: Entity) {}
     protected open fun applyCustomKnockback(hitEntity: Entity) {}
     open fun onCollidedWithEntity(entity: Entity?) {}
     fun getShooter(): EntityLiving? {
-        return if (shooter.isDead()) null else shooter
+        return if (shooter == null || shooter!!.isDead) null else shooter
     }
 
     fun setShooter(shooter: EntityLiving) {
         this.shooter = shooter
-        this.metadata.setLong(EntityData.OWNER_EID, shooter.getEntityId())
+        this.metadata.setLong(EntityData.OWNER_EID, shooter.entityId)
     }
 }

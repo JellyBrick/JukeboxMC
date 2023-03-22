@@ -1,6 +1,8 @@
 package org.jukeboxmc.entity.metadata
 
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
 
 /**
  * @author LucGamesYT
@@ -71,7 +73,7 @@ class Metadata {
     fun setFlag(entityFlag: EntityFlag, value: Boolean): Metadata {
         val oldValue = getFlag(entityFlag)
         if (oldValue != value) {
-            entityDataMap.getOrCreateFlags().setFlag(entityFlag, value)
+            entityDataMap.orCreateFlags.setFlag(entityFlag, value)
         }
         return this
     }
@@ -89,7 +91,7 @@ class Metadata {
     }
 
     fun getFlag(entityFlag: EntityFlag): Boolean {
-        return entityDataMap.getOrCreateFlags().getFlag(entityFlag)
+        return entityDataMap.orCreateFlags.getFlag(entityFlag)
     }
 
     fun getEntityDataMap(): EntityDataMap {

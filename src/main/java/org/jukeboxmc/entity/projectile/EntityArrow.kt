@@ -1,15 +1,17 @@
 package org.jukeboxmc.entity.projectile
 
 import com.nukkitx.protocol.bedrock.data.LevelEventType
-import java.util.concurrent.TimeUnit
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.Entity
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.EntityType
+import org.jukeboxmc.event.player.PlayerPickupItemEvent
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
+import java.util.concurrent.TimeUnit
 
 /**
  * @author LucGamesYT
@@ -26,7 +28,7 @@ class EntityArrow : EntityProjectile() {
     var flameModifier = 0
     override fun update(currentTick: Long) {
         super.update(currentTick)
-        if (onGround || isCollided || hadCollision) {
+        if (isOnGround || isCollided || hadCollision) {
             canBePickedUp = true
         }
         if (age >= TimeUnit.MINUTES.toMillis(5) / 50) {
@@ -34,32 +36,32 @@ class EntityArrow : EntityProjectile() {
         }
     }
 
-    val name: String
+    override val name: String
         get() = "Arrow"
-    val width: Float
+    override val width: Float
         get() = 0.5f
-    val height: Float
+    override val height: Float
         get() = 0.5f
-    val type: EntityType
+    override val type: EntityType
         get() = EntityType.ARROW
-    val identifier: Identifier
-        get() = Identifier.Companion.fromString("minecraft:arrow")
+    override val identifier: Identifier
+        get() = Identifier.fromString("minecraft:arrow")
 
     override fun onCollideWithPlayer(player: Player) {
-        if (Server.Companion.getInstance()
-                .getCurrentTick() > pickupDelay && canBePickedUp && !closed && !player.isDead
+        if (Server.instance
+                .currentTick > pickupDelay && canBePickedUp && !isClosed && !player.isDead
         ) {
-            val arrow: Item = Item.Companion.create<Item>(ItemType.ARROW)
+            val arrow: Item = Item.create<Item>(ItemType.ARROW)
             if (!player.inventory.canAddItem(arrow)) {
                 return
             }
             val pickupItemEvent = PlayerPickupItemEvent(player, arrow)
-            player.world.server.pluginManager.callEvent(pickupItemEvent)
-            if (pickupItemEvent.isCancelled()) {
+            player.world?.server?.pluginManager?.callEvent(pickupItemEvent)
+            if (pickupItemEvent.isCancelled) {
                 return
             }
             close()
-            player.world.sendLevelEvent(player.location, LevelEventType.SOUND_INFINITY_ARROW_PICKUP)
+            player.world?.sendLevelEvent(player.getLocation(), LevelEventType.SOUND_INFINITY_ARROW_PICKUP)
             if (!wasInfinityArrow) {
                 player.inventory.addItem(arrow)
             }
@@ -69,14 +71,15 @@ class EntityArrow : EntityProjectile() {
 
     override fun applyCustomKnockback(hitEntity: Entity) {
         if (punchModifier > 0) {
-            val sqrtMotion = Math.sqrt((velocity.x * velocity.x + velocity.z * velocity.z).toDouble()).toFloat()
+            val sqrtMotion =
+                Math.sqrt((velocity.getX() * velocity.getX() + velocity.getZ() * velocity.getZ()).toDouble()).toFloat()
             if (sqrtMotion > 0.0f) {
                 val toAdd = Vector(
-                    velocity.x * punchModifier * 0.6f / sqrtMotion,
+                    velocity.getX() * punchModifier * 0.6f / sqrtMotion,
                     0.1f,
-                    velocity.z * punchModifier * 0.6f / sqrtMotion
+                    velocity.getZ() * punchModifier * 0.6f / sqrtMotion,
                 )
-                hitEntity.velocity = hitEntity.velocity.add(toAdd.x, toAdd.y, toAdd.z)
+                hitEntity.setVelocity(hitEntity.getVelocity().add(toAdd.getX(), toAdd.getY(), toAdd.getZ()))
             }
         }
     }
@@ -90,10 +93,12 @@ class EntityArrow : EntityProjectile() {
     override val damage: Float
         get() = if (powerModifier > 0) {
             2 + (powerModifier * 0.5f + 0.5f)
-        } else 2
+        } else {
+            2f
+        }
 
     fun setPickupDelay(duration: Long, timeUnit: TimeUnit) {
-        pickupDelay = Server.Companion.getInstance().getCurrentTick() + timeUnit.toMillis(duration) / 50
+        pickupDelay = Server.instance.currentTick + timeUnit.toMillis(duration) / 50
     }
 
     fun wasInfinityArrow(): Boolean {
