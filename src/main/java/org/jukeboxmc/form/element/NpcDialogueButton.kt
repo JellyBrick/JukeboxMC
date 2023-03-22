@@ -2,15 +2,11 @@ package org.jukeboxmc.form.element
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import lombok.Value
-import lombok.experimental.Accessors
 
 /**
  * @author Kaooot
  * @version 1.0
  */
-@Value
-@Accessors(fluent = true)
 class NpcDialogueButton {
     var text: String? = null
     var commands: List<String>? = null

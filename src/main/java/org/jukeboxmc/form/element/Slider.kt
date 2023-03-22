@@ -7,8 +7,8 @@ import org.json.simple.JSONObject
  * @version 1.0
  */
 class Slider(
-    id: String?,
-    text: String?,
+    id: String,
+    text: String,
     private val min: Float,
     private val max: Float,
     private val step: Float,

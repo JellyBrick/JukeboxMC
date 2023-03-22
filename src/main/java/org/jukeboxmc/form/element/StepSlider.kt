@@ -8,7 +8,7 @@ import org.jukeboxmc.form.CustomForm
  * @author GoMint
  * @version 1.0
  */
-class StepSlider(private val form: CustomForm, id: String?, text: String?) : Element(id, text) {
+class StepSlider(private val form: CustomForm, id: String, text: String) : Element(id, text) {
     private val steps: MutableList<String> = ArrayList()
     private var defaultStep = 0
     fun addStep(step: String): StepSlider {

@@ -5,50 +5,40 @@ import com.nukkitx.protocol.bedrock.data.entity.EntityData
 import com.nukkitx.protocol.bedrock.packet.NpcDialoguePacket
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import java.util.Arrays
-import java.util.UUID
-import lombok.Getter
-import lombok.Setter
-import lombok.experimental.Accessors
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.passiv.EntityNPC
 import org.jukeboxmc.form.element.NpcDialogueButton
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Utils
+import java.util.UUID
 
 /**
  * @author Kaooot
  * @version 1.0
  */
-@Accessors(fluent = true, chain = true)
-class NpcDialogueForm {
-    @Getter
+class NpcDialogueForm(
+    private var title: String,
+    private var dialogue: String,
+    private var npc: EntityNPC,
+) {
     val sceneName = UUID.randomUUID().toString()
-
-    @Getter
-    @Setter
-    private val title: String? = null
-
-    @Getter
-    @Setter
-    private val dialogue: String? = null
-
-    @Getter
-    @Setter
-    private val npc: EntityNPC? = null
     private var actionJson = ""
 
-    @Getter
     val dialogueButtons = ObjectArrayList<NpcDialogueButton>()
+
     fun buttons(vararg buttons: NpcDialogueButton): NpcDialogueForm {
-        val urlTag = npc.getMetadata().getString(EntityData.URL_TAG)
+        val urlTag = npc.metadata.getString(EntityData.URL_TAG)
         val urlTags: MutableList<JsonObject> =
-            if (Utils.gson().fromJson<List<*>>(urlTag, MutableList::class.java) == null) ArrayList() else Utils.gson()
-                .fromJson<List<*>>(urlTag, MutableList::class.java)
+            if (Utils.gson.fromJson<List<*>>(urlTag, MutableList::class.java) == null) {
+                mutableListOf()
+            } else {
+                Utils.gson
+                    .fromJson<MutableList<JsonObject>>(urlTag, MutableList::class.java)
+            }
         for (button in buttons) {
             var found = false
             for (tag in urlTags) {
-                if (tag["button_name"].asString.equals(button.text(), ignoreCase = true)) {
+                if (tag["button_name"].asString.equals(button.text, ignoreCase = true)) {
                     found = true
                 }
             }
@@ -56,23 +46,23 @@ class NpcDialogueForm {
                 urlTags.add(button.toJsonObject())
             }
         }
-        actionJson = Utils.gson().toJson(urlTags)
-        dialogueButtons.addAll(Arrays.asList(*buttons))
+        actionJson = Utils.gson.toJson(urlTags)
+        dialogueButtons.addAll(listOf(*buttons))
         return this
     }
 
     fun create(player: Player) {
         val setEntityDataPacket = SetEntityDataPacket()
-        setEntityDataPacket.runtimeEntityId = npc.getEntityId()
+        setEntityDataPacket.runtimeEntityId = npc.entityId
         setEntityDataPacket.metadata.putAll(
-            npc.getMetadata()
+            npc.metadata
                 .setString(EntityData.NAMETAG, title)
                 .setString(EntityData.INTERACTIVE_TAG, dialogue)
-                .entityDataMap
+                .getEntityDataMap(),
         )
         Server.instance.broadcastPacket(setEntityDataPacket)
         val npcDialoguePacket = NpcDialoguePacket()
-        npcDialoguePacket.uniqueEntityId = npc.getEntityId()
+        npcDialoguePacket.uniqueEntityId = npc.entityId
         npcDialoguePacket.action = NpcDialoguePacket.Action.OPEN
         npcDialoguePacket.dialogue = dialogue
         npcDialoguePacket.npcName = title
@@ -84,7 +74,7 @@ class NpcDialogueForm {
 
     fun close(player: Player) {
         val npcDialoguePacket = NpcDialoguePacket()
-        npcDialoguePacket.uniqueEntityId = npc.getEntityId()
+        npcDialoguePacket.uniqueEntityId = npc.entityId
         npcDialoguePacket.action = NpcDialoguePacket.Action.CLOSE
         npcDialoguePacket.dialogue = dialogue
         npcDialoguePacket.npcName = title

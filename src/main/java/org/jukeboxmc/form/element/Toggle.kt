@@ -6,7 +6,7 @@ import org.json.simple.JSONObject
  * @author GoMint
  * @version 1.0
  */
-class Toggle(id: String?, text: String?, private var value: Boolean) : Element(id, text) {
+class Toggle(id: String, text: String, private var value: Boolean) : Element(id, text) {
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
         obj!!["type"] = "toggle"

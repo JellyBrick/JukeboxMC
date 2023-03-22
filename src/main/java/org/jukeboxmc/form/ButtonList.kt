@@ -9,7 +9,7 @@ import org.jukeboxmc.form.element.ImageButton
  * @author GoMint
  * @version 1.0
  */
-class ButtonList(title: String?) : Form<String?>(title) {
+class ButtonList(title: String) : Form<String?>(title) {
     private val buttons: MutableList<Button> = ArrayList()
     private var content = ""
     fun setContent(content: String): ButtonList {
@@ -18,14 +18,14 @@ class ButtonList(title: String?) : Form<String?>(title) {
         return this
     }
 
-    fun addButton(id: String?, text: String?): ButtonList {
+    fun addButton(id: String, text: String): ButtonList {
         val button = Button(id, text)
         buttons.add(button)
         dirty = true
         return this
     }
 
-    fun addImageButton(id: String?, text: String?, imagePath: String): ButtonList {
+    fun addImageButton(id: String, text: String, imagePath: String): ButtonList {
         val imageButton = ImageButton(id, text, imagePath)
         buttons.add(imageButton)
         dirty = true

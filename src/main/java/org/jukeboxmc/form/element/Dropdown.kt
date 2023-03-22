@@ -8,7 +8,7 @@ import org.jukeboxmc.form.CustomForm
  * @author GoMint
  * @version 1.0
  */
-class Dropdown(private val form: CustomForm, id: String?, text: String?) : Element(id, text) {
+class Dropdown(private val form: CustomForm, id: String, text: String) : Element(id, text) {
     private val options: MutableList<String> = ArrayList()
     private var defaultOption = 0
     fun addOption(option: String): Dropdown {
@@ -28,7 +28,7 @@ class Dropdown(private val form: CustomForm, id: String?, text: String?) : Eleme
 
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
-        obj!!["type"] = "dropdown"
+        obj["type"] = "dropdown"
         val jsonOptions = JSONArray()
         jsonOptions.addAll(options)
         obj["options"] = jsonOptions

@@ -1,6 +1,5 @@
 package org.jukeboxmc.form
 
-import lombok.RequiredArgsConstructor
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
@@ -8,10 +7,10 @@ import org.json.simple.JSONObject
  * @author GoMint
  * @version 1.0
  */
-@RequiredArgsConstructor
-abstract class Form<R> {
-    val title: String = null
-    private var icon: String? = null
+abstract class Form<R> @JvmOverloads constructor(
+    val title: String,
+    var icon: String = "",
+) {
 
     // Caching
     protected var cache: JSONObject? = null
@@ -23,12 +22,12 @@ abstract class Form<R> {
      * @return type of form
      */
     abstract val formType: String
-    fun setIcon(icon: String?) {
+    fun setIcon(icon: String) {
         this.icon = icon
         dirty = true
     }
 
-    fun getIcon(): String? {
+    fun getIcon(): String {
         return icon
     }
 

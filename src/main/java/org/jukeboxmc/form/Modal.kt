@@ -6,7 +6,7 @@ import org.json.simple.JSONObject
  * @author GoMint
  * @version 1.0
  */
-class Modal(title: String?, private val question: String) : Form<Boolean>(title) {
+class Modal(title: String, private val question: String) : Form<Boolean>(title) {
     private var trueButtonText: String? = null
     private var falseButtonText: String? = null
     fun setTrueButtonText(text: String?) {

@@ -6,11 +6,11 @@ import org.json.simple.JSONObject
  * @author GoMint
  * @version 1.0
  */
-class Input(id: String?, text: String?, private val placeHolder: String, private var defaultValue: String) :
+class Input(id: String, text: String, private val placeHolder: String, private var defaultValue: String) :
     Element(id, text) {
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
-        obj!!["type"] = "input"
+        obj["type"] = "input"
         obj["placeholder"] = placeHolder
         obj["default"] = defaultValue
         return obj

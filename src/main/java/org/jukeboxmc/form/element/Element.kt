@@ -1,20 +1,15 @@
 package org.jukeboxmc.form.element
 
-import lombok.Getter
-import lombok.RequiredArgsConstructor
 import org.json.simple.JSONObject
 
 /**
  * @author GoMint
  * @version 1.0
  */
-@RequiredArgsConstructor
-abstract class Element {
-    @Getter
-    private val id: String = null
-
-    @Getter
-    private val text: String = null
+abstract class Element(
+    val id: String,
+    val text: String
+) {
 
     /**
      * Get the JSON representation of a form
