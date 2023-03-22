@@ -8,8 +8,7 @@ import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.event.block.BlockSignChangeEvent
 import org.jukeboxmc.player.Player
-import java.util.Arrays
-import java.util.Collections
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -52,14 +51,14 @@ class BlockEntitySign(block: Block, blockEntityType: BlockEntityType) : BlockEnt
         lines.clear()
         lines.addAll(blockSignChangeEvent.getLines())
         val blockEntityDataPacket = BlockEntityDataPacket()
-        blockEntityDataPacket.blockPosition = block.getLocation().toVector3i()
+        blockEntityDataPacket.blockPosition = block.location.toVector3i()
         blockEntityDataPacket.data = toCompound().build()
         Server.instance.broadcastPacket(blockEntityDataPacket)
     }
 
     fun updateBlockEntitySign() {
         val blockEntityDataPacket = BlockEntityDataPacket()
-        blockEntityDataPacket.blockPosition = block.getLocation().toVector3i()
+        blockEntityDataPacket.blockPosition = block.location.toVector3i()
         blockEntityDataPacket.data = toCompound().build()
         Server.instance.broadcastPacket(blockEntityDataPacket)
     }

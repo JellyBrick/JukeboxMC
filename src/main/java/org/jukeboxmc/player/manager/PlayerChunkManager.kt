@@ -80,7 +80,7 @@ class PlayerChunkManager(private val player: Player) {
     }
 
     @JvmOverloads
-    fun queueNewChunks(pos: Vector = player.getLocation()) {
+    fun queueNewChunks(pos: Vector = player.location) {
         this.queueNewChunks(pos.blockX shr 4, pos.blockZ shr 4)
     }
 
@@ -109,7 +109,7 @@ class PlayerChunkManager(private val player: Player) {
         val loadedChunksChanged = loadedChunks.retainAll(chunksForRadius)
         if (loadedChunksChanged || !chunksToLoad.isEmpty()) {
             val packet = NetworkChunkPublisherUpdatePacket()
-            packet.position = player.getLocation().toVector3i()
+            packet.position = player.location.toVector3i()
             packet.radius = this.radius
             player.playerConnection.sendPacket(packet)
         }

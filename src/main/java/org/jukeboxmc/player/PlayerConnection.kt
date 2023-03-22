@@ -39,7 +39,7 @@ import org.jukeboxmc.util.BiomeDefinitions
 import org.jukeboxmc.util.CreativeItems
 import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -214,7 +214,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         server.logger.info(
             player.name + " logged in [World=" + player.world!!.name + ", X=" +
                 player.blockX + ", Y=" + player.blockY + ", Z=" + player.blockZ +
-                ", Dimension=" + player.getLocation().dimension.dimensionName + "]",
+                ", Dimension=" + player.location.dimension.dimensionName + "]",
         )
     }
 
@@ -225,11 +225,11 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.uniqueEntityId = player.entityId
         startGamePacket.runtimeEntityId = player.entityId
         startGamePacket.playerGameType = player.gameMode!!.toGameType()
-        startGamePacket.playerPosition = player.getLocation().toVector3f().add(0f, 2f, 0f) // TODO
-        startGamePacket.defaultSpawn = player.getLocation().toVector3i().add(0, 2, 0) // TODO
+        startGamePacket.playerPosition = player.location.toVector3f().add(0f, 2f, 0f) // TODO
+        startGamePacket.defaultSpawn = player.location.toVector3i().add(0, 2, 0) // TODO
         startGamePacket.rotation = Vector2f.from(player.pitch, player.yaw)
         startGamePacket.seed = 0L // TODO
-        startGamePacket.dimensionId = player.getLocation().dimension.ordinal
+        startGamePacket.dimensionId = player.location.dimension.ordinal
         startGamePacket.isTrustingPlayers = true
         startGamePacket.levelGameType = server.gameMode.toGameType()
         startGamePacket.difficulty = player.world!!.difficulty.ordinal

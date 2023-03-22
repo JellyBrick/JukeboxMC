@@ -24,7 +24,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     var isSpawned = false
 
     init {
-        dimension = block.getLocation().dimension
+        dimension = block.location.dimension
     }
 
     open fun interact(
@@ -44,7 +44,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
 
     open fun toCompound(): NbtMapBuilder {
         val compound = NbtMap.builder()
-        val position: Vector = block.getLocation()
+        val position: Vector = block.location
         compound.putString("id", BlockEntityRegistry.getBlockEntityType(blockEntityType))
         compound.putInt("x", position.blockX)
         compound.putInt("y", position.blockY)
@@ -84,8 +84,8 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     }
 
     fun spawn(): BlockEntity {
-        val world = block.getLocation().world
-        val location: Vector = block.getLocation()
+        val world = block.location.world
+        val location: Vector = block.location
         val blockEntityDataPacket = BlockEntityDataPacket()
         blockEntityDataPacket.blockPosition = location.toVector3i()
         blockEntityDataPacket.data = toCompound().build()
@@ -98,7 +98,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
 
     fun update(player: Player) {
         val blockEntityDataPacket = BlockEntityDataPacket()
-        blockEntityDataPacket.blockPosition = block.getLocation().toVector3i()
+        blockEntityDataPacket.blockPosition = block.location.toVector3i()
         blockEntityDataPacket.data = toCompound().build()
         player.playerConnection.sendPacket(blockEntityDataPacket)
     }

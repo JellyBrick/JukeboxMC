@@ -178,15 +178,6 @@ abstract class Entity {
         isDead = true
     }
 
-    fun getLocation(): Location {
-        return location
-    }
-
-    fun setLocation(location: Location) {
-        this.location = location
-        recalculateBoundingBox()
-    }
-
     fun getVelocity(): Vector {
         return velocity
     }
@@ -415,7 +406,7 @@ abstract class Entity {
                 ?: return false
             val block = loadedChunk.getBlock(eyeLocation.blockX, eyeLocation.blockY, eyeLocation.blockZ, 0)
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {
-                val yLiquid = (block.getLocation().y + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
+                val yLiquid = (block.location.y + 1 + (block as BlockWater).liquidDepth - 0.12).toFloat()
                 return eyeLocation.y < yLiquid
             }
             return false

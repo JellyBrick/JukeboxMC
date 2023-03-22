@@ -61,7 +61,7 @@ class EntityArrow : EntityProjectile() {
                 return
             }
             close()
-            player.world?.sendLevelEvent(player.getLocation(), LevelEventType.SOUND_INFINITY_ARROW_PICKUP)
+            player.world?.sendLevelEvent(player.location, LevelEventType.SOUND_INFINITY_ARROW_PICKUP)
             if (!wasInfinityArrow) {
                 player.inventory.addItem(arrow)
             }

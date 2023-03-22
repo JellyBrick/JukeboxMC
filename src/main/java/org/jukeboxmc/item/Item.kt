@@ -23,9 +23,7 @@ import org.jukeboxmc.util.ItemPalette
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
 import java.io.IOException
-import java.util.Base64
-import java.util.LinkedList
-import java.util.Random
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -536,7 +534,7 @@ open class Item : Cloneable {
                 .putInt("Count", item.amount)
                 .putInt("Meta", item.meta)
                 .putBoolean("Unbreakable", item.isUnbreakable)
-                .putCompound("BlockState", item.toBlock().getBlockStates())
+                .putCompound("BlockState", item.toBlock().blockStates)
                 .putCompound("tag", if (item.toNbt() != null) item.toNbt() else NbtMap.EMPTY)
                 .build()
             val buffer = Unpooled.buffer()

@@ -30,9 +30,9 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
             Vector(packet.position.sub(0f, player.eyeHeight, 0f)),
             packet.rotation.y,
             packet.rotation.x,
-            player.getLocation().dimension,
+            player.location.dimension,
         )
-        val playerMoveEvent = PlayerMoveEvent(player, player.getLocation(), toLocation)
+        val playerMoveEvent = PlayerMoveEvent(player, player.location, toLocation)
         Server.instance.pluginManager.callEvent(playerMoveEvent)
         if (playerMoveEvent.isCancelled) {
             playerMoveEvent.to = playerMoveEvent.from
@@ -99,8 +99,8 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
     private fun move(target: Player, player: Player) {
         val moveAbsolutePacket = MoveEntityAbsolutePacket()
         moveAbsolutePacket.runtimeEntityId = target.entityId
-        moveAbsolutePacket.position = target.getLocation().toVector3f().add(0f, target.eyeHeight, 0f)
-        moveAbsolutePacket.rotation = Vector3f.from(target.getLocation().pitch, target.getLocation().yaw, target.getLocation().yaw)
+        moveAbsolutePacket.position = target.location.toVector3f().add(0f, target.eyeHeight, 0f)
+        moveAbsolutePacket.rotation = Vector3f.from(target.location.pitch, target.location.yaw, target.location.yaw)
         moveAbsolutePacket.isOnGround = target.isOnGround
         moveAbsolutePacket.isTeleported = false
         player.playerConnection.sendPacket(moveAbsolutePacket)

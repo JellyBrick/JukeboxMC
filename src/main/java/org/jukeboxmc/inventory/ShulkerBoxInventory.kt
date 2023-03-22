@@ -22,7 +22,7 @@ class ShulkerBoxInventory(holder: InventoryHolder?) : ContainerInventory(holder,
     override fun onOpen(player: Player) {
         super.onOpen(player)
         if (viewer.size == 1) {
-            val location: Location = inventoryHolder.block.getLocation()
+            val location: Location = inventoryHolder.block.location
             val blockEventPacket = BlockEventPacket()
             blockEventPacket.blockPosition = location.toVector3i()
             blockEventPacket.eventType = 1
@@ -34,7 +34,7 @@ class ShulkerBoxInventory(holder: InventoryHolder?) : ContainerInventory(holder,
 
     override fun onClose(player: Player) {
         if (viewer.size == 0) {
-            val location: Location = inventoryHolder.block.getLocation()
+            val location: Location = inventoryHolder.block.location
             val blockEventPacket = BlockEventPacket()
             blockEventPacket.blockPosition = location.toVector3i()
             blockEventPacket.eventType = 1

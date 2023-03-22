@@ -127,7 +127,7 @@ abstract class BlockLiquid : Block {
                     } else if (bottomBlock is BlockWater && bottomBlock.liquidDepth == 0) {
                         newDecay = 0
                     } else {
-                        bottomBlock = bottomBlock.getLocation().world!!.getBlock(location, 1)
+                        bottomBlock = bottomBlock.location.world!!.getBlock(location, 1)
                         if (bottomBlock is BlockWater && bottomBlock.liquidDepth == 0) {
                             newDecay = 0
                         }
@@ -241,7 +241,7 @@ abstract class BlockLiquid : Block {
 
     protected fun getFlowDecay(block: Block): Int {
         if (block.type != this.type) {
-            val layer1 = block.getLocation().world!!.getBlock(location, 1)
+            val layer1 = block.location.world!!.getBlock(location, 1)
             return if (layer1.type != this.type) {
                 -1
             } else {
@@ -288,12 +288,12 @@ abstract class BlockLiquid : Block {
             val event = BlockLiquidFlowEvent(block, this, newFlowDecay)
             Server.instance.pluginManager.callEvent(event)
             if (!event.isCancelled) {
-                if (block.getLayer() == 0 && block.type != BlockType.AIR) {
+                if (block.layer == 0 && block.type != BlockType.AIR) {
                     // TODO DROP ITEM IF LIQUID IS COLLIDED
-                    // this.location.getWorld().breakBlock( null, block.getLocation(), block.getType() == BlockType.WEB ? Item.create( ItemType.WOODEN_SWORD ) : null );
+                    // this.location.getWorld().breakBlock( null, block.location, block.getType() == BlockType.WEB ? Item.create( ItemType.WOODEN_SWORD ) : null );
                 }
-                location.world!!.setBlock(block.getLocation(), getBlock(newFlowDecay), block.getLayer())
-                location.world!!.scheduleBlockUpdate(block.getLocation(), tickRate.toLong())
+                location.world!!.setBlock(block.location, getBlock(newFlowDecay), block.layer)
+                location.world!!.scheduleBlockUpdate(block.location, tickRate.toLong())
             }
         }
     }

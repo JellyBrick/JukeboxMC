@@ -27,7 +27,7 @@ open class ItemBucket : Item {
     override fun useOnBlock(player: Player, block: Block, placeLocation: Location): Boolean {
         var block = block
         if (block !is BlockLiquid && block.type != BlockType.POWDER_SNOW) {
-            block = player.world?.getBlock(block.getLocation(), 1)!!
+            block = player.world?.getBlock(block.location, 1)!!
         }
         if (block is BlockLiquid || block.type == BlockType.POWDER_SNOW) {
             if (this.type != ItemType.BUCKET) {
@@ -49,13 +49,13 @@ open class ItemBucket : Item {
                 player.inventory.sendContents(player)
                 return false
             }
-            player.world?.setBlock(block.getLocation(), Block.create<Block>(BlockType.AIR), 0)
+            player.world?.setBlock(block.location, Block.create<Block>(BlockType.AIR), 0)
             if (block.type == BlockType.POWDER_SNOW) {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_POWDER_SNOW)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_FILL_POWDER_SNOW)
             } else if (block is BlockLava) {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_LAVA)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_FILL_LAVA)
             } else {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_WATER)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_FILL_WATER)
             }
             if (player.gameMode != GameMode.CREATIVE) {
                 if (amount - 1 <= 0) {
@@ -65,12 +65,12 @@ open class ItemBucket : Item {
                     clone.setAmount(amount - 1)
                     player.inventory.itemInHand = clone
                     if (!player.inventory.addItem(playerBucketFillEvent.itemInHand)) {
-                        player.world?.dropItem(item, player.getLocation(), null)
+                        player.world?.dropItem(item, player.location, null)
                     }
                 }
             }
         } else {
-            block = block.world?.getBlock(block.getLocation(), 0)!!
+            block = block.world?.getBlock(block.location, 0)!!
             val placedBlock: Block?
             when (this.type) {
                 ItemType.BUCKET, ItemType.MILK_BUCKET, ItemType.COD_BUCKET, ItemType.SALMON_BUCKET, ItemType.PUFFERFISH_BUCKET, ItemType.TROPICAL_FISH_BUCKET, ItemType.AXOLOTL_BUCKET -> {
@@ -80,7 +80,7 @@ open class ItemBucket : Item {
                 else -> {
                     placedBlock = toBlock()
                     if (block is Waterlogable && this.type == ItemType.WATER_BUCKET) {
-                        placedBlock.setLocation(block.getLocation())
+                        placedBlock.setLocation(block.location)
                         placedBlock.setLayer(1)
                     } else if (block is BlockLiquid) {
                         return false
@@ -102,13 +102,13 @@ open class ItemBucket : Item {
                 return false
             }
             if (placedBlock.type == BlockType.POWDER_SNOW) {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_POWDER_SNOW)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_EMPTY_POWDER_SNOW)
             } else if (placedBlock is BlockLava) {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_LAVA)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_EMPTY_LAVA)
             } else {
-                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_WATER)
+                player.world?.playSound(player.location, SoundEvent.BUCKET_EMPTY_WATER)
             }
-            player.world?.setBlock(placeLocation, placedBlock, placedBlock.getLayer())
+            player.world?.setBlock(placeLocation, placedBlock, placedBlock.layer)
             if (placedBlock is BlockLiquid) {
                 player.world?.scheduleBlockUpdate(placeLocation, placedBlock.tickRate.toLong())
             }
@@ -120,7 +120,7 @@ open class ItemBucket : Item {
                     clone.setAmount(amount - 1)
                     player.inventory.itemInHand = clone
                     if (!player.inventory.addItem(playerBucketEmptyEvent.itemInHand)) {
-                        player.world?.dropItem(create<Item>(ItemType.BUCKET), player.getLocation(), null)
+                        player.world?.dropItem(create<Item>(ItemType.BUCKET), player.location, null)
                     }
                 }
             }

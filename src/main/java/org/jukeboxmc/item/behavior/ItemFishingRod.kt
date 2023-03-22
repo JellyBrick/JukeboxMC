@@ -13,7 +13,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import java.time.Duration
-import java.util.Objects
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -28,7 +28,7 @@ class ItemFishingRod : Item, Durability, Burnable {
             val entityFishingHook =
                 Objects.requireNonNull<EntityFishingHook>(Entity.create<EntityFishingHook>(EntityType.FISHING_HOOK))
             entityFishingHook.setShooter(player)
-            entityFishingHook.setLocation(player.getLocation().add(0f, player.eyeHeight, 0f))
+            entityFishingHook.setLocation(player.location.add(0f, player.eyeHeight, 0f))
             val force = 1.6f
             entityFishingHook.setVelocity(
                 Vector(
@@ -52,7 +52,7 @@ class ItemFishingRod : Item, Durability, Burnable {
                 entityFishingHook.spawn()
                 this.updateItem(player, 1)
                 player.entityFishingHook = entityFishingHook
-                player.world?.playSound(player.getLocation(), SoundEvent.THROW, -1, "minecraft:player", false, false)
+                player.world?.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
                 return true
             }
             return false

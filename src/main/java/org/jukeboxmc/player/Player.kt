@@ -492,7 +492,7 @@ class Player(
     }
 
     fun teleport(player: Player) {
-        this.teleport(player.getLocation())
+        this.teleport(player.location)
     }
 
     fun teleport(location: Location) {

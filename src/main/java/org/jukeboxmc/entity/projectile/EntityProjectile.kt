@@ -32,7 +32,7 @@ abstract class EntityProjectile : EntityMoveable() {
         super.update(currentTick)
         if (!this.isDead) {
             if (hitEntity != null) {
-                this.location = hitEntity!!.getLocation()
+                this.location = hitEntity!!.location
                     .add(0f, hitEntity!!.eyeHeight + this.eyeHeight, 0f)
             } else {
                 val location: Location = this.location

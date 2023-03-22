@@ -24,8 +24,8 @@ class ItemGoldenShovel : Item, Durability {
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {
         if (clickedBlock.type == BlockType.GRASS) {
-            player.world?.setBlock(clickedBlock.getLocation(), Block.create<Block>(BlockType.GRASS_PATH))
-            player.world?.playSound(clickedBlock.getLocation(), SoundEvent.ITEM_USE_ON, 12259)
+            player.world?.setBlock(clickedBlock.location, Block.create<Block>(BlockType.GRASS_PATH))
+            player.world?.playSound(clickedBlock.location, SoundEvent.ITEM_USE_ON, 12259)
             this.updateItem(player, 1)
             return true
         }

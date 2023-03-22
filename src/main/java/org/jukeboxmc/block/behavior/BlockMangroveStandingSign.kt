@@ -2,7 +2,6 @@ package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
 import org.apache.commons.math3.util.FastMath
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.block.direction.SignDirection
@@ -36,7 +35,7 @@ class BlockMangroveStandingSign : BlockSign {
         if (blockFace == BlockFace.UP) {
             signDirection =
                 SignDirection.values()[
-                    FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5)
+                    FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5)
                         .toInt() and 0x0f,
                 ]
 

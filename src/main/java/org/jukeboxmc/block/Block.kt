@@ -46,17 +46,17 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         protected set
     var identifier: Identifier?
         protected set
-    protected var blockStates: NbtMap?
+    var blockStates: NbtMap?
     var type: BlockType?
         protected set
-    protected var location: Location = Location(null, Vector(0, 0, 0))
-    protected var layer = 0
+    var location: Location = Location(null, Vector(0, 0, 0))
+    var layer = 0
     protected var blockProperties: BlockProperties?
 
     init {
-        var blockStates = blockStates
+        var variableBlockStates = blockStates
         this.identifier = identifier
-        this.blockStates = blockStates
+        this.blockStates = variableBlockStates
         type = BlockRegistry.getBlockType(identifier)
         blockProperties = BlockRegistry.getBlockProperties(identifier)
         if (!STATES.containsKey(this.identifier)) {
@@ -68,40 +68,16 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
             STATES[this.identifier] = toRuntimeId
         }
-        if (blockStates == null) {
+        if (variableBlockStates == null) {
             val states: List<NbtMap?> = LinkedList(STATES[this.identifier]!!.keys)
-            blockStates = if (states.isEmpty()) NbtMap.EMPTY else states[0]
+            variableBlockStates = if (states.isEmpty()) NbtMap.EMPTY else states[0]
         }
-        this.blockStates = blockStates
+        this.blockStates = variableBlockStates
         runtimeId = STATES[this.identifier]!![this.blockStates]!!
-    }
-
-    fun getBlockStates(): NbtMap? {
-        return blockStates
-    }
-
-    fun setBlockStates(blockStates: NbtMap?) {
-        this.blockStates = blockStates
     }
 
     val world: World?
         get() = location.world
-
-    fun getLocation(): Location {
-        return location
-    }
-
-    fun setLocation(location: Location) {
-        this.location = location
-    }
-
-    fun getLayer(): Int {
-        return layer
-    }
-
-    fun setLayer(layer: Int) {
-        this.layer = layer
-    }
 
     fun checkValidity(): Boolean {
         return location.world != null && location.world!!

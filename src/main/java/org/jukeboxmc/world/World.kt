@@ -344,7 +344,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             for (blockFace in BlockFace.values()) {
                 val blockSide = block.getSide(blockFace)
                 if (blockSide.onUpdate(UpdateReason.NEIGHBORS).also { next = it } > server.currentTick) {
-                    scheduleBlockUpdate(blockSide.getLocation(), next)
+                    scheduleBlockUpdate(blockSide.location, next)
                 }
             }
         }
@@ -518,7 +518,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     }
 
     fun playSound(player: Player, soundEvent: SoundEvent) {
-        this.playSound(player, player.getLocation(), soundEvent, -1, ":", false, false)
+        this.playSound(player, player.location, soundEvent, -1, ":", false, false)
     }
 
     fun playSound(position: Vector, soundEvent: SoundEvent, data: Int) {

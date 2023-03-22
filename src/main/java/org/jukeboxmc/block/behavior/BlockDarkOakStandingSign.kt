@@ -34,7 +34,7 @@ class BlockDarkOakStandingSign : BlockSign {
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.UP) {
             signDirection =
-                SignDirection.values()[FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
+                SignDirection.values()[FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockDarkOakWallSign =

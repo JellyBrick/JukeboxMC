@@ -11,7 +11,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
-import java.util.Objects
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -25,7 +25,7 @@ class ItemSnowball : Item {
         val entitySnowball =
             Objects.requireNonNull<EntitySnowball>(Entity.create<EntitySnowball>(EntityType.SNOWBALL))
         entitySnowball.setShooter(player)
-        entitySnowball.setLocation(player.getLocation().add(0f, player.eyeHeight, 0f))
+        entitySnowball.setLocation(player.location.add(0f, player.eyeHeight, 0f))
         entitySnowball.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entitySnowball.yaw = player.yaw
         entitySnowball.pitch = player.pitch
@@ -37,7 +37,7 @@ class ItemSnowball : Item {
                 player.inventory.removeItem(ItemType.SNOWBALL, 1)
             }
             entitySnowball.spawn()
-            player.world?.playSound(player.getLocation(), SoundEvent.THROW, -1, "minecraft:player", false, false)
+            player.world?.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
             return true
         }
         return false

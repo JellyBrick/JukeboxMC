@@ -65,7 +65,7 @@ class BlockEntityChest(
                 realInventory.setItem(slot.toInt(), item, false)
             }
         }
-        pairPosition = Vector(compound.getInt("pairx", 0), block.getLocation().blockY, compound.getInt("pairz", 0))
+        pairPosition = Vector(compound.getInt("pairx", 0), block.location.blockY, compound.getInt("pairz", 0))
         findable = compound.getBoolean("Findable", false)
     }
 
@@ -96,9 +96,9 @@ class BlockEntityChest(
         }
 
     fun pair(other: BlockEntityChest) {
-        val otherBP: Vector = other.block.getLocation()
+        val otherBP: Vector = other.block.location
         val otherL = Utils.toLong(otherBP.blockX, otherBP.blockZ)
-        val thisBP: Vector = block.getLocation()
+        val thisBP: Vector = block.location
         val thisL = Utils.toLong(thisBP.blockX, thisBP.blockZ)
         if (otherL > thisL) {
             doubleChestInventory = DoubleChestInventory(this, other.getChestInventory(), realInventory)
@@ -146,7 +146,7 @@ class BlockEntityChest(
     private fun setPair(otherBP: Vector) {
         findable = true
         setPaired = true
-        pairPosition = Vector(otherBP.blockX, block.getLocation().blockY, otherBP.blockZ)
+        pairPosition = Vector(otherBP.blockX, block.location.blockY, otherBP.blockZ)
     }
 
     fun getChestInventory(): ChestInventory {

@@ -34,7 +34,7 @@ class BlockBed : Block {
     ): Boolean {
         val blockColor = BlockColor.values()[itemInHand.meta]
         val blockDirection = this.getSide(player.direction)
-        val directionLocation = blockDirection.getLocation()
+        val directionLocation = blockDirection.location
         if (blockDirection.canBeReplaced(this) && blockDirection.isTransparent) {
             direction = player.direction
             val blockBed: BlockBed = create<BlockBed>(BlockType.BED)
@@ -58,7 +58,7 @@ class BlockBed : Block {
         val otherBlock = this.getSide(direction)
         if (otherBlock is BlockBed) {
             if (otherBlock.isHeadPiece != isHeadPiece) {
-                location.world?.setBlock(otherBlock.getLocation(), create<Block>(BlockType.AIR), 0)
+                location.world?.setBlock(otherBlock.location, create<Block>(BlockType.AIR), 0)
             }
         }
         location.world?.setBlock(breakPosition, create<Block>(BlockType.AIR), 0)

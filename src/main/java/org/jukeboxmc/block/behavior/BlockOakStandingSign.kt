@@ -34,7 +34,7 @@ class BlockOakStandingSign : BlockSign {
         if (blockFace == BlockFace.UP) {
             signDirection =
                 SignDirection.values()[
-                    FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5)
+                    FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5)
                         .toInt() and 0x0f,
                 ]
 

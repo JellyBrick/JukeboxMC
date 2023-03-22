@@ -123,7 +123,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                 Server.instance.pluginManager.callEvent(playerInteractEvent)
                 if (player.gameMode == GameMode.SURVIVAL) {
                     if (player.lasBreakPosition == lasBreakPosition && currentBreakTime - player.lastBreakTime < 10 || lasBreakPosition.distanceSquared(
-                            player.getLocation(),
+                            player.location,
                         ) > 100
                     ) {
                         return

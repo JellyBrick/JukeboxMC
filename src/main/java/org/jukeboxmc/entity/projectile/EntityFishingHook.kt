@@ -59,7 +59,7 @@ class EntityFishingHook : EntityProjectile() {
             val eyeLocation = getLocation().add(0f, this.eyeHeight, 0f)
             val block = eyeLocation.block!!
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {
-                val yLiquid = (block.getLocation().y + 1 + ((block as BlockLiquid).liquidDepth - 0.12)).toFloat()
+                val yLiquid = (block.location.y + 1 + ((block as BlockLiquid).liquidDepth - 0.12)).toFloat()
                 return eyeLocation.y < yLiquid
             }
             return false

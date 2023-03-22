@@ -2,7 +2,6 @@ package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
 import org.apache.commons.math3.util.FastMath
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.block.direction.SignDirection
@@ -35,7 +34,7 @@ class BlockJungleStandingSign : BlockSign {
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.UP) {
             signDirection =
-                SignDirection.values()[FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
+                SignDirection.values()[FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockJungleWallSign =
