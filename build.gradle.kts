@@ -30,7 +30,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation("org.ow2.asm:asm:9.4")
-    implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
