@@ -17,8 +17,8 @@ class ItemNetheriteBoots : ItemArmor, Durability {
     constructor(identifier: Identifier?) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
-        val oldItem = player.armorInventory.boots
-        player.armorInventory.boots = this
+        val oldItem = player.getArmorInventory().boots
+        player.getArmorInventory().boots = this
         player.inventory.itemInHand = oldItem
         return super.useInAir(player, clickVector)
     }

@@ -14,6 +14,6 @@ class ItemPowderSnowBucket : ItemBucket {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.Companion.create<Block>(BlockType.POWDER_SNOW)
+        return Block.create<Block>(BlockType.POWDER_SNOW)
     }
 }

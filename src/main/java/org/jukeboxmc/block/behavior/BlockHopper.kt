@@ -27,14 +27,14 @@ class BlockHopper : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = if (blockFace == BlockFace.UP) BlockFace.DOWN else blockFace.opposite()
         isToggle = false
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.HOPPER, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.HOPPER, this).spawn()
         }
         return value
     }
@@ -44,9 +44,9 @@ class BlockHopper : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityHopper? = blockEntity
+        val blockEntity: BlockEntityHopper? = blockEntity as BlockEntityHopper?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -55,7 +55,7 @@ class BlockHopper : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityHopper?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityHopper?
     var isToggle: Boolean
         get() = stateExists("toggle_bit") && getByteState("toggle_bit").toInt() == 1
         set(value) {

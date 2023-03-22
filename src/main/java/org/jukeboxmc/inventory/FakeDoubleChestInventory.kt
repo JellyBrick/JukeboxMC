@@ -1,10 +1,12 @@
 package org.jukeboxmc.inventory
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Arrays
+import com.nukkitx.protocol.bedrock.packet.BlockEntityDataPacket
+import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
+import java.util.Arrays
 
 /**
  * @author LucGamesYT
@@ -26,32 +28,35 @@ class FakeDoubleChestInventory : FakeChestInventory {
         }
         val blockPosition = onOpenChest(player)
         blockPositions[player] = blockPosition
-        Server.Companion.getInstance().getScheduler().scheduleDelayed(Runnable {
-            val vector = blockPosition[0]
-            val containerOpenPacket = ContainerOpenPacket()
-            containerOpenPacket.setId(windowId)
-            containerOpenPacket.setUniqueEntityId(holderId)
-            containerOpenPacket.setType(this.windowTypeId)
-            containerOpenPacket.setBlockPosition(vector!!.toVector3i())
-            player.playerConnection.sendPacket(containerOpenPacket)
-            this.sendContents(player)
-        }, 3)
+        Server.instance.scheduler.scheduleDelayed(
+            {
+                val vector = blockPosition[0]
+                val containerOpenPacket = ContainerOpenPacket()
+                containerOpenPacket.id = windowId
+                containerOpenPacket.uniqueEntityId = holderId
+                containerOpenPacket.type = this.windowTypeId
+                containerOpenPacket.blockPosition = vector!!.toVector3i()
+                player.playerConnection.sendPacket(containerOpenPacket)
+                this.sendContents(player)
+            },
+            3,
+        )
     }
 
     override fun onOpenChest(player: Player): List<Vector?> {
         val positionA = Vector(player.blockX, player.blockY + 2, player.blockZ)
         val positionB = positionA.add(1f, 0f, 0f)
         placeFakeChest(player, positionA)
-        placeFakeChest(player, positionB!!)
-        pair(player, positionA, positionB!!)
-        pair(player, positionB!!, positionA)
-        return Arrays.asList(positionA, positionB)
+        placeFakeChest(player, positionB)
+        pair(player, positionA, positionB)
+        pair(player, positionB, positionA)
+        return listOf(positionA, positionB)
     }
 
     private fun pair(player: Player, positionA: Vector, positionB: Vector) {
         val blockEntityDataPacket = BlockEntityDataPacket()
-        blockEntityDataPacket.setBlockPosition(positionA.toVector3i())
-        blockEntityDataPacket.setData(this.toChestNBT(positionA, positionB))
+        blockEntityDataPacket.blockPosition = positionA.toVector3i()
+        blockEntityDataPacket.data = this.toChestNBT(positionA, positionB)
         player.playerConnection.sendPacket(blockEntityDataPacket)
     }
 

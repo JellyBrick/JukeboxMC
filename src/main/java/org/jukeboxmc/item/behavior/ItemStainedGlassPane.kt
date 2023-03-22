@@ -17,18 +17,18 @@ class ItemStainedGlassPane : Item {
     private val block: BlockStainedGlassPane
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
+        block = Block.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
+        block = Block.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemStainedGlassPane {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

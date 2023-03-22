@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.UpdateReason
@@ -14,6 +13,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -30,7 +30,7 @@ open class BlockWall : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         updateWall()
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
@@ -49,10 +49,10 @@ open class BlockWall : Block {
             val south = canConnect(this.getSide(BlockFace.SOUTH))
             val west = canConnect(this.getSide(BlockFace.WEST))
             val east = canConnect(this.getSide(BlockFace.EAST))
-            var n: Float = if (north) 0 else 0.25f
-            var s: Float = if (south) 1 else 0.75f
-            var w: Float = if (west) 0 else 0.25f
-            var e: Float = if (east) 1 else 0.75f
+            var n: Float = if (north) 0f else 0.25f
+            var s: Float = if (south) 1f else 0.75f
+            var w: Float = if (west) 0f else 0.25f
+            var e: Float = if (east) 1f else 0.75f
             if (north && south && !west && !east) {
                 w = 0.3125f
                 e = 0.6875f
@@ -61,19 +61,19 @@ open class BlockWall : Block {
                 s = 0.6875f
             }
             return AxisAlignedBB(
-                location!!.x + w,
-                location!!.y,
-                location!!.z + n,
-                location!!.x + e,
-                location!!.y + 1.5f,
-                location!!.z + s
+                location.getX() + w,
+                location.getY(),
+                location.getZ() + n,
+                location.getX() + e,
+                location.getY() + 1.5f,
+                location.getZ() + s,
             )
         }
 
     protected fun updateWall() {
         for (value in Direction.values()) {
             val block = this.getSide(value)
-            if (canConnect(block!!)) {
+            if (canConnect(block)) {
                 connect(value, WallConnectionType.SHORT)
             } else {
                 connect(value, WallConnectionType.NONE)
@@ -83,17 +83,17 @@ open class BlockWall : Block {
             getWallConnectionType(Direction.SOUTH) == WallConnectionType.SHORT
         ) {
             isWallPost = getWallConnectionType(Direction.WEST) != WallConnectionType.NONE || getWallConnectionType(
-                Direction.EAST
+                Direction.EAST,
             ) != WallConnectionType.NONE
         } else if (getWallConnectionType(Direction.WEST) == WallConnectionType.SHORT && getWallConnectionType(Direction.EAST) == WallConnectionType.SHORT) {
             isWallPost = getWallConnectionType(Direction.SOUTH) != WallConnectionType.NONE ||
-                    getWallConnectionType(Direction.NORTH) != WallConnectionType.NONE
+                getWallConnectionType(Direction.NORTH) != WallConnectionType.NONE
         }
         if (this.getSide(BlockFace.UP).isSolid) {
             isWallPost = true
         }
         this.sendUpdate()
-        location.chunk.setBlock(location.blockX, location.blockY, location.blockZ, 0, this)
+        location.chunk?.setBlock(location.blockX, location.blockY, location.blockZ, 0, this)
     }
 
     fun canConnect(block: Block): Boolean {

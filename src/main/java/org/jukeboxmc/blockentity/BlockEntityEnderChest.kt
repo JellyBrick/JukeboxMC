@@ -16,10 +16,10 @@ class BlockEntityEnderChest(block: Block, blockEntityType: BlockEntityType) : Bl
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item?
+        itemInHand: Item?,
     ): Boolean {
-        player.enderChestInventory.position = blockPosition
-        player.openInventory(player.enderChestInventory, blockPosition)
+        player.getEnderChestInventory().position = blockPosition
+        player.openInventory(player.getEnderChestInventory(), blockPosition)
         return true
     }
 }

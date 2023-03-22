@@ -1,8 +1,5 @@
 package org.jukeboxmc.item.behavior
 
-import java.time.Duration
-import java.util.Objects
-import java.util.concurrent.TimeUnit
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityType
@@ -20,6 +17,9 @@ import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Sound
+import java.time.Duration
+import java.util.Objects
+import java.util.concurrent.TimeUnit
 
 /**
  * @author LucGamesYT
@@ -43,10 +43,10 @@ class ItemBow : Item, Durability, Burnable {
         if (player.actionStart == -1L) {
             return
         }
-        val tick: Float = (Server.Companion.getInstance().getCurrentTick() - player.actionStart).toFloat() / 20
+        val tick: Float = (Server.instance.currentTick - player.actionStart).toFloat() / 20
         val force = Math.min((tick * tick + tick * 2) / 3, 1f) * 2
         player.setAction(false)
-        if (!player.inventory.contains(Item.Companion.create<Item>(ItemType.ARROW)) && player.gameMode != GameMode.CREATIVE) {
+        if (!player.inventory.contains(create<Item>(ItemType.ARROW)) && player.gameMode != GameMode.CREATIVE) {
             return
         }
         var powerModifier = 0
@@ -64,22 +64,25 @@ class ItemBow : Item, Durability, Burnable {
         if (flame != null) {
             flameModifier = flame.level.toInt()
         }
-        val arrow = Objects.requireNonNull<EntityArrow>(Entity.Companion.create<EntityArrow>(EntityType.ARROW))
+        val arrow = Objects.requireNonNull<EntityArrow>(Entity.create<EntityArrow>(EntityType.ARROW))
         arrow.setShooter(player)
-        arrow.location = Location(
-            player.world,
-            player.x,
-            player.y + player.eyeHeight,
-            player.z,
-            (if (player.yaw > 180) 360 else 0) - player.yaw,
-            -player.pitch
+        arrow.setLocation(
+            Location(
+                player.world,
+                player.x,
+                player.y + player.eyeHeight,
+                player.z,
+                (if (player.yaw > 180) 360 else 0) - player.yaw,
+                -player.pitch,
+            ),
         )
         arrow.setVelocity(
             Vector(
                 (-Math.sin(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)).toFloat(),
                 (-Math.sin(player.pitch / 180 * Math.PI)).toFloat(),
-                (Math.cos(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)).toFloat()
-            ).multiply(force, force, force), false
+                (Math.cos(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)).toFloat(),
+            ).multiply(force, force, force),
+            false,
         )
         arrow.flameModifier = flameModifier
         arrow.punchModifier = punchModifier
@@ -87,17 +90,10 @@ class ItemBow : Item, Durability, Burnable {
         arrow.setPickupDelay(500, TimeUnit.MILLISECONDS)
         arrow.force = force
         val event = ProjectileLaunchEvent(arrow, ProjectileLaunchEvent.Cause.BOW)
-        player.world.server.pluginManager.callEvent(event)
+        player.world?.server?.pluginManager?.callEvent(event)
         if (!event.isCancelled) {
             val enchantmentInfinity = getEnchantment(EnchantmentType.INFINITY) as EnchantmentInfinity
-            if (enchantmentInfinity == null) {
-                this.updateItem(player, 1)
-                if (player.gameMode == GameMode.SURVIVAL) {
-                    player.inventory.removeItem(ItemType.ARROW, 1)
-                }
-            } else {
-                arrow.setWasInfinityArrow(true)
-            }
+            arrow.setWasInfinityArrow(true)
             arrow.spawn()
             arrow.isBurning = flameModifier > 0
             player.playSound(Sound.RANDOM_BOW, 1f, 1f)

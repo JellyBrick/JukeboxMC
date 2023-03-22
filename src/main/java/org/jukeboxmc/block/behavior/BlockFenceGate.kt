@@ -26,7 +26,7 @@ class BlockFenceGate : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction
         isOpen = false
@@ -38,7 +38,7 @@ class BlockFenceGate : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         val playerDirection = player.direction
         val direction = direction
@@ -60,7 +60,7 @@ class BlockFenceGate : Block {
             }
         }
         isOpen = !isOpen
-        location.world.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
+        location.world?.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
         return true
     }
 

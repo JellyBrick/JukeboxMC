@@ -1,5 +1,6 @@
 package org.jukeboxmc.entity.passiv
 
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.util.Identifier
 
@@ -8,14 +9,14 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class EntityNPC : EntityLiving() {
-    val name: String
+    override val name: String
         get() = "NPC"
-    val width: Float
+    override val width: Float
         get() = 0.6f
-    val height: Float
+    override val height: Float
         get() = 1.95f
-    val type: EntityType
+    override val type: EntityType
         get() = EntityType.NPC
-    val identifier: Identifier
-        get() = Identifier.Companion.fromString("minecraft:npc")
+    override val identifier: Identifier
+        get() = Identifier.fromString("minecraft:npc")
 }

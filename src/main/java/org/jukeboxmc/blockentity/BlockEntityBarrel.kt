@@ -6,6 +6,7 @@ import com.nukkitx.nbt.NbtType
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.inventory.BarrelInventory
+import org.jukeboxmc.inventory.InventoryHolder
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
@@ -14,8 +15,10 @@ import org.jukeboxmc.player.Player
  * @author LucGamesYT
  * @version 1.0
  */
-class BlockEntityBarrel(block: Block, blockEntityType: BlockEntityType) : BlockEntity(block, blockEntityType),
-    InventoryHolder {
+class BlockEntityBarrel(
+    block: Block,
+    blockEntityType: BlockEntityType,
+) : BlockEntity(block, blockEntityType), InventoryHolder {
     val barrelInventory: BarrelInventory
 
     init {
@@ -27,7 +30,7 @@ class BlockEntityBarrel(block: Block, blockEntityType: BlockEntityType) : BlockE
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item?
+        itemInHand: Item?,
     ): Boolean {
         player.openInventory(barrelInventory, blockPosition)
         return true
@@ -40,9 +43,9 @@ class BlockEntityBarrel(block: Block, blockEntityType: BlockEntityType) : BlockE
             val item = toItem(nbtMap)
             val slot = nbtMap.getByte("Slot", 127.toByte())
             if (slot.toInt() == 127) {
-                barrelInventory.addItem(item!!, false)
+                barrelInventory.addItem(item, false)
             } else {
-                barrelInventory.setItem(slot.toInt(), item!!, false)
+                barrelInventory.setItem(slot.toInt(), item, false)
             }
         }
     }
@@ -54,10 +57,10 @@ class BlockEntityBarrel(block: Block, blockEntityType: BlockEntityType) : BlockE
             val itemCompound = NbtMap.builder()
             val item = barrelInventory.getItem(slot)
             itemCompound.putByte("Slot", slot.toByte())
-            fromItem(item!!, itemCompound)
+            fromItem(item, itemCompound)
             itemsCompoundList.add(itemCompound.build())
         }
-        builder!!.putList("Items", NbtType.COMPOUND, itemsCompoundList)
+        builder.putList("Items", NbtType.COMPOUND, itemsCompoundList)
         return builder
     }
 }

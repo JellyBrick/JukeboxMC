@@ -7,7 +7,7 @@ import org.jukeboxmc.Server
  * @version 1.0
  */
 interface CommandSender {
-    fun sendMessage(message: String?)
+    fun sendMessage(message: String)
     fun hasPermission(permission: String): Boolean
     val server: Server
 }

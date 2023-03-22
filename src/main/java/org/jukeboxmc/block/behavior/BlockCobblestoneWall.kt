@@ -1,12 +1,12 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.data.WallType
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.behavior.ItemWall
 import org.jukeboxmc.util.Identifier
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -17,8 +17,8 @@ class BlockCobblestoneWall : BlockWall {
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemWall>(ItemType.COBBLESTONE_WALL).setWallType(
-            wallBlockType
+        return Item.create<ItemWall>(ItemType.COBBLESTONE_WALL).setWallType(
+            wallBlockType,
         )
     }
 

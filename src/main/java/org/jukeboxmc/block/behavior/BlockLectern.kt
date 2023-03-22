@@ -28,19 +28,19 @@ class BlockLectern : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.opposite()
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.LECTERN, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.LECTERN, this).spawn()
         }
         return value
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityLectern?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityLectern?
     var isPowered: Boolean
         get() = stateExists("powered_bit") && getByteState("powered_bit").toInt() == 1
         set(value) {

@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.WoodType
@@ -13,6 +12,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -29,7 +29,7 @@ class BlockWoodenSlab : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
@@ -37,17 +37,17 @@ class BlockWoodenSlab : BlockSlab {
             if (targetBlock is BlockWoodenSlab && targetBlock.isTopSlot && targetBlock.woodType == woodType) {
                 world.setBlock(
                     blockPosition,
-                    Block.Companion.create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
-                        woodType
-                    )
+                    create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
+                        woodType,
+                    ),
                 )
                 return true
             } else if (block is BlockWoodenSlab && block.woodType == woodType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
-                        woodType
-                    )
+                    create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
+                        woodType,
+                    ),
                 )
                 return true
             }
@@ -55,17 +55,17 @@ class BlockWoodenSlab : BlockSlab {
             if (targetBlock is BlockWoodenSlab && !targetBlock.isTopSlot && targetBlock.woodType == woodType) {
                 world.setBlock(
                     blockPosition,
-                    Block.Companion.create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
-                        woodType
-                    )
+                    create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
+                        woodType,
+                    ),
                 )
                 return true
             } else if (block is BlockWoodenSlab && block.woodType == woodType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
-                        woodType
-                    )
+                    create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
+                        woodType,
+                    ),
                 )
                 return true
             }
@@ -73,13 +73,13 @@ class BlockWoodenSlab : BlockSlab {
             if (block is BlockWoodenSlab && block.woodType == woodType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
-                        woodType
-                    )
+                    create<BlockDoubleWoodenSlab>(BlockType.DOUBLE_WOODEN_SLAB).setWoodType(
+                        woodType,
+                    ),
                 )
                 return true
             } else {
-                this.isTopSlot = clickedPosition.y > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this)
+                this.setTopSlot(clickedPosition.getY() > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
             }
         }
         super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
@@ -88,8 +88,8 @@ class BlockWoodenSlab : BlockSlab {
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemWoodenSlab>(ItemType.WOODEN_SLAB).setWoodType(
-            woodType
+        return Item.create<ItemWoodenSlab>(ItemType.WOODEN_SLAB).setWoodType(
+            woodType,
         )
     }
 

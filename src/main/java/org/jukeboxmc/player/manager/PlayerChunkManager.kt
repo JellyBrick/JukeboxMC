@@ -1,6 +1,8 @@
 package org.jukeboxmc.player.manager
 
+import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
+import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongArrayList
@@ -8,13 +10,14 @@ import it.unimi.dsi.fastutil.longs.LongList
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import it.unimi.dsi.fastutil.longs.LongSet
 import it.unimi.dsi.fastutil.longs.LongSets
-import java.util.function.LongConsumer
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.ChunkComparator
+import java.util.concurrent.atomic.AtomicLong
+import java.util.function.LongConsumer
 
 /**
  * @author LucGamesYT
@@ -33,14 +36,14 @@ class PlayerChunkManager(private val player: Player) {
     init {
         comparator = ChunkComparator(player)
         removeChunkLoader = LongConsumer { chunkKey: Long ->
-            val chunk = player.world.getLoadedChunk(chunkKey, player.dimension)
+            val chunk = player.world?.getLoadedChunk(chunkKey, player.dimension)
             chunk?.removeLoader(player)
         }
     }
 
     @Synchronized
     fun sendQueued() {
-        var chunksPerTick = 4 //this.player.getServer().getConfig("chunk-sending.per-tick", 4);
+        var chunksPerTick = 4 // this.player.getServer().getConfig("chunk-sending.per-tick", 4);
         val sendQueueIterator = sendQueue.long2ObjectEntrySet().iterator()
         // Remove chunks which are out of range
         while (sendQueueIterator.hasNext()) {
@@ -48,7 +51,7 @@ class PlayerChunkManager(private val player: Player) {
             val key = entry.longKey
             if (!loadedChunks.contains(key)) {
                 sendQueueIterator.remove()
-                val chunk = player.world.getLoadedChunk(key, player.dimension)
+                val chunk = player.world?.getLoadedChunk(key, player.dimension)
                 chunk?.removeLoader(player)
             }
         }
@@ -63,11 +66,11 @@ class PlayerChunkManager(private val player: Player) {
                 break
             sendQueue.remove(key)
             player.playerConnection.sendPacket(packet)
-            val chunk = player.world.getLoadedChunk(key, player.dimension)
+            val chunk = player.world?.getLoadedChunk(key, player.dimension)
             if (chunk != null) {
-                for (entity in chunk.entities) {
-                    if (entity !is Player && !entity!!.isClosed) {
-                        entity!!.spawn(player)
+                for (entity in chunk!!.getEntities()) {
+                    if (entity !is Player && !entity.isClosed) {
+                        entity.spawn(player)
                     }
                 }
             }
@@ -77,7 +80,7 @@ class PlayerChunkManager(private val player: Player) {
     }
 
     @JvmOverloads
-    fun queueNewChunks(pos: Vector = player.location) {
+    fun queueNewChunks(pos: Vector = player.getLocation()) {
         this.queueNewChunks(pos.blockX shr 4, pos.blockZ shr 4)
     }
 
@@ -106,8 +109,8 @@ class PlayerChunkManager(private val player: Player) {
         val loadedChunksChanged = loadedChunks.retainAll(chunksForRadius)
         if (loadedChunksChanged || !chunksToLoad.isEmpty()) {
             val packet = NetworkChunkPublisherUpdatePacket()
-            packet.setPosition(player.location.toVector3i())
-            packet.setRadius(this.radius)
+            packet.position = player.getLocation().toVector3i()
+            packet.radius = this.radius
             player.playerConnection.sendPacket(packet)
         }
 
@@ -117,25 +120,26 @@ class PlayerChunkManager(private val player: Player) {
             val cx = Utils.fromHashX(key)
             val cz = Utils.fromHashZ(key)
             if (sendQueue.putIfAbsent(key, null) == null) {
-                player.world.getChunkFuture(cx, cz, player.dimension).thenApply { chunk: Chunk ->
+                player.world?.getChunkFuture(cx, cz, player.dimension)?.thenApply { chunk: Chunk ->
                     chunk.addLoader(player)
                     chunk
-                }.thenApplyAsync(
+                }?.thenApplyAsync(
                     { obj: Chunk -> obj.createLevelChunkPacket() },
-                    Server.Companion.getInstance().getScheduler().getChunkExecutor()
+                    Server.instance.scheduler.chunkExecutor,
                 )
-                    .whenComplete { packet: LevelChunkPacket?, throwable: Throwable? ->
+                    ?.whenComplete { packet: LevelChunkPacket?, throwable: Throwable? ->
                         synchronized(this@PlayerChunkManager) {
                             if (throwable != null) {
-                                if (sendQueue.remove(key, null)) {
+                                if (sendQueue.containsKey(key)) {
+                                    sendQueue.remove(key)
                                     loadedChunks.remove(key)
                                 }
                             } else if (!sendQueue.replace(key, null, packet)) {
                                 // The chunk was already loaded!?
                                 if (sendQueue.containsKey(key)) {
-                                    Server.Companion.getInstance().getLogger().debug(
-                                        "Chunk (" + cx + "," + cz + ") already loaded for "
-                                                + player.name + ", values " + sendQueue[key]
+                                    Server.instance.logger.debug(
+                                        "Chunk (" + cx + "," + cz + ") already loaded for " +
+                                            player.name + ", values " + sendQueue[key],
                                     )
                                 }
                                 //                                    packet.release();
@@ -157,7 +161,7 @@ class PlayerChunkManager(private val player: Player) {
         if (this.radius != radius) {
             this.radius = radius
             val chunkRadiusUpdatePacket = ChunkRadiusUpdatedPacket()
-            chunkRadiusUpdatePacket.setRadius(radius shr 4)
+            chunkRadiusUpdatePacket.radius = radius shr 4
             player.playerConnection.sendPacket(chunkRadiusUpdatePacket)
             this.queueNewChunks()
         }

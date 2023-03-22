@@ -2,7 +2,6 @@ package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
 import org.apache.commons.math3.util.FastMath
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.block.direction.SignDirection
@@ -30,26 +29,28 @@ class BlockCrimsonStandingSign : BlockSign {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.UP) {
-            setSignDirection(
-                SignDirection.values()[FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5)
-                    .toInt() and 0x0f]
-            )
+            signDirection =
+                SignDirection.values()[
+                    FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5)
+                        .toInt() and 0x0f,
+                ]
+
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockCrimsonWallSign =
-                Block.Companion.create<BlockCrimsonWallSign>(BlockType.CRIMSON_WALL_SIGN)
-            blockWallSign.setBlockFace(blockFace)
+                create<BlockCrimsonWallSign>(BlockType.CRIMSON_WALL_SIGN)
+            blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.SIGN, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.SIGN, this).spawn()
         return true
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<Item>(ItemType.CRIMSON_SIGN)
+        return Item.create<Item>(ItemType.CRIMSON_SIGN)
     }
 }

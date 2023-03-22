@@ -1,6 +1,5 @@
 package org.jukeboxmc.item.behavior
 
-import java.time.Duration
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockSapling
@@ -10,6 +9,7 @@ import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
+import java.time.Duration
 
 /**
  * @author LucGamesYT
@@ -19,18 +19,18 @@ class ItemSapling : Item, Burnable {
     private val block: BlockSapling
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockSapling>(BlockType.SAPLING)
+        block = Block.create<BlockSapling>(BlockType.SAPLING)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockSapling>(BlockType.SAPLING)
+        block = Block.create<BlockSapling>(BlockType.SAPLING)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemSapling {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

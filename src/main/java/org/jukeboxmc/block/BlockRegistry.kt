@@ -1,9 +1,7 @@
 package org.jukeboxmc.block
 
 import com.google.gson.Gson
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.util.Objects
+import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.behavior.BlockAcaciaStandingSign
 import org.jukeboxmc.block.behavior.BlockAcaciaWallSign
 import org.jukeboxmc.block.behavior.BlockAir
@@ -214,6 +212,9 @@ import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.util.Identifier
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -227,2005 +228,2005 @@ object BlockRegistry {
     fun init() {
         register(
             BlockType.ACACIA_BUTTON,
-            Identifier.Companion.fromString("minecraft:acacia_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:acacia_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.ACACIA_DOOR, Identifier.Companion.fromString("minecraft:acacia_door"), BlockDoor::class.java)
+        register(BlockType.ACACIA_DOOR, Identifier.fromString("minecraft:acacia_door"), BlockDoor::class.java)
         register(
             BlockType.ACACIA_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:acacia_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:acacia_fence_gate"),
+            BlockFenceGate::class.java,
         )
         register(
             BlockType.ACACIA_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:acacia_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:acacia_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.ACACIA_STAIRS,
-            Identifier.Companion.fromString("minecraft:acacia_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:acacia_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.ACACIA_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:acacia_standing_sign"),
-            BlockAcaciaStandingSign::class.java
+            Identifier.fromString("minecraft:acacia_standing_sign"),
+            BlockAcaciaStandingSign::class.java,
         )
         register(
             BlockType.ACACIA_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:acacia_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:acacia_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.ACACIA_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:acacia_wall_sign"),
-            BlockAcaciaWallSign::class.java
+            Identifier.fromString("minecraft:acacia_wall_sign"),
+            BlockAcaciaWallSign::class.java,
         )
         register(
             BlockType.ACTIVATOR_RAIL,
-            Identifier.Companion.fromString("minecraft:activator_rail"),
-            BlockRail::class.java
+            Identifier.fromString("minecraft:activator_rail"),
+            BlockRail::class.java,
         )
-        register(BlockType.AIR, Identifier.Companion.fromString("minecraft:air"), BlockAir::class.java)
-        register(BlockType.ALLOW, Identifier.Companion.fromString("minecraft:allow"))
-        register(BlockType.AMETHYST_BLOCK, Identifier.Companion.fromString("minecraft:amethyst_block"))
-        register(BlockType.AMETHYST_CLUSTER, Identifier.Companion.fromString("minecraft:amethyst_cluster"))
-        register(BlockType.ANCIENT_DEBRIS, Identifier.Companion.fromString("minecraft:ancient_debris"))
+        register(BlockType.AIR, Identifier.fromString("minecraft:air"), BlockAir::class.java)
+        register(BlockType.ALLOW, Identifier.fromString("minecraft:allow"))
+        register(BlockType.AMETHYST_BLOCK, Identifier.fromString("minecraft:amethyst_block"))
+        register(BlockType.AMETHYST_CLUSTER, Identifier.fromString("minecraft:amethyst_cluster"))
+        register(BlockType.ANCIENT_DEBRIS, Identifier.fromString("minecraft:ancient_debris"))
         register(
             BlockType.ANDESITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:andesite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:andesite_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.ANVIL, Identifier.Companion.fromString("minecraft:anvil"), BlockAnvil::class.java)
-        register(BlockType.AZALEA, Identifier.Companion.fromString("minecraft:azalea"))
-        register(BlockType.AZALEA_LEAVES, Identifier.Companion.fromString("minecraft:azalea_leaves"))
-        register(BlockType.AZALEA_LEAVES_FLOWERED, Identifier.Companion.fromString("minecraft:azalea_leaves_flowered"))
-        register(BlockType.BAMBOO, Identifier.Companion.fromString("minecraft:bamboo"), BlockBamboo::class.java)
-        register(BlockType.BAMBOO_SAPLING, Identifier.Companion.fromString("minecraft:bamboo_sapling"))
-        register(BlockType.BARREL, Identifier.Companion.fromString("minecraft:barrel"), BlockBarrel::class.java)
-        register(BlockType.BARRIER, Identifier.Companion.fromString("minecraft:barrier"))
-        register(BlockType.BASALT, Identifier.Companion.fromString("minecraft:basalt"), BlockBasalt::class.java)
-        register(BlockType.BEACON, Identifier.Companion.fromString("minecraft:beacon"))
-        register(BlockType.BED, Identifier.Companion.fromString("minecraft:bed"), BlockBed::class.java)
-        register(BlockType.BEDROCK, Identifier.Companion.fromString("minecraft:bedrock"))
-        register(BlockType.BEEHIVE, Identifier.Companion.fromString("minecraft:beehive"))
-        register(BlockType.BEETROOT, Identifier.Companion.fromString("minecraft:beetroot"))
-        register(BlockType.BEE_NEST, Identifier.Companion.fromString("minecraft:bee_nest"))
-        register(BlockType.BELL, Identifier.Companion.fromString("minecraft:bell"), BlockBell::class.java)
-        register(BlockType.BIG_DRIPLEAF, Identifier.Companion.fromString("minecraft:big_dripleaf"))
+        register(BlockType.ANVIL, Identifier.fromString("minecraft:anvil"), BlockAnvil::class.java)
+        register(BlockType.AZALEA, Identifier.fromString("minecraft:azalea"))
+        register(BlockType.AZALEA_LEAVES, Identifier.fromString("minecraft:azalea_leaves"))
+        register(BlockType.AZALEA_LEAVES_FLOWERED, Identifier.fromString("minecraft:azalea_leaves_flowered"))
+        register(BlockType.BAMBOO, Identifier.fromString("minecraft:bamboo"), BlockBamboo::class.java)
+        register(BlockType.BAMBOO_SAPLING, Identifier.fromString("minecraft:bamboo_sapling"))
+        register(BlockType.BARREL, Identifier.fromString("minecraft:barrel"), BlockBarrel::class.java)
+        register(BlockType.BARRIER, Identifier.fromString("minecraft:barrier"))
+        register(BlockType.BASALT, Identifier.fromString("minecraft:basalt"), BlockBasalt::class.java)
+        register(BlockType.BEACON, Identifier.fromString("minecraft:beacon"))
+        register(BlockType.BED, Identifier.fromString("minecraft:bed"), BlockBed::class.java)
+        register(BlockType.BEDROCK, Identifier.fromString("minecraft:bedrock"))
+        register(BlockType.BEEHIVE, Identifier.fromString("minecraft:beehive"))
+        register(BlockType.BEETROOT, Identifier.fromString("minecraft:beetroot"))
+        register(BlockType.BEE_NEST, Identifier.fromString("minecraft:bee_nest"))
+        register(BlockType.BELL, Identifier.fromString("minecraft:bell"), BlockBell::class.java)
+        register(BlockType.BIG_DRIPLEAF, Identifier.fromString("minecraft:big_dripleaf"))
         register(
             BlockType.BIRCH_BUTTON,
-            Identifier.Companion.fromString("minecraft:birch_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:birch_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.BIRCH_DOOR, Identifier.Companion.fromString("minecraft:birch_door"), BlockDoor::class.java)
+        register(BlockType.BIRCH_DOOR, Identifier.fromString("minecraft:birch_door"), BlockDoor::class.java)
         register(
             BlockType.BIRCH_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:birch_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:birch_fence_gate"),
+            BlockFenceGate::class.java,
         )
         register(
             BlockType.BIRCH_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:birch_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:birch_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.BIRCH_STAIRS,
-            Identifier.Companion.fromString("minecraft:birch_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:birch_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.BIRCH_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:birch_standing_sign"),
-            BlockAcaciaStandingSign::class.java
+            Identifier.fromString("minecraft:birch_standing_sign"),
+            BlockAcaciaStandingSign::class.java,
         )
         register(
             BlockType.BIRCH_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:birch_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:birch_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.BIRCH_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:birch_wall_sign"),
-            BlockBirchWallSign::class.java
+            Identifier.fromString("minecraft:birch_wall_sign"),
+            BlockBirchWallSign::class.java,
         )
-        register(BlockType.BLACKSTONE, Identifier.Companion.fromString("minecraft:blackstone"))
+        register(BlockType.BLACKSTONE, Identifier.fromString("minecraft:blackstone"))
         register(
             BlockType.BLACKSTONE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:blackstone_double_slab"),
-            BlockDoubleBlackStoneSlab::class.java
+            Identifier.fromString("minecraft:blackstone_double_slab"),
+            BlockDoubleBlackStoneSlab::class.java,
         )
         register(
             BlockType.BLACKSTONE_SLAB,
-            Identifier.Companion.fromString("minecraft:blackstone_slab"),
-            BlockBlackStoneSlab::class.java
+            Identifier.fromString("minecraft:blackstone_slab"),
+            BlockBlackStoneSlab::class.java,
         )
         register(
             BlockType.BLACKSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:blackstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:blackstone_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.BLACKSTONE_WALL,
-            Identifier.Companion.fromString("minecraft:blackstone_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:blackstone_wall"),
+            BlockWall::class.java,
         )
         register(
             BlockType.BLACK_CANDLE,
-            Identifier.Companion.fromString("minecraft:black_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:black_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.BLACK_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:black_candle_cake"))
+        register(BlockType.BLACK_CANDLE_CAKE, Identifier.fromString("minecraft:black_candle_cake"))
         register(
             BlockType.BLACK_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:black_glazed_terracotta")
+            Identifier.fromString("minecraft:black_glazed_terracotta"),
         )
         register(
             BlockType.BLAST_FURNACE,
-            Identifier.Companion.fromString("minecraft:blast_furnace"),
-            BlockBlastFurnace::class.java
+            Identifier.fromString("minecraft:blast_furnace"),
+            BlockBlastFurnace::class.java,
         )
         register(
             BlockType.BLUE_CANDLE,
-            Identifier.Companion.fromString("minecraft:blue_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:blue_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.BLUE_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:blue_candle_cake"))
-        register(BlockType.BLUE_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:blue_glazed_terracotta"))
-        register(BlockType.BLUE_ICE, Identifier.Companion.fromString("minecraft:blue_ice"))
-        register(BlockType.BONE_BLOCK, Identifier.Companion.fromString("minecraft:bone_block"))
-        register(BlockType.BOOKSHELF, Identifier.Companion.fromString("minecraft:bookshelf"))
-        register(BlockType.BORDER_BLOCK, Identifier.Companion.fromString("minecraft:border_block"))
+        register(BlockType.BLUE_CANDLE_CAKE, Identifier.fromString("minecraft:blue_candle_cake"))
+        register(BlockType.BLUE_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:blue_glazed_terracotta"))
+        register(BlockType.BLUE_ICE, Identifier.fromString("minecraft:blue_ice"))
+        register(BlockType.BONE_BLOCK, Identifier.fromString("minecraft:bone_block"))
+        register(BlockType.BOOKSHELF, Identifier.fromString("minecraft:bookshelf"))
+        register(BlockType.BORDER_BLOCK, Identifier.fromString("minecraft:border_block"))
         register(
             BlockType.BREWING_STAND,
-            Identifier.Companion.fromString("minecraft:brewing_stand"),
-            BlockBrewingStand::class.java
+            Identifier.fromString("minecraft:brewing_stand"),
+            BlockBrewingStand::class.java,
         )
-        register(BlockType.BRICK_BLOCK, Identifier.Companion.fromString("minecraft:brick_block"))
+        register(BlockType.BRICK_BLOCK, Identifier.fromString("minecraft:brick_block"))
         register(
             BlockType.BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.BROWN_CANDLE,
-            Identifier.Companion.fromString("minecraft:brown_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:brown_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.BROWN_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:brown_candle_cake"))
+        register(BlockType.BROWN_CANDLE_CAKE, Identifier.fromString("minecraft:brown_candle_cake"))
         register(
             BlockType.BROWN_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:brown_glazed_terracotta")
+            Identifier.fromString("minecraft:brown_glazed_terracotta"),
         )
-        register(BlockType.BROWN_MUSHROOM, Identifier.Companion.fromString("minecraft:brown_mushroom"))
-        register(BlockType.BROWN_MUSHROOM_BLOCK, Identifier.Companion.fromString("minecraft:brown_mushroom_block"))
-        register(BlockType.BUBBLE_COLUMN, Identifier.Companion.fromString("minecraft:bubble_column"))
-        register(BlockType.BUDDING_AMETHYST, Identifier.Companion.fromString("minecraft:budding_amethyst"))
-        register(BlockType.CACTUS, Identifier.Companion.fromString("minecraft:cactus"))
-        register(BlockType.CAKE, Identifier.Companion.fromString("minecraft:cake"))
-        register(BlockType.CALCITE, Identifier.Companion.fromString("minecraft:calcite"))
-        register(BlockType.CAMERA, Identifier.Companion.fromString("minecraft:camera"))
-        register(BlockType.CAMPFIRE, Identifier.Companion.fromString("minecraft:campfire"), BlockCampfire::class.java)
-        register(BlockType.CANDLE, Identifier.Companion.fromString("minecraft:candle"), BlockCandle::class.java)
-        register(BlockType.CANDLE_CAKE, Identifier.Companion.fromString("minecraft:candle_cake"))
-        register(BlockType.CARPET, Identifier.Companion.fromString("minecraft:carpet"), BlockCarpet::class.java)
-        register(BlockType.CARROTS, Identifier.Companion.fromString("minecraft:carrots"))
+        register(BlockType.BROWN_MUSHROOM, Identifier.fromString("minecraft:brown_mushroom"))
+        register(BlockType.BROWN_MUSHROOM_BLOCK, Identifier.fromString("minecraft:brown_mushroom_block"))
+        register(BlockType.BUBBLE_COLUMN, Identifier.fromString("minecraft:bubble_column"))
+        register(BlockType.BUDDING_AMETHYST, Identifier.fromString("minecraft:budding_amethyst"))
+        register(BlockType.CACTUS, Identifier.fromString("minecraft:cactus"))
+        register(BlockType.CAKE, Identifier.fromString("minecraft:cake"))
+        register(BlockType.CALCITE, Identifier.fromString("minecraft:calcite"))
+        register(BlockType.CAMERA, Identifier.fromString("minecraft:camera"))
+        register(BlockType.CAMPFIRE, Identifier.fromString("minecraft:campfire"), BlockCampfire::class.java)
+        register(BlockType.CANDLE, Identifier.fromString("minecraft:candle"), BlockCandle::class.java)
+        register(BlockType.CANDLE_CAKE, Identifier.fromString("minecraft:candle_cake"))
+        register(BlockType.CARPET, Identifier.fromString("minecraft:carpet"), BlockCarpet::class.java)
+        register(BlockType.CARROTS, Identifier.fromString("minecraft:carrots"))
         register(
             BlockType.CARTOGRAPHY_TABLE,
-            Identifier.Companion.fromString("minecraft:cartography_table"),
-            BlockCartographyTable::class.java
+            Identifier.fromString("minecraft:cartography_table"),
+            BlockCartographyTable::class.java,
         )
-        register(BlockType.CARVED_PUMPKIN, Identifier.Companion.fromString("minecraft:carved_pumpkin"))
-        register(BlockType.CAULDRON, Identifier.Companion.fromString("minecraft:cauldron"), BlockCauldron::class.java)
-        register(BlockType.CAVE_VINES, Identifier.Companion.fromString("minecraft:cave_vines"))
+        register(BlockType.CARVED_PUMPKIN, Identifier.fromString("minecraft:carved_pumpkin"))
+        register(BlockType.CAULDRON, Identifier.fromString("minecraft:cauldron"), BlockCauldron::class.java)
+        register(BlockType.CAVE_VINES, Identifier.fromString("minecraft:cave_vines"))
         register(
             BlockType.CAVE_VINES_BODY_WITH_BERRIES,
-            Identifier.Companion.fromString("minecraft:cave_vines_body_with_berries")
+            Identifier.fromString("minecraft:cave_vines_body_with_berries"),
         )
         register(
             BlockType.CAVE_VINES_HEAD_WITH_BERRIES,
-            Identifier.Companion.fromString("minecraft:cave_vines_head_with_berries")
+            Identifier.fromString("minecraft:cave_vines_head_with_berries"),
         )
-        register(BlockType.CHAIN, Identifier.Companion.fromString("minecraft:chain"), BlockChain::class.java)
-        register(BlockType.CHAIN_COMMAND_BLOCK, Identifier.Companion.fromString("minecraft:chain_command_block"))
-        register(BlockType.CHEMICAL_HEAT, Identifier.Companion.fromString("minecraft:chemical_heat"))
-        register(BlockType.CHEMISTRY_TABLE, Identifier.Companion.fromString("minecraft:chemistry_table"))
-        register(BlockType.CHEST, Identifier.Companion.fromString("minecraft:chest"), BlockChest::class.java)
-        register(BlockType.CHISELED_DEEPSLATE, Identifier.Companion.fromString("minecraft:chiseled_deepslate"))
-        register(BlockType.CHISELED_NETHER_BRICKS, Identifier.Companion.fromString("minecraft:chiseled_nether_bricks"))
+        register(BlockType.CHAIN, Identifier.fromString("minecraft:chain"), BlockChain::class.java)
+        register(BlockType.CHAIN_COMMAND_BLOCK, Identifier.fromString("minecraft:chain_command_block"))
+        register(BlockType.CHEMICAL_HEAT, Identifier.fromString("minecraft:chemical_heat"))
+        register(BlockType.CHEMISTRY_TABLE, Identifier.fromString("minecraft:chemistry_table"))
+        register(BlockType.CHEST, Identifier.fromString("minecraft:chest"), BlockChest::class.java)
+        register(BlockType.CHISELED_DEEPSLATE, Identifier.fromString("minecraft:chiseled_deepslate"))
+        register(BlockType.CHISELED_NETHER_BRICKS, Identifier.fromString("minecraft:chiseled_nether_bricks"))
         register(
             BlockType.CHISELED_POLISHED_BLACKSTONE,
-            Identifier.Companion.fromString("minecraft:chiseled_polished_blackstone")
+            Identifier.fromString("minecraft:chiseled_polished_blackstone"),
         )
-        register(BlockType.CHORUS_FLOWER, Identifier.Companion.fromString("minecraft:chorus_flower"))
-        register(BlockType.CHORUS_PLANT, Identifier.Companion.fromString("minecraft:chorus_plant"))
-        register(BlockType.CLAY, Identifier.Companion.fromString("minecraft:clay"))
+        register(BlockType.CHORUS_FLOWER, Identifier.fromString("minecraft:chorus_flower"))
+        register(BlockType.CHORUS_PLANT, Identifier.fromString("minecraft:chorus_plant"))
+        register(BlockType.CLAY, Identifier.fromString("minecraft:clay"))
         register(
             BlockType.CLIENT_REQUEST_PLACEHOLDER_BLOCK,
-            Identifier.Companion.fromString("minecraft:client_request_placeholder_block")
+            Identifier.fromString("minecraft:client_request_placeholder_block"),
         )
-        register(BlockType.COAL_BLOCK, Identifier.Companion.fromString("minecraft:coal_block"))
-        register(BlockType.COAL_ORE, Identifier.Companion.fromString("minecraft:coal_ore"), BlockCoalOre::class.java)
-        register(BlockType.COBBLED_DEEPSLATE, Identifier.Companion.fromString("minecraft:cobbled_deepslate"))
+        register(BlockType.COAL_BLOCK, Identifier.fromString("minecraft:coal_block"))
+        register(BlockType.COAL_ORE, Identifier.fromString("minecraft:coal_ore"), BlockCoalOre::class.java)
+        register(BlockType.COBBLED_DEEPSLATE, Identifier.fromString("minecraft:cobbled_deepslate"))
         register(
             BlockType.COBBLED_DEEPSLATE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:cobbled_deepslate_double_slab"),
-            BlockDoubleCobbledDeepslateSlab::class.java
+            Identifier.fromString("minecraft:cobbled_deepslate_double_slab"),
+            BlockDoubleCobbledDeepslateSlab::class.java,
         )
         register(
             BlockType.COBBLED_DEEPSLATE_SLAB,
-            Identifier.Companion.fromString("minecraft:cobbled_deepslate_slab"),
-            BlockCobbledDeepslateSlab::class.java
+            Identifier.fromString("minecraft:cobbled_deepslate_slab"),
+            BlockCobbledDeepslateSlab::class.java,
         )
         register(
             BlockType.COBBLED_DEEPSLATE_STAIRS,
-            Identifier.Companion.fromString("minecraft:cobbled_deepslate_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:cobbled_deepslate_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.COBBLED_DEEPSLATE_WALL,
-            Identifier.Companion.fromString(" minecraft:cobbled_deepslate_wall"),
-            BlockWall::class.java
+            Identifier.fromString(" minecraft:cobbled_deepslate_wall"),
+            BlockWall::class.java,
         )
-        register(BlockType.COBBLESTONE, Identifier.Companion.fromString("minecraft:cobblestone"))
+        register(BlockType.COBBLESTONE, Identifier.fromString("minecraft:cobblestone"))
         register(
             BlockType.COBBLESTONE_WALL,
-            Identifier.Companion.fromString("minecraft:cobblestone_wall"),
-            BlockCobblestoneWall::class.java
+            Identifier.fromString("minecraft:cobblestone_wall"),
+            BlockCobblestoneWall::class.java,
         )
-        register(BlockType.COCOA, Identifier.Companion.fromString("minecraft:cocoa"))
-        register(BlockType.COLORED_TORCH_BP, Identifier.Companion.fromString("minecraft:colored_torch_bp"))
-        register(BlockType.COLORED_TORCH_RG, Identifier.Companion.fromString("minecraft:colored_torch_rg"))
-        register(BlockType.COMMAND_BLOCK, Identifier.Companion.fromString("minecraft:command_block"))
+        register(BlockType.COCOA, Identifier.fromString("minecraft:cocoa"))
+        register(BlockType.COLORED_TORCH_BP, Identifier.fromString("minecraft:colored_torch_bp"))
+        register(BlockType.COLORED_TORCH_RG, Identifier.fromString("minecraft:colored_torch_rg"))
+        register(BlockType.COMMAND_BLOCK, Identifier.fromString("minecraft:command_block"))
         register(
             BlockType.COMPOSTER,
-            Identifier.Companion.fromString("minecraft:composter"),
-            BlockComposter::class.java
+            Identifier.fromString("minecraft:composter"),
+            BlockComposter::class.java,
         )
-        register(BlockType.CONCRETE, Identifier.Companion.fromString("minecraft:concrete"), BlockConcrete::class.java)
+        register(BlockType.CONCRETE, Identifier.fromString("minecraft:concrete"), BlockConcrete::class.java)
         register(
             BlockType.CONCRETE_POWDER,
-            Identifier.Companion.fromString("minecraft:concrete_powder"),
-            BlockConcretePowder::class.java
+            Identifier.fromString("minecraft:concrete_powder"),
+            BlockConcretePowder::class.java,
         )
-        register(BlockType.CONDUIT, Identifier.Companion.fromString("minecraft:conduit"))
-        register(BlockType.COPPER_BLOCK, Identifier.Companion.fromString("minecraft:copper_block"))
+        register(BlockType.CONDUIT, Identifier.fromString("minecraft:conduit"))
+        register(BlockType.COPPER_BLOCK, Identifier.fromString("minecraft:copper_block"))
         register(
             BlockType.COPPER_ORE,
-            Identifier.Companion.fromString("minecraft:copper_ore"),
-            BlockCopperOre::class.java
+            Identifier.fromString("minecraft:copper_ore"),
+            BlockCopperOre::class.java,
         )
-        register(BlockType.CORAL, Identifier.Companion.fromString("minecraft:coral"), BlockCoral::class.java)
+        register(BlockType.CORAL, Identifier.fromString("minecraft:coral"), BlockCoral::class.java)
         register(
             BlockType.CORAL_BLOCK,
-            Identifier.Companion.fromString("minecraft:coral_block"),
-            BlockCoralBlock::class.java
+            Identifier.fromString("minecraft:coral_block"),
+            BlockCoralBlock::class.java,
         )
-        register(BlockType.CORAL_FAN, Identifier.Companion.fromString("minecraft:coral_fan"), BlockCoralFan::class.java)
+        register(BlockType.CORAL_FAN, Identifier.fromString("minecraft:coral_fan"), BlockCoralFan::class.java)
         register(
             BlockType.CORAL_FAN_DEAD,
-            Identifier.Companion.fromString("minecraft:coral_fan_dead"),
-            BlockCoralFanDead::class.java
+            Identifier.fromString("minecraft:coral_fan_dead"),
+            BlockCoralFanDead::class.java,
         )
-        register(BlockType.CORAL_FAN_HANG, Identifier.Companion.fromString("minecraft:coral_fan_hang"))
-        register(BlockType.CORAL_FAN_HANG2, Identifier.Companion.fromString("minecraft:coral_fan_hang2"))
-        register(BlockType.CORAL_FAN_HANG3, Identifier.Companion.fromString("minecraft:coral_fan_hang3"))
+        register(BlockType.CORAL_FAN_HANG, Identifier.fromString("minecraft:coral_fan_hang"))
+        register(BlockType.CORAL_FAN_HANG2, Identifier.fromString("minecraft:coral_fan_hang2"))
+        register(BlockType.CORAL_FAN_HANG3, Identifier.fromString("minecraft:coral_fan_hang3"))
         register(
             BlockType.CRACKED_DEEPSLATE_BRICKS,
-            Identifier.Companion.fromString("minecraft:cracked_deepslate_bricks")
+            Identifier.fromString("minecraft:cracked_deepslate_bricks"),
         )
         register(
             BlockType.CRACKED_DEEPSLATE_TILES,
-            Identifier.Companion.fromString("minecraft:cracked_deepslate_tiles")
+            Identifier.fromString("minecraft:cracked_deepslate_tiles"),
         )
-        register(BlockType.CRACKED_NETHER_BRICKS, Identifier.Companion.fromString("minecraft:cracked_nether_bricks"))
+        register(BlockType.CRACKED_NETHER_BRICKS, Identifier.fromString("minecraft:cracked_nether_bricks"))
         register(
             BlockType.CRACKED_POLISHED_BLACKSTONE_BRICKS,
-            Identifier.Companion.fromString("minecraft:cracked_polished_blackstone_bricks")
+            Identifier.fromString("minecraft:cracked_polished_blackstone_bricks"),
         )
         register(
             BlockType.CRAFTING_TABLE,
-            Identifier.Companion.fromString("minecraft:crafting_table"),
-            BlockCraftingTable::class.java
+            Identifier.fromString("minecraft:crafting_table"),
+            BlockCraftingTable::class.java,
         )
         register(
             BlockType.CRIMSON_BUTTON,
-            Identifier.Companion.fromString("minecraft:crimson_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:crimson_button"),
+            BlockButton::class.java,
         )
         register(
             BlockType.CRIMSON_DOOR,
-            Identifier.Companion.fromString("minecraft:crimson_door"),
-            BlockDoor::class.java
+            Identifier.fromString("minecraft:crimson_door"),
+            BlockDoor::class.java,
         )
         register(
             BlockType.CRIMSON_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:crimson_double_slab"),
-            BlockDoubleCrimsonSlab::class.java
+            Identifier.fromString("minecraft:crimson_double_slab"),
+            BlockDoubleCrimsonSlab::class.java,
         )
         register(
             BlockType.CRIMSON_FENCE,
-            Identifier.Companion.fromString("minecraft:crimson_fence"),
-            BlockFence::class.java
+            Identifier.fromString("minecraft:crimson_fence"),
+            BlockFence::class.java,
         )
         register(
             BlockType.CRIMSON_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:crimson_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:crimson_fence_gate"),
+            BlockFenceGate::class.java,
         )
-        register(BlockType.CRIMSON_FUNGUS, Identifier.Companion.fromString("minecraft:crimson_fungus"))
+        register(BlockType.CRIMSON_FUNGUS, Identifier.fromString("minecraft:crimson_fungus"))
         register(
             BlockType.CRIMSON_HYPHAE,
-            Identifier.Companion.fromString("minecraft:crimson_hyphae"),
-            BlockCrimsonHyphae::class.java
+            Identifier.fromString("minecraft:crimson_hyphae"),
+            BlockCrimsonHyphae::class.java,
         )
-        register(BlockType.CRIMSON_NYLIUM, Identifier.Companion.fromString("minecraft:crimson_nylium"))
-        register(BlockType.CRIMSON_PLANKS, Identifier.Companion.fromString("minecraft:crimson_planks"))
+        register(BlockType.CRIMSON_NYLIUM, Identifier.fromString("minecraft:crimson_nylium"))
+        register(BlockType.CRIMSON_PLANKS, Identifier.fromString("minecraft:crimson_planks"))
         register(
             BlockType.CRIMSON_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:crimson_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:crimson_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
-        register(BlockType.CRIMSON_ROOTS, Identifier.Companion.fromString("minecraft:crimson_roots"))
+        register(BlockType.CRIMSON_ROOTS, Identifier.fromString("minecraft:crimson_roots"))
         register(
             BlockType.CRIMSON_SLAB,
-            Identifier.Companion.fromString("minecraft:crimson_slab"),
-            BlockCrimsonSlab::class.java
+            Identifier.fromString("minecraft:crimson_slab"),
+            BlockCrimsonSlab::class.java,
         )
         register(
             BlockType.CRIMSON_STAIRS,
-            Identifier.Companion.fromString("minecraft:crimson_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:crimson_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.CRIMSON_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:crimson_standing_sign"),
-            BlockCrimsonStandingSign::class.java
+            Identifier.fromString("minecraft:crimson_standing_sign"),
+            BlockCrimsonStandingSign::class.java,
         )
         register(
             BlockType.CRIMSON_STEM,
-            Identifier.Companion.fromString("minecraft:crimson_stem"),
-            BlockCrimsonStem::class.java
+            Identifier.fromString("minecraft:crimson_stem"),
+            BlockCrimsonStem::class.java,
         )
         register(
             BlockType.CRIMSON_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:crimson_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:crimson_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.CRIMSON_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:crimson_wall_sign"),
-            BlockCrimsonWallSign::class.java
+            Identifier.fromString("minecraft:crimson_wall_sign"),
+            BlockCrimsonWallSign::class.java,
         )
-        register(BlockType.CRYING_OBSIDIAN, Identifier.Companion.fromString("minecraft:crying_obsidian"))
-        register(BlockType.CUT_COPPER, Identifier.Companion.fromString("minecraft:cut_copper"))
+        register(BlockType.CRYING_OBSIDIAN, Identifier.fromString("minecraft:crying_obsidian"))
+        register(BlockType.CUT_COPPER, Identifier.fromString("minecraft:cut_copper"))
         register(
             BlockType.CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:cut_copper_slab"),
-            BlockCutCopperSlab::class.java
+            Identifier.fromString("minecraft:cut_copper_slab"),
+            BlockCutCopperSlab::class.java,
         )
         register(
             BlockType.CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.CYAN_CANDLE,
-            Identifier.Companion.fromString("minecraft:cyan_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:cyan_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.CYAN_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:cyan_candle_cake"))
-        register(BlockType.CYAN_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:cyan_glazed_terracotta"))
+        register(BlockType.CYAN_CANDLE_CAKE, Identifier.fromString("minecraft:cyan_candle_cake"))
+        register(BlockType.CYAN_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:cyan_glazed_terracotta"))
         register(
             BlockType.DARKOAK_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:darkoak_standing_sign"),
-            BlockDarkOakStandingSign::class.java
+            Identifier.fromString("minecraft:darkoak_standing_sign"),
+            BlockDarkOakStandingSign::class.java,
         )
         register(
             BlockType.DARKOAK_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:darkoak_wall_sign"),
-            BlockDarkOakWallSign::class.java
+            Identifier.fromString("minecraft:darkoak_wall_sign"),
+            BlockDarkOakWallSign::class.java,
         )
         register(
             BlockType.DARK_OAK_BUTTON,
-            Identifier.Companion.fromString("minecraft:dark_oak_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:dark_oak_button"),
+            BlockButton::class.java,
         )
         register(
             BlockType.DARK_OAK_DOOR,
-            Identifier.Companion.fromString("minecraft:dark_oak_door"),
-            BlockDoor::class.java
+            Identifier.fromString("minecraft:dark_oak_door"),
+            BlockDoor::class.java,
         )
         register(
             BlockType.DARK_OAK_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:dark_oak_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:dark_oak_fence_gate"),
+            BlockFenceGate::class.java,
         )
         register(
             BlockType.DARK_OAK_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:dark_oak_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:dark_oak_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.DARK_OAK_STAIRS,
-            Identifier.Companion.fromString("minecraft:dark_oak_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:dark_oak_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.DARK_OAK_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:dark_oak_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:dark_oak_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.DARK_PRISMARINE_STAIRS,
-            Identifier.Companion.fromString("minecraft:dark_prismarine_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:dark_prismarine_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.DAYLIGHT_DETECTOR,
-            Identifier.Companion.fromString("minecraft:daylight_detector"),
-            BlockDaylightDetector::class.java
+            Identifier.fromString("minecraft:daylight_detector"),
+            BlockDaylightDetector::class.java,
         )
         register(
             BlockType.DAYLIGHT_DETECTOR_INVERTED,
-            Identifier.Companion.fromString("minecraft:daylight_detector_inverted"),
-            BlockDaylightDetectorInverted::class.java
+            Identifier.fromString("minecraft:daylight_detector_inverted"),
+            BlockDaylightDetectorInverted::class.java,
         )
-        register(BlockType.DEADBUSH, Identifier.Companion.fromString("minecraft:deadbush"))
-        register(BlockType.DEEPSLATE, Identifier.Companion.fromString("minecraft:deepslate"))
-        register(BlockType.DEEPSLATE_BRICKS, Identifier.Companion.fromString("minecraft:deepslate_bricks"))
+        register(BlockType.DEADBUSH, Identifier.fromString("minecraft:deadbush"))
+        register(BlockType.DEEPSLATE, Identifier.fromString("minecraft:deepslate"))
+        register(BlockType.DEEPSLATE_BRICKS, Identifier.fromString("minecraft:deepslate_bricks"))
         register(
             BlockType.DEEPSLATE_BRICK_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:deepslate_brick_double_slab"),
-            BlockDoubleDeepslateBrickSlab::class.java
+            Identifier.fromString("minecraft:deepslate_brick_double_slab"),
+            BlockDoubleDeepslateBrickSlab::class.java,
         )
         register(
             BlockType.DEEPSLATE_BRICK_SLAB,
-            Identifier.Companion.fromString("minecraft:deepslate_brick_slab"),
-            BlockDeepslateBrickSlab::class.java
+            Identifier.fromString("minecraft:deepslate_brick_slab"),
+            BlockDeepslateBrickSlab::class.java,
         )
         register(
             BlockType.DEEPSLATE_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:deepslate_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:deepslate_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.DEEPSLATE_BRICK_WALL,
-            Identifier.Companion.fromString("minecraft:deepslate_brick_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:deepslate_brick_wall"),
+            BlockWall::class.java,
         )
         register(
             BlockType.DEEPSLATE_COAL_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_coal_ore"),
-            BlockCoalOre::class.java
+            Identifier.fromString("minecraft:deepslate_coal_ore"),
+            BlockCoalOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_COPPER_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_copper_ore"),
-            BlockCopperOre::class.java
+            Identifier.fromString("minecraft:deepslate_copper_ore"),
+            BlockCopperOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_DIAMOND_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_diamond_ore"),
-            BlockDiamondOre::class.java
+            Identifier.fromString("minecraft:deepslate_diamond_ore"),
+            BlockDiamondOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_EMERALD_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_emerald_ore"),
-            BlockEmeraldOre::class.java
+            Identifier.fromString("minecraft:deepslate_emerald_ore"),
+            BlockEmeraldOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_GOLD_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_gold_ore"),
-            BlockGoldOre::class.java
+            Identifier.fromString("minecraft:deepslate_gold_ore"),
+            BlockGoldOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_IRON_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_iron_ore"),
-            BlockIronOre::class.java
+            Identifier.fromString("minecraft:deepslate_iron_ore"),
+            BlockIronOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_LAPIS_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_lapis_ore"),
-            BlockLapisOre::class.java
+            Identifier.fromString("minecraft:deepslate_lapis_ore"),
+            BlockLapisOre::class.java,
         )
         register(
             BlockType.DEEPSLATE_REDSTONE_ORE,
-            Identifier.Companion.fromString("minecraft:deepslate_redstone_ore"),
-            BlockRedstoneOre::class.java
+            Identifier.fromString("minecraft:deepslate_redstone_ore"),
+            BlockRedstoneOre::class.java,
         )
-        register(BlockType.DEEPSLATE_TILES, Identifier.Companion.fromString("minecraft:deepslate_tiles"))
+        register(BlockType.DEEPSLATE_TILES, Identifier.fromString("minecraft:deepslate_tiles"))
         register(
             BlockType.DEEPSLATE_TILE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:deepslate_tile_double_slab"),
-            BlockDoubleDeepslateTileSlab::class.java
+            Identifier.fromString("minecraft:deepslate_tile_double_slab"),
+            BlockDoubleDeepslateTileSlab::class.java,
         )
         register(
             BlockType.DEEPSLATE_TILE_SLAB,
-            Identifier.Companion.fromString("minecraft:deepslate_tile_slab"),
-            BlockDeepslateTileSlab::class.java
+            Identifier.fromString("minecraft:deepslate_tile_slab"),
+            BlockDeepslateTileSlab::class.java,
         )
         register(
             BlockType.DEEPSLATE_TILE_STAIRS,
-            Identifier.Companion.fromString("minecraft:deepslate_tile_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:deepslate_tile_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.DEEPSLATE_TILE_WALL,
-            Identifier.Companion.fromString("minecraft:deepslate_tile_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:deepslate_tile_wall"),
+            BlockWall::class.java,
         )
-        register(BlockType.DENY, Identifier.Companion.fromString("minecraft:deny"))
+        register(BlockType.DENY, Identifier.fromString("minecraft:deny"))
         register(
             BlockType.DETECTOR_RAIL,
-            Identifier.Companion.fromString("minecraft:detector_rail"),
-            BlockRail::class.java
+            Identifier.fromString("minecraft:detector_rail"),
+            BlockRail::class.java,
         )
-        register(BlockType.DIAMOND_BLOCK, Identifier.Companion.fromString("minecraft:diamond_block"))
+        register(BlockType.DIAMOND_BLOCK, Identifier.fromString("minecraft:diamond_block"))
         register(
             BlockType.DIAMOND_ORE,
-            Identifier.Companion.fromString("minecraft:diamond_ore"),
-            BlockDiamondOre::class.java
+            Identifier.fromString("minecraft:diamond_ore"),
+            BlockDiamondOre::class.java,
         )
         register(
             BlockType.DIORITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:diorite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:diorite_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.DIRT, Identifier.Companion.fromString("minecraft:dirt"), BlockDirt::class.java)
-        register(BlockType.DIRT_WITH_ROOTS, Identifier.Companion.fromString("minecraft:dirt_with_roots"))
+        register(BlockType.DIRT, Identifier.fromString("minecraft:dirt"), BlockDirt::class.java)
+        register(BlockType.DIRT_WITH_ROOTS, Identifier.fromString("minecraft:dirt_with_roots"))
         register(
             BlockType.DISPENSER,
-            Identifier.Companion.fromString("minecraft:dispenser"),
-            BlockDispenser::class.java
+            Identifier.fromString("minecraft:dispenser"),
+            BlockDispenser::class.java,
         )
         register(
             BlockType.DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:double_cut_copper_slab"),
-            BlockDoubleCutCopperSlab::class.java
+            Identifier.fromString("minecraft:double_cut_copper_slab"),
+            BlockDoubleCutCopperSlab::class.java,
         )
         register(
             BlockType.DOUBLE_PLANT,
-            Identifier.Companion.fromString("minecraft:double_plant"),
-            BlockDoublePlant::class.java
+            Identifier.fromString("minecraft:double_plant"),
+            BlockDoublePlant::class.java,
         )
         register(
             BlockType.DOUBLE_STONE_BLOCK_SLAB,
-            Identifier.Companion.fromString("minecraft:double_stone_block_slab"),
-            BlockDoubleStoneSlab::class.java
+            Identifier.fromString("minecraft:double_stone_block_slab"),
+            BlockDoubleStoneSlab::class.java,
         )
         register(
             BlockType.DOUBLE_STONE_BLOCK_SLAB2,
-            Identifier.Companion.fromString("minecraft:double_stone_block_slab2"),
-            BlockDoubleStoneSlab2::class.java
+            Identifier.fromString("minecraft:double_stone_block_slab2"),
+            BlockDoubleStoneSlab2::class.java,
         )
         register(
             BlockType.DOUBLE_STONE_BLOCK_SLAB3,
-            Identifier.Companion.fromString("minecraft:double_stone_block_slab3"),
-            BlockDoubleStoneSlab3::class.java
+            Identifier.fromString("minecraft:double_stone_block_slab3"),
+            BlockDoubleStoneSlab3::class.java,
         )
         register(
             BlockType.DOUBLE_STONE_BLOCK_SLAB4,
-            Identifier.Companion.fromString("minecraft:double_stone_block_slab4"),
-            BlockDoubleStoneSlab4::class.java
+            Identifier.fromString("minecraft:double_stone_block_slab4"),
+            BlockDoubleStoneSlab4::class.java,
         )
         register(
             BlockType.DOUBLE_WOODEN_SLAB,
-            Identifier.Companion.fromString("minecraft:double_wooden_slab"),
-            BlockDoubleWoodenSlab::class.java
+            Identifier.fromString("minecraft:double_wooden_slab"),
+            BlockDoubleWoodenSlab::class.java,
         )
-        register(BlockType.DRAGON_EGG, Identifier.Companion.fromString("minecraft:dragon_egg"))
-        register(BlockType.DRIED_KELP_BLOCK, Identifier.Companion.fromString("minecraft:dried_kelp_block"))
-        register(BlockType.DRIPSTONE_BLOCK, Identifier.Companion.fromString("minecraft:dripstone_block"))
-        register(BlockType.DROPPER, Identifier.Companion.fromString("minecraft:dropper"), BlockDropper::class.java)
-        register(BlockType.ELEMENT_0, Identifier.Companion.fromString("minecraft:element_0"))
-        register(BlockType.ELEMENT_1, Identifier.Companion.fromString("minecraft:element_1"))
-        register(BlockType.ELEMENT_10, Identifier.Companion.fromString("minecraft:element_10"))
-        register(BlockType.ELEMENT_100, Identifier.Companion.fromString("minecraft:element_100"))
-        register(BlockType.ELEMENT_101, Identifier.Companion.fromString("minecraft:element_101"))
-        register(BlockType.ELEMENT_102, Identifier.Companion.fromString("minecraft:element_102"))
-        register(BlockType.ELEMENT_103, Identifier.Companion.fromString("minecraft:element_103"))
-        register(BlockType.ELEMENT_104, Identifier.Companion.fromString("minecraft:element_104"))
-        register(BlockType.ELEMENT_105, Identifier.Companion.fromString("minecraft:element_105"))
-        register(BlockType.ELEMENT_106, Identifier.Companion.fromString("minecraft:element_106"))
-        register(BlockType.ELEMENT_107, Identifier.Companion.fromString("minecraft:element_107"))
-        register(BlockType.ELEMENT_108, Identifier.Companion.fromString("minecraft:element_108"))
-        register(BlockType.ELEMENT_109, Identifier.Companion.fromString("minecraft:element_109"))
-        register(BlockType.ELEMENT_11, Identifier.Companion.fromString("minecraft:element_11"))
-        register(BlockType.ELEMENT_110, Identifier.Companion.fromString("minecraft:element_110"))
-        register(BlockType.ELEMENT_111, Identifier.Companion.fromString("minecraft:element_111"))
-        register(BlockType.ELEMENT_112, Identifier.Companion.fromString("minecraft:element_112"))
-        register(BlockType.ELEMENT_113, Identifier.Companion.fromString("minecraft:element_113"))
-        register(BlockType.ELEMENT_114, Identifier.Companion.fromString("minecraft:element_114"))
-        register(BlockType.ELEMENT_115, Identifier.Companion.fromString("minecraft:element_115"))
-        register(BlockType.ELEMENT_116, Identifier.Companion.fromString("minecraft:element_116"))
-        register(BlockType.ELEMENT_117, Identifier.Companion.fromString("minecraft:element_117"))
-        register(BlockType.ELEMENT_118, Identifier.Companion.fromString("minecraft:element_118"))
-        register(BlockType.ELEMENT_12, Identifier.Companion.fromString("minecraft:element_12"))
-        register(BlockType.ELEMENT_13, Identifier.Companion.fromString("minecraft:element_13"))
-        register(BlockType.ELEMENT_14, Identifier.Companion.fromString("minecraft:element_14"))
-        register(BlockType.ELEMENT_15, Identifier.Companion.fromString("minecraft:element_15"))
-        register(BlockType.ELEMENT_16, Identifier.Companion.fromString("minecraft:element_16"))
-        register(BlockType.ELEMENT_17, Identifier.Companion.fromString("minecraft:element_17"))
-        register(BlockType.ELEMENT_18, Identifier.Companion.fromString("minecraft:element_18"))
-        register(BlockType.ELEMENT_19, Identifier.Companion.fromString("minecraft:element_19"))
-        register(BlockType.ELEMENT_2, Identifier.Companion.fromString("minecraft:element_2"))
-        register(BlockType.ELEMENT_20, Identifier.Companion.fromString("minecraft:element_20"))
-        register(BlockType.ELEMENT_21, Identifier.Companion.fromString("minecraft:element_21"))
-        register(BlockType.ELEMENT_22, Identifier.Companion.fromString("minecraft:element_22"))
-        register(BlockType.ELEMENT_23, Identifier.Companion.fromString("minecraft:element_23"))
-        register(BlockType.ELEMENT_24, Identifier.Companion.fromString("minecraft:element_24"))
-        register(BlockType.ELEMENT_25, Identifier.Companion.fromString("minecraft:element_25"))
-        register(BlockType.ELEMENT_26, Identifier.Companion.fromString("minecraft:element_26"))
-        register(BlockType.ELEMENT_27, Identifier.Companion.fromString("minecraft:element_27"))
-        register(BlockType.ELEMENT_28, Identifier.Companion.fromString("minecraft:element_28"))
-        register(BlockType.ELEMENT_29, Identifier.Companion.fromString("minecraft:element_29"))
-        register(BlockType.ELEMENT_3, Identifier.Companion.fromString("minecraft:element_3"))
-        register(BlockType.ELEMENT_30, Identifier.Companion.fromString("minecraft:element_30"))
-        register(BlockType.ELEMENT_31, Identifier.Companion.fromString("minecraft:element_31"))
-        register(BlockType.ELEMENT_32, Identifier.Companion.fromString("minecraft:element_32"))
-        register(BlockType.ELEMENT_33, Identifier.Companion.fromString("minecraft:element_33"))
-        register(BlockType.ELEMENT_34, Identifier.Companion.fromString("minecraft:element_34"))
-        register(BlockType.ELEMENT_35, Identifier.Companion.fromString("minecraft:element_35"))
-        register(BlockType.ELEMENT_36, Identifier.Companion.fromString("minecraft:element_36"))
-        register(BlockType.ELEMENT_37, Identifier.Companion.fromString("minecraft:element_37"))
-        register(BlockType.ELEMENT_38, Identifier.Companion.fromString("minecraft:element_38"))
-        register(BlockType.ELEMENT_39, Identifier.Companion.fromString("minecraft:element_39"))
-        register(BlockType.ELEMENT_4, Identifier.Companion.fromString("minecraft:element_4"))
-        register(BlockType.ELEMENT_40, Identifier.Companion.fromString("minecraft:element_40"))
-        register(BlockType.ELEMENT_41, Identifier.Companion.fromString("minecraft:element_41"))
-        register(BlockType.ELEMENT_42, Identifier.Companion.fromString("minecraft:element_42"))
-        register(BlockType.ELEMENT_43, Identifier.Companion.fromString("minecraft:element_43"))
-        register(BlockType.ELEMENT_44, Identifier.Companion.fromString("minecraft:element_44"))
-        register(BlockType.ELEMENT_45, Identifier.Companion.fromString("minecraft:element_45"))
-        register(BlockType.ELEMENT_46, Identifier.Companion.fromString("minecraft:element_46"))
-        register(BlockType.ELEMENT_47, Identifier.Companion.fromString("minecraft:element_47"))
-        register(BlockType.ELEMENT_48, Identifier.Companion.fromString("minecraft:element_48"))
-        register(BlockType.ELEMENT_49, Identifier.Companion.fromString("minecraft:element_49"))
-        register(BlockType.ELEMENT_5, Identifier.Companion.fromString("minecraft:element_5"))
-        register(BlockType.ELEMENT_50, Identifier.Companion.fromString("minecraft:element_50"))
-        register(BlockType.ELEMENT_51, Identifier.Companion.fromString("minecraft:element_51"))
-        register(BlockType.ELEMENT_52, Identifier.Companion.fromString("minecraft:element_52"))
-        register(BlockType.ELEMENT_53, Identifier.Companion.fromString("minecraft:element_53"))
-        register(BlockType.ELEMENT_54, Identifier.Companion.fromString("minecraft:element_54"))
-        register(BlockType.ELEMENT_55, Identifier.Companion.fromString("minecraft:element_55"))
-        register(BlockType.ELEMENT_56, Identifier.Companion.fromString("minecraft:element_56"))
-        register(BlockType.ELEMENT_57, Identifier.Companion.fromString("minecraft:element_57"))
-        register(BlockType.ELEMENT_58, Identifier.Companion.fromString("minecraft:element_58"))
-        register(BlockType.ELEMENT_59, Identifier.Companion.fromString("minecraft:element_59"))
-        register(BlockType.ELEMENT_6, Identifier.Companion.fromString("minecraft:element_6"))
-        register(BlockType.ELEMENT_60, Identifier.Companion.fromString("minecraft:element_60"))
-        register(BlockType.ELEMENT_61, Identifier.Companion.fromString("minecraft:element_61"))
-        register(BlockType.ELEMENT_62, Identifier.Companion.fromString("minecraft:element_62"))
-        register(BlockType.ELEMENT_63, Identifier.Companion.fromString("minecraft:element_63"))
-        register(BlockType.ELEMENT_64, Identifier.Companion.fromString("minecraft:element_64"))
-        register(BlockType.ELEMENT_65, Identifier.Companion.fromString("minecraft:element_65"))
-        register(BlockType.ELEMENT_66, Identifier.Companion.fromString("minecraft:element_66"))
-        register(BlockType.ELEMENT_67, Identifier.Companion.fromString("minecraft:element_67"))
-        register(BlockType.ELEMENT_68, Identifier.Companion.fromString("minecraft:element_68"))
-        register(BlockType.ELEMENT_69, Identifier.Companion.fromString("minecraft:element_69"))
-        register(BlockType.ELEMENT_7, Identifier.Companion.fromString("minecraft:element_7"))
-        register(BlockType.ELEMENT_70, Identifier.Companion.fromString("minecraft:element_70"))
-        register(BlockType.ELEMENT_71, Identifier.Companion.fromString("minecraft:element_71"))
-        register(BlockType.ELEMENT_72, Identifier.Companion.fromString("minecraft:element_72"))
-        register(BlockType.ELEMENT_73, Identifier.Companion.fromString("minecraft:element_73"))
-        register(BlockType.ELEMENT_74, Identifier.Companion.fromString("minecraft:element_74"))
-        register(BlockType.ELEMENT_75, Identifier.Companion.fromString("minecraft:element_75"))
-        register(BlockType.ELEMENT_76, Identifier.Companion.fromString("minecraft:element_76"))
-        register(BlockType.ELEMENT_77, Identifier.Companion.fromString("minecraft:element_77"))
-        register(BlockType.ELEMENT_78, Identifier.Companion.fromString("minecraft:element_78"))
-        register(BlockType.ELEMENT_79, Identifier.Companion.fromString("minecraft:element_79"))
-        register(BlockType.ELEMENT_8, Identifier.Companion.fromString("minecraft:element_8"))
-        register(BlockType.ELEMENT_80, Identifier.Companion.fromString("minecraft:element_80"))
-        register(BlockType.ELEMENT_81, Identifier.Companion.fromString("minecraft:element_81"))
-        register(BlockType.ELEMENT_82, Identifier.Companion.fromString("minecraft:element_82"))
-        register(BlockType.ELEMENT_83, Identifier.Companion.fromString("minecraft:element_83"))
-        register(BlockType.ELEMENT_84, Identifier.Companion.fromString("minecraft:element_84"))
-        register(BlockType.ELEMENT_85, Identifier.Companion.fromString("minecraft:element_85"))
-        register(BlockType.ELEMENT_86, Identifier.Companion.fromString("minecraft:element_86"))
-        register(BlockType.ELEMENT_87, Identifier.Companion.fromString("minecraft:element_87"))
-        register(BlockType.ELEMENT_88, Identifier.Companion.fromString("minecraft:element_88"))
-        register(BlockType.ELEMENT_89, Identifier.Companion.fromString("minecraft:element_89"))
-        register(BlockType.ELEMENT_9, Identifier.Companion.fromString("minecraft:element_9"))
-        register(BlockType.ELEMENT_90, Identifier.Companion.fromString("minecraft:element_90"))
-        register(BlockType.ELEMENT_91, Identifier.Companion.fromString("minecraft:element_91"))
-        register(BlockType.ELEMENT_92, Identifier.Companion.fromString("minecraft:element_92"))
-        register(BlockType.ELEMENT_93, Identifier.Companion.fromString("minecraft:element_93"))
-        register(BlockType.ELEMENT_94, Identifier.Companion.fromString("minecraft:element_94"))
-        register(BlockType.ELEMENT_95, Identifier.Companion.fromString("minecraft:element_95"))
-        register(BlockType.ELEMENT_96, Identifier.Companion.fromString("minecraft:element_96"))
-        register(BlockType.ELEMENT_97, Identifier.Companion.fromString("minecraft:element_97"))
-        register(BlockType.ELEMENT_98, Identifier.Companion.fromString("minecraft:element_98"))
-        register(BlockType.ELEMENT_99, Identifier.Companion.fromString("minecraft:element_99"))
-        register(BlockType.EMERALD_BLOCK, Identifier.Companion.fromString("minecraft:emerald_block"))
+        register(BlockType.DRAGON_EGG, Identifier.fromString("minecraft:dragon_egg"))
+        register(BlockType.DRIED_KELP_BLOCK, Identifier.fromString("minecraft:dried_kelp_block"))
+        register(BlockType.DRIPSTONE_BLOCK, Identifier.fromString("minecraft:dripstone_block"))
+        register(BlockType.DROPPER, Identifier.fromString("minecraft:dropper"), BlockDropper::class.java)
+        register(BlockType.ELEMENT_0, Identifier.fromString("minecraft:element_0"))
+        register(BlockType.ELEMENT_1, Identifier.fromString("minecraft:element_1"))
+        register(BlockType.ELEMENT_10, Identifier.fromString("minecraft:element_10"))
+        register(BlockType.ELEMENT_100, Identifier.fromString("minecraft:element_100"))
+        register(BlockType.ELEMENT_101, Identifier.fromString("minecraft:element_101"))
+        register(BlockType.ELEMENT_102, Identifier.fromString("minecraft:element_102"))
+        register(BlockType.ELEMENT_103, Identifier.fromString("minecraft:element_103"))
+        register(BlockType.ELEMENT_104, Identifier.fromString("minecraft:element_104"))
+        register(BlockType.ELEMENT_105, Identifier.fromString("minecraft:element_105"))
+        register(BlockType.ELEMENT_106, Identifier.fromString("minecraft:element_106"))
+        register(BlockType.ELEMENT_107, Identifier.fromString("minecraft:element_107"))
+        register(BlockType.ELEMENT_108, Identifier.fromString("minecraft:element_108"))
+        register(BlockType.ELEMENT_109, Identifier.fromString("minecraft:element_109"))
+        register(BlockType.ELEMENT_11, Identifier.fromString("minecraft:element_11"))
+        register(BlockType.ELEMENT_110, Identifier.fromString("minecraft:element_110"))
+        register(BlockType.ELEMENT_111, Identifier.fromString("minecraft:element_111"))
+        register(BlockType.ELEMENT_112, Identifier.fromString("minecraft:element_112"))
+        register(BlockType.ELEMENT_113, Identifier.fromString("minecraft:element_113"))
+        register(BlockType.ELEMENT_114, Identifier.fromString("minecraft:element_114"))
+        register(BlockType.ELEMENT_115, Identifier.fromString("minecraft:element_115"))
+        register(BlockType.ELEMENT_116, Identifier.fromString("minecraft:element_116"))
+        register(BlockType.ELEMENT_117, Identifier.fromString("minecraft:element_117"))
+        register(BlockType.ELEMENT_118, Identifier.fromString("minecraft:element_118"))
+        register(BlockType.ELEMENT_12, Identifier.fromString("minecraft:element_12"))
+        register(BlockType.ELEMENT_13, Identifier.fromString("minecraft:element_13"))
+        register(BlockType.ELEMENT_14, Identifier.fromString("minecraft:element_14"))
+        register(BlockType.ELEMENT_15, Identifier.fromString("minecraft:element_15"))
+        register(BlockType.ELEMENT_16, Identifier.fromString("minecraft:element_16"))
+        register(BlockType.ELEMENT_17, Identifier.fromString("minecraft:element_17"))
+        register(BlockType.ELEMENT_18, Identifier.fromString("minecraft:element_18"))
+        register(BlockType.ELEMENT_19, Identifier.fromString("minecraft:element_19"))
+        register(BlockType.ELEMENT_2, Identifier.fromString("minecraft:element_2"))
+        register(BlockType.ELEMENT_20, Identifier.fromString("minecraft:element_20"))
+        register(BlockType.ELEMENT_21, Identifier.fromString("minecraft:element_21"))
+        register(BlockType.ELEMENT_22, Identifier.fromString("minecraft:element_22"))
+        register(BlockType.ELEMENT_23, Identifier.fromString("minecraft:element_23"))
+        register(BlockType.ELEMENT_24, Identifier.fromString("minecraft:element_24"))
+        register(BlockType.ELEMENT_25, Identifier.fromString("minecraft:element_25"))
+        register(BlockType.ELEMENT_26, Identifier.fromString("minecraft:element_26"))
+        register(BlockType.ELEMENT_27, Identifier.fromString("minecraft:element_27"))
+        register(BlockType.ELEMENT_28, Identifier.fromString("minecraft:element_28"))
+        register(BlockType.ELEMENT_29, Identifier.fromString("minecraft:element_29"))
+        register(BlockType.ELEMENT_3, Identifier.fromString("minecraft:element_3"))
+        register(BlockType.ELEMENT_30, Identifier.fromString("minecraft:element_30"))
+        register(BlockType.ELEMENT_31, Identifier.fromString("minecraft:element_31"))
+        register(BlockType.ELEMENT_32, Identifier.fromString("minecraft:element_32"))
+        register(BlockType.ELEMENT_33, Identifier.fromString("minecraft:element_33"))
+        register(BlockType.ELEMENT_34, Identifier.fromString("minecraft:element_34"))
+        register(BlockType.ELEMENT_35, Identifier.fromString("minecraft:element_35"))
+        register(BlockType.ELEMENT_36, Identifier.fromString("minecraft:element_36"))
+        register(BlockType.ELEMENT_37, Identifier.fromString("minecraft:element_37"))
+        register(BlockType.ELEMENT_38, Identifier.fromString("minecraft:element_38"))
+        register(BlockType.ELEMENT_39, Identifier.fromString("minecraft:element_39"))
+        register(BlockType.ELEMENT_4, Identifier.fromString("minecraft:element_4"))
+        register(BlockType.ELEMENT_40, Identifier.fromString("minecraft:element_40"))
+        register(BlockType.ELEMENT_41, Identifier.fromString("minecraft:element_41"))
+        register(BlockType.ELEMENT_42, Identifier.fromString("minecraft:element_42"))
+        register(BlockType.ELEMENT_43, Identifier.fromString("minecraft:element_43"))
+        register(BlockType.ELEMENT_44, Identifier.fromString("minecraft:element_44"))
+        register(BlockType.ELEMENT_45, Identifier.fromString("minecraft:element_45"))
+        register(BlockType.ELEMENT_46, Identifier.fromString("minecraft:element_46"))
+        register(BlockType.ELEMENT_47, Identifier.fromString("minecraft:element_47"))
+        register(BlockType.ELEMENT_48, Identifier.fromString("minecraft:element_48"))
+        register(BlockType.ELEMENT_49, Identifier.fromString("minecraft:element_49"))
+        register(BlockType.ELEMENT_5, Identifier.fromString("minecraft:element_5"))
+        register(BlockType.ELEMENT_50, Identifier.fromString("minecraft:element_50"))
+        register(BlockType.ELEMENT_51, Identifier.fromString("minecraft:element_51"))
+        register(BlockType.ELEMENT_52, Identifier.fromString("minecraft:element_52"))
+        register(BlockType.ELEMENT_53, Identifier.fromString("minecraft:element_53"))
+        register(BlockType.ELEMENT_54, Identifier.fromString("minecraft:element_54"))
+        register(BlockType.ELEMENT_55, Identifier.fromString("minecraft:element_55"))
+        register(BlockType.ELEMENT_56, Identifier.fromString("minecraft:element_56"))
+        register(BlockType.ELEMENT_57, Identifier.fromString("minecraft:element_57"))
+        register(BlockType.ELEMENT_58, Identifier.fromString("minecraft:element_58"))
+        register(BlockType.ELEMENT_59, Identifier.fromString("minecraft:element_59"))
+        register(BlockType.ELEMENT_6, Identifier.fromString("minecraft:element_6"))
+        register(BlockType.ELEMENT_60, Identifier.fromString("minecraft:element_60"))
+        register(BlockType.ELEMENT_61, Identifier.fromString("minecraft:element_61"))
+        register(BlockType.ELEMENT_62, Identifier.fromString("minecraft:element_62"))
+        register(BlockType.ELEMENT_63, Identifier.fromString("minecraft:element_63"))
+        register(BlockType.ELEMENT_64, Identifier.fromString("minecraft:element_64"))
+        register(BlockType.ELEMENT_65, Identifier.fromString("minecraft:element_65"))
+        register(BlockType.ELEMENT_66, Identifier.fromString("minecraft:element_66"))
+        register(BlockType.ELEMENT_67, Identifier.fromString("minecraft:element_67"))
+        register(BlockType.ELEMENT_68, Identifier.fromString("minecraft:element_68"))
+        register(BlockType.ELEMENT_69, Identifier.fromString("minecraft:element_69"))
+        register(BlockType.ELEMENT_7, Identifier.fromString("minecraft:element_7"))
+        register(BlockType.ELEMENT_70, Identifier.fromString("minecraft:element_70"))
+        register(BlockType.ELEMENT_71, Identifier.fromString("minecraft:element_71"))
+        register(BlockType.ELEMENT_72, Identifier.fromString("minecraft:element_72"))
+        register(BlockType.ELEMENT_73, Identifier.fromString("minecraft:element_73"))
+        register(BlockType.ELEMENT_74, Identifier.fromString("minecraft:element_74"))
+        register(BlockType.ELEMENT_75, Identifier.fromString("minecraft:element_75"))
+        register(BlockType.ELEMENT_76, Identifier.fromString("minecraft:element_76"))
+        register(BlockType.ELEMENT_77, Identifier.fromString("minecraft:element_77"))
+        register(BlockType.ELEMENT_78, Identifier.fromString("minecraft:element_78"))
+        register(BlockType.ELEMENT_79, Identifier.fromString("minecraft:element_79"))
+        register(BlockType.ELEMENT_8, Identifier.fromString("minecraft:element_8"))
+        register(BlockType.ELEMENT_80, Identifier.fromString("minecraft:element_80"))
+        register(BlockType.ELEMENT_81, Identifier.fromString("minecraft:element_81"))
+        register(BlockType.ELEMENT_82, Identifier.fromString("minecraft:element_82"))
+        register(BlockType.ELEMENT_83, Identifier.fromString("minecraft:element_83"))
+        register(BlockType.ELEMENT_84, Identifier.fromString("minecraft:element_84"))
+        register(BlockType.ELEMENT_85, Identifier.fromString("minecraft:element_85"))
+        register(BlockType.ELEMENT_86, Identifier.fromString("minecraft:element_86"))
+        register(BlockType.ELEMENT_87, Identifier.fromString("minecraft:element_87"))
+        register(BlockType.ELEMENT_88, Identifier.fromString("minecraft:element_88"))
+        register(BlockType.ELEMENT_89, Identifier.fromString("minecraft:element_89"))
+        register(BlockType.ELEMENT_9, Identifier.fromString("minecraft:element_9"))
+        register(BlockType.ELEMENT_90, Identifier.fromString("minecraft:element_90"))
+        register(BlockType.ELEMENT_91, Identifier.fromString("minecraft:element_91"))
+        register(BlockType.ELEMENT_92, Identifier.fromString("minecraft:element_92"))
+        register(BlockType.ELEMENT_93, Identifier.fromString("minecraft:element_93"))
+        register(BlockType.ELEMENT_94, Identifier.fromString("minecraft:element_94"))
+        register(BlockType.ELEMENT_95, Identifier.fromString("minecraft:element_95"))
+        register(BlockType.ELEMENT_96, Identifier.fromString("minecraft:element_96"))
+        register(BlockType.ELEMENT_97, Identifier.fromString("minecraft:element_97"))
+        register(BlockType.ELEMENT_98, Identifier.fromString("minecraft:element_98"))
+        register(BlockType.ELEMENT_99, Identifier.fromString("minecraft:element_99"))
+        register(BlockType.EMERALD_BLOCK, Identifier.fromString("minecraft:emerald_block"))
         register(
             BlockType.EMERALD_ORE,
-            Identifier.Companion.fromString("minecraft:emerald_ore"),
-            BlockEmeraldOre::class.java
+            Identifier.fromString("minecraft:emerald_ore"),
+            BlockEmeraldOre::class.java,
         )
         register(
             BlockType.ENCHANTING_TABLE,
-            Identifier.Companion.fromString("minecraft:enchanting_table"),
-            BlockEnchantingTable::class.java
+            Identifier.fromString("minecraft:enchanting_table"),
+            BlockEnchantingTable::class.java,
         )
         register(
             BlockType.ENDER_CHEST,
-            Identifier.Companion.fromString("minecraft:ender_chest"),
-            BlockEnderChest::class.java
+            Identifier.fromString("minecraft:ender_chest"),
+            BlockEnderChest::class.java,
         )
-        register(BlockType.END_BRICKS, Identifier.Companion.fromString("minecraft:end_bricks"))
+        register(BlockType.END_BRICKS, Identifier.fromString("minecraft:end_bricks"))
         register(
             BlockType.END_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:end_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:end_brick_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.END_GATEWAY, Identifier.Companion.fromString("minecraft:end_gateway"))
-        register(BlockType.END_PORTAL, Identifier.Companion.fromString("minecraft:end_portal"))
+        register(BlockType.END_GATEWAY, Identifier.fromString("minecraft:end_gateway"))
+        register(BlockType.END_PORTAL, Identifier.fromString("minecraft:end_portal"))
         register(
             BlockType.END_PORTAL_FRAME,
-            Identifier.Companion.fromString("minecraft:end_portal_frame"),
-            BlockEndPortalFrame::class.java
+            Identifier.fromString("minecraft:end_portal_frame"),
+            BlockEndPortalFrame::class.java,
         )
-        register(BlockType.END_ROD, Identifier.Companion.fromString("minecraft:end_rod"), BlockEndRod::class.java)
-        register(BlockType.END_STONE, Identifier.Companion.fromString("minecraft:end_stone"))
-        register(BlockType.EXPOSED_COPPER, Identifier.Companion.fromString("minecraft:exposed_copper"))
-        register(BlockType.EXPOSED_CUT_COPPER, Identifier.Companion.fromString("minecraft:exposed_cut_copper"))
+        register(BlockType.END_ROD, Identifier.fromString("minecraft:end_rod"), BlockEndRod::class.java)
+        register(BlockType.END_STONE, Identifier.fromString("minecraft:end_stone"))
+        register(BlockType.EXPOSED_COPPER, Identifier.fromString("minecraft:exposed_copper"))
+        register(BlockType.EXPOSED_CUT_COPPER, Identifier.fromString("minecraft:exposed_cut_copper"))
         register(
             BlockType.EXPOSED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:exposed_cut_copper_slab"),
-            BlockExposedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:exposed_cut_copper_slab"),
+            BlockExposedCutCopperSlab::class.java,
         )
         register(
             BlockType.EXPOSED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:exposed_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:exposed_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.EXPOSED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:exposed_double_cut_copper_slab"),
-            BlockDoubleExposedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:exposed_double_cut_copper_slab"),
+            BlockDoubleExposedCutCopperSlab::class.java,
         )
-        register(BlockType.FARMLAND, Identifier.Companion.fromString("minecraft:farmland"))
-        register(BlockType.FENCE, Identifier.Companion.fromString("minecraft:fence"), BlockWoodenFence::class.java)
+        register(BlockType.FARMLAND, Identifier.fromString("minecraft:farmland"))
+        register(BlockType.FENCE, Identifier.fromString("minecraft:fence"), BlockWoodenFence::class.java)
         register(
             BlockType.FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:fence_gate"),
+            BlockFenceGate::class.java,
         )
-        register(BlockType.FIRE, Identifier.Companion.fromString("minecraft:fire"))
-        register(BlockType.FLETCHING_TABLE, Identifier.Companion.fromString("minecraft:fletching_table"))
-        register(BlockType.FLOWERING_AZALEA, Identifier.Companion.fromString("minecraft:flowering_azalea"))
-        register(BlockType.FLOWER_POT, Identifier.Companion.fromString("minecraft:flower_pot"))
+        register(BlockType.FIRE, Identifier.fromString("minecraft:fire"))
+        register(BlockType.FLETCHING_TABLE, Identifier.fromString("minecraft:fletching_table"))
+        register(BlockType.FLOWERING_AZALEA, Identifier.fromString("minecraft:flowering_azalea"))
+        register(BlockType.FLOWER_POT, Identifier.fromString("minecraft:flower_pot"))
         register(
             BlockType.FLOWING_LAVA,
-            Identifier.Companion.fromString("minecraft:flowing_lava"),
-            BlockLava::class.java
+            Identifier.fromString("minecraft:flowing_lava"),
+            BlockLava::class.java,
         )
         register(
             BlockType.FLOWING_WATER,
-            Identifier.Companion.fromString("minecraft:flowing_water"),
-            BlockWater::class.java
+            Identifier.fromString("minecraft:flowing_water"),
+            BlockWater::class.java,
         )
-        register(BlockType.FRAME, Identifier.Companion.fromString("minecraft:frame"))
-        register(BlockType.FROG_SPAWN, Identifier.Companion.fromString("minecraft:frog_spawn"))
-        register(BlockType.FROSTED_ICE, Identifier.Companion.fromString("minecraft:frosted_ice"))
-        register(BlockType.FURNACE, Identifier.Companion.fromString("minecraft:furnace"), BlockFurnace::class.java)
-        register(BlockType.GILDED_BLACKSTONE, Identifier.Companion.fromString("minecraft:gilded_blackstone"))
-        register(BlockType.GLASS, Identifier.Companion.fromString("minecraft:glass"))
-        register(BlockType.GLASS_PANE, Identifier.Companion.fromString("minecraft:glass_pane"))
-        register(BlockType.GLOWINGOBSIDIAN, Identifier.Companion.fromString("minecraft:glowingobsidian"))
-        register(BlockType.GLOWSTONE, Identifier.Companion.fromString("minecraft:glowstone"))
-        register(BlockType.GLOW_FRAME, Identifier.Companion.fromString("minecraft:glow_frame"))
-        register(BlockType.GLOW_LICHEN, Identifier.Companion.fromString("minecraft:glow_lichen"))
-        register(BlockType.GOLDEN_RAIL, Identifier.Companion.fromString("minecraft:golden_rail"), BlockRail::class.java)
-        register(BlockType.GOLD_BLOCK, Identifier.Companion.fromString("minecraft:gold_block"))
-        register(BlockType.GOLD_ORE, Identifier.Companion.fromString("minecraft:gold_ore"), BlockGoldOre::class.java)
+        register(BlockType.FRAME, Identifier.fromString("minecraft:frame"))
+        register(BlockType.FROG_SPAWN, Identifier.fromString("minecraft:frog_spawn"))
+        register(BlockType.FROSTED_ICE, Identifier.fromString("minecraft:frosted_ice"))
+        register(BlockType.FURNACE, Identifier.fromString("minecraft:furnace"), BlockFurnace::class.java)
+        register(BlockType.GILDED_BLACKSTONE, Identifier.fromString("minecraft:gilded_blackstone"))
+        register(BlockType.GLASS, Identifier.fromString("minecraft:glass"))
+        register(BlockType.GLASS_PANE, Identifier.fromString("minecraft:glass_pane"))
+        register(BlockType.GLOWINGOBSIDIAN, Identifier.fromString("minecraft:glowingobsidian"))
+        register(BlockType.GLOWSTONE, Identifier.fromString("minecraft:glowstone"))
+        register(BlockType.GLOW_FRAME, Identifier.fromString("minecraft:glow_frame"))
+        register(BlockType.GLOW_LICHEN, Identifier.fromString("minecraft:glow_lichen"))
+        register(BlockType.GOLDEN_RAIL, Identifier.fromString("minecraft:golden_rail"), BlockRail::class.java)
+        register(BlockType.GOLD_BLOCK, Identifier.fromString("minecraft:gold_block"))
+        register(BlockType.GOLD_ORE, Identifier.fromString("minecraft:gold_ore"), BlockGoldOre::class.java)
         register(
             BlockType.GRANITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:granite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:granite_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.GRASS, Identifier.Companion.fromString("minecraft:grass"), BlockGrass::class.java)
-        register(BlockType.GRASS_PATH, Identifier.Companion.fromString("minecraft:grass_path"))
-        register(BlockType.GRAVEL, Identifier.Companion.fromString("minecraft:gravel"), BlockGravel::class.java)
+        register(BlockType.GRASS, Identifier.fromString("minecraft:grass"), BlockGrass::class.java)
+        register(BlockType.GRASS_PATH, Identifier.fromString("minecraft:grass_path"))
+        register(BlockType.GRAVEL, Identifier.fromString("minecraft:gravel"), BlockGravel::class.java)
         register(
             BlockType.GRAY_CANDLE,
-            Identifier.Companion.fromString("minecraft:gray_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:gray_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.GRAY_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:gray_candle_cake"))
-        register(BlockType.GRAY_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:gray_glazed_terracotta"))
+        register(BlockType.GRAY_CANDLE_CAKE, Identifier.fromString("minecraft:gray_candle_cake"))
+        register(BlockType.GRAY_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:gray_glazed_terracotta"))
         register(
             BlockType.GREEN_CANDLE,
-            Identifier.Companion.fromString("minecraft:green_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:green_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.GREEN_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:green_candle_cake"))
+        register(BlockType.GREEN_CANDLE_CAKE, Identifier.fromString("minecraft:green_candle_cake"))
         register(
             BlockType.GREEN_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:green_glazed_terracotta")
+            Identifier.fromString("minecraft:green_glazed_terracotta"),
         )
         register(
             BlockType.GRINDSTONE,
-            Identifier.Companion.fromString("minecraft:grindstone"),
-            BlockGrindstone::class.java
+            Identifier.fromString("minecraft:grindstone"),
+            BlockGrindstone::class.java,
         )
         register(
             BlockType.HANGING_ROOTS,
-            Identifier.Companion.fromString("minecraft:hanging_roots"),
-            BlockHangingRoots::class.java
+            Identifier.fromString("minecraft:hanging_roots"),
+            BlockHangingRoots::class.java,
         )
-        register(BlockType.HARDENED_CLAY, Identifier.Companion.fromString("minecraft:hardened_clay"))
-        register(BlockType.HARD_GLASS, Identifier.Companion.fromString("minecraft:hard_glass"))
-        register(BlockType.HARD_GLASS_PANE, Identifier.Companion.fromString("minecraft:hard_glass_pane"))
-        register(BlockType.HARD_STAINED_GLASS, Identifier.Companion.fromString("minecraft:hard_stained_glass"))
+        register(BlockType.HARDENED_CLAY, Identifier.fromString("minecraft:hardened_clay"))
+        register(BlockType.HARD_GLASS, Identifier.fromString("minecraft:hard_glass"))
+        register(BlockType.HARD_GLASS_PANE, Identifier.fromString("minecraft:hard_glass_pane"))
+        register(BlockType.HARD_STAINED_GLASS, Identifier.fromString("minecraft:hard_stained_glass"))
         register(
             BlockType.HARD_STAINED_GLASS_PANE,
-            Identifier.Companion.fromString("minecraft:hard_stained_glass_pane")
+            Identifier.fromString("minecraft:hard_stained_glass_pane"),
         )
-        register(BlockType.HAY_BLOCK, Identifier.Companion.fromString("minecraft:hay_block"))
+        register(BlockType.HAY_BLOCK, Identifier.fromString("minecraft:hay_block"))
         register(
             BlockType.HEAVY_WEIGHTED_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:heavy_weighted_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:heavy_weighted_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
-        register(BlockType.HONEYCOMB_BLOCK, Identifier.Companion.fromString("minecraft:honeycomb_block"))
-        register(BlockType.HONEY_BLOCK, Identifier.Companion.fromString("minecraft:honey_block"))
-        register(BlockType.HOPPER, Identifier.Companion.fromString("minecraft:hopper"), BlockHopper::class.java)
-        register(BlockType.ICE, Identifier.Companion.fromString("minecraft:ice"))
-        register(BlockType.INFESTED_DEEPSLATE, Identifier.Companion.fromString("minecraft:infested_deepslate"))
-        register(BlockType.INFO_UPDATE, Identifier.Companion.fromString("minecraft:info_update"))
-        register(BlockType.INFO_UPDATE2, Identifier.Companion.fromString("minecraft:info_update2"))
-        register(BlockType.INVISIBLE_BEDROCK, Identifier.Companion.fromString("minecraft:invisible_bedrock"))
-        register(BlockType.IRON_BARS, Identifier.Companion.fromString("minecraft:iron_bars"))
-        register(BlockType.IRON_BLOCK, Identifier.Companion.fromString("minecraft:iron_block"))
-        register(BlockType.IRON_DOOR, Identifier.Companion.fromString("minecraft:iron_door"), BlockDoor::class.java)
-        register(BlockType.IRON_ORE, Identifier.Companion.fromString("minecraft:iron_ore"), BlockIronOre::class.java)
+        register(BlockType.HONEYCOMB_BLOCK, Identifier.fromString("minecraft:honeycomb_block"))
+        register(BlockType.HONEY_BLOCK, Identifier.fromString("minecraft:honey_block"))
+        register(BlockType.HOPPER, Identifier.fromString("minecraft:hopper"), BlockHopper::class.java)
+        register(BlockType.ICE, Identifier.fromString("minecraft:ice"))
+        register(BlockType.INFESTED_DEEPSLATE, Identifier.fromString("minecraft:infested_deepslate"))
+        register(BlockType.INFO_UPDATE, Identifier.fromString("minecraft:info_update"))
+        register(BlockType.INFO_UPDATE2, Identifier.fromString("minecraft:info_update2"))
+        register(BlockType.INVISIBLE_BEDROCK, Identifier.fromString("minecraft:invisible_bedrock"))
+        register(BlockType.IRON_BARS, Identifier.fromString("minecraft:iron_bars"))
+        register(BlockType.IRON_BLOCK, Identifier.fromString("minecraft:iron_block"))
+        register(BlockType.IRON_DOOR, Identifier.fromString("minecraft:iron_door"), BlockDoor::class.java)
+        register(BlockType.IRON_ORE, Identifier.fromString("minecraft:iron_ore"), BlockIronOre::class.java)
         register(
             BlockType.IRON_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:iron_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:iron_trapdoor"),
+            BlockTrapdoor::class.java,
         )
-        register(BlockType.JIGSAW, Identifier.Companion.fromString("minecraft:jigsaw"))
-        register(BlockType.JUKEBOX, Identifier.Companion.fromString("minecraft:jukebox"))
+        register(BlockType.JIGSAW, Identifier.fromString("minecraft:jigsaw"))
+        register(BlockType.JUKEBOX, Identifier.fromString("minecraft:jukebox"))
         register(
             BlockType.JUNGLE_BUTTON,
-            Identifier.Companion.fromString("minecraft:jungle_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:jungle_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.JUNGLE_DOOR, Identifier.Companion.fromString("minecraft:jungle_door"), BlockDoor::class.java)
+        register(BlockType.JUNGLE_DOOR, Identifier.fromString("minecraft:jungle_door"), BlockDoor::class.java)
         register(
             BlockType.JUNGLE_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:jungle_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:jungle_fence_gate"),
+            BlockFenceGate::class.java,
         )
         register(
             BlockType.JUNGLE_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:jungle_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:jungle_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.JUNGLE_STAIRS,
-            Identifier.Companion.fromString("minecraft:jungle_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:jungle_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.JUNGLE_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:jungle_standing_sign"),
-            BlockJungleStandingSign::class.java
+            Identifier.fromString("minecraft:jungle_standing_sign"),
+            BlockJungleStandingSign::class.java,
         )
         register(
             BlockType.JUNGLE_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:jungle_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:jungle_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.JUNGLE_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:jungle_wall_sign"),
-            BlockJungleWallSign::class.java
+            Identifier.fromString("minecraft:jungle_wall_sign"),
+            BlockJungleWallSign::class.java,
         )
-        register(BlockType.KELP, Identifier.Companion.fromString("minecraft:kelp"), BlockKelp::class.java)
-        register(BlockType.LADDER, Identifier.Companion.fromString("minecraft:ladder"), BlockLadder::class.java)
-        register(BlockType.LANTERN, Identifier.Companion.fromString("minecraft:lantern"), BlockLantern::class.java)
-        register(BlockType.LAPIS_BLOCK, Identifier.Companion.fromString("minecraft:lapis_block"))
-        register(BlockType.LAPIS_ORE, Identifier.Companion.fromString("minecraft:lapis_ore"), BlockLapisOre::class.java)
-        register(BlockType.LARGE_AMETHYST_BUD, Identifier.Companion.fromString("minecraft:large_amethyst_bud"))
-        register(BlockType.LAVA, Identifier.Companion.fromString("minecraft:lava"), BlockLava::class.java)
-        register(BlockType.LAVA_CAULDRON, Identifier.Companion.fromString("minecraft:lava_cauldron"))
-        register(BlockType.LEAVES, Identifier.Companion.fromString("minecraft:leaves"), BlockLeaves::class.java)
-        register(BlockType.LEAVES2, Identifier.Companion.fromString("minecraft:leaves2"), BlockLeaves2::class.java)
-        register(BlockType.LECTERN, Identifier.Companion.fromString("minecraft:lectern"), BlockLectern::class.java)
-        register(BlockType.LEVER, Identifier.Companion.fromString("minecraft:lever"), BlockLever::class.java)
+        register(BlockType.KELP, Identifier.fromString("minecraft:kelp"), BlockKelp::class.java)
+        register(BlockType.LADDER, Identifier.fromString("minecraft:ladder"), BlockLadder::class.java)
+        register(BlockType.LANTERN, Identifier.fromString("minecraft:lantern"), BlockLantern::class.java)
+        register(BlockType.LAPIS_BLOCK, Identifier.fromString("minecraft:lapis_block"))
+        register(BlockType.LAPIS_ORE, Identifier.fromString("minecraft:lapis_ore"), BlockLapisOre::class.java)
+        register(BlockType.LARGE_AMETHYST_BUD, Identifier.fromString("minecraft:large_amethyst_bud"))
+        register(BlockType.LAVA, Identifier.fromString("minecraft:lava"), BlockLava::class.java)
+        register(BlockType.LAVA_CAULDRON, Identifier.fromString("minecraft:lava_cauldron"))
+        register(BlockType.LEAVES, Identifier.fromString("minecraft:leaves"), BlockLeaves::class.java)
+        register(BlockType.LEAVES2, Identifier.fromString("minecraft:leaves2"), BlockLeaves2::class.java)
+        register(BlockType.LECTERN, Identifier.fromString("minecraft:lectern"), BlockLectern::class.java)
+        register(BlockType.LEVER, Identifier.fromString("minecraft:lever"), BlockLever::class.java)
         register(
             BlockType.LIGHTNING_ROD,
-            Identifier.Companion.fromString("minecraft:lightning_rod"),
-            BlockLightningRod::class.java
+            Identifier.fromString("minecraft:lightning_rod"),
+            BlockLightningRod::class.java,
         )
-        register(BlockType.LIGHT_BLOCK, Identifier.Companion.fromString("minecraft:light_block"))
+        register(BlockType.LIGHT_BLOCK, Identifier.fromString("minecraft:light_block"))
         register(
             BlockType.LIGHT_BLUE_CANDLE,
-            Identifier.Companion.fromString("minecraft:light_blue_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:light_blue_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.LIGHT_BLUE_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:light_blue_candle_cake"))
+        register(BlockType.LIGHT_BLUE_CANDLE_CAKE, Identifier.fromString("minecraft:light_blue_candle_cake"))
         register(
             BlockType.LIGHT_BLUE_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:light_blue_glazed_terracotta")
+            Identifier.fromString("minecraft:light_blue_glazed_terracotta"),
         )
         register(
             BlockType.LIGHT_GRAY_CANDLE,
-            Identifier.Companion.fromString("minecraft:light_gray_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:light_gray_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.LIGHT_GRAY_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:light_gray_candle_cake"))
+        register(BlockType.LIGHT_GRAY_CANDLE_CAKE, Identifier.fromString("minecraft:light_gray_candle_cake"))
         register(
             BlockType.LIGHT_WEIGHTED_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:light_weighted_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:light_weighted_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.LIME_CANDLE,
-            Identifier.Companion.fromString("minecraft:lime_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:lime_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.LIME_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:lime_candle_cake"))
-        register(BlockType.LIME_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:lime_glazed_terracotta"))
+        register(BlockType.LIME_CANDLE_CAKE, Identifier.fromString("minecraft:lime_candle_cake"))
+        register(BlockType.LIME_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:lime_glazed_terracotta"))
         register(
             BlockType.LIT_BLAST_FURNACE,
-            Identifier.Companion.fromString("minecraft:lit_blast_furnace"),
-            BlockBlastFurnace::class.java
+            Identifier.fromString("minecraft:lit_blast_furnace"),
+            BlockBlastFurnace::class.java,
         )
         register(
             BlockType.LIT_DEEPSLATE_REDSTONE_ORE,
-            Identifier.Companion.fromString("minecraft:lit_deepslate_redstone_ore"),
-            BlockRedstoneOre::class.java
+            Identifier.fromString("minecraft:lit_deepslate_redstone_ore"),
+            BlockRedstoneOre::class.java,
         )
         register(
             BlockType.LIT_FURNACE,
-            Identifier.Companion.fromString("minecraft:lit_furnace"),
-            BlockFurnace::class.java
+            Identifier.fromString("minecraft:lit_furnace"),
+            BlockFurnace::class.java,
         )
-        register(BlockType.LIT_PUMPKIN, Identifier.Companion.fromString("minecraft:lit_pumpkin"))
-        register(BlockType.LIT_REDSTONE_LAMP, Identifier.Companion.fromString("minecraft:lit_redstone_lamp"))
+        register(BlockType.LIT_PUMPKIN, Identifier.fromString("minecraft:lit_pumpkin"))
+        register(BlockType.LIT_REDSTONE_LAMP, Identifier.fromString("minecraft:lit_redstone_lamp"))
         register(
             BlockType.LIT_REDSTONE_ORE,
-            Identifier.Companion.fromString("minecraft:lit_redstone_ore"),
-            BlockRedstoneOre::class.java
+            Identifier.fromString("minecraft:lit_redstone_ore"),
+            BlockRedstoneOre::class.java,
         )
-        register(BlockType.LIT_SMOKER, Identifier.Companion.fromString("minecraft:lit_smoker"))
-        register(BlockType.LODESTONE, Identifier.Companion.fromString("minecraft:lodestone"))
-        register(BlockType.LOG, Identifier.Companion.fromString("minecraft:log"), BlockLog::class.java)
-        register(BlockType.LOG2, Identifier.Companion.fromString("minecraft:log2"), BlockLog2::class.java)
-        register(BlockType.LOOM, Identifier.Companion.fromString("minecraft:loom"))
+        register(BlockType.LIT_SMOKER, Identifier.fromString("minecraft:lit_smoker"))
+        register(BlockType.LODESTONE, Identifier.fromString("minecraft:lodestone"))
+        register(BlockType.LOG, Identifier.fromString("minecraft:log"), BlockLog::class.java)
+        register(BlockType.LOG2, Identifier.fromString("minecraft:log2"), BlockLog2::class.java)
+        register(BlockType.LOOM, Identifier.fromString("minecraft:loom"))
         register(
             BlockType.MAGENTA_CANDLE,
-            Identifier.Companion.fromString("minecraft:magenta_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:magenta_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.MAGENTA_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:magenta_candle_cake"))
+        register(BlockType.MAGENTA_CANDLE_CAKE, Identifier.fromString("minecraft:magenta_candle_cake"))
         register(
             BlockType.MAGENTA_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:magenta_glazed_terracotta")
+            Identifier.fromString("minecraft:magenta_glazed_terracotta"),
         )
-        register(BlockType.MAGMA, Identifier.Companion.fromString("minecraft:magma"))
+        register(BlockType.MAGMA, Identifier.fromString("minecraft:magma"))
         register(
             BlockType.MANGROVE_BUTTON,
-            Identifier.Companion.fromString("minecraft:mangrove_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:mangrove_button"),
+            BlockButton::class.java,
         )
         register(
             BlockType.MANGROVE_DOOR,
-            Identifier.Companion.fromString("minecraft:mangrove_door"),
-            BlockDoor::class.java
+            Identifier.fromString("minecraft:mangrove_door"),
+            BlockDoor::class.java,
         )
         register(
             BlockType.MANGROVE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:mangrove_double_slab"),
-            BlockDoubleMangroveSlab::class.java
+            Identifier.fromString("minecraft:mangrove_double_slab"),
+            BlockDoubleMangroveSlab::class.java,
         )
         register(
             BlockType.MANGROVE_FENCE,
-            Identifier.Companion.fromString("minecraft:mangrove_fence"),
-            BlockFence::class.java
+            Identifier.fromString("minecraft:mangrove_fence"),
+            BlockFence::class.java,
         )
         register(
             BlockType.MANGROVE_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:mangrove_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:mangrove_fence_gate"),
+            BlockFenceGate::class.java,
         )
-        register(BlockType.MANGROVE_LEAVES, Identifier.Companion.fromString("minecraft:mangrove_leaves"))
+        register(BlockType.MANGROVE_LEAVES, Identifier.fromString("minecraft:mangrove_leaves"))
         register(
             BlockType.MANGROVE_LOG,
-            Identifier.Companion.fromString("minecraft:mangrove_log"),
-            BlockMangroveLog::class.java
+            Identifier.fromString("minecraft:mangrove_log"),
+            BlockMangroveLog::class.java,
         )
-        register(BlockType.MANGROVE_PLANKS, Identifier.Companion.fromString("minecraft:mangrove_planks"))
+        register(BlockType.MANGROVE_PLANKS, Identifier.fromString("minecraft:mangrove_planks"))
         register(
             BlockType.MANGROVE_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:mangrove_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:mangrove_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
-        register(BlockType.MANGROVE_PROPAGULE, Identifier.Companion.fromString("minecraft:mangrove_propagule"))
-        register(BlockType.MANGROVE_ROOTS, Identifier.Companion.fromString("minecraft:mangrove_roots"))
+        register(BlockType.MANGROVE_PROPAGULE, Identifier.fromString("minecraft:mangrove_propagule"))
+        register(BlockType.MANGROVE_ROOTS, Identifier.fromString("minecraft:mangrove_roots"))
         register(
             BlockType.MANGROVE_SLAB,
-            Identifier.Companion.fromString("minecraft:mangrove_slab"),
-            BlockMangroveSlab::class.java
+            Identifier.fromString("minecraft:mangrove_slab"),
+            BlockMangroveSlab::class.java,
         )
         register(
             BlockType.MANGROVE_STAIRS,
-            Identifier.Companion.fromString("minecraft:mangrove_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:mangrove_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.MANGROVE_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:mangrove_standing_sign"),
-            BlockMangroveStandingSign::class.java
+            Identifier.fromString("minecraft:mangrove_standing_sign"),
+            BlockMangroveStandingSign::class.java,
         )
         register(
             BlockType.MANGROVE_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:mangrove_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:mangrove_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.MANGROVE_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:mangrove_wall_sign"),
-            BlockMangroveWallSign::class.java
+            Identifier.fromString("minecraft:mangrove_wall_sign"),
+            BlockMangroveWallSign::class.java,
         )
         register(
             BlockType.MANGROVE_WOOD,
-            Identifier.Companion.fromString("minecraft:mangrove_wood"),
-            BlockMangroveWood::class.java
+            Identifier.fromString("minecraft:mangrove_wood"),
+            BlockMangroveWood::class.java,
         )
-        register(BlockType.MEDIUM_AMETHYST_BUD, Identifier.Companion.fromString("minecraft:medium_amethyst_bud"))
-        register(BlockType.MELON_BLOCK, Identifier.Companion.fromString("minecraft:melon_block"))
-        register(BlockType.MELON_STEM, Identifier.Companion.fromString("minecraft:melon_stem"))
-        register(BlockType.MOB_SPAWNER, Identifier.Companion.fromString("minecraft:mob_spawner"))
-        register(BlockType.INFESTED_STONE, Identifier.Companion.fromString("minecraft:monster_egg"))
-        register(BlockType.MOSSY_COBBLESTONE, Identifier.Companion.fromString("minecraft:mossy_cobblestone"))
+        register(BlockType.MEDIUM_AMETHYST_BUD, Identifier.fromString("minecraft:medium_amethyst_bud"))
+        register(BlockType.MELON_BLOCK, Identifier.fromString("minecraft:melon_block"))
+        register(BlockType.MELON_STEM, Identifier.fromString("minecraft:melon_stem"))
+        register(BlockType.MOB_SPAWNER, Identifier.fromString("minecraft:mob_spawner"))
+        register(BlockType.INFESTED_STONE, Identifier.fromString("minecraft:monster_egg"))
+        register(BlockType.MOSSY_COBBLESTONE, Identifier.fromString("minecraft:mossy_cobblestone"))
         register(
             BlockType.MOSSY_COBBLESTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:mossy_cobblestone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:mossy_cobblestone_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.MOSSY_STONE_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:mossy_stone_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:mossy_stone_brick_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.MOSS_BLOCK, Identifier.Companion.fromString("minecraft:moss_block"))
-        register(BlockType.MOSS_CARPET, Identifier.Companion.fromString("minecraft:moss_carpet"))
-        register(BlockType.MOVING_BLOCK, Identifier.Companion.fromString("minecraft:moving_block"))
-        register(BlockType.MUD, Identifier.Companion.fromString("minecraft:mud"))
+        register(BlockType.MOSS_BLOCK, Identifier.fromString("minecraft:moss_block"))
+        register(BlockType.MOSS_CARPET, Identifier.fromString("minecraft:moss_carpet"))
+        register(BlockType.MOVING_BLOCK, Identifier.fromString("minecraft:moving_block"))
+        register(BlockType.MUD, Identifier.fromString("minecraft:mud"))
         register(
             BlockType.MUDDY_MANGROVE_ROOTS,
-            Identifier.Companion.fromString("minecraft:muddy_mangrove_roots"),
-            BlockMuddyMangroveRoots::class.java
+            Identifier.fromString("minecraft:muddy_mangrove_roots"),
+            BlockMuddyMangroveRoots::class.java,
         )
-        register(BlockType.MUD_BRICKS, Identifier.Companion.fromString("minecraft:mud_bricks"))
+        register(BlockType.MUD_BRICKS, Identifier.fromString("minecraft:mud_bricks"))
         register(
             BlockType.MUD_BRICK_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:mud_brick_double_slab"),
-            BlockDoubleMudBrickSlab::class.java
+            Identifier.fromString("minecraft:mud_brick_double_slab"),
+            BlockDoubleMudBrickSlab::class.java,
         )
         register(
             BlockType.MUD_BRICK_SLAB,
-            Identifier.Companion.fromString("minecraft:mud_brick_slab"),
-            BlockMudBrickSlab::class.java
+            Identifier.fromString("minecraft:mud_brick_slab"),
+            BlockMudBrickSlab::class.java,
         )
         register(
             BlockType.MUD_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:mud_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:mud_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.MUD_BRICK_WALL,
-            Identifier.Companion.fromString("minecraft:mud_brick_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:mud_brick_wall"),
+            BlockWall::class.java,
         )
-        register(BlockType.MYCELIUM, Identifier.Companion.fromString("minecraft:mycelium"))
-        register(BlockType.NETHERITE_BLOCK, Identifier.Companion.fromString("minecraft:netherite_block"))
-        register(BlockType.NETHERRACK, Identifier.Companion.fromString("minecraft:netherrack"))
-        register(BlockType.NETHERREACTOR, Identifier.Companion.fromString("minecraft:netherreactor"))
-        register(BlockType.NETHER_BRICK, Identifier.Companion.fromString("minecraft:nether_brick"))
+        register(BlockType.MYCELIUM, Identifier.fromString("minecraft:mycelium"))
+        register(BlockType.NETHERITE_BLOCK, Identifier.fromString("minecraft:netherite_block"))
+        register(BlockType.NETHERRACK, Identifier.fromString("minecraft:netherrack"))
+        register(BlockType.NETHERREACTOR, Identifier.fromString("minecraft:netherreactor"))
+        register(BlockType.NETHER_BRICK, Identifier.fromString("minecraft:nether_brick"))
         register(
             BlockType.NETHER_BRICK_FENCE,
-            Identifier.Companion.fromString("minecraft:nether_brick_fence"),
-            BlockFence::class.java
+            Identifier.fromString("minecraft:nether_brick_fence"),
+            BlockFence::class.java,
         )
         register(
             BlockType.NETHER_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:nether_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:nether_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.NETHER_GOLD_ORE,
-            Identifier.Companion.fromString("minecraft:nether_gold_ore"),
-            BlockNetherGoldOre::class.java
+            Identifier.fromString("minecraft:nether_gold_ore"),
+            BlockNetherGoldOre::class.java,
         )
-        register(BlockType.NETHER_SPROUTS, Identifier.Companion.fromString("minecraft:nether_sprouts"))
+        register(BlockType.NETHER_SPROUTS, Identifier.fromString("minecraft:nether_sprouts"))
         register(
             BlockType.NETHER_WART,
-            Identifier.Companion.fromString("minecraft:nether_wart"),
-            BlockNetherWart::class.java
+            Identifier.fromString("minecraft:nether_wart"),
+            BlockNetherWart::class.java,
         )
-        register(BlockType.NETHER_WART_BLOCK, Identifier.Companion.fromString("minecraft:nether_wart_block"))
+        register(BlockType.NETHER_WART_BLOCK, Identifier.fromString("minecraft:nether_wart_block"))
         register(
             BlockType.NORMAL_STONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:normal_stone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:normal_stone_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.NOTEBLOCK, Identifier.Companion.fromString("minecraft:noteblock"))
-        register(BlockType.OAK_STAIRS, Identifier.Companion.fromString("minecraft:oak_stairs"), BlockStairs::class.java)
-        register(BlockType.OBSERVER, Identifier.Companion.fromString("minecraft:observer"))
-        register(BlockType.OBSIDIAN, Identifier.Companion.fromString("minecraft:obsidian"))
-        register(BlockType.OCHRE_FROGLIGHT, Identifier.Companion.fromString("minecraft:ochre_froglight"))
+        register(BlockType.NOTEBLOCK, Identifier.fromString("minecraft:noteblock"))
+        register(BlockType.OAK_STAIRS, Identifier.fromString("minecraft:oak_stairs"), BlockStairs::class.java)
+        register(BlockType.OBSERVER, Identifier.fromString("minecraft:observer"))
+        register(BlockType.OBSIDIAN, Identifier.fromString("minecraft:obsidian"))
+        register(BlockType.OCHRE_FROGLIGHT, Identifier.fromString("minecraft:ochre_froglight"))
         register(
             BlockType.ORANGE_CANDLE,
-            Identifier.Companion.fromString("minecraft:orange_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:orange_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.ORANGE_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:orange_candle_cake"))
+        register(BlockType.ORANGE_CANDLE_CAKE, Identifier.fromString("minecraft:orange_candle_cake"))
         register(
             BlockType.ORANGE_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:orange_glazed_terracotta")
+            Identifier.fromString("minecraft:orange_glazed_terracotta"),
         )
-        register(BlockType.OXIDIZED_COPPER, Identifier.Companion.fromString("minecraft:oxidized_copper"))
-        register(BlockType.OXIDIZED_CUT_COPPER, Identifier.Companion.fromString("minecraft:oxidized_cut_copper"))
+        register(BlockType.OXIDIZED_COPPER, Identifier.fromString("minecraft:oxidized_copper"))
+        register(BlockType.OXIDIZED_CUT_COPPER, Identifier.fromString("minecraft:oxidized_cut_copper"))
         register(
             BlockType.OXIDIZED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:oxidized_cut_copper_slab"),
-            BlockOxidizedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:oxidized_cut_copper_slab"),
+            BlockOxidizedCutCopperSlab::class.java,
         )
         register(
             BlockType.OXIDIZED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:oxidized_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:oxidized_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.OXIDIZED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:oxidized_double_cut_copper_slab"),
-            BlockDoubleOxidizedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:oxidized_double_cut_copper_slab"),
+            BlockDoubleOxidizedCutCopperSlab::class.java,
         )
-        register(BlockType.PACKED_ICE, Identifier.Companion.fromString("minecraft:packed_ice"))
-        register(BlockType.PACKED_MUD, Identifier.Companion.fromString("minecraft:packed_mud"))
-        register(BlockType.PEARLESCENT_FROGLIGHT, Identifier.Companion.fromString("minecraft:pearlescent_froglight"))
+        register(BlockType.PACKED_ICE, Identifier.fromString("minecraft:packed_ice"))
+        register(BlockType.PACKED_MUD, Identifier.fromString("minecraft:packed_mud"))
+        register(BlockType.PEARLESCENT_FROGLIGHT, Identifier.fromString("minecraft:pearlescent_froglight"))
         register(
             BlockType.PINK_CANDLE,
-            Identifier.Companion.fromString("minecraft:pink_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:pink_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.PINK_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:pink_candle_cake"))
-        register(BlockType.PINK_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:pink_glazed_terracotta"))
-        register(BlockType.PISTON, Identifier.Companion.fromString("minecraft:piston"), BlockPiston::class.java)
-        register(BlockType.PISTON_ARM_COLLISION, Identifier.Companion.fromString("minecraft:piston_arm_collision"))
-        register(BlockType.PLANKS, Identifier.Companion.fromString("minecraft:planks"), BlockPlanks::class.java)
-        register(BlockType.PODZOL, Identifier.Companion.fromString("minecraft:podzol"))
+        register(BlockType.PINK_CANDLE_CAKE, Identifier.fromString("minecraft:pink_candle_cake"))
+        register(BlockType.PINK_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:pink_glazed_terracotta"))
+        register(BlockType.PISTON, Identifier.fromString("minecraft:piston"), BlockPiston::class.java)
+        register(BlockType.PISTON_ARM_COLLISION, Identifier.fromString("minecraft:piston_arm_collision"))
+        register(BlockType.PLANKS, Identifier.fromString("minecraft:planks"), BlockPlanks::class.java)
+        register(BlockType.PODZOL, Identifier.fromString("minecraft:podzol"))
         register(
             BlockType.POINTED_DRIPSTONE,
-            Identifier.Companion.fromString("minecraft:pointed_dripstone"),
-            BlockPointedDripstone::class.java
+            Identifier.fromString("minecraft:pointed_dripstone"),
+            BlockPointedDripstone::class.java,
         )
         register(
             BlockType.POLISHED_ANDESITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_andesite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_andesite_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.POLISHED_BASALT,
-            Identifier.Companion.fromString("minecraft:polished_basalt"),
-            BlockPolishedBasalt::class.java
+            Identifier.fromString("minecraft:polished_basalt"),
+            BlockPolishedBasalt::class.java,
         )
-        register(BlockType.POLISHED_BLACKSTONE, Identifier.Companion.fromString("minecraft:polished_blackstone"))
+        register(BlockType.POLISHED_BLACKSTONE, Identifier.fromString("minecraft:polished_blackstone"))
         register(
             BlockType.POLISHED_BLACKSTONE_BRICKS,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_bricks")
+            Identifier.fromString("minecraft:polished_blackstone_bricks"),
         )
         register(
             BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_brick_double_slab"),
-            BlockDoublePolishedBlackstoneBrickSlab::class.java
+            Identifier.fromString("minecraft:polished_blackstone_brick_double_slab"),
+            BlockDoublePolishedBlackstoneBrickSlab::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_BRICK_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_brick_slab"),
-            BlockPolishedBlackstoneBrickSlab::class.java
+            Identifier.fromString("minecraft:polished_blackstone_brick_slab"),
+            BlockPolishedBlackstoneBrickSlab::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_blackstone_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_BRICK_WALL,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_brick_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:polished_blackstone_brick_wall"),
+            BlockWall::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_BUTTON,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:polished_blackstone_button"),
+            BlockButton::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_double_slab"),
-            BlockDoublePolishedBlackstoneSlab::class.java
+            Identifier.fromString("minecraft:polished_blackstone_double_slab"),
+            BlockDoublePolishedBlackstoneSlab::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:polished_blackstone_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_slab"),
-            BlockPolishedBlackstoneSlab::class.java
+            Identifier.fromString("minecraft:polished_blackstone_slab"),
+            BlockPolishedBlackstoneSlab::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_blackstone_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.POLISHED_BLACKSTONE_WALL,
-            Identifier.Companion.fromString("minecraft:polished_blackstone_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:polished_blackstone_wall"),
+            BlockWall::class.java,
         )
-        register(BlockType.POLISHED_DEEPSLATE, Identifier.Companion.fromString("minecraft:polished_deepslate"))
+        register(BlockType.POLISHED_DEEPSLATE, Identifier.fromString("minecraft:polished_deepslate"))
         register(
             BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_deepslate_double_slab"),
-            BlockDoublePolishedDeepslateSlab::class.java
+            Identifier.fromString("minecraft:polished_deepslate_double_slab"),
+            BlockDoublePolishedDeepslateSlab::class.java,
         )
         register(
             BlockType.POLISHED_DEEPSLATE_SLAB,
-            Identifier.Companion.fromString("minecraft:polished_deepslate_slab"),
-            BlockPolishedDeepslateSlab::class.java
+            Identifier.fromString("minecraft:polished_deepslate_slab"),
+            BlockPolishedDeepslateSlab::class.java,
         )
         register(
             BlockType.POLISHED_DEEPSLATE_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_deepslate_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_deepslate_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.POLISHED_DEEPSLATE_WALL,
-            Identifier.Companion.fromString("minecraft:polished_deepslate_wall"),
-            BlockWall::class.java
+            Identifier.fromString("minecraft:polished_deepslate_wall"),
+            BlockWall::class.java,
         )
         register(
             BlockType.POLISHED_DIORITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_diorite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_diorite_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.POLISHED_GRANITE_STAIRS,
-            Identifier.Companion.fromString("minecraft:polished_granite_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:polished_granite_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.PORTAL, Identifier.Companion.fromString("minecraft:portal"))
-        register(BlockType.POTATOES, Identifier.Companion.fromString("minecraft:potatoes"))
-        register(BlockType.POWDER_SNOW, Identifier.Companion.fromString("minecraft:powder_snow"))
-        register(BlockType.POWERED_COMPARATOR, Identifier.Companion.fromString("minecraft:powered_comparator"))
-        register(BlockType.POWERED_REPEATER, Identifier.Companion.fromString("minecraft:powered_repeater"))
+        register(BlockType.PORTAL, Identifier.fromString("minecraft:portal"))
+        register(BlockType.POTATOES, Identifier.fromString("minecraft:potatoes"))
+        register(BlockType.POWDER_SNOW, Identifier.fromString("minecraft:powder_snow"))
+        register(BlockType.POWERED_COMPARATOR, Identifier.fromString("minecraft:powered_comparator"))
+        register(BlockType.POWERED_REPEATER, Identifier.fromString("minecraft:powered_repeater"))
         register(
             BlockType.PRISMARINE,
-            Identifier.Companion.fromString("minecraft:prismarine"),
-            BlockPrismarine::class.java
+            Identifier.fromString("minecraft:prismarine"),
+            BlockPrismarine::class.java,
         )
         register(
             BlockType.PRISMARINE_BRICKS_STAIRS,
-            Identifier.Companion.fromString("minecraft:prismarine_bricks_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:prismarine_bricks_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.PRISMARINE_STAIRS,
-            Identifier.Companion.fromString("minecraft:prismarine_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:prismarine_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.PUMPKIN, Identifier.Companion.fromString("minecraft:pumpkin"))
-        register(BlockType.PUMPKIN_STEM, Identifier.Companion.fromString("minecraft:pumpkin_stem"))
+        register(BlockType.PUMPKIN, Identifier.fromString("minecraft:pumpkin"))
+        register(BlockType.PUMPKIN_STEM, Identifier.fromString("minecraft:pumpkin_stem"))
         register(
             BlockType.PURPLE_CANDLE,
-            Identifier.Companion.fromString("minecraft:purple_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:purple_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.PURPLE_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:purple_candle_cake"))
+        register(BlockType.PURPLE_CANDLE_CAKE, Identifier.fromString("minecraft:purple_candle_cake"))
         register(
             BlockType.PURPLE_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:purple_glazed_terracotta")
+            Identifier.fromString("minecraft:purple_glazed_terracotta"),
         )
         register(
             BlockType.PURPUR_BLOCK,
-            Identifier.Companion.fromString("minecraft:purpur_block"),
-            BlockPurpurBlock::class.java
+            Identifier.fromString("minecraft:purpur_block"),
+            BlockPurpurBlock::class.java,
         )
         register(
             BlockType.PURPUR_STAIRS,
-            Identifier.Companion.fromString("minecraft:purpur_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:purpur_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.QUARTZ_BLOCK,
-            Identifier.Companion.fromString("minecraft:quartz_block"),
-            BlockQuartzBlock::class.java
+            Identifier.fromString("minecraft:quartz_block"),
+            BlockQuartzBlock::class.java,
         )
-        register(BlockType.QUARTZ_BRICKS, Identifier.Companion.fromString("minecraft:quartz_bricks"))
+        register(BlockType.QUARTZ_BRICKS, Identifier.fromString("minecraft:quartz_bricks"))
         register(
             BlockType.QUARTZ_ORE,
-            Identifier.Companion.fromString("minecraft:quartz_ore"),
-            BlockQuartzOre::class.java
+            Identifier.fromString("minecraft:quartz_ore"),
+            BlockQuartzOre::class.java,
         )
         register(
             BlockType.QUARTZ_STAIRS,
-            Identifier.Companion.fromString("minecraft:quartz_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:quartz_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.RAIL, Identifier.Companion.fromString("minecraft:rail"), BlockRail::class.java)
-        register(BlockType.RAW_COPPER_BLOCK, Identifier.Companion.fromString("minecraft:raw_copper_block"))
-        register(BlockType.RAW_GOLD_BLOCK, Identifier.Companion.fromString("minecraft:raw_gold_block"))
-        register(BlockType.RAW_IRON_BLOCK, Identifier.Companion.fromString("minecraft:raw_iron_block"))
-        register(BlockType.REDSTONE_BLOCK, Identifier.Companion.fromString("minecraft:redstone_block"))
-        register(BlockType.REDSTONE_LAMP, Identifier.Companion.fromString("minecraft:redstone_lamp"))
+        register(BlockType.RAIL, Identifier.fromString("minecraft:rail"), BlockRail::class.java)
+        register(BlockType.RAW_COPPER_BLOCK, Identifier.fromString("minecraft:raw_copper_block"))
+        register(BlockType.RAW_GOLD_BLOCK, Identifier.fromString("minecraft:raw_gold_block"))
+        register(BlockType.RAW_IRON_BLOCK, Identifier.fromString("minecraft:raw_iron_block"))
+        register(BlockType.REDSTONE_BLOCK, Identifier.fromString("minecraft:redstone_block"))
+        register(BlockType.REDSTONE_LAMP, Identifier.fromString("minecraft:redstone_lamp"))
         register(
             BlockType.REDSTONE_ORE,
-            Identifier.Companion.fromString("minecraft:redstone_ore"),
-            BlockRedstoneOre::class.java
+            Identifier.fromString("minecraft:redstone_ore"),
+            BlockRedstoneOre::class.java,
         )
         register(
             BlockType.REDSTONE_TORCH,
-            Identifier.Companion.fromString("minecraft:redstone_torch"),
-            BlockTorch::class.java
+            Identifier.fromString("minecraft:redstone_torch"),
+            BlockTorch::class.java,
         )
-        register(BlockType.REDSTONE_WIRE, Identifier.Companion.fromString("minecraft:redstone_wire"))
-        register(BlockType.RED_CANDLE, Identifier.Companion.fromString("minecraft:red_candle"), BlockCandle::class.java)
-        register(BlockType.RED_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:red_candle_cake"))
+        register(BlockType.REDSTONE_WIRE, Identifier.fromString("minecraft:redstone_wire"))
+        register(BlockType.RED_CANDLE, Identifier.fromString("minecraft:red_candle"), BlockCandle::class.java)
+        register(BlockType.RED_CANDLE_CAKE, Identifier.fromString("minecraft:red_candle_cake"))
         register(
             BlockType.RED_FLOWER,
-            Identifier.Companion.fromString("minecraft:red_flower"),
-            BlockRedFlower::class.java
+            Identifier.fromString("minecraft:red_flower"),
+            BlockRedFlower::class.java,
         )
-        register(BlockType.RED_GLAZED_TERRACOTTA, Identifier.Companion.fromString("minecraft:red_glazed_terracotta"))
-        register(BlockType.RED_MUSHROOM, Identifier.Companion.fromString("minecraft:red_mushroom"))
-        register(BlockType.RED_MUSHROOM_BLOCK, Identifier.Companion.fromString("minecraft:red_mushroom_block"))
-        register(BlockType.RED_NETHER_BRICK, Identifier.Companion.fromString("minecraft:red_nether_brick"))
+        register(BlockType.RED_GLAZED_TERRACOTTA, Identifier.fromString("minecraft:red_glazed_terracotta"))
+        register(BlockType.RED_MUSHROOM, Identifier.fromString("minecraft:red_mushroom"))
+        register(BlockType.RED_MUSHROOM_BLOCK, Identifier.fromString("minecraft:red_mushroom_block"))
+        register(BlockType.RED_NETHER_BRICK, Identifier.fromString("minecraft:red_nether_brick"))
         register(
             BlockType.RED_NETHER_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:red_nether_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:red_nether_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.RED_SANDSTONE,
-            Identifier.Companion.fromString("minecraft:red_sandstone"),
-            BlockRedSandstone::class.java
+            Identifier.fromString("minecraft:red_sandstone"),
+            BlockRedSandstone::class.java,
         )
         register(
             BlockType.RED_SANDSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:red_sandstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:red_sandstone_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.SUGAR_CANE, Identifier.Companion.fromString("minecraft:reeds"), BlockSugarCane::class.java)
-        register(BlockType.REINFORCED_DEEPSLATE, Identifier.Companion.fromString("minecraft:reinforced_deepslate"))
+        register(BlockType.SUGAR_CANE, Identifier.fromString("minecraft:reeds"), BlockSugarCane::class.java)
+        register(BlockType.REINFORCED_DEEPSLATE, Identifier.fromString("minecraft:reinforced_deepslate"))
         register(
             BlockType.REPEATING_COMMAND_BLOCK,
-            Identifier.Companion.fromString("minecraft:repeating_command_block")
+            Identifier.fromString("minecraft:repeating_command_block"),
         )
-        register(BlockType.RESERVED6, Identifier.Companion.fromString("minecraft:reserved6"))
-        register(BlockType.RESPAWN_ANCHOR, Identifier.Companion.fromString("minecraft:respawn_anchor"))
-        register(BlockType.SAND, Identifier.Companion.fromString("minecraft:sand"), BlockSand::class.java)
+        register(BlockType.RESERVED6, Identifier.fromString("minecraft:reserved6"))
+        register(BlockType.RESPAWN_ANCHOR, Identifier.fromString("minecraft:respawn_anchor"))
+        register(BlockType.SAND, Identifier.fromString("minecraft:sand"), BlockSand::class.java)
         register(
             BlockType.SANDSTONE,
-            Identifier.Companion.fromString("minecraft:sandstone"),
-            BlockSandstone::class.java
+            Identifier.fromString("minecraft:sandstone"),
+            BlockSandstone::class.java,
         )
         register(
             BlockType.SANDSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:sandstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:sandstone_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.SAPLING, Identifier.Companion.fromString("minecraft:sapling"), BlockSapling::class.java)
-        register(BlockType.SCAFFOLDING, Identifier.Companion.fromString("minecraft:scaffolding"))
-        register(BlockType.SCULK, Identifier.Companion.fromString("minecraft:sculk"))
-        register(BlockType.SCULK_CATALYST, Identifier.Companion.fromString("minecraft:sculk_catalyst"))
-        register(BlockType.SCULK_SENSOR, Identifier.Companion.fromString("minecraft:sculk_sensor"))
-        register(BlockType.SCULK_SHRIEKER, Identifier.Companion.fromString("minecraft:sculk_shrieker"))
-        register(BlockType.SCULK_VEIN, Identifier.Companion.fromString("minecraft:sculk_vein"))
-        register(BlockType.SEAGRASS, Identifier.Companion.fromString("minecraft:seagrass"), BlockSeagrass::class.java)
-        register(BlockType.SEA_LANTERN, Identifier.Companion.fromString("minecraft:sea_lantern"))
+        register(BlockType.SAPLING, Identifier.fromString("minecraft:sapling"), BlockSapling::class.java)
+        register(BlockType.SCAFFOLDING, Identifier.fromString("minecraft:scaffolding"))
+        register(BlockType.SCULK, Identifier.fromString("minecraft:sculk"))
+        register(BlockType.SCULK_CATALYST, Identifier.fromString("minecraft:sculk_catalyst"))
+        register(BlockType.SCULK_SENSOR, Identifier.fromString("minecraft:sculk_sensor"))
+        register(BlockType.SCULK_SHRIEKER, Identifier.fromString("minecraft:sculk_shrieker"))
+        register(BlockType.SCULK_VEIN, Identifier.fromString("minecraft:sculk_vein"))
+        register(BlockType.SEAGRASS, Identifier.fromString("minecraft:seagrass"), BlockSeagrass::class.java)
+        register(BlockType.SEA_LANTERN, Identifier.fromString("minecraft:sea_lantern"))
         register(
             BlockType.SEA_PICKLE,
-            Identifier.Companion.fromString("minecraft:sea_pickle"),
-            BlockSeaPickle::class.java
+            Identifier.fromString("minecraft:sea_pickle"),
+            BlockSeaPickle::class.java,
         )
-        register(BlockType.SHROOMLIGHT, Identifier.Companion.fromString("minecraft:shroomlight"))
+        register(BlockType.SHROOMLIGHT, Identifier.fromString("minecraft:shroomlight"))
         register(
             BlockType.SHULKER_BOX,
-            Identifier.Companion.fromString("minecraft:shulker_box"),
-            BlockShulkerBox::class.java
+            Identifier.fromString("minecraft:shulker_box"),
+            BlockShulkerBox::class.java,
         )
         register(
             BlockType.SILVER_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:silver_glazed_terracotta")
+            Identifier.fromString("minecraft:silver_glazed_terracotta"),
         )
-        register(BlockType.SKULL, Identifier.Companion.fromString("minecraft:skull"), BlockSkull::class.java)
-        register(BlockType.SLIME, Identifier.Companion.fromString("minecraft:slime"))
-        register(BlockType.SMALL_AMETHYST_BUD, Identifier.Companion.fromString("minecraft:small_amethyst_bud"))
-        register(BlockType.SMALL_DRIPLEAF_BLOCK, Identifier.Companion.fromString("minecraft:small_dripleaf_block"))
+        register(BlockType.SKULL, Identifier.fromString("minecraft:skull"), BlockSkull::class.java)
+        register(BlockType.SLIME, Identifier.fromString("minecraft:slime"))
+        register(BlockType.SMALL_AMETHYST_BUD, Identifier.fromString("minecraft:small_amethyst_bud"))
+        register(BlockType.SMALL_DRIPLEAF_BLOCK, Identifier.fromString("minecraft:small_dripleaf_block"))
         register(
             BlockType.SMITHING_TABLE,
-            Identifier.Companion.fromString("minecraft:smithing_table"),
-            BlockSmithingTable::class.java
+            Identifier.fromString("minecraft:smithing_table"),
+            BlockSmithingTable::class.java,
         )
-        register(BlockType.SMOKER, Identifier.Companion.fromString("minecraft:smoker"), BlockSmoker::class.java)
-        register(BlockType.SMOOTH_BASALT, Identifier.Companion.fromString("minecraft:smooth_basalt"))
+        register(BlockType.SMOKER, Identifier.fromString("minecraft:smoker"), BlockSmoker::class.java)
+        register(BlockType.SMOOTH_BASALT, Identifier.fromString("minecraft:smooth_basalt"))
         register(
             BlockType.SMOOTH_QUARTZ_STAIRS,
-            Identifier.Companion.fromString("minecraft:smooth_quartz_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:smooth_quartz_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.SMOOTH_RED_SANDSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:smooth_red_sandstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:smooth_red_sandstone_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.SMOOTH_SANDSTONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:smooth_sandstone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:smooth_sandstone_stairs"),
+            BlockStairs::class.java,
         )
-        register(BlockType.SMOOTH_STONE, Identifier.Companion.fromString("minecraft:smooth_stone"))
-        register(BlockType.SNOW, Identifier.Companion.fromString("minecraft:snow"))
+        register(BlockType.SMOOTH_STONE, Identifier.fromString("minecraft:smooth_stone"))
+        register(BlockType.SNOW, Identifier.fromString("minecraft:snow"))
         register(
             BlockType.SNOW_LAYER,
-            Identifier.Companion.fromString("minecraft:snow_layer"),
-            BlockSnowLayer::class.java
+            Identifier.fromString("minecraft:snow_layer"),
+            BlockSnowLayer::class.java,
         )
         register(
             BlockType.SOUL_CAMPFIRE,
-            Identifier.Companion.fromString("minecraft:soul_campfire"),
-            BlockCampfire::class.java
+            Identifier.fromString("minecraft:soul_campfire"),
+            BlockCampfire::class.java,
         )
-        register(BlockType.SOUL_FIRE, Identifier.Companion.fromString("minecraft:soul_fire"))
+        register(BlockType.SOUL_FIRE, Identifier.fromString("minecraft:soul_fire"))
         register(
             BlockType.SOUL_LANTERN,
-            Identifier.Companion.fromString("minecraft:soul_lantern"),
-            BlockLantern::class.java
+            Identifier.fromString("minecraft:soul_lantern"),
+            BlockLantern::class.java,
         )
-        register(BlockType.SOUL_SAND, Identifier.Companion.fromString("minecraft:soul_sand"))
-        register(BlockType.SOUL_SOIL, Identifier.Companion.fromString("minecraft:soul_soil"))
-        register(BlockType.SOUL_TORCH, Identifier.Companion.fromString("minecraft:soul_torch"), BlockTorch::class.java)
-        register(BlockType.SPONGE, Identifier.Companion.fromString("minecraft:sponge"), BlockSponge::class.java)
-        register(BlockType.SPORE_BLOSSOM, Identifier.Companion.fromString("minecraft:spore_blossom"))
+        register(BlockType.SOUL_SAND, Identifier.fromString("minecraft:soul_sand"))
+        register(BlockType.SOUL_SOIL, Identifier.fromString("minecraft:soul_soil"))
+        register(BlockType.SOUL_TORCH, Identifier.fromString("minecraft:soul_torch"), BlockTorch::class.java)
+        register(BlockType.SPONGE, Identifier.fromString("minecraft:sponge"), BlockSponge::class.java)
+        register(BlockType.SPORE_BLOSSOM, Identifier.fromString("minecraft:spore_blossom"))
         register(
             BlockType.SPRUCE_BUTTON,
-            Identifier.Companion.fromString("minecraft:spruce_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:spruce_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.SPRUCE_DOOR, Identifier.Companion.fromString("minecraft:spruce_door"), BlockDoor::class.java)
+        register(BlockType.SPRUCE_DOOR, Identifier.fromString("minecraft:spruce_door"), BlockDoor::class.java)
         register(
             BlockType.SPRUCE_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:spruce_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:spruce_fence_gate"),
+            BlockFenceGate::class.java,
         )
         register(
             BlockType.SPRUCE_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:spruce_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:spruce_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.SPRUCE_STAIRS,
-            Identifier.Companion.fromString("minecraft:spruce_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:spruce_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.SPRUCE_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:spruce_standing_sign"),
-            BlockSpruceStandingSign::class.java
+            Identifier.fromString("minecraft:spruce_standing_sign"),
+            BlockSpruceStandingSign::class.java,
         )
         register(
             BlockType.SPRUCE_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:spruce_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:spruce_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.SPRUCE_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:spruce_wall_sign"),
-            BlockSpruceWallSign::class.java
+            Identifier.fromString("minecraft:spruce_wall_sign"),
+            BlockSpruceWallSign::class.java,
         )
         register(
             BlockType.STAINED_GLASS,
-            Identifier.Companion.fromString("minecraft:stained_glass"),
-            BlockStainedGlass::class.java
+            Identifier.fromString("minecraft:stained_glass"),
+            BlockStainedGlass::class.java,
         )
         register(
             BlockType.STAINED_GLASS_PANE,
-            Identifier.Companion.fromString("minecraft:stained_glass_pane"),
-            BlockStainedGlassPane::class.java
+            Identifier.fromString("minecraft:stained_glass_pane"),
+            BlockStainedGlassPane::class.java,
         )
         register(
             BlockType.STAINED_HARDENED_CLAY,
-            Identifier.Companion.fromString("minecraft:stained_hardened_clay"),
-            BlockStainedHardenedClay::class.java
+            Identifier.fromString("minecraft:stained_hardened_clay"),
+            BlockStainedHardenedClay::class.java,
         )
         register(
             BlockType.STANDING_BANNER,
-            Identifier.Companion.fromString("minecraft:standing_banner"),
-            BlockStandingBanner::class.java
+            Identifier.fromString("minecraft:standing_banner"),
+            BlockStandingBanner::class.java,
         )
         register(
             BlockType.OAK_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:standing_sign"),
-            BlockOakStandingSign::class.java
+            Identifier.fromString("minecraft:standing_sign"),
+            BlockOakStandingSign::class.java,
         )
         register(
             BlockType.STICKY_PISTON,
-            Identifier.Companion.fromString("minecraft:sticky_piston"),
-            BlockStickyPiston::class.java
+            Identifier.fromString("minecraft:sticky_piston"),
+            BlockStickyPiston::class.java,
         )
         register(
             BlockType.STICKY_PISTON_ARM_COLLISION,
-            Identifier.Companion.fromString("minecraft:sticky_piston_arm_collision")
+            Identifier.fromString("minecraft:sticky_piston_arm_collision"),
         )
-        register(BlockType.STONE, Identifier.Companion.fromString("minecraft:stone"), BlockStone::class.java)
+        register(BlockType.STONE, Identifier.fromString("minecraft:stone"), BlockStone::class.java)
         register(
             BlockType.STONEBRICK,
-            Identifier.Companion.fromString("minecraft:stonebrick"),
-            BlockStonebrick::class.java
+            Identifier.fromString("minecraft:stonebrick"),
+            BlockStonebrick::class.java,
         )
-        register(BlockType.STONECUTTER, Identifier.Companion.fromString("minecraft:stonecutter"))
+        register(BlockType.STONECUTTER, Identifier.fromString("minecraft:stonecutter"))
         register(
             BlockType.STONECUTTER_BLOCK,
-            Identifier.Companion.fromString("minecraft:stonecutter_block"),
-            BlockStonecutterBlock::class.java
+            Identifier.fromString("minecraft:stonecutter_block"),
+            BlockStonecutterBlock::class.java,
         )
         register(
             BlockType.STONE_BLOCK_SLAB,
-            Identifier.Companion.fromString("minecraft:stone_block_slab"),
-            BlockStoneSlab::class.java
+            Identifier.fromString("minecraft:stone_block_slab"),
+            BlockStoneSlab::class.java,
         )
         register(
             BlockType.STONE_BLOCK_SLAB2,
-            Identifier.Companion.fromString("minecraft:stone_block_slab2"),
-            BlockStoneSlab2::class.java
+            Identifier.fromString("minecraft:stone_block_slab2"),
+            BlockStoneSlab2::class.java,
         )
         register(
             BlockType.STONE_BLOCK_SLAB3,
-            Identifier.Companion.fromString("minecraft:stone_block_slab3"),
-            BlockStoneSlab3::class.java
+            Identifier.fromString("minecraft:stone_block_slab3"),
+            BlockStoneSlab3::class.java,
         )
         register(
             BlockType.STONE_BLOCK_SLAB4,
-            Identifier.Companion.fromString("minecraft:stone_block_slab4"),
-            BlockStoneSlab4::class.java
+            Identifier.fromString("minecraft:stone_block_slab4"),
+            BlockStoneSlab4::class.java,
         )
         register(
             BlockType.STONE_BRICK_STAIRS,
-            Identifier.Companion.fromString("minecraft:stone_brick_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:stone_brick_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.STONE_BUTTON,
-            Identifier.Companion.fromString("minecraft:stone_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:stone_button"),
+            BlockButton::class.java,
         )
         register(
             BlockType.STONE_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:stone_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:stone_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.STONE_STAIRS,
-            Identifier.Companion.fromString("minecraft:stone_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:stone_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.STRIPPED_ACACIA_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_acacia_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_acacia_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_BIRCH_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_birch_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_birch_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_CRIMSON_HYPHAE,
-            Identifier.Companion.fromString("minecraft:stripped_crimson_hyphae"),
-            BlockStrippedCrimsonHyphae::class.java
+            Identifier.fromString("minecraft:stripped_crimson_hyphae"),
+            BlockStrippedCrimsonHyphae::class.java,
         )
         register(
             BlockType.STRIPPED_CRIMSON_STEM,
-            Identifier.Companion.fromString("minecraft:stripped_crimson_stem"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_crimson_stem"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_DARK_OAK_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_dark_oak_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_dark_oak_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_JUNGLE_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_jungle_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_jungle_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_MANGROVE_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_mangrove_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_mangrove_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_MANGROVE_WOOD,
-            Identifier.Companion.fromString("minecraft:stripped_mangrove_wood"),
-            BlockStrippedMangroveWood::class.java
+            Identifier.fromString("minecraft:stripped_mangrove_wood"),
+            BlockStrippedMangroveWood::class.java,
         )
         register(
             BlockType.STRIPPED_OAK_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_oak_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_oak_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_SPRUCE_LOG,
-            Identifier.Companion.fromString("minecraft:stripped_spruce_log"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_spruce_log"),
+            BlockStippedLog::class.java,
         )
         register(
             BlockType.STRIPPED_WARPED_HYPHAE,
-            Identifier.Companion.fromString("minecraft:stripped_warped_hyphae"),
-            BlockStrippedWarpedHyphae::class.java
+            Identifier.fromString("minecraft:stripped_warped_hyphae"),
+            BlockStrippedWarpedHyphae::class.java,
         )
         register(
             BlockType.STRIPPED_WARPED_STEM,
-            Identifier.Companion.fromString("minecraft:stripped_warped_stem"),
-            BlockStippedLog::class.java
+            Identifier.fromString("minecraft:stripped_warped_stem"),
+            BlockStippedLog::class.java,
         )
-        register(BlockType.STRUCTURE_BLOCK, Identifier.Companion.fromString("minecraft:structure_block"))
-        register(BlockType.STRUCTURE_VOID, Identifier.Companion.fromString("minecraft:structure_void"))
-        register(BlockType.SWEET_BERRY_BUSH, Identifier.Companion.fromString("minecraft:sweet_berry_bush"))
+        register(BlockType.STRUCTURE_BLOCK, Identifier.fromString("minecraft:structure_block"))
+        register(BlockType.STRUCTURE_VOID, Identifier.fromString("minecraft:structure_void"))
+        register(BlockType.SWEET_BERRY_BUSH, Identifier.fromString("minecraft:sweet_berry_bush"))
         register(
             BlockType.TALLGRASS,
-            Identifier.Companion.fromString("minecraft:tallgrass"),
-            BlockTallGrass::class.java
+            Identifier.fromString("minecraft:tallgrass"),
+            BlockTallGrass::class.java,
         )
-        register(BlockType.TARGET, Identifier.Companion.fromString("minecraft:target"))
-        register(BlockType.TINTED_GLASS, Identifier.Companion.fromString("minecraft:tinted_glass"))
-        register(BlockType.TNT, Identifier.Companion.fromString("minecraft:tnt"))
-        register(BlockType.TORCH, Identifier.Companion.fromString("minecraft:torch"), BlockTorch::class.java)
-        register(BlockType.TRAPDOOR, Identifier.Companion.fromString("minecraft:trapdoor"), BlockTrapdoor::class.java)
+        register(BlockType.TARGET, Identifier.fromString("minecraft:target"))
+        register(BlockType.TINTED_GLASS, Identifier.fromString("minecraft:tinted_glass"))
+        register(BlockType.TNT, Identifier.fromString("minecraft:tnt"))
+        register(BlockType.TORCH, Identifier.fromString("minecraft:torch"), BlockTorch::class.java)
+        register(BlockType.TRAPDOOR, Identifier.fromString("minecraft:trapdoor"), BlockTrapdoor::class.java)
         register(
             BlockType.TRAPPED_CHEST,
-            Identifier.Companion.fromString("minecraft:trapped_chest"),
-            BlockTrappedChest::class.java
+            Identifier.fromString("minecraft:trapped_chest"),
+            BlockTrappedChest::class.java,
         )
         register(
             BlockType.TRIPWIRE_HOOK,
-            Identifier.Companion.fromString("minecraft:tripwire_hook"),
-            BlockTripwireHook::class.java
+            Identifier.fromString("minecraft:tripwire_hook"),
+            BlockTripwireHook::class.java,
         )
-        register(BlockType.TRIP_WIRE, Identifier.Companion.fromString("minecraft:trip_wire"))
-        register(BlockType.TUFF, Identifier.Companion.fromString("minecraft:tuff"))
-        register(BlockType.TURTLE_EGG, Identifier.Companion.fromString("minecraft:turtle_egg"))
-        register(BlockType.TWISTING_VINES, Identifier.Companion.fromString("minecraft:twisting_vines"))
+        register(BlockType.TRIP_WIRE, Identifier.fromString("minecraft:trip_wire"))
+        register(BlockType.TUFF, Identifier.fromString("minecraft:tuff"))
+        register(BlockType.TURTLE_EGG, Identifier.fromString("minecraft:turtle_egg"))
+        register(BlockType.TWISTING_VINES, Identifier.fromString("minecraft:twisting_vines"))
         register(
             BlockType.UNDERWATER_TORCH,
-            Identifier.Companion.fromString("minecraft:underwater_torch"),
-            BlockTorch::class.java
+            Identifier.fromString("minecraft:underwater_torch"),
+            BlockTorch::class.java,
         )
         register(
             BlockType.UNDYED_SHULKER_BOX,
-            Identifier.Companion.fromString("minecraft:undyed_shulker_box"),
-            BlockUndyedShulkerBox::class.java
+            Identifier.fromString("minecraft:undyed_shulker_box"),
+            BlockUndyedShulkerBox::class.java,
         )
-        register(BlockType.UNKNOWN, Identifier.Companion.fromString("minecraft:unknown"))
+        register(BlockType.UNKNOWN, Identifier.fromString("minecraft:unknown"))
         register(
             BlockType.UNLIT_REDSTONE_TORCH,
-            Identifier.Companion.fromString("minecraft:unlit_redstone_torch"),
-            BlockTorch::class.java
+            Identifier.fromString("minecraft:unlit_redstone_torch"),
+            BlockTorch::class.java,
         )
         register(
             BlockType.UNPOWERED_COMPARATOR,
-            Identifier.Companion.fromString("minecraft:unpowered_comparator"),
-            BlockCompartor::class.java
+            Identifier.fromString("minecraft:unpowered_comparator"),
+            BlockCompartor::class.java,
         )
         register(
             BlockType.UNPOWERED_REPEATER,
-            Identifier.Companion.fromString("minecraft:unpowered_repeater"),
-            BlockRepeater::class.java
+            Identifier.fromString("minecraft:unpowered_repeater"),
+            BlockRepeater::class.java,
         )
-        register(BlockType.VERDANT_FROGLIGHT, Identifier.Companion.fromString("minecraft:verdant_froglight"))
-        register(BlockType.VINE, Identifier.Companion.fromString("minecraft:vine"), BlockVine::class.java)
+        register(BlockType.VERDANT_FROGLIGHT, Identifier.fromString("minecraft:verdant_froglight"))
+        register(BlockType.VINE, Identifier.fromString("minecraft:vine"), BlockVine::class.java)
         register(
             BlockType.WALL_BANNER,
-            Identifier.Companion.fromString("minecraft:wall_banner"),
-            BlockWallBanner::class.java
+            Identifier.fromString("minecraft:wall_banner"),
+            BlockWallBanner::class.java,
         )
         register(
             BlockType.OAK_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:wall_sign"),
-            BlockOakWallSign::class.java
+            Identifier.fromString("minecraft:wall_sign"),
+            BlockOakWallSign::class.java,
         )
         register(
             BlockType.WARPED_BUTTON,
-            Identifier.Companion.fromString("minecraft:warped_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:warped_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.WARPED_DOOR, Identifier.Companion.fromString("minecraft:warped_door"), BlockDoor::class.java)
+        register(BlockType.WARPED_DOOR, Identifier.fromString("minecraft:warped_door"), BlockDoor::class.java)
         register(
             BlockType.WARPED_DOUBLE_SLAB,
-            Identifier.Companion.fromString("minecraft:warped_double_slab"),
-            BlockDoubleWarpedSlab::class.java
+            Identifier.fromString("minecraft:warped_double_slab"),
+            BlockDoubleWarpedSlab::class.java,
         )
         register(
             BlockType.WARPED_FENCE,
-            Identifier.Companion.fromString("minecraft:warped_fence"),
-            BlockFence::class.java
+            Identifier.fromString("minecraft:warped_fence"),
+            BlockFence::class.java,
         )
         register(
             BlockType.WARPED_FENCE_GATE,
-            Identifier.Companion.fromString("minecraft:warped_fence_gate"),
-            BlockFenceGate::class.java
+            Identifier.fromString("minecraft:warped_fence_gate"),
+            BlockFenceGate::class.java,
         )
-        register(BlockType.WARPED_FUNGUS, Identifier.Companion.fromString("minecraft:warped_fungus"))
+        register(BlockType.WARPED_FUNGUS, Identifier.fromString("minecraft:warped_fungus"))
         register(
             BlockType.WARPED_HYPHAE,
-            Identifier.Companion.fromString("minecraft:warped_hyphae"),
-            BlockWarpedHyphae::class.java
+            Identifier.fromString("minecraft:warped_hyphae"),
+            BlockWarpedHyphae::class.java,
         )
-        register(BlockType.WARPED_NYLIUM, Identifier.Companion.fromString("minecraft:warped_nylium"))
-        register(BlockType.WARPED_PLANKS, Identifier.Companion.fromString("minecraft:warped_planks"))
+        register(BlockType.WARPED_NYLIUM, Identifier.fromString("minecraft:warped_nylium"))
+        register(BlockType.WARPED_PLANKS, Identifier.fromString("minecraft:warped_planks"))
         register(
             BlockType.WARPED_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:warped_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:warped_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
-        register(BlockType.WARPED_ROOTS, Identifier.Companion.fromString("minecraft:warped_roots"))
+        register(BlockType.WARPED_ROOTS, Identifier.fromString("minecraft:warped_roots"))
         register(
             BlockType.WARPED_SLAB,
-            Identifier.Companion.fromString("minecraft:warped_slab"),
-            BlockWarpedSlab::class.java
+            Identifier.fromString("minecraft:warped_slab"),
+            BlockWarpedSlab::class.java,
         )
         register(
             BlockType.WARPED_STAIRS,
-            Identifier.Companion.fromString("minecraft:warped_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:warped_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WARPED_STANDING_SIGN,
-            Identifier.Companion.fromString("minecraft:warped_standing_sign"),
-            BlockWarpedStandingSign::class.java
+            Identifier.fromString("minecraft:warped_standing_sign"),
+            BlockWarpedStandingSign::class.java,
         )
         register(
             BlockType.WARPED_STEM,
-            Identifier.Companion.fromString("minecraft:warped_stem"),
-            BlockWarpedStem::class.java
+            Identifier.fromString("minecraft:warped_stem"),
+            BlockWarpedStem::class.java,
         )
         register(
             BlockType.WARPED_TRAPDOOR,
-            Identifier.Companion.fromString("minecraft:warped_trapdoor"),
-            BlockTrapdoor::class.java
+            Identifier.fromString("minecraft:warped_trapdoor"),
+            BlockTrapdoor::class.java,
         )
         register(
             BlockType.WARPED_WALL_SIGN,
-            Identifier.Companion.fromString("minecraft:warped_wall_sign"),
-            BlockWarpedWallSign::class.java
+            Identifier.fromString("minecraft:warped_wall_sign"),
+            BlockWarpedWallSign::class.java,
         )
-        register(BlockType.WARPED_WART_BLOCK, Identifier.Companion.fromString("minecraft:warped_wart_block"))
-        register(BlockType.WATER, Identifier.Companion.fromString("minecraft:water"), BlockWater::class.java)
+        register(BlockType.WARPED_WART_BLOCK, Identifier.fromString("minecraft:warped_wart_block"))
+        register(BlockType.WATER, Identifier.fromString("minecraft:water"), BlockWater::class.java)
         register(
             BlockType.WATERLILY,
-            Identifier.Companion.fromString("minecraft:waterlily"),
-            BlockWaterlily::class.java
+            Identifier.fromString("minecraft:waterlily"),
+            BlockWaterlily::class.java,
         )
-        register(BlockType.WAXED_COPPER, Identifier.Companion.fromString("minecraft:waxed_copper"))
-        register(BlockType.WAXED_CUT_COPPER, Identifier.Companion.fromString("minecraft:waxed_cut_copper"))
+        register(BlockType.WAXED_COPPER, Identifier.fromString("minecraft:waxed_copper"))
+        register(BlockType.WAXED_CUT_COPPER, Identifier.fromString("minecraft:waxed_cut_copper"))
         register(
             BlockType.WAXED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_cut_copper_slab"),
-            BlockWaxedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_cut_copper_slab"),
+            BlockWaxedCutCopperSlab::class.java,
         )
         register(
             BlockType.WAXED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:waxed_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:waxed_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_double_cut_copper_slab"),
-            BlockDoubleWaxedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_double_cut_copper_slab"),
+            BlockDoubleWaxedCutCopperSlab::class.java,
         )
-        register(BlockType.WAXED_EXPOSED_COPPER, Identifier.Companion.fromString("minecraft:waxed_exposed_copper"))
+        register(BlockType.WAXED_EXPOSED_COPPER, Identifier.fromString("minecraft:waxed_exposed_copper"))
         register(
             BlockType.WAXED_EXPOSED_CUT_COPPER,
-            Identifier.Companion.fromString("minecraft:waxed_exposed_cut_copper")
+            Identifier.fromString("minecraft:waxed_exposed_cut_copper"),
         )
         register(
             BlockType.WAXED_EXPOSED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_exposed_cut_copper_slab"),
-            BlockWaxedExposedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_exposed_cut_copper_slab"),
+            BlockWaxedExposedCutCopperSlab::class.java,
         )
         register(
             BlockType.WAXED_EXPOSED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:waxed_exposed_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:waxed_exposed_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_exposed_double_cut_copper_slab"),
-            BlockDoubleWaxedExposedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_exposed_double_cut_copper_slab"),
+            BlockDoubleWaxedExposedCutCopperSlab::class.java,
         )
-        register(BlockType.WAXED_OXIDIZED_COPPER, Identifier.Companion.fromString("minecraft:waxed_oxidized_copper"))
+        register(BlockType.WAXED_OXIDIZED_COPPER, Identifier.fromString("minecraft:waxed_oxidized_copper"))
         register(
             BlockType.WAXED_OXIDIZED_CUT_COPPER,
-            Identifier.Companion.fromString("minecraft:waxed_oxidized_cut_copper")
+            Identifier.fromString("minecraft:waxed_oxidized_cut_copper"),
         )
         register(
             BlockType.WAXED_OXIDIZED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_oxidized_cut_copper_slab"),
-            BlockWaxedOxidizedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_oxidized_cut_copper_slab"),
+            BlockWaxedOxidizedCutCopperSlab::class.java,
         )
         register(
             BlockType.WAXED_OXIDIZED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:waxed_oxidized_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:waxed_oxidized_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WAXED_OXIDIZED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_oxidized_double_cut_copper_slab"),
-            BlockDoubleWaxedOxidizedCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_oxidized_double_cut_copper_slab"),
+            BlockDoubleWaxedOxidizedCutCopperSlab::class.java,
         )
-        register(BlockType.WAXED_WEATHERED_COPPER, Identifier.Companion.fromString("minecraft:waxed_weathered_copper"))
+        register(BlockType.WAXED_WEATHERED_COPPER, Identifier.fromString("minecraft:waxed_weathered_copper"))
         register(
             BlockType.WAXED_WEATHERED_CUT_COPPER,
-            Identifier.Companion.fromString("minecraft:waxed_weathered_cut_copper")
+            Identifier.fromString("minecraft:waxed_weathered_cut_copper"),
         )
         register(
             BlockType.WAXED_WEATHERED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_weathered_cut_copper_slab"),
-            BlockWaxedWeatheredCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_weathered_cut_copper_slab"),
+            BlockWaxedWeatheredCutCopperSlab::class.java,
         )
         register(
             BlockType.WAXED_WEATHERED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:waxed_weathered_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:waxed_weathered_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:waxed_weathered_double_cut_copper_slab"),
-            BlockDoubleWaxedWeatheredCutCopperSlab::class.java
+            Identifier.fromString("minecraft:waxed_weathered_double_cut_copper_slab"),
+            BlockDoubleWaxedWeatheredCutCopperSlab::class.java,
         )
-        register(BlockType.WEATHERED_COPPER, Identifier.Companion.fromString("minecraft:weathered_copper"))
-        register(BlockType.WEATHERED_CUT_COPPER, Identifier.Companion.fromString("minecraft:weathered_cut_copper"))
+        register(BlockType.WEATHERED_COPPER, Identifier.fromString("minecraft:weathered_copper"))
+        register(BlockType.WEATHERED_CUT_COPPER, Identifier.fromString("minecraft:weathered_cut_copper"))
         register(
             BlockType.WEATHERED_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:weathered_cut_copper_slab"),
-            BlockWeatheredCutCopperSlab::class.java
+            Identifier.fromString("minecraft:weathered_cut_copper_slab"),
+            BlockWeatheredCutCopperSlab::class.java,
         )
         register(
             BlockType.WEATHERED_CUT_COPPER_STAIRS,
-            Identifier.Companion.fromString("minecraft:weathered_cut_copper_stairs"),
-            BlockStairs::class.java
+            Identifier.fromString("minecraft:weathered_cut_copper_stairs"),
+            BlockStairs::class.java,
         )
         register(
             BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB,
-            Identifier.Companion.fromString("minecraft:weathered_double_cut_copper_slab"),
-            BlockDoubleWeatheredCutCopperSlab::class.java
+            Identifier.fromString("minecraft:weathered_double_cut_copper_slab"),
+            BlockDoubleWeatheredCutCopperSlab::class.java,
         )
-        register(BlockType.WEB, Identifier.Companion.fromString("minecraft:web"))
-        register(BlockType.WEEPING_VINES, Identifier.Companion.fromString("minecraft:weeping_vines"))
-        register(BlockType.WHEAT, Identifier.Companion.fromString("minecraft:wheat"))
+        register(BlockType.WEB, Identifier.fromString("minecraft:web"))
+        register(BlockType.WEEPING_VINES, Identifier.fromString("minecraft:weeping_vines"))
+        register(BlockType.WHEAT, Identifier.fromString("minecraft:wheat"))
         register(
             BlockType.WHITE_CANDLE,
-            Identifier.Companion.fromString("minecraft:white_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:white_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.WHITE_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:white_candle_cake"))
+        register(BlockType.WHITE_CANDLE_CAKE, Identifier.fromString("minecraft:white_candle_cake"))
         register(
             BlockType.WHITE_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:white_glazed_terracotta")
+            Identifier.fromString("minecraft:white_glazed_terracotta"),
         )
-        register(BlockType.WITHER_ROSE, Identifier.Companion.fromString("minecraft:wither_rose"))
-        register(BlockType.WOOD, Identifier.Companion.fromString("minecraft:wood"), BlockWood::class.java)
+        register(BlockType.WITHER_ROSE, Identifier.fromString("minecraft:wither_rose"))
+        register(BlockType.WOOD, Identifier.fromString("minecraft:wood"), BlockWood::class.java)
         register(
             BlockType.OAK_BUTTON,
-            Identifier.Companion.fromString("minecraft:wooden_button"),
-            BlockButton::class.java
+            Identifier.fromString("minecraft:wooden_button"),
+            BlockButton::class.java,
         )
-        register(BlockType.WOODEN_DOOR, Identifier.Companion.fromString("minecraft:wooden_door"), BlockDoor::class.java)
+        register(BlockType.WOODEN_DOOR, Identifier.fromString("minecraft:wooden_door"), BlockDoor::class.java)
         register(
             BlockType.WOODEN_PRESSURE_PLATE,
-            Identifier.Companion.fromString("minecraft:wooden_pressure_plate"),
-            BlockPressurePlate::class.java
+            Identifier.fromString("minecraft:wooden_pressure_plate"),
+            BlockPressurePlate::class.java,
         )
         register(
             BlockType.WOODEN_SLAB,
-            Identifier.Companion.fromString("minecraft:wooden_slab"),
-            BlockWoodenSlab::class.java
+            Identifier.fromString("minecraft:wooden_slab"),
+            BlockWoodenSlab::class.java,
         )
         register(
             BlockType.WHITE_WOOL,
-            Identifier.Companion.fromString("minecraft:white_wool"),
-            BlockWhiteWool::class.java
+            Identifier.fromString("minecraft:white_wool"),
+            BlockWhiteWool::class.java,
         )
         register(
             BlockType.ORANGE_WOOL,
-            Identifier.Companion.fromString("minecraft:orange_wool"),
-            BlockOrangeWool::class.java
+            Identifier.fromString("minecraft:orange_wool"),
+            BlockOrangeWool::class.java,
         )
         register(
             BlockType.MAGENTA_WOOL,
-            Identifier.Companion.fromString("minecraft:magenta_wool"),
-            BlockMagentaWool::class.java
+            Identifier.fromString("minecraft:magenta_wool"),
+            BlockMagentaWool::class.java,
         )
         register(
             BlockType.LIGHT_BLUE_WOOL,
-            Identifier.Companion.fromString("minecraft:light_blue_wool"),
-            BlockLightBlueWool::class.java
+            Identifier.fromString("minecraft:light_blue_wool"),
+            BlockLightBlueWool::class.java,
         )
         register(
             BlockType.YELLOW_WOOL,
-            Identifier.Companion.fromString("minecraft:yellow_wool"),
-            BlockYellowWool::class.java
+            Identifier.fromString("minecraft:yellow_wool"),
+            BlockYellowWool::class.java,
         )
-        register(BlockType.LIME_WOOL, Identifier.Companion.fromString("minecraft:lime_wool"), BlockLimeWool::class.java)
-        register(BlockType.PINK_WOOL, Identifier.Companion.fromString("minecraft:pink_wool"), BlockPinkWool::class.java)
-        register(BlockType.GRAY_WOOL, Identifier.Companion.fromString("minecraft:gray_wool"), BlockGrayWool::class.java)
+        register(BlockType.LIME_WOOL, Identifier.fromString("minecraft:lime_wool"), BlockLimeWool::class.java)
+        register(BlockType.PINK_WOOL, Identifier.fromString("minecraft:pink_wool"), BlockPinkWool::class.java)
+        register(BlockType.GRAY_WOOL, Identifier.fromString("minecraft:gray_wool"), BlockGrayWool::class.java)
         register(
             BlockType.SILVER_WOOL,
-            Identifier.Companion.fromString("minecraft:silver_wool"),
-            BlockSilverWool::class.java
+            Identifier.fromString("minecraft:silver_wool"),
+            BlockSilverWool::class.java,
         )
-        register(BlockType.CYAN_WOOL, Identifier.Companion.fromString("minecraft:cyan_wool"), BlockCyanWool::class.java)
+        register(BlockType.CYAN_WOOL, Identifier.fromString("minecraft:cyan_wool"), BlockCyanWool::class.java)
         register(
             BlockType.PURPLE_WOOL,
-            Identifier.Companion.fromString("minecraft:purple_wool"),
-            BlockPurpleWool::class.java
+            Identifier.fromString("minecraft:purple_wool"),
+            BlockPurpleWool::class.java,
         )
-        register(BlockType.BLUE_WOOL, Identifier.Companion.fromString("minecraft:blue_wool"), BlockBlueWool::class.java)
+        register(BlockType.BLUE_WOOL, Identifier.fromString("minecraft:blue_wool"), BlockBlueWool::class.java)
         register(
             BlockType.BROWN_WOOL,
-            Identifier.Companion.fromString("minecraft:brown_wool"),
-            BlockBrownWool::class.java
+            Identifier.fromString("minecraft:brown_wool"),
+            BlockBrownWool::class.java,
         )
         register(
             BlockType.GREEN_WOOL,
-            Identifier.Companion.fromString("minecraft:green_wool"),
-            BlockGreenWool::class.java
+            Identifier.fromString("minecraft:green_wool"),
+            BlockGreenWool::class.java,
         )
-        register(BlockType.RED_WOOL, Identifier.Companion.fromString("minecraft:red_wool"), BlockRedWool::class.java)
+        register(BlockType.RED_WOOL, Identifier.fromString("minecraft:red_wool"), BlockRedWool::class.java)
         register(
             BlockType.BLACK_WOOL,
-            Identifier.Companion.fromString("minecraft:black_wool"),
-            BlockBlackWool::class.java
+            Identifier.fromString("minecraft:black_wool"),
+            BlockBlackWool::class.java,
         )
         register(
             BlockType.YELLOW_CANDLE,
-            Identifier.Companion.fromString("minecraft:yellow_candle"),
-            BlockCandle::class.java
+            Identifier.fromString("minecraft:yellow_candle"),
+            BlockCandle::class.java,
         )
-        register(BlockType.YELLOW_CANDLE_CAKE, Identifier.Companion.fromString("minecraft:yellow_candle_cake"))
-        register(BlockType.YELLOW_FLOWER, Identifier.Companion.fromString("minecraft:yellow_flower"))
+        register(BlockType.YELLOW_CANDLE_CAKE, Identifier.fromString("minecraft:yellow_candle_cake"))
+        register(BlockType.YELLOW_FLOWER, Identifier.fromString("minecraft:yellow_flower"))
         register(
             BlockType.YELLOW_GLAZED_TERRACOTTA,
-            Identifier.Companion.fromString("minecraft:yellow_glazed_terracotta")
+            Identifier.fromString("minecraft:yellow_glazed_terracotta"),
         )
     }
 
     fun initBlockProperties() {
         val GSON = Gson()
         try {
-            Objects.requireNonNull<InputStream>(
-                Bootstrap::class.java.getClassLoader().getResourceAsStream("block_properties.json")
+            Objects.requireNonNull(
+                Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json"),
             ).use { inputStream ->
                 val inputStreamReader = InputStreamReader(inputStream)
                 val itemEntries =
                     GSON.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
                 itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
-                    BLOCK_PROPERTIES[Identifier.Companion.fromString(identifier)] = BlockProperties(
+                    BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
                         map["hardness"] as Double,
                         map["solid"] as Boolean,
                         map["transparent"] as Boolean,
                         ToolType.valueOf((map["tool_type"] as String?)!!),
                         TierType.valueOf((map["tier_type"] as String?)!!),
                         map["can_break_with_hand"] as Boolean,
-                        map["can_pass_through"] as Boolean
+                        map["can_pass_through"] as Boolean,
                     )
                 }
             }

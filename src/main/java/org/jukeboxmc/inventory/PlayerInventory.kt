@@ -1,12 +1,14 @@
 package org.jukeboxmc.inventory
 
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerType
-import java.util.Objects
-import java.util.function.Supplier
+import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket
+import com.nukkitx.protocol.bedrock.packet.MobEquipmentPacket
 import org.jukeboxmc.entity.passiv.EntityHuman
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.player.Player
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -18,34 +20,34 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
         get() = InventoryType.PLAYER
     override val windowTypeId: ContainerType
         get() = ContainerType.INVENTORY
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
 
     override fun sendContents(player: Player) {
         val inventoryContentPacket = InventoryContentPacket()
-        if (player.currentInventory === this) {
-            inventoryContentPacket.setContainerId(WindowId.OPEN_CONTAINER.id)
-            inventoryContentPacket.setContents(this.itemDataContents)
+        if (player.getCurrentInventory() === this) {
+            inventoryContentPacket.containerId = WindowId.OPEN_CONTAINER.id
+            inventoryContentPacket.contents = this.itemDataContents
             player.playerConnection.sendPacket(inventoryContentPacket)
             return
         }
-        inventoryContentPacket.setContainerId(WindowId.PLAYER.id)
-        inventoryContentPacket.setContents(this.itemDataContents)
+        inventoryContentPacket.containerId = WindowId.PLAYER.id
+        inventoryContentPacket.contents = this.itemDataContents
         player.playerConnection.sendPacket(inventoryContentPacket)
     }
 
     override fun sendContents(slot: Int, player: Player) {
-        if (player.currentInventory != null && player.currentInventory === this) {
+        if (player.getCurrentInventory() != null && player.getCurrentInventory() === this) {
             val inventorySlotPacket = InventorySlotPacket()
-            inventorySlotPacket.setSlot(slot)
-            inventorySlotPacket.setItem(content[slot].toItemData())
-            inventorySlotPacket.setContainerId(WindowId.OPEN_CONTAINER.id)
+            inventorySlotPacket.slot = slot
+            inventorySlotPacket.item = contents[slot].toItemData()
+            inventorySlotPacket.containerId = WindowId.OPEN_CONTAINER.id
             player.playerConnection.sendPacket(inventorySlotPacket)
         }
         val inventorySlotPacket = InventorySlotPacket()
-        inventorySlotPacket.setSlot(slot)
-        inventorySlotPacket.setItem(content[slot].toItemData())
-        inventorySlotPacket.setContainerId(WindowId.PLAYER.id)
+        inventorySlotPacket.slot = slot
+        inventorySlotPacket.item = contents[slot].toItemData()
+        inventorySlotPacket.containerId = WindowId.PLAYER.id
         player.playerConnection.sendPacket(inventorySlotPacket)
     }
 
@@ -59,7 +61,8 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
         val oldItem = getItem(slot)
         super.setItem(slot, item)
         if (slot == itemInHandSlot && holder is Player) {
-            oldItem!!.removeFromHand(player)
+            val player = holder as Player
+            oldItem.removeFromHand(player)
             item.addToHand(player)
             updateItemInHandForAll()
         }
@@ -67,8 +70,8 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
 
     var itemInHand: Item
         get() {
-            val content = content[itemInHandSlot]
-            return Objects.requireNonNullElseGet(content, Supplier { Item.Companion.create<Item>(ItemType.AIR) })
+            val content = contents[itemInHandSlot]
+            return Objects.requireNonNullElseGet(content) { Item.create<Item>(ItemType.AIR) }
         }
         set(itemInHand) {
             this.setItem(itemInHandSlot, itemInHand)
@@ -80,7 +83,7 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
     }
 
     fun setItemInHandSlot(itemInHandSlot: Int) {
-        if (itemInHandSlot >= 0 && itemInHandSlot < 9) {
+        if (itemInHandSlot in 0..8) {
             val oldItem = itemInHand
             oldItem.removeFromHand((holder as Player))
             this.itemInHandSlot = itemInHandSlot
@@ -92,25 +95,27 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
 
     fun createMobEquipmentPacket(entityHuman: EntityHuman): MobEquipmentPacket {
         val mobEquipmentPacket = MobEquipmentPacket()
-        mobEquipmentPacket.setRuntimeEntityId(entityHuman.entityId)
-        mobEquipmentPacket.setItem(itemInHand.toItemData())
-        mobEquipmentPacket.setContainerId(WindowId.PLAYER.id)
-        mobEquipmentPacket.setHotbarSlot(itemInHandSlot)
-        mobEquipmentPacket.setInventorySlot(itemInHandSlot)
+        mobEquipmentPacket.runtimeEntityId = entityHuman.entityId
+        mobEquipmentPacket.item = itemInHand.toItemData()
+        mobEquipmentPacket.containerId = WindowId.PLAYER.id
+        mobEquipmentPacket.hotbarSlot = itemInHandSlot
+        mobEquipmentPacket.inventorySlot = itemInHandSlot
         return mobEquipmentPacket
     }
 
     fun sendItemInHand() {
         if (holder is Player) {
-            player.getPlayerConnection().sendPacket(createMobEquipmentPacket(player))
+            val player = holder as Player
+            player.playerConnection.sendPacket(createMobEquipmentPacket(player))
             this.sendContents(itemInHandSlot, player)
         }
     }
 
     fun updateItemInHandForAll() {
         if (holder is EntityHuman) {
+            val entityHuman = holder as EntityHuman
             val mobEquipmentPacket: MobEquipmentPacket = createMobEquipmentPacket(entityHuman)
-            for (onlinePlayers in entityHuman.getWorld().getPlayers()) {
+            for (onlinePlayers in entityHuman.world!!.players) {
                 if (onlinePlayers !== entityHuman) {
                     onlinePlayers.playerConnection.sendPacket(mobEquipmentPacket)
                 }

@@ -1,13 +1,13 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.LeafType
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.behavior.ItemLeaves
 import org.jukeboxmc.util.Identifier
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -17,15 +17,17 @@ class BlockLeaves : Block {
     constructor(identifier: Identifier?) : super(identifier)
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemLeaves>(ItemType.LEAVES).setLeafType(
-            leafType
+        return Item.create<ItemLeaves>(ItemType.LEAVES).setLeafType(
+            leafType,
         )
     }
 
     override fun getDrops(item: Item?): List<Item> {
         return if (item != null && isCorrectToolType(item)) {
             listOf(toItem())
-        } else emptyList()
+        } else {
+            emptyList()
+        }
     }
 
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)

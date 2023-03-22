@@ -2,6 +2,7 @@ package org.jukeboxmc.inventory
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerType
+import com.nukkitx.protocol.bedrock.packet.BlockEventPacket
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 
@@ -11,7 +12,7 @@ import org.jukeboxmc.player.Player
  */
 class EnderChestInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 27) {
     var position: Vector? = null
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: Player
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.ENDER_CHEST
@@ -22,22 +23,22 @@ class EnderChestInventory(holder: InventoryHolder?) : ContainerInventory(holder,
         super.onOpen(player)
         if (viewer.size == 1) {
             val blockEventPacket = BlockEventPacket()
-            blockEventPacket.setBlockPosition(position!!.toVector3i())
-            blockEventPacket.setEventType(1)
-            blockEventPacket.setEventData(2)
-            player.world.playSound(position, SoundEvent.ENDERCHEST_OPEN)
-            player.world.sendChunkPacket(position.getBlockX() shr 4, position.getBlockZ() shr 4, blockEventPacket)
+            blockEventPacket.blockPosition = position!!.toVector3i()
+            blockEventPacket.eventType = 1
+            blockEventPacket.eventData = 2
+            player.world?.playSound(position!!, SoundEvent.ENDERCHEST_OPEN)
+            player.world?.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
         }
     }
 
     override fun onClose(player: Player) {
         if (viewer.size == 0) {
             val blockEventPacket = BlockEventPacket()
-            blockEventPacket.setBlockPosition(position!!.toVector3i())
-            blockEventPacket.setEventType(1)
-            blockEventPacket.setEventData(0)
-            player.world.playSound(position, SoundEvent.ENDERCHEST_CLOSED)
-            player.world.sendChunkPacket(position.getBlockX() shr 4, position.getBlockZ() shr 4, blockEventPacket)
+            blockEventPacket.blockPosition = position!!.toVector3i()
+            blockEventPacket.eventType = 1
+            blockEventPacket.eventData = 0
+            player.world?.playSound(position!!, SoundEvent.ENDERCHEST_CLOSED)
+            player.world?.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
         }
     }
 }

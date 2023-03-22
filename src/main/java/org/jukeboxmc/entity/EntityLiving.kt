@@ -8,8 +8,12 @@ import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.attribute.Attribute
 import org.jukeboxmc.entity.attribute.AttributeType
-import org.jukeboxmc.event.entity.*
+import org.jukeboxmc.event.entity.EntityAddEffectEvent
+import org.jukeboxmc.event.entity.EntityDamageByEntityEvent
+import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
+import org.jukeboxmc.event.entity.EntityHealEvent
+import org.jukeboxmc.event.entity.EntityRemoveEffectEvent
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
@@ -146,8 +150,8 @@ abstract class EntityLiving : Entity() {
                     baseModifier,
                     diffZ * distance * baseModifier,
                 )
-                if (velocity.y > baseModifier) {
-                    velocity.y = baseModifier
+                if (velocity.getY() > baseModifier) {
+                    velocity.setY(baseModifier)
                 }
                 this.setVelocity(velocity, true)
             }

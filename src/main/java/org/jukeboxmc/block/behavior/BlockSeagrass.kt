@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.SeaGrassType
@@ -11,6 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,12 +27,12 @@ class BlockSeagrass : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
         if (block.type == BlockType.WATER) {
             world.setBlock(placePosition, this, 0)
-            world.setBlock(placePosition, block!!, 1)
+            world.setBlock(placePosition, block, 1)
             return true
         }
         return false
@@ -43,7 +43,7 @@ class BlockSeagrass : Block {
         val block = world!!.getBlock(breakPosition, 1)
         if (block is BlockWater) {
             world.setBlock(breakPosition, block, 0)
-            world.setBlock(breakPosition, Block.Companion.create<Block>(BlockType.AIR), 1)
+            world.setBlock(breakPosition, create<Block>(BlockType.AIR), 1)
             return
         }
         super.onBlockBreak(breakPosition)

@@ -27,13 +27,13 @@ class BlockEnderChest : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.ENDER_CHEST, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.ENDER_CHEST, this).spawn()
         }
         return value
     }
@@ -43,9 +43,9 @@ class BlockEnderChest : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityEnderChest? = blockEntity
+        val blockEntity: BlockEntityEnderChest? = blockEntity as BlockEntityEnderChest?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -54,7 +54,7 @@ class BlockEnderChest : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityEnderChest?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityEnderChest?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

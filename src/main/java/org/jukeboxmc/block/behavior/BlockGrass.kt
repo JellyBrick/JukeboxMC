@@ -15,6 +15,6 @@ class BlockGrass : Block {
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun getDrops(item: Item?): List<Item> {
-        return listOf(Item.Companion.create<Item>(ItemType.DIRT))
+        return listOf(Item.create<Item>(ItemType.DIRT))
     }
 }

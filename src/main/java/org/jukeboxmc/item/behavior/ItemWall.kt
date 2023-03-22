@@ -17,18 +17,18 @@ class ItemWall : Item {
     private val block: BlockCobblestoneWall
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
+        block = Block.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
+        block = Block.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemWall {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

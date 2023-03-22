@@ -25,10 +25,10 @@ class BlockStairs : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         crossDirection = player.direction.toCrossDirection()
-        if (clickedPosition.y > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
+        if (clickedPosition.getY() > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
             isUpsideDown = true
         }
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)

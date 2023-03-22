@@ -1,9 +1,11 @@
 package org.jukeboxmc.command.internal
 
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import java.util.Locale
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -21,7 +23,7 @@ import org.jukeboxmc.world.Dimension
 @Description("Teleport to another location or player.")
 @Permission("jukeboxmc.command.teleport")
 class TeleportCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .addAlias("tp")
         .setParameters(
             arrayOf<CommandParameter>(
@@ -36,7 +38,7 @@ class TeleportCommand : Command(
         )
         .build()
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (commandSender is Player) {
             if (args.size == 1) {
                 val targetName = args[0]
@@ -44,7 +46,7 @@ class TeleportCommand : Command(
                     commandSender.sendMessage("§cYou must specify a name")
                     return
                 }
-                val target: Player = Server.Companion.getInstance().getPlayer(targetName)
+                val target: Player? = Server.instance.getPlayer(targetName)
                 if (target == null) {
                     commandSender.sendMessage("§cThe player $targetName could not be found")
                     return
@@ -58,8 +60,8 @@ class TeleportCommand : Command(
                     commandSender.sendMessage("§cYou must specify a name for both players")
                     return
                 }
-                val tagetPlayer: Player = Server.Companion.getInstance().getPlayer(playerName)
-                val toPlayer: Player = Server.Companion.getInstance().getPlayer(targetName)
+                val tagetPlayer: Player? = Server.instance.getPlayer(playerName)
+                val toPlayer: Player? = Server.instance.getPlayer(targetName)
                 if (tagetPlayer == null) {
                     commandSender.sendMessage("§cPlayer $playerName could not be found")
                     return

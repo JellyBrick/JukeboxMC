@@ -16,11 +16,13 @@ enum class LeverDirection {
                 BlockFace.DOWN -> when (playerDirection) {
                     Direction.WEST, Direction.EAST -> DOWN_EAST_WEST
                     Direction.NORTH, Direction.SOUTH -> DOWN_NORTH_SOUTH
+                    else -> throw IllegalArgumentException("Invalid player direction $playerDirection")
                 }
 
                 BlockFace.UP -> when (playerDirection) {
                     Direction.WEST, Direction.EAST -> UP_EAST_WEST
                     Direction.NORTH, Direction.SOUTH -> UP_NORTH_SOUTH
+                    else -> throw IllegalArgumentException("Invalid player direction $playerDirection")
                 }
 
                 BlockFace.NORTH -> NORTH

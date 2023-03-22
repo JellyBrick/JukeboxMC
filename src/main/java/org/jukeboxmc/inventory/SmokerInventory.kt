@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntitySmoker
  * @version 1.0
  */
 class SmokerInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 3) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntitySmoker
     override val type: InventoryType
         get() = InventoryType.SMOKER

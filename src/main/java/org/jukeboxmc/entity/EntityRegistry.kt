@@ -14,7 +14,7 @@ import org.jukeboxmc.entity.projectile.EntitySnowball
  * @version 1.0
  */
 object EntityRegistry {
-    private val ENTITYCLASS_FROM_ENTITYTYPE: MutableMap<EntityType?, Class<out Entity?>> = LinkedHashMap()
+    private val ENTITYCLASS_FROM_ENTITYTYPE: MutableMap<EntityType?, Class<out Entity>> = LinkedHashMap()
     fun init() {
         register(EntityType.HUMAN, EntityHuman::class.java)
         register(EntityType.ITEM, EntityItem::class.java)
@@ -26,11 +26,11 @@ object EntityRegistry {
         register(EntityType.FALLING_BLOCK, EntityFallingBlock::class.java)
     }
 
-    private fun register(entityType: EntityType, entityClazz: Class<out Entity?>) {
+    private fun register(entityType: EntityType, entityClazz: Class<out Entity>) {
         ENTITYCLASS_FROM_ENTITYTYPE[entityType] = entityClazz
     }
 
-    fun getEntityClass(entityType: EntityType?): Class<out Entity?> {
+    fun getEntityClass(entityType: EntityType?): Class<out Entity> {
         return ENTITYCLASS_FROM_ENTITYTYPE[entityType]!!
     }
 }

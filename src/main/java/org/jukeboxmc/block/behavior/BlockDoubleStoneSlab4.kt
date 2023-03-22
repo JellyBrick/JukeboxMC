@@ -1,9 +1,9 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.data.StoneSlab4Type
 import org.jukeboxmc.util.Identifier
+import java.util.Locale
 
 /**
  * @author LucGamesYT

@@ -5,10 +5,23 @@ package org.jukeboxmc.player.info
  * @version 1.0
  */
 enum class Device(val id: Int) {
-    ANDROID(1), IOS(2), OSX(3), AMAZON(4), GEAR_VR(5), HOLOLENS(6), WINDOWS(7), WINDOWS_32(8), DEDICATED(9), TVOS(10), PLAYSTATION(
-        11
+    ANDROID(1),
+    IOS(2),
+    OSX(3),
+    AMAZON(4),
+    GEAR_VR(5),
+    HOLOLENS(6),
+    WINDOWS(7),
+    WINDOWS_32(8),
+    DEDICATED(9),
+    TVOS(10),
+    PLAYSTATION(
+        11,
     ),
-    NINTENDO(12), XBOX(13), WINDOWS_PHONE(14);
+    NINTENDO(12),
+    XBOX(13),
+    WINDOWS_PHONE(14),
+    ;
 
     companion object {
         fun getDevice(id: Int): Device? {

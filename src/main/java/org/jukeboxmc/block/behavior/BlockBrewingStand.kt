@@ -28,12 +28,12 @@ class BlockBrewingStand : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.BREWING_STAND, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.BREWING_STAND, this).spawn()
         }
         return value
     }
@@ -43,9 +43,9 @@ class BlockBrewingStand : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityBrewingStand? = blockEntity
+        val blockEntity: BlockEntityBrewingStand? = blockEntity as BlockEntityBrewingStand?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -54,22 +54,22 @@ class BlockBrewingStand : Block {
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val blockEntity: BlockEntityBrewingStand? = blockEntity
+        val blockEntity: BlockEntityBrewingStand? = blockEntity as BlockEntityBrewingStand?
         if (blockEntity != null) {
             val inventory = blockEntity.brewingStandInventory
             for (content in inventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
-                    location.world.dropItem(content, breakPosition, null).spawn()
+                if (content.type != ItemType.AIR) {
+                    location.world?.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             inventory.clear()
-            inventory.viewer.clear()
+            inventory.getViewer().clear()
         }
         super.onBlockBreak(breakPosition)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBrewingStand?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBrewingStand?
     var isBrewingStandSlotA: Boolean
         get() = stateExists("brewing_stand_slot_a_bit") && getByteState("brewing_stand_slot_a_bit").toInt() == 1
         set(value) {

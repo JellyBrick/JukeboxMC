@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityLoom
  * @version 1.0
  */
 class LoomInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 4) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityLoom
     override val type: InventoryType
         get() = InventoryType.LOOM

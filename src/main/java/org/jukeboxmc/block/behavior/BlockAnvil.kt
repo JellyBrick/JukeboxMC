@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.AnvilDamage
 import org.jukeboxmc.block.direction.BlockFace
@@ -11,6 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,7 +27,7 @@ class BlockAnvil : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.rightDirection
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
@@ -38,9 +38,9 @@ class BlockAnvil : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        player.openInventory(player.anvilInventory, blockPosition)
+        player.openInventory(player.getAnvilInventory(), blockPosition)
         return true
     }
 

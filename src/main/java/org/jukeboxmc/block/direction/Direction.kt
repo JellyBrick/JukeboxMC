@@ -65,7 +65,9 @@ enum class Direction {
             }
             return if (135 <= value && value < 225) {
                 SOUTH
-            } else WEST
+            } else {
+                WEST
+            }
         }
     }
 }

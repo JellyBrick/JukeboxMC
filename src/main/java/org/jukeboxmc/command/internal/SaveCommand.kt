@@ -15,10 +15,10 @@ import org.jukeboxmc.command.annotation.Permission
 @Name("save")
 @Description("Save all worlds.")
 @Permission("jukeboxmc.command.save")
-class SaveCommand : Command(CommandData.Companion.builder().build()) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+class SaveCommand : Command(CommandData.builder().build()) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         commandSender.sendMessage("Saving all worlds...")
-        for (world in Server.Companion.getInstance().getWorlds()) {
+        for (world in Server.instance.getWorlds()) {
             world.save()
             commandSender.sendMessage("Saving " + world.name + " success.")
         }

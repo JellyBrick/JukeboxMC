@@ -17,18 +17,18 @@ class ItemShulkerBox : Item {
     private val block: BlockShulkerBox
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
+        block = Block.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
+        block = Block.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemShulkerBox {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

@@ -1,31 +1,38 @@
 package org.jukeboxmc.crafting
 
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerMixData
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
+import com.nukkitx.protocol.bedrock.data.inventory.PotionMixData
 import com.nukkitx.protocol.bedrock.data.inventory.descriptor.InvalidDescriptor
+import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
+import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemTagDescriptor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.jukeboxmc.Server
+import org.jukeboxmc.config.Config
+import org.jukeboxmc.config.ConfigType
+import org.jukeboxmc.crafting.recipes.Recipe
+import org.jukeboxmc.crafting.recipes.SmeltingRecipe
+import org.jukeboxmc.item.Item
+import org.jukeboxmc.util.ItemPalette
 import java.io.IOException
 import java.util.LinkedList
 import java.util.Optional
 import java.util.UUID
 import java.util.function.Function
 import java.util.function.Predicate
-import lombok.Getter
-import org.jukeboxmc.Server
-import org.jukeboxmc.config.Config
-import org.jukeboxmc.item.Item
-import org.jukeboxmc.util.ItemPalette
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@Getter
 class CraftingManager {
-    private val craftingData: MutableList<CraftingData> = ObjectArrayList<CraftingData>()
-    private val potionMixData: MutableList<PotionMixData> = ObjectArrayList<PotionMixData>()
-    private val containerMixData: MutableList<ContainerMixData> = ObjectArrayList<ContainerMixData>()
-    private val smeltingRecipes: MutableSet<SmeltingRecipe?> = HashSet<SmeltingRecipe?>()
-    private val recipes: Set<Recipe> = HashSet<Recipe>()
+    val craftingData: MutableList<CraftingData> = ObjectArrayList()
+     val potionMixData: MutableList<PotionMixData> = ObjectArrayList()
+     val containerMixData: MutableList<ContainerMixData> = ObjectArrayList()
+     val smeltingRecipes: MutableSet<SmeltingRecipe?> = HashSet()
+    private val recipes: Set<Recipe> = HashSet()
 
     init {
         val recipesStream = Server::class.java.classLoader.getResourceAsStream("recipes.json")
@@ -33,8 +40,8 @@ class CraftingManager {
         val config = Config(recipesStream, ConfigType.JSON)
         val recipes = config.map["recipes"] as List<Map<String, Any?>>?
         for (recipe in recipes!!) {
-            val craftingDataType: CraftingDataType = CraftingDataType.valueOf(recipe["type"] as String?)
-            val recipeId = recipe["recipeId"] as String?
+            val craftingDataType: CraftingDataType = CraftingDataType.valueOf(recipe["type"] as String)
+            val recipeId = recipe["recipeId"] as String
             val width = (recipe["width"] as Double).toInt()
             val height = (recipe["height"] as Double).toInt()
             val inputId = (recipe["inputId"] as Double).toInt()
@@ -67,8 +74,8 @@ class CraftingManager {
                                             .blockRuntimeId(blockRuntimeId)
                                             .usingNetId(usingNetId)
                                             .netId(netId)
-                                            .build()
-                                    )
+                                            .build(),
+                                    ),
                                 )
                             } else if (type.equals("INVALID", ignoreCase = true)) {
                                 inputItems.add(ItemDescriptorWithCount(InvalidDescriptor.INSTANCE, 1))
@@ -102,18 +109,18 @@ class CraftingManager {
                             .blockRuntimeId(blockRuntimeId)
                             .usingNetId(usingNetId)
                             .netId(netId)
-                            .build()
+                            .build(),
                     )
                 }
             }
             if (craftingDataType == CraftingDataType.FURNACE || craftingDataType == CraftingDataType.FURNACE_DATA) {
                 val input = Item(ItemPalette.getIdentifier(inputId.toShort()), false)
                 if (inputDamage != 32767) {
-                    input.meta = inputDamage
+                    input.setMeta(inputDamage)
                 }
                 val output = Item(outputItems[0], false)
                 if (output.meta == 32767) {
-                    output.meta = 0
+                    output.setMeta(0)
                 }
                 smeltingRecipes.add(SmeltingRecipe(input, output))
             }
@@ -134,8 +141,8 @@ class CraftingManager {
                     uuid,
                     craftingTag,
                     priority,
-                    networkId
-                )
+                    networkId,
+                ),
             )
         }
         val containerMixes = config.map["containerMixes"] as List<Map<String, Any>>?
@@ -164,39 +171,43 @@ class CraftingManager {
 
     fun registerRecipe(recipeId: String, recipe: Recipe) {
         try {
-            craftingData.add(recipe.doRegister(this, recipeId))
+            val registered = recipe.doRegister(this, recipeId)
+            if (registered != null) {
+                craftingData.add(registered)
+            }
         } catch (e: RuntimeException) {
-            Server.Companion.getInstance().getLogger().error("Could not register recipe $recipeId!", e)
+            Server.instance.logger.error("Could not register recipe $recipeId!", e)
         }
     }
 
     val highestNetworkId: Int
         get() {
             val optional: Optional<CraftingData> = craftingData.stream().max(
-                Comparator.comparing<CraftingData, Int>(
-                    Function<CraftingData, Int> { obj: CraftingData -> obj.getNetworkId() })
+                Comparator.comparing { obj: CraftingData -> obj.networkId },
             )
-            return optional.map(Function<CraftingData, Int> { obj: CraftingData -> obj.getNetworkId() }).orElse(-1)
+            return optional.map { obj: CraftingData -> obj.networkId }.orElse(-1)
         }
 
-    fun getResultItem(recipeNetworkId: Int): List<Item>? {
+    fun getResultItem(recipeNetworkId: Int): List<Item> {
         val optional: Optional<CraftingData> = craftingData.stream()
-            .filter(Predicate<CraftingData> { craftingData: CraftingData -> craftingData.getNetworkId() == recipeNetworkId })
+            .filter { craftingData: CraftingData -> craftingData.networkId == recipeNetworkId }
             .findFirst()
-        if (optional.isPresent()) {
+        if (optional.isPresent) {
             val craftingData: CraftingData = optional.get()
             val items: MutableList<Item> = LinkedList()
-            for (output in craftingData.getOutputs()) {
+            for (output in craftingData.outputs) {
                 items.add(Item(output, false))
             }
             return items
         }
-        return null
+        return emptyList()
     }
 
     fun getSmeltingRecipe(input: Item): SmeltingRecipe? {
-        return smeltingRecipes.stream().filter(Predicate<SmeltingRecipe?> { smeltingRecipe: SmeltingRecipe? ->
-            smeltingRecipe.getInput().getType() == input.type
-        }).findFirst().orElse(null)
+        return smeltingRecipes.stream().filter(
+            Predicate<SmeltingRecipe?> { smeltingRecipe: SmeltingRecipe? ->
+                smeltingRecipe?.input?.type == input.type
+            },
+        ).findFirst().orElse(null)
     }
 }

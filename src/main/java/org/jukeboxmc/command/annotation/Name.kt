@@ -12,5 +12,5 @@ annotation class Name(
      *
      * @return a fresh [String]
      */
-    val value: String = ""
+    val value: String = "",
 )

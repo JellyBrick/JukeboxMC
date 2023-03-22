@@ -24,10 +24,10 @@ class BlockLadder : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
-        if (!targetBlock!!.isTransparent && blockFace != BlockFace.UP && blockFace != BlockFace.DOWN) {
+        if (!targetBlock.isTransparent && blockFace != BlockFace.UP && blockFace != BlockFace.DOWN) {
             this.blockFace = blockFace
             return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         }

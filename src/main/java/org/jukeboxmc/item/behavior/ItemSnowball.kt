@@ -1,7 +1,6 @@
 package org.jukeboxmc.item.behavior
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import java.util.Objects
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.entity.projectile.EntitySnowball
@@ -12,6 +11,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -23,9 +23,9 @@ class ItemSnowball : Item {
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val entitySnowball =
-            Objects.requireNonNull<EntitySnowball>(Entity.Companion.create<EntitySnowball>(EntityType.SNOWBALL))
+            Objects.requireNonNull<EntitySnowball>(Entity.create<EntitySnowball>(EntityType.SNOWBALL))
         entitySnowball.setShooter(player)
-        entitySnowball.location = player.location.add(0f, player.eyeHeight, 0f)
+        entitySnowball.setLocation(player.getLocation().add(0f, player.eyeHeight, 0f))
         entitySnowball.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entitySnowball.yaw = player.yaw
         entitySnowball.pitch = player.pitch
@@ -37,7 +37,7 @@ class ItemSnowball : Item {
                 player.inventory.removeItem(ItemType.SNOWBALL, 1)
             }
             entitySnowball.spawn()
-            player.world.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
+            player.world?.playSound(player.getLocation(), SoundEvent.THROW, -1, "minecraft:player", false, false)
             return true
         }
         return false

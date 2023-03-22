@@ -17,18 +17,18 @@ class ItemQuartzBlock : Item {
     private val block: BlockQuartzBlock
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockQuartzBlock>(BlockType.QUARTZ_BLOCK)
+        block = Block.create<BlockQuartzBlock>(BlockType.QUARTZ_BLOCK)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockQuartzBlock>(BlockType.QUARTZ_BLOCK)
+        block = Block.create<BlockQuartzBlock>(BlockType.QUARTZ_BLOCK)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemQuartzBlock {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

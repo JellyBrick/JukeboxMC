@@ -12,7 +12,7 @@ class ItemRabbitStew : ItemFood {
     constructor(itemType: ItemType) : super(itemType)
 
     override val saturation: Float
-        get() = 12
+        get() = 12f
     override val hunger: Int
         get() = 10
 }

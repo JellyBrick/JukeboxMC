@@ -426,21 +426,21 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     }
 
     @Synchronized
-    fun setBiome(vector: Vector, dimension: Dimension, biome: Biome?) {
+    fun setBiome(vector: Vector, dimension: Dimension, biome: Biome) {
         val chunk = Objects.requireNonNull(getChunk(vector.chunkX, vector.chunkZ, dimension))
         chunk!!.setBiome(vector.blockX, vector.blockY, vector.blockZ, biome)
     }
 
     @Synchronized
-    fun setBiome(x: Int, y: Int, z: Int, dimension: Dimension, biome: Biome?) {
+    fun setBiome(x: Int, y: Int, z: Int, dimension: Dimension, biome: Biome) {
         this.setBiome(Vector(x, y, z), dimension, biome)
     }
 
-    fun setBiome(vector: Vector, biome: Biome?) {
+    fun setBiome(vector: Vector, biome: Biome) {
         this.setBiome(vector, Dimension.OVERWORLD, biome)
     }
 
-    fun setBiome(x: Int, y: Int, z: Int, biome: Biome?) {
+    fun setBiome(x: Int, y: Int, z: Int, biome: Biome) {
         this.setBiome(Vector(x, y, z), biome)
     }
 
@@ -474,7 +474,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         return chunkManagers[dimension]!!.loadedChunks
     }
 
-    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension): CompletableFuture<Chunk?>? {
+    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension): CompletableFuture<Chunk>? {
         return chunkManagers[dimension]!!.getChunkFuture(chunkX, chunkZ)
     }
 
@@ -634,7 +634,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         saveLevelFile()
     }
 
-    fun save(immediately: Boolean) {
+    @JvmOverloads
+    fun save(immediately: Boolean = false) {
         for (dimension in Dimension.values()) {
             if (!immediately) {
                 saveChunks(dimension).whenComplete { _: Void?, _: Throwable? -> }

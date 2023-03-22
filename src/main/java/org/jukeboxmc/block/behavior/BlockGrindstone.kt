@@ -27,7 +27,7 @@ class BlockGrindstone : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.opposite()
         if (blockFace == BlockFace.UP) {
@@ -48,9 +48,9 @@ class BlockGrindstone : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        player.openInventory(player.grindstoneInventory, blockPosition)
+        player.openInventory(player.getCraftingGridInventory(), blockPosition)
         return true
     }
 

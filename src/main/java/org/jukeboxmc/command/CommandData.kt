@@ -1,14 +1,13 @@
 package org.jukeboxmc.command
 
-import java.util.Arrays
+import com.nukkitx.protocol.bedrock.data.command.CommandParamData
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import java.util.Locale
-import lombok.ToString
 
 /**
  * @author Cloudburst
  * @version 1.0
  */
-@ToString
 class CommandData(
     var name: String,
     var description: String,
@@ -16,7 +15,7 @@ class CommandData(
     private var permission: String,
     private var permissionMessage: String,
     private val aliases: CommandEnum,
-    private val overloads: MutableList<Array<CommandParameter>>
+    private val overloads: MutableList<Array<CommandParameter>>,
 ) {
     fun getPermission(): String? {
         return permission
@@ -26,7 +25,7 @@ class CommandData(
         this.permission = permission
     }
 
-    fun getAliases(): MutableList<String?>? {
+    fun getAliases(): MutableList<String> {
         return aliases.values
     }
 
@@ -38,7 +37,7 @@ class CommandData(
         return overloads
     }
 
-    fun getPermissionMessage(): String? {
+    fun getPermissionMessage(): String {
         return permissionMessage
     }
 
@@ -51,28 +50,39 @@ class CommandData(
             overloads.add(arrayOf(CommandParameter("args", CommandParamType.TEXT, true)))
         }
         return CommandData(
-            name, description, usage, permission, permissionMessage, CommandEnum(
-                name, getAliases()
-            ), overloads
+            name,
+            description,
+            usage,
+            permission,
+            permissionMessage,
+            CommandEnum(
+                name,
+                getAliases(),
+            ),
+            overloads,
         )
     }
 
     fun toNetwork(): com.nukkitx.protocol.bedrock.data.command.CommandData {
         val description = description
-        val overloadData: Array<Array<CommandParamData?>> = arrayOfNulls<Array<CommandParamData?>>(
-            overloads.size
+        val overloadData: Array<Array<CommandParamData?>?> = arrayOfNulls(
+            overloads.size,
         )
         for (i in overloadData.indices) {
             val parameters = overloads[i]
-            val params: Array<CommandParamData?> = arrayOfNulls<CommandParamData>(parameters.size)
+            val params: Array<CommandParamData?> = arrayOfNulls(parameters.size)
             for (i2 in parameters.indices) {
                 params[i2] = parameters[i2].toNetwork()
             }
             overloadData[i] = params
         }
         return com.nukkitx.protocol.bedrock.data.command.CommandData(
-            name, description, emptyList(),
-            0.toByte().toInt(), aliases.toNetwork(), overloadData
+            name,
+            description,
+            emptyList(),
+            0.toByte().toInt(),
+            aliases.toNetwork(),
+            overloadData,
         )
     }
 
@@ -82,7 +92,7 @@ class CommandData(
         private var usage = ""
         private var permission = ""
         private var permissionMessage = ""
-        private var aliases: MutableList<String?> = ArrayList()
+        private var aliases: MutableList<String> = ArrayList()
         private var overloads: MutableList<Array<CommandParameter>> = ArrayList()
 
         constructor()
@@ -95,9 +105,16 @@ class CommandData(
                 overloads.add(arrayOf(CommandParameter("args", CommandParamType.TEXT, true)))
             }
             return CommandData(
-                name, description, usage, permission, permissionMessage, CommandEnum(
-                    name, aliases
-                ), overloads
+                name,
+                description,
+                usage,
+                permission,
+                permissionMessage,
+                CommandEnum(
+                    name,
+                    aliases,
+                ),
+                overloads,
             )
         }
 
@@ -121,8 +138,8 @@ class CommandData(
             return this
         }
 
-        fun setAliases(vararg aliases: String?): Builder {
-            this.aliases = Arrays.asList(*aliases)
+        fun setAliases(vararg aliases: String): Builder {
+            this.aliases = mutableListOf(*aliases)
             return this
         }
 
@@ -131,13 +148,13 @@ class CommandData(
             return this
         }
 
-        fun addAliases(vararg aliases: String?): Builder {
-            this.aliases.addAll(Arrays.asList(*aliases))
+        fun addAliases(vararg aliases: String): Builder {
+            this.aliases.addAll(listOf(*aliases))
             return this
         }
 
-        fun setParameters(vararg paramSet: Array<CommandParameter?>): Builder {
-            overloads = Arrays.asList(*paramSet)
+        fun setParameters(vararg paramSet: Array<CommandParameter>): Builder {
+            overloads = mutableListOf(*paramSet)
             return this
         }
 
@@ -146,8 +163,8 @@ class CommandData(
             return this
         }
 
-        fun addParameters(vararg paramSet: Array<CommandParameter?>): Builder {
-            overloads.addAll(Arrays.asList<Array<CommandParameter>>(*paramSet))
+        fun addParameters(vararg paramSet: Array<CommandParameter>): Builder {
+            overloads.addAll(listOf(*paramSet))
             return this
         }
     }

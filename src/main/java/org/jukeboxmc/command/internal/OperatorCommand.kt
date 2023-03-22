@@ -1,8 +1,10 @@
 package org.jukeboxmc.command.internal
 
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -17,21 +19,19 @@ import org.jukeboxmc.player.Player
 @Description("Add a player to operator")
 @Permission("jukeboxmc.command.operator")
 class OperatorCommand : Command(
-    CommandData.Companion.builder()
+    CommandData.builder()
         .setParameters(
-            listOf<Array<CommandParameter>>(
-                arrayOf<CommandParameter>(
-                    CommandParameter("player", CommandParamType.TARGET, false)
-                )
-            )
+            arrayOf<CommandParameter>(
+                CommandParameter("player", CommandParamType.TARGET, false),
+            ),
         )
-        .build()
+        .build(),
 ) {
-    override fun execute(commandSender: CommandSender, command: String?, args: Array<String?>) {
+    override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (args.size == 1) {
             val playerName = args[0]
-            if (playerName != null && !playerName.isEmpty()) {
-                val target: Player = Server.Companion.getInstance().getPlayer(playerName)
+            if (playerName.isNotEmpty()) {
+                val target: Player? = Server.instance.getPlayer(playerName)
                 if (target != null) {
                     if (target.isOp) {
                         commandSender.sendMessage("The player $playerName is already an operator")
@@ -39,10 +39,10 @@ class OperatorCommand : Command(
                     }
                     target.isOp = true
                     target.sendMessage("You are now operator")
-                    Server.Companion.getInstance().addOperatorToFile(target.name)
+                    Server.instance.addOperatorToFile(target.name)
                 } else {
-                    if (!Server.Companion.getInstance().isOperatorInFile(playerName)) {
-                        Server.Companion.getInstance().addOperatorToFile(playerName)
+                    if (!Server.instance.isOperatorInFile(playerName)) {
+                        Server.instance.addOperatorToFile(playerName)
                     } else {
                         commandSender.sendMessage("The player $playerName is already an operator")
                     }

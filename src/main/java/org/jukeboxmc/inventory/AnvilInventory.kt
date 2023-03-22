@@ -9,7 +9,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class AnvilInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 3) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.ANVIL
@@ -20,7 +20,7 @@ class AnvilInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 
         super.setItem(slot - 1, item, sendContent)
     }
 
-    override fun getItem(slot: Int): Item? {
+    override fun getItem(slot: Int): Item {
         return super.getItem(slot - 1)
     }
 }

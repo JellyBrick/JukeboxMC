@@ -1,9 +1,15 @@
 package org.jukeboxmc.crafting.recipes
 
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
+import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import java.util.UUID
+import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.item.Item
+import java.util.UUID
 
 /**
  * @author LucGamesYT
@@ -11,11 +17,8 @@ import org.jukeboxmc.item.Item
  */
 class ShapedRecipe : Recipe() {
     private val ingredients: Char2ObjectMap<ItemDescriptorWithCount> = Char2ObjectOpenHashMap<ItemDescriptorWithCount>()
-    private override val outputs: MutableList<ItemData?> = ObjectArrayList()
-    private var pattern: Array<String>
-    override fun getOutputs(): List<ItemData?> {
-        return outputs
-    }
+    override val outputs: MutableList<ItemData?> = ObjectArrayList()
+    private lateinit var pattern: Array<String>
 
     fun shape(vararg pattern: String): ShapedRecipe {
         if (pattern.size > 3 || pattern.size < 1) {
@@ -31,7 +34,7 @@ class ShapedRecipe : Recipe() {
                 throw RuntimeException("Shape colums must be have the same length!")
             }
         }
-        this.pattern = pattern
+        this.pattern = pattern.toList().toTypedArray()
         return this
     }
 
@@ -77,7 +80,7 @@ class ShapedRecipe : Recipe() {
             UUID.randomUUID(),
             "crafting_table",
             1,
-            craftingManager.getHighestNetworkId() + 1
+            craftingManager.highestNetworkId + 1,
         )
     }
 }

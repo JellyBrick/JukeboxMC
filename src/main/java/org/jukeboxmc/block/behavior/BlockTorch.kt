@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.block.direction.TorchFacing
@@ -11,6 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,10 +27,10 @@ class BlockTorch : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
-        if (!block!!.isTransparent && blockFace != BlockFace.DOWN) {
+        if (!block.isTransparent && blockFace != BlockFace.DOWN) {
             torchFacing = blockFace.opposite().torchFacing()
             world.setBlock(placePosition, this)
             return true
@@ -49,56 +49,58 @@ class BlockTorch : Block {
             when (torchFacing) {
                 TorchFacing.EAST -> {
                     return AxisAlignedBB(
-                        location!!.x,
-                        location!!.y + 0.2f,
-                        location!!.z + 0.5f - size,
-                        location!!.x + size * 2f,
-                        location!!.y + 0.8f,
-                        location!!.z + 0.5f + size
+                        location.getX(),
+                        location.getY() + 0.2f,
+                        location.getZ() + 0.5f - size,
+                        location.getX() + size * 2f,
+                        location.getY() + 0.8f,
+                        location.getZ() + 0.5f + size,
                     )
                 }
 
                 TorchFacing.WEST -> {
                     return AxisAlignedBB(
-                        location!!.x + 1.0f - size * 2f,
-                        location!!.y + 0.2f,
-                        location!!.z + 0.5f - size,
-                        location!!.x + 1f,
-                        location!!.y + 0.8f,
-                        location!!.z + 0.5f + size
+                        location.getX() + 1.0f - size * 2f,
+                        location.getY() + 0.2f,
+                        location.getZ() + 0.5f - size,
+                        location.getX() + 1f,
+                        location.getY() + 0.8f,
+                        location.getZ() + 0.5f + size,
                     )
                 }
 
                 TorchFacing.SOUTH -> {
                     return AxisAlignedBB(
-                        location!!.x + 0.5f - size,
-                        location!!.y + 0.2f,
-                        location!!.z,
-                        location!!.x + 0.5f + size,
-                        location!!.y + 0.8f,
-                        location!!.z + size * 2f
+                        location.getX() + 0.5f - size,
+                        location.getY() + 0.2f,
+                        location.getZ(),
+                        location.getX() + 0.5f + size,
+                        location.getY() + 0.8f,
+                        location.getZ() + size * 2f,
                     )
                 }
 
                 TorchFacing.NORTH -> {
                     return AxisAlignedBB(
-                        location!!.x + 0.5f - size,
-                        location!!.y + 0.2f,
-                        location!!.z + 1f - size * 2f,
-                        location!!.x + 0.5f + size,
-                        location!!.y + 0.8f,
-                        location!!.z + 1f
+                        location.getX() + 0.5f - size,
+                        location.getY() + 0.2f,
+                        location.getZ() + 1f - size * 2f,
+                        location.getX() + 0.5f + size,
+                        location.getY() + 0.8f,
+                        location.getZ() + 1f,
                     )
                 }
+
+                else -> {}
             }
             size = 0.1f
             return AxisAlignedBB(
-                location!!.x + 0.5f - size,
-                location!!.y + 0.0f,
-                location!!.z + 0.5f - size,
-                location!!.x + 0.5f + size,
-                location!!.y + 0.6f,
-                location!!.z + 0.5f + size
+                location.getX() + 0.5f - size,
+                location.getY() + 0.0f,
+                location.getZ() + 0.5f - size,
+                location.getX() + 0.5f + size,
+                location.getY() + 0.6f,
+                location.getZ() + 0.5f + size,
             )
         }
     var torchFacing: TorchFacing

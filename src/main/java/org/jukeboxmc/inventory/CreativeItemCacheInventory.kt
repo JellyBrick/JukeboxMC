@@ -9,7 +9,7 @@ import org.jukeboxmc.player.Player
 class CreativeItemCacheInventory(holder: InventoryHolder) : Inventory(holder, 1) {
     override fun sendContents(player: Player) {}
     override fun sendContents(slot: Int, player: Player) {}
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.CREATIVE

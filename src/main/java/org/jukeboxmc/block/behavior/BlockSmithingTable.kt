@@ -21,9 +21,9 @@ class BlockSmithingTable : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        player.openInventory(player.smithingTableInventory, blockPosition)
+        player.openInventory(player.getSmithingTableInventory(), blockPosition)
         return true
     }
 }

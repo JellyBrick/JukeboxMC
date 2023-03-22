@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Objects
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
@@ -16,6 +15,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -32,7 +32,7 @@ class BlockGravel : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         world.setBlock(placePosition, this, 0)
         return true
@@ -40,20 +40,20 @@ class BlockGravel : Block {
 
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.NORMAL) {
-            location.world.scheduleBlockUpdate(location, 1)
+            location.world?.scheduleBlockUpdate(location, 1)
         } else if (updateReason == UpdateReason.SCHEDULED) {
-            val blockDown = location!!.block!!.clone().getSide(BlockFace.DOWN)
+            val blockDown = location.block!!.clone().getSide(BlockFace.DOWN)
             if (blockDown.type == BlockType.AIR) {
                 val entity =
-                    Objects.requireNonNull<EntityFallingBlock>(Entity.Companion.create<EntityFallingBlock>(EntityType.FALLING_BLOCK))
-                entity.location = location!!.add(0.5f, 0f, 0.5f)
-                entity.block = this
+                    Objects.requireNonNull<EntityFallingBlock>(Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK))
+                entity.setLocation(location.add(0.5f, 0f, 0.5f))
+                entity.setBlock(this)
                 val fallingBlockEvent = FallingBlockEvent(this, entity)
-                Server.Companion.getInstance().getPluginManager().callEvent(fallingBlockEvent)
+                Server.instance.pluginManager.callEvent(fallingBlockEvent)
                 if (fallingBlockEvent.isCancelled) {
                     return -1
                 }
-                location.world.setBlock(location, Block.Companion.create<Block>(BlockType.AIR))
+                location.world?.setBlock(location, create<Block>(BlockType.AIR))
                 entity.spawn()
             }
         }

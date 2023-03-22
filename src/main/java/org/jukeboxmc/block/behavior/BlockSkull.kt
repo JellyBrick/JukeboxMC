@@ -27,13 +27,13 @@ class BlockSkull : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = blockFace
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntitySkull>(BlockEntityType.SKULL, this)
+            BlockEntity.create<BlockEntitySkull>(BlockEntityType.SKULL, this)
                 .setRotation((Math.floor(player.yaw * 16 / 360 + 0.5).toInt() and 0xF).toByte())
                 .setSkullMeta(itemInHand.meta.toByte())
                 .spawn()
@@ -42,7 +42,7 @@ class BlockSkull : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntitySkull?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySkull?
 
     fun setNoDrop(value: Boolean): BlockSkull {
         return setState("no_drop_bit", if (value) 1.toByte() else 0.toByte())

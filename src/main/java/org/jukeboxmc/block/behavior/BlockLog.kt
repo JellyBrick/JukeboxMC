@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.Axis
 import org.jukeboxmc.block.data.LogType
@@ -13,6 +12,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -29,7 +29,7 @@ class BlockLog : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
             axis = Axis.Y
@@ -43,7 +43,7 @@ class BlockLog : Block {
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemLog>(ItemType.LOG).setLogType(logType)
+        return Item.create<ItemLog>(ItemType.LOG).setLogType(logType)
     }
 
     fun setLogType(logType: LogType): BlockLog {

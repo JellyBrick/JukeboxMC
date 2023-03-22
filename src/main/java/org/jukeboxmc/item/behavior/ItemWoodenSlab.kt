@@ -1,6 +1,5 @@
 package org.jukeboxmc.item.behavior
 
-import java.time.Duration
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockWoodenSlab
@@ -10,6 +9,7 @@ import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
+import java.time.Duration
 
 /**
  * @author LucGamesYT
@@ -19,18 +19,18 @@ class ItemWoodenSlab : Item, Burnable {
     private val block: BlockWoodenSlab
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
+        block = Block.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
+        block = Block.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemWoodenSlab {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

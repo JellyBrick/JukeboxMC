@@ -16,18 +16,18 @@ class ItemNetherWart : Item {
     private val block: BlockNetherWart
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockNetherWart>(BlockType.NETHER_WART)
+        block = Block.create<BlockNetherWart>(BlockType.NETHER_WART)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockNetherWart>(BlockType.NETHER_WART)
+        block = Block.create<BlockNetherWart>(BlockType.NETHER_WART)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemNetherWart {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 }

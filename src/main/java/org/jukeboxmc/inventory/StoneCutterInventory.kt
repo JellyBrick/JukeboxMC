@@ -8,7 +8,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class StoneCutterInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 2) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.STONE_CUTTER

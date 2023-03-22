@@ -1,6 +1,9 @@
 package org.jukeboxmc.inventory
 
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerType
+import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket
+import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 
@@ -17,25 +20,25 @@ abstract class ContainerInventory : Inventory {
 
     override fun sendContents(player: Player) {
         val inventoryContentPacket = InventoryContentPacket()
-        inventoryContentPacket.setContainerId(WindowId.OPEN_CONTAINER.id)
-        inventoryContentPacket.setContents(this.itemDataContents)
+        inventoryContentPacket.containerId = WindowId.OPEN_CONTAINER.id
+        inventoryContentPacket.contents = this.itemDataContents
         player.playerConnection.sendPacket(inventoryContentPacket)
     }
 
     override fun sendContents(slot: Int, player: Player) {
         val inventorySlotPacket = InventorySlotPacket()
-        inventorySlotPacket.setContainerId(WindowId.OPEN_CONTAINER.id)
-        inventorySlotPacket.setSlot(slot)
-        inventorySlotPacket.setItem(this.contents[slot].toItemData())
+        inventorySlotPacket.containerId = WindowId.OPEN_CONTAINER.id
+        inventorySlotPacket.slot = slot
+        inventorySlotPacket.item = this.contents[slot].toItemData()
         player.playerConnection.sendPacket(inventorySlotPacket)
     }
 
     open fun addViewer(player: Player, position: Vector, windowId: Byte) {
         val containerOpenPacket = ContainerOpenPacket()
-        containerOpenPacket.setUniqueEntityId(holderId)
-        containerOpenPacket.setId(windowId)
-        containerOpenPacket.setType(windowTypeId)
-        containerOpenPacket.setBlockPosition(position.toVector3i())
+        containerOpenPacket.uniqueEntityId = holderId
+        containerOpenPacket.id = windowId
+        containerOpenPacket.type = windowTypeId
+        containerOpenPacket.blockPosition = position.toVector3i()
         player.playerConnection.sendPacket(containerOpenPacket)
         super.addViewer(player)
         onOpen(player)

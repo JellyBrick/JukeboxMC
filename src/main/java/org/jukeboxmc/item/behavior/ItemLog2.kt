@@ -17,18 +17,18 @@ class ItemLog2 : Item {
     private val block: BlockLog2
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockLog2>(BlockType.LOG2)
+        block = Block.create<BlockLog2>(BlockType.LOG2)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockLog2>(BlockType.LOG2)
+        block = Block.create<BlockLog2>(BlockType.LOG2)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemLog2 {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

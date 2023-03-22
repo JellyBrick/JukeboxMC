@@ -17,8 +17,8 @@ class ItemNetheriteChestplate : ItemArmor, Durability {
     constructor(identifier: Identifier?) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
-        val oldItem = player.armorInventory.chestplate
-        player.armorInventory.chestplate = this
+        val oldItem = player.getArmorInventory().chestplate
+        player.getArmorInventory().chestplate = this
         player.inventory.itemInHand = oldItem
         return super.useInAir(player, clickVector)
     }

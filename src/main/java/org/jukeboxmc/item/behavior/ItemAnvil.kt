@@ -17,18 +17,18 @@ class ItemAnvil : Item {
     private val block: BlockAnvil
 
     constructor(identifier: Identifier?) : super(identifier) {
-        block = Block.Companion.create<BlockAnvil>(BlockType.ANVIL)
+        block = Block.create<BlockAnvil>(BlockType.ANVIL)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.Companion.create<BlockAnvil>(BlockType.ANVIL)
+        block = Block.create<BlockAnvil>(BlockType.ANVIL)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemAnvil {
         this.blockRuntimeId = blockRuntimeId
-        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
+        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
         return this
     }
 

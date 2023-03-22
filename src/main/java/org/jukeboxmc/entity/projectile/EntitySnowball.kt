@@ -1,11 +1,11 @@
 package org.jukeboxmc.entity.projectile
 
-import java.util.concurrent.TimeUnit
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Particle
+import java.util.concurrent.TimeUnit
 
 /**
  * @author LucGamesYT
@@ -27,24 +27,22 @@ class EntitySnowball : EntityProjectile() {
         close()
     }
 
-    val name: String
+    override val name: String
         get() = "Snowball"
-    val width: Float
+    override val width: Float
         get() = 0.25f
-    val height: Float
+    override val height: Float
         get() = 0.25f
-    val drag: Float
-        get() = 0.01f
-    val gravity: Float
-        get() = 0.03f
-    val type: EntityType
+    override var drag: Float = 0.01f
+    override var gravity: Float = 0.03f
+    override val type: EntityType
         get() = EntityType.SNOWBALL
-    val identifier: Identifier
-        get() = Identifier.Companion.fromString("minecraft:snowball")
+    override val identifier: Identifier
+        get() = Identifier.fromString("minecraft:snowball")
 
     private fun spawnSnowballParticle(location: Location) {
         for (i in 0..5) {
-            this.world.spawnParticle(Particle.SNOWBALL_POOF, location.add(0f, 0.5f, 0f))
+            this.world?.spawnParticle(Particle.SNOWBALL_POOF, location.add(0f, 0.5f, 0f))
         }
     }
 }

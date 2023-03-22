@@ -2,7 +2,6 @@ package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtType
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.BlockColor
 import org.jukeboxmc.block.direction.BlockFace
@@ -16,6 +15,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -32,15 +32,15 @@ class BlockShulkerBox : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemIndHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemIndHand, blockFace)
         if (value) {
             val blockEntityShulkerBox =
-                BlockEntity.Companion.create<BlockEntityShulkerBox>(BlockEntityType.SHULKER_BOX, this).setUndyed(false)
+                BlockEntity.create<BlockEntityShulkerBox>(BlockEntityType.SHULKER_BOX, this).setUndyed(false)
                     .spawn() as BlockEntityShulkerBox
-            if (itemIndHand.nbt != null && itemIndHand.nbt.containsKey("Items")) {
+            if (itemIndHand.nbt != null && itemIndHand.nbt!!.containsKey("Items")) {
                 val nbt = itemIndHand.nbt
                 val items = nbt!!.getList("Items", NbtType.COMPOUND)
                 for (nbtMap in items) {
@@ -62,9 +62,9 @@ class BlockShulkerBox : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityShulkerBox? = blockEntity
+        val blockEntity: BlockEntityShulkerBox? = blockEntity as BlockEntityShulkerBox?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -73,9 +73,9 @@ class BlockShulkerBox : Block {
     }
 
     override fun toItem(): ItemShulkerBox {
-        val itemShulkerBox: ItemShulkerBox = Item.Companion.create<ItemShulkerBox>(ItemType.SHULKER_BOX)
+        val itemShulkerBox: ItemShulkerBox = Item.create<ItemShulkerBox>(ItemType.SHULKER_BOX)
         itemShulkerBox.setColor(color)
-        val blockEntity = blockEntity ?: return itemShulkerBox
+        val blockEntity = blockEntity as BlockEntityShulkerBox? ?: return itemShulkerBox
         val shulkerBoxInventory = blockEntity.shulkerBoxInventory
         val builder = NbtMap.builder()
         val itemsCompoundList: MutableList<NbtMap> = ArrayList()
@@ -94,7 +94,7 @@ class BlockShulkerBox : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     fun setColor(color: BlockColor): BlockShulkerBox {
         return setState("color", color.name.lowercase(Locale.getDefault()))

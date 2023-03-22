@@ -25,7 +25,7 @@ class BlockPolishedBlackstoneBrickSlab : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
@@ -34,14 +34,14 @@ class BlockPolishedBlackstoneBrickSlab : BlockSlab {
                 if (targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB)
+                        create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockPolishedBlackstoneBrickSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB)
+                    create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB),
                 )
                 return true
             }
@@ -50,14 +50,14 @@ class BlockPolishedBlackstoneBrickSlab : BlockSlab {
                 if (!targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB)
+                        create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockPolishedBlackstoneBrickSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB)
+                    create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB),
                 )
                 return true
             }
@@ -65,7 +65,7 @@ class BlockPolishedBlackstoneBrickSlab : BlockSlab {
             if (block is BlockPolishedBlackstoneBrickSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB)
+                    create<Block>(BlockType.POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB),
                 )
                 return true
             }

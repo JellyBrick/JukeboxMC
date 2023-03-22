@@ -1,13 +1,13 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.BlockColor
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.behavior.ItemConcrete
 import org.jukeboxmc.util.Identifier
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -18,8 +18,8 @@ class BlockConcrete : Block {
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemConcrete>(ItemType.CONCRETE).setColor(
-            color
+        return Item.create<ItemConcrete>(ItemType.CONCRETE).setColor(
+            color,
         )
     }
 

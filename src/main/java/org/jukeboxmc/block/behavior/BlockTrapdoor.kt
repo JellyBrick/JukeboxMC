@@ -26,10 +26,10 @@ class BlockTrapdoor : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val playerDirection = player.direction
-        if (clickedPosition.y > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
+        if (clickedPosition.getY() > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
             isUpsideDown = true
         }
         if (playerDirection == Direction.NORTH) {
@@ -50,10 +50,10 @@ class BlockTrapdoor : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         isOpen = !isOpen
-        location.world.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
+        location.world?.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
         return true
     }
 

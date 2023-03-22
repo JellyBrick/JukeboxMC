@@ -1,5 +1,6 @@
 package org.jukeboxmc.inventory
 
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.player.Player
 
@@ -8,7 +9,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class CursorInventory(holder: InventoryHolder) : Inventory(holder, 1) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.CURSOR
@@ -19,9 +20,9 @@ class CursorInventory(holder: InventoryHolder) : Inventory(holder, 1) {
 
     override fun sendContents(slot: Int, player: Player) {
         val inventorySlotPacket = InventorySlotPacket()
-        inventorySlotPacket.setContainerId(WindowId.CURSOR_DEPRECATED.id)
-        inventorySlotPacket.setItem(content[slot].toItemData())
-        inventorySlotPacket.setSlot(slot)
+        inventorySlotPacket.containerId = WindowId.CURSOR_DEPRECATED.id
+        inventorySlotPacket.item = contents[slot].toItemData()
+        inventorySlotPacket.slot = slot
         player.playerConnection.sendPacket(inventorySlotPacket)
     }
 
@@ -29,6 +30,6 @@ class CursorInventory(holder: InventoryHolder) : Inventory(holder, 1) {
         this.setItem(0, item)
     }
 
-    val item: Item?
+    val item: Item
         get() = getItem(0)
 }

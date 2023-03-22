@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityBrewingStand
  * @version 1.0
  */
 class BrewingStandInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 5) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityBrewingStand
     override val type: InventoryType
         get() = InventoryType.BREWING_STAND

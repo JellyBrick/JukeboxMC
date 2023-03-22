@@ -18,7 +18,7 @@ class BlockEntityBed(block: Block, blockEntityType: BlockEntityType) : BlockEnti
 
     override fun toCompound(): NbtMapBuilder {
         val compound = super.toCompound()
-        compound!!.putByte("color", color)
+        compound.putByte("color", color)
         return compound
     }
 

@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.StoneSlab2Type
@@ -11,6 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,7 +27,7 @@ class BlockStoneSlab2 : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
@@ -35,17 +35,17 @@ class BlockStoneSlab2 : BlockSlab {
             if (targetBlock is BlockStoneSlab2 && targetBlock.isTopSlot && targetBlock.stoneSlabType == stoneSlabType) {
                 world.setBlock(
                     blockPosition,
-                    Block.Companion.create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
-                        stoneSlabType
-                    )
+                    create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
+                        stoneSlabType,
+                    ),
                 )
                 return true
             } else if (block is BlockStoneSlab2 && block.stoneSlabType == stoneSlabType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
-                        stoneSlabType
-                    )
+                    create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
+                        stoneSlabType,
+                    ),
                 )
                 return true
             }
@@ -53,17 +53,17 @@ class BlockStoneSlab2 : BlockSlab {
             if (targetBlock is BlockStoneSlab2 && !targetBlock.isTopSlot && targetBlock.stoneSlabType == stoneSlabType) {
                 world.setBlock(
                     blockPosition,
-                    Block.Companion.create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
-                        stoneSlabType
-                    )
+                    create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
+                        stoneSlabType,
+                    ),
                 )
                 return true
             } else if (block is BlockStoneSlab2 && block.stoneSlabType == stoneSlabType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
-                        stoneSlabType
-                    )
+                    create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
+                        stoneSlabType,
+                    ),
                 )
                 return true
             }
@@ -71,13 +71,13 @@ class BlockStoneSlab2 : BlockSlab {
             if (block is BlockStoneSlab2 && block.stoneSlabType == stoneSlabType) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
-                        stoneSlabType
-                    )
+                    create<BlockDoubleStoneSlab2>(BlockType.DOUBLE_STONE_BLOCK_SLAB2).setStoneSlabType(
+                        stoneSlabType,
+                    ),
                 )
                 return true
             } else {
-                this.isTopSlot = clickedPosition.y > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this)
+                this.setTopSlot(clickedPosition.getY() > 0.5 && !world.getBlock(blockPosition).canBeReplaced(this))
             }
         }
         super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)

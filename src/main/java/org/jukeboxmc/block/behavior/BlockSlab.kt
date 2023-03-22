@@ -16,21 +16,21 @@ open class BlockSlab : Block {
     override val boundingBox: AxisAlignedBB
         get() = if (isTopSlot) {
             AxisAlignedBB(
-                location!!.x,
-                location!!.y + 0.5f,
-                location!!.z,
-                location!!.x + 1,
-                location!!.y + 1,
-                location!!.z + 1
+                location.getX(),
+                location.getY() + 0.5f,
+                location.getZ(),
+                location.getX() + 1,
+                location.getY() + 1,
+                location.getZ() + 1,
             )
         } else {
             AxisAlignedBB(
-                location!!.x,
-                location!!.y,
-                location!!.z,
-                location!!.x + 1,
-                location!!.y + 0.5f,
-                location!!.z + 1
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getX() + 1,
+                location.getY() + 0.5f,
+                location.getZ() + 1,
             )
         }
 

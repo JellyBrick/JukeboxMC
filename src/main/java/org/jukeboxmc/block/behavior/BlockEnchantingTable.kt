@@ -27,12 +27,12 @@ class BlockEnchantingTable : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.ENCHANTMENT_TABLE, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.ENCHANTMENT_TABLE, this).spawn()
         }
         return value
     }
@@ -42,9 +42,9 @@ class BlockEnchantingTable : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityEnchantmentTable? = blockEntity
+        val blockEntity: BlockEntityEnchantmentTable? = blockEntity as BlockEntityEnchantmentTable?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -53,5 +53,5 @@ class BlockEnchantingTable : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityEnchantmentTable?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityEnchantmentTable?
 }

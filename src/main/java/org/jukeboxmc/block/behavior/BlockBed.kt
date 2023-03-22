@@ -30,21 +30,21 @@ class BlockBed : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val blockColor = BlockColor.values()[itemInHand.meta]
         val blockDirection = this.getSide(player.direction)
-        val directionLocation = blockDirection.location
+        val directionLocation = blockDirection.getLocation()
         if (blockDirection.canBeReplaced(this) && blockDirection.isTransparent) {
             direction = player.direction
-            val blockBed: BlockBed = Block.Companion.create<BlockBed>(BlockType.BED)
+            val blockBed: BlockBed = create<BlockBed>(BlockType.BED)
             blockBed.setLocation(directionLocation)
             blockBed.direction = direction
             blockBed.isHeadPiece = true
-            world.setBlock(directionLocation!!, blockBed, 0)
+            world.setBlock(directionLocation, blockBed, 0)
             world.setBlock(placePosition, this, 0)
-            BlockEntity.Companion.create<BlockEntityBed>(BlockEntityType.BED, blockBed).setColor(blockColor).spawn()
-            BlockEntity.Companion.create<BlockEntityBed>(BlockEntityType.BED, this).setColor(blockColor).spawn()
+            BlockEntity.create<BlockEntityBed>(BlockEntityType.BED, blockBed).setColor(blockColor).spawn()
+            BlockEntity.create<BlockEntityBed>(BlockEntityType.BED, this).setColor(blockColor).spawn()
             return true
         }
         return false
@@ -58,14 +58,14 @@ class BlockBed : Block {
         val otherBlock = this.getSide(direction)
         if (otherBlock is BlockBed) {
             if (otherBlock.isHeadPiece != isHeadPiece) {
-                location.world.setBlock(otherBlock.getLocation(), Block.Companion.create<Block>(BlockType.AIR), 0)
+                location.world?.setBlock(otherBlock.getLocation(), create<Block>(BlockType.AIR), 0)
             }
         }
-        location.world.setBlock(breakPosition, Block.Companion.create<Block>(BlockType.AIR), 0)
+        location.world?.setBlock(breakPosition, create<Block>(BlockType.AIR), 0)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBed?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBed?
     var isHeadPiece: Boolean
         get() = stateExists("head_piece_bit") && getByteState("head_piece_bit").toInt() == 1
         set(value) {

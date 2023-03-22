@@ -7,11 +7,16 @@ import org.jukeboxmc.math.Vector
  * @version 1.0
  */
 enum class BlockFace(val horizontalIndex: Int, val offset: Vector) {
-    DOWN(-1, Vector(0, -1, 0)), UP(-1, Vector(0, 1, 0)), NORTH(2, Vector(0, 0, -1)), SOUTH(0, Vector(0, 0, 1)), WEST(
+    DOWN(-1, Vector(0, -1, 0)),
+    UP(-1, Vector(0, 1, 0)),
+    NORTH(2, Vector(0, 0, -1)),
+    SOUTH(0, Vector(0, 0, 1)),
+    WEST(
         1,
-        Vector(-1, 0, 0)
+        Vector(-1, 0, 0),
     ),
-    EAST(3, Vector(1, 0, 0));
+    EAST(3, Vector(1, 0, 0)),
+    ;
 
     fun opposite(): BlockFace {
         return when (this) {

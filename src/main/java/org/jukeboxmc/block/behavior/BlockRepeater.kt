@@ -25,7 +25,7 @@ class BlockRepeater : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.opposite()
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
@@ -36,7 +36,7 @@ class BlockRepeater : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         val delay = repeaterDelay
         if (delay != 3) {
@@ -49,7 +49,7 @@ class BlockRepeater : Block {
 
     var repeaterDelay: Int
         get() = if (stateExists("repeater_delay")) getIntState("repeater_delay") else 0
-        set(value) { //0-3
+        set(value) { // 0-3
             setState<Block>("repeater_delay", value)
         }
     var direction: Direction

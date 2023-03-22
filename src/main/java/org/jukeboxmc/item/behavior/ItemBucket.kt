@@ -24,47 +24,53 @@ open class ItemBucket : Item {
     constructor(identifier: Identifier?) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
-    override fun useOnBlock(player: Player, block: Block?, placeLocation: Location?): Boolean {
+    override fun useOnBlock(player: Player, block: Block, placeLocation: Location): Boolean {
         var block = block
-        if (block !is BlockLiquid && block.getType() != BlockType.POWDER_SNOW) {
-            block = player.world.getBlock(block!!.location, 1)
+        if (block !is BlockLiquid && block.type != BlockType.POWDER_SNOW) {
+            block = player.world?.getBlock(block.getLocation(), 1)!!
         }
-        if (block is BlockLiquid || block.getType() == BlockType.POWDER_SNOW) {
+        if (block is BlockLiquid || block.type == BlockType.POWDER_SNOW) {
             if (this.type != ItemType.BUCKET) {
                 return false
             }
             val item: Item =
-                if (block.getType() == BlockType.POWDER_SNOW) Item.Companion.create<Item>(ItemType.POWDER_SNOW_BUCKET) else if (block is BlockLava) Item.Companion.create<Item>(
-                    ItemType.LAVA_BUCKET
-                ) else Item.Companion.create<Item>(ItemType.WATER_BUCKET)
+                if (block.type == BlockType.POWDER_SNOW) {
+                    create<Item>(ItemType.POWDER_SNOW_BUCKET)
+                } else if (block is BlockLava) {
+                    create<Item>(
+                        ItemType.LAVA_BUCKET,
+                    )
+                } else {
+                    create<Item>(ItemType.WATER_BUCKET)
+                }
             val playerBucketFillEvent = PlayerBucketFillEvent(player, this, item, block)
-            Server.Companion.getInstance().getPluginManager().callEvent(playerBucketFillEvent)
+            Server.instance.pluginManager.callEvent(playerBucketFillEvent)
             if (playerBucketFillEvent.isCancelled) {
                 player.inventory.sendContents(player)
                 return false
             }
-            player.world.setBlock(block!!.location, Block.Companion.create<Block>(BlockType.AIR), 0)
+            player.world?.setBlock(block.getLocation(), Block.create<Block>(BlockType.AIR), 0)
             if (block.type == BlockType.POWDER_SNOW) {
-                player.world.playSound(player.location, SoundEvent.BUCKET_FILL_POWDER_SNOW)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_POWDER_SNOW)
             } else if (block is BlockLava) {
-                player.world.playSound(player.location, SoundEvent.BUCKET_FILL_LAVA)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_LAVA)
             } else {
-                player.world.playSound(player.location, SoundEvent.BUCKET_FILL_WATER)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_FILL_WATER)
             }
             if (player.gameMode != GameMode.CREATIVE) {
-                if (getAmount() - 1 <= 0) {
+                if (amount - 1 <= 0) {
                     player.inventory.itemInHand = playerBucketFillEvent.itemInHand
                 } else {
                     val clone = clone()
-                    clone.amount = getAmount() - 1
+                    clone.setAmount(amount - 1)
                     player.inventory.itemInHand = clone
                     if (!player.inventory.addItem(playerBucketFillEvent.itemInHand)) {
-                        player.world.dropItem(item, player.location, null)
+                        player.world?.dropItem(item, player.getLocation(), null)
                     }
                 }
             }
         } else {
-            block = block!!.location.world.getBlock(block.location, 0)
+            block = block.world?.getBlock(block.getLocation(), 0)!!
             val placedBlock: Block?
             when (this.type) {
                 ItemType.BUCKET, ItemType.MILK_BUCKET, ItemType.COD_BUCKET, ItemType.SALMON_BUCKET, ItemType.PUFFERFISH_BUCKET, ItemType.TROPICAL_FISH_BUCKET, ItemType.AXOLOTL_BUCKET -> {
@@ -74,44 +80,47 @@ open class ItemBucket : Item {
                 else -> {
                     placedBlock = toBlock()
                     if (block is Waterlogable && this.type == ItemType.WATER_BUCKET) {
-                        placedBlock.location = block.location
-                        placedBlock.layer = 1
+                        placedBlock.setLocation(block.getLocation())
+                        placedBlock.setLayer(1)
                     } else if (block is BlockLiquid) {
                         return false
                     } else {
-                        placedBlock.location = placeLocation
+                        placedBlock.setLocation(placeLocation)
                     }
                 }
             }
             val playerBucketEmptyEvent = PlayerBucketEmptyEvent(
-                player, this,
-                Item.Companion.create<Item>(ItemType.BUCKET), block, placedBlock
+                player,
+                this,
+                create<Item>(ItemType.BUCKET),
+                block,
+                placedBlock,
             )
-            Server.Companion.getInstance().getPluginManager().callEvent(playerBucketEmptyEvent)
+            Server.instance.pluginManager.callEvent(playerBucketEmptyEvent)
             if (playerBucketEmptyEvent.isCancelled) {
                 player.inventory.sendContents(player)
                 return false
             }
             if (placedBlock.type == BlockType.POWDER_SNOW) {
-                player.world.playSound(player.location, SoundEvent.BUCKET_EMPTY_POWDER_SNOW)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_POWDER_SNOW)
             } else if (placedBlock is BlockLava) {
-                player.world.playSound(player.location, SoundEvent.BUCKET_EMPTY_LAVA)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_LAVA)
             } else {
-                player.world.playSound(player.location, SoundEvent.BUCKET_EMPTY_WATER)
+                player.world?.playSound(player.getLocation(), SoundEvent.BUCKET_EMPTY_WATER)
             }
-            player.world.setBlock(placeLocation, placedBlock, placedBlock.layer)
+            player.world?.setBlock(placeLocation, placedBlock, placedBlock.getLayer())
             if (placedBlock is BlockLiquid) {
-                player.world.scheduleBlockUpdate(placeLocation, placedBlock.tickRate.toLong())
+                player.world?.scheduleBlockUpdate(placeLocation, placedBlock.tickRate.toLong())
             }
             if (player.gameMode != GameMode.CREATIVE) {
-                if (getAmount() - 1 <= 0) {
+                if (amount - 1 <= 0) {
                     player.inventory.itemInHand = playerBucketEmptyEvent.itemInHand
                 } else {
                     val clone = clone()
-                    clone.amount = getAmount() - 1
+                    clone.setAmount(amount - 1)
                     player.inventory.itemInHand = clone
                     if (!player.inventory.addItem(playerBucketEmptyEvent.itemInHand)) {
-                        player.world.dropItem(Item.Companion.create<Item>(ItemType.BUCKET), player.location, null)
+                        player.world?.dropItem(create<Item>(ItemType.BUCKET), player.getLocation(), null)
                     }
                 }
             }

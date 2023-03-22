@@ -1,20 +1,17 @@
 package org.jukeboxmc.block.palette.bitarray
 
-import java.util.Arrays
-import lombok.Getter
 import org.jukeboxmc.util.Utils
 
-@Getter
 class PaddedBitArray internal constructor(
-    private override val version: BitArrayVersion,
-    private override val size: Int,
-    private override val words: IntArray
+    override val version: BitArrayVersion,
+    override val size: Int,
+    override val words: IntArray,
 ) : BitArray {
     init {
         val expectedWordsLength = Utils.ceil(size.toFloat() / version.entriesPerWord)
         require(words.size == expectedWordsLength) {
             "Invalid length given for storage, got: " + words.size +
-                    " but expected: " + expectedWordsLength
+                " but expected: " + expectedWordsLength
         }
     }
 
@@ -32,6 +29,6 @@ class PaddedBitArray internal constructor(
     }
 
     override fun copy(): BitArray {
-        return PaddedBitArray(version, size, Arrays.copyOf(words, words.size))
+        return PaddedBitArray(version, size, words.copyOf(words.size))
     }
 }

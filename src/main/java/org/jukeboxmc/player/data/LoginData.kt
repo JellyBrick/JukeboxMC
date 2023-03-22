@@ -2,18 +2,29 @@ package org.jukeboxmc.player.data
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import java.nio.charset.StandardCharsets
-import java.util.Base64
-import java.util.UUID
-import lombok.ToString
+import com.nimbusds.jose.JOSEException
+import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
+import com.nimbusds.jose.proc.JWSVerifierFactory
+import com.nukkitx.protocol.bedrock.packet.LoginPacket
+import com.nukkitx.protocol.bedrock.util.EncryptionUtils
+import org.jukeboxmc.player.info.Device
+import org.jukeboxmc.player.info.DeviceInfo
+import org.jukeboxmc.player.info.UIProfile
 import org.jukeboxmc.player.skin.Image
 import org.jukeboxmc.player.skin.Skin
+import java.nio.charset.StandardCharsets
+import java.security.PublicKey
+import java.util.Base64
+import java.util.UUID
+import org.jukeboxmc.player.skin.PersonaPiece
+import org.jukeboxmc.player.skin.PersonaPieceTint
+import org.jukeboxmc.player.skin.SkinAnimation
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
 class LoginData(loginPacket: LoginPacket) {
     var isXboxAuthenticated = false
         private set
@@ -32,8 +43,8 @@ class LoginData(loginPacket: LoginPacket) {
         private set
 
     init {
-        decodeChainData(loginPacket.getChainData().toString())
-        decodeSkinData(loginPacket.getSkinData().toString())
+        decodeChainData(loginPacket.chainData.toString())
+        decodeSkinData(loginPacket.skinData.toString())
     }
 
     fun getDeviceInfo(): DeviceInfo? {
@@ -76,8 +87,8 @@ class LoginData(loginPacket: LoginPacket) {
                 deviceModel,
                 deviceId,
                 clientId,
-                Device.Companion.getDevice(deviceOS),
-                UIProfile.Companion.getById(uiProfile)
+                Device.getDevice(deviceOS)!!,
+                UIProfile.getById(uiProfile)!!,
             )
         }
         if (skinMap.has("LanguageCode")) {
@@ -88,71 +99,71 @@ class LoginData(loginPacket: LoginPacket) {
         }
         skin = Skin()
         if (skinMap.has("SkinId")) {
-            skin.setSkinId(skinMap["SkinId"].asString)
+            skin!!.skinId = (skinMap["SkinId"].asString)
         }
         if (skinMap.has("SkinResourcePatch")) {
             skin!!.setResourcePatch(
-                kotlin.String(
+                String(
                     Base64.getDecoder().decode(skinMap["SkinResourcePatch"].asString),
-                    StandardCharsets.UTF_8
-                )
+                    StandardCharsets.UTF_8,
+                ),
             )
         }
         if (skinMap.has("SkinGeometryData")) {
             skin!!.setGeometryData(
-                kotlin.String(
+                String(
                     Base64.getDecoder().decode(skinMap["SkinGeometryData"].asString),
-                    StandardCharsets.UTF_8
-                )
+                    StandardCharsets.UTF_8,
+                ),
             )
         }
         if (skinMap.has("AnimationData")) {
             skin!!.setAnimationData(
-                kotlin.String(
+                String(
                     Base64.getDecoder().decode(skinMap["AnimationData"].asString),
-                    StandardCharsets.UTF_8
-                )
+                    StandardCharsets.UTF_8,
+                ),
             )
         }
         if (skinMap.has("CapeId")) {
             skin!!.setCapeId(skinMap["CapeId"].asString)
         }
         if (skinMap.has("SkinColor")) {
-            skin.setSkinColor(skinMap["SkinColor"].asString)
+            skin!!.skinColor = (skinMap["SkinColor"].asString)
         }
         if (skinMap.has("ArmSize")) {
-            skin.setArmSize(skinMap["ArmSize"].asString)
+            skin!!.armSize = (skinMap["ArmSize"].asString)
         }
         if (skinMap.has("PlayFabID")) {
-            skin.setPlayFabId(skinMap["PlayFabID"].asString)
+            skin!!.playFabId = (skinMap["PlayFabID"].asString)
         }
-        skin.setSkinData(getImage(skinMap, "Skin"))
+        skin!!.skinData = (getImage(skinMap, "Skin"))
         skin!!.setCapeData(getImage(skinMap, "Cape"))
         if (skinMap.has("PremiumSkin")) {
-            skin.setPremium(skinMap["PremiumSkin"].asBoolean)
+            skin!!.isPremium = (skinMap["PremiumSkin"].asBoolean)
         }
         if (skinMap.has("PersonaSkin")) {
-            skin.setPersona(skinMap["PersonaSkin"].asBoolean)
+            skin!!.isPersona = (skinMap["PersonaSkin"].asBoolean)
         }
         if (skinMap.has("CapeOnClassicSkin")) {
-            skin.setCapeOnClassic(skinMap["CapeOnClassicSkin"].asBoolean)
+            skin!!.isCapeOnClassic = (skinMap["CapeOnClassicSkin"].asBoolean)
         }
         if (skinMap.has("AnimatedImageData")) {
             val array = skinMap["AnimatedImageData"].asJsonArray
             for (jsonElement in array) {
-                skin.getSkinAnimations().add(getSkinAnimationData(jsonElement.asJsonObject))
+                skin!!.skinAnimations.add(getSkinAnimationData(jsonElement.asJsonObject))
             }
         }
         if (skinMap.has("PersonaPieces")) {
             val array = skinMap["PersonaPieces"].asJsonArray
             for (jsonElement in array) {
-                skin.getPersonaPieces().add(getPersonaPiece(jsonElement.asJsonObject))
+                skin!!.personaPieces.add(getPersonaPiece(jsonElement.asJsonObject))
             }
         }
         if (skinMap.has("PieceTintColors")) {
             val array = skinMap["PieceTintColors"].asJsonArray
             for (jsonElement in array) {
-                skin.getPersonaPieceTints().add(getPersonaPieceTint(jsonElement.asJsonObject))
+                skin!!.personaPieceTints.add(getPersonaPieceTint(jsonElement.asJsonObject))
             }
         }
     }
@@ -169,7 +180,7 @@ class LoginData(loginPacket: LoginPacket) {
             if (lastKey != null && !verify(lastKey, jws)) {
                 throw JOSEException("Unable to verify key in chain.")
             }
-            val payload: Map<String, Any> = jws.getPayload().toJSONObject()
+            val payload: Map<String, Any> = jws.payload.toJSONObject()
             val base64key = payload["identityPublicKey"] as String? ?: throw RuntimeException("No key found")
             lastKey = EncryptionUtils.generateKey(base64key)
         }
@@ -180,11 +191,13 @@ class LoginData(loginPacket: LoginPacket) {
         val tokenSplit = token.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         require(tokenSplit.size >= 2) { "Invalid token length" }
         return GSON.fromJson(
-            kotlin.String(
+            String(
                 Base64.getDecoder().decode(
-                    tokenSplit[1]
-                ), StandardCharsets.UTF_8
-            ), JsonObject::class.java
+                    tokenSplit[1],
+                ),
+                StandardCharsets.UTF_8,
+            ),
+            JsonObject::class.java,
         )
     }
 
@@ -196,7 +209,7 @@ class LoginData(loginPacket: LoginPacket) {
                 val height = skinMap[name + "ImageHeight"].asInt
                 Image(width, height, skinImage)
             } else {
-                Image.Companion.getImage(skinImage)
+                Image.getImage(skinImage)
             }
         }
         return Image(0, 0, ByteArray(0))
@@ -233,9 +246,10 @@ class LoginData(loginPacket: LoginPacket) {
     companion object {
         private val GSON = Gson()
         private val JWS_VERIFIER_FACTORY: JWSVerifierFactory = DefaultJWSVerifierFactory()
+
         @Throws(JOSEException::class)
         private fun verify(publicKey: PublicKey, jwsObject: JWSObject): Boolean {
-            return jwsObject.verify(JWS_VERIFIER_FACTORY.createJWSVerifier(jwsObject.getHeader(), publicKey))
+            return jwsObject.verify(JWS_VERIFIER_FACTORY.createJWSVerifier(jwsObject.header, publicKey))
         }
     }
 }

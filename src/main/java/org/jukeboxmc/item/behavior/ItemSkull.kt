@@ -16,11 +16,11 @@ class ItemSkull : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.Companion.create<Block>(BlockType.SKULL)
+        return Block.create<Block>(BlockType.SKULL)
     }
 
     var skullType: SkullType
-        get() = SkullType.values()[getMeta()]
+        get() = SkullType.values()[meta]
         set(skullType) {
             setMeta(skullType.ordinal)
         }

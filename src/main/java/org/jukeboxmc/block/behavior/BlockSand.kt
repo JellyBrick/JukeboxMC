@@ -1,8 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
-import java.util.Objects
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
@@ -20,6 +18,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -36,32 +35,31 @@ class BlockSand : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         world.setBlock(placePosition, this, 0)
         return true
     }
 
     override fun onUpdate(updateReason: UpdateReason): Long {
-        val blockDown = location!!.block!!.clone().getSide(BlockFace.DOWN)
+        val blockDown = location.block!!.clone().getSide(BlockFace.DOWN)
         if (blockDown.type == BlockType.AIR) {
-            val entity =
-                Objects.requireNonNull<EntityFallingBlock>(Entity.Companion.create<EntityFallingBlock>(EntityType.FALLING_BLOCK))
-            entity.location = location!!.add(0.5f, 0f, 0.5f)
-            entity.block = this
+            val entity = Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK)!!
+            entity.setLocation(location.add(0.5f, 0f, 0.5f))
+            entity.setBlock(this)
             val fallingBlockEvent = FallingBlockEvent(this, entity)
-            Server.Companion.getInstance().getPluginManager().callEvent(fallingBlockEvent)
+            Server.instance.pluginManager.callEvent(fallingBlockEvent)
             if (fallingBlockEvent.isCancelled) {
                 return -1
             }
-            location.world.setBlock(location, Block.Companion.create<Block>(BlockType.AIR))
+            location.world?.setBlock(location, create(BlockType.AIR))
             entity.spawn()
         }
         return -1
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemSand>(ItemType.SAND).setSandType(sandType)
+        return Item.create<ItemSand>(ItemType.SAND).setSandType(sandType)
     }
 
     fun setSandType(sandType: SandType): BlockSand {
