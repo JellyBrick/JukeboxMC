@@ -4,7 +4,7 @@ import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
-import org.jukeboxmc.world.generator.`object`.tree.Tree
+import org.jukeboxmc.world.generator.thing.tree.Tree
 import java.util.Random
 
 /**

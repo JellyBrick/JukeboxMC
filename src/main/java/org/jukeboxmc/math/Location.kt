@@ -142,13 +142,13 @@ class Location @JvmOverloads constructor(
 
     override fun toString(): String {
         return "Location{" +
-                "world=" + world?.name +
-                ", x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                ", yaw=" + yaw +
-                ", pitch=" + pitch +
-                ", dimension=" + dimension.dimensionName +
-                '}'
+            "world=" + world?.name +
+            ", x=" + x +
+            ", y=" + y +
+            ", z=" + z +
+            ", yaw=" + yaw +
+            ", pitch=" + pitch +
+            ", dimension=" + dimension.dimensionName +
+            '}'
     }
 }

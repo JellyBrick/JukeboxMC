@@ -1,7 +1,7 @@
 package org.jukeboxmc.world.generator.populator.biome
 
-import org.jukeboxmc.world.generator.`object`.tree.Tree
 import org.jukeboxmc.world.generator.populator.TreePopulator
+import org.jukeboxmc.world.generator.thing.tree.Tree
 
 /**
  * @author LucGamesYT

@@ -4,7 +4,6 @@ import com.nukkitx.protocol.bedrock.packet.ContainerSetDataPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
-import org.jukeboxmc.crafting.recipes.SmeltingRecipe
 import org.jukeboxmc.inventory.FurnaceInventory
 import org.jukeboxmc.inventory.Inventory
 import org.jukeboxmc.inventory.WindowId

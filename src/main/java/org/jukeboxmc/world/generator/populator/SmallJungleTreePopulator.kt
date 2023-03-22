@@ -5,7 +5,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
-import org.jukeboxmc.world.generator.`object`.tree.SmallJungleTree
+import org.jukeboxmc.world.generator.thing.tree.SmallJungleTree
 import java.util.Random
 
 /**

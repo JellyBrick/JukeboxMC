@@ -16,6 +16,7 @@ abstract class Form<R> @JvmOverloads constructor(
             field = value
             dirty = true
         }
+
     // Caching
     protected var cache: JSONObject? = null
     protected var dirty = false

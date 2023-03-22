@@ -1,4 +1,4 @@
-package org.jukeboxmc.world.generator.`object`
+package org.jukeboxmc.world.generator.thing
 
 import org.jukeboxmc.block.Block
 

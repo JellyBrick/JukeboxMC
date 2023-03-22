@@ -24,10 +24,10 @@ import org.jukeboxmc.world.generator.biome.generation.GroundGeneratorSnowy
 import org.jukeboxmc.world.generator.biomegrid.MapLayer
 import org.jukeboxmc.world.generator.noise.PerlinOctaveGenerator
 import org.jukeboxmc.world.generator.noise.SimplexOctaveGenerator
-import org.jukeboxmc.world.generator.`object`.OreType
 import org.jukeboxmc.world.generator.populator.OrePopulator
 import org.jukeboxmc.world.generator.populator.Populator
 import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
+import org.jukeboxmc.world.generator.thing.OreType
 import java.util.Random
 import java.util.concurrent.ThreadLocalRandom
 
