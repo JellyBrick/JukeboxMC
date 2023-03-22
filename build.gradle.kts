@@ -86,9 +86,13 @@ tasks.create<FormatTask>("ktFormat") {
     source(files("src"))
 }
 
+application {
+    mainClass.set("org.jukeboxmc.Bootstrap")
+}
+
 tasks {
     shadowJar {
-        dependsOn("ktLint")
+        dependsOn("ktLint", distTar, distZip)
         archiveClassifier.set("")
         manifest {
             attributes(

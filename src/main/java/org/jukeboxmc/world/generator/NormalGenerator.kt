@@ -266,8 +266,8 @@ open class NormalGenerator(private val world: World) : Generator() {
 
     companion object {
         const val WATER_HEIGHT = 64
-        private val HEIGHT_MAP: MutableMap<Biome?, BiomeHeight> = EnumMap(org.jukeboxmc.world.Biome::class.java)
-        private val GROUND_MAP: MutableMap<Biome, GroundGenerator> = EnumMap(org.jukeboxmc.world.Biome::class.java)
+        private val HEIGHT_MAP: MutableMap<Biome, BiomeHeight> = EnumMap(Biome::class.java)
+        private val GROUND_MAP: MutableMap<Biome, GroundGenerator> = EnumMap(Biome::class.java)
         private val ELEVATION_WEIGHT = Array(5) { DoubleArray(5) }
 
         init {

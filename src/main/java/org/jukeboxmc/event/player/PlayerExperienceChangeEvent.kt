@@ -15,5 +15,4 @@ class PlayerExperienceChangeEvent(
     newLevel: Int,
 ) : PlayerEvent(player), Cancellable {
     var newLevel: Int = newExperience
-
 }

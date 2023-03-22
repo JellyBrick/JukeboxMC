@@ -7,7 +7,7 @@ import com.nukkitx.math.vector.Vector3l
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.world.Dimension
 import java.util.*
-import kotlin.math.roundToLong
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /**
@@ -204,7 +204,7 @@ open class Vector : Cloneable {
     }
 
     fun round(): Vector {
-        return Vector(x.roundToLong(), y.roundToLong(), z.roundToLong())
+        return Vector(x.roundToInt(), y.roundToInt(), z.roundToInt())
     }
 
     companion object {

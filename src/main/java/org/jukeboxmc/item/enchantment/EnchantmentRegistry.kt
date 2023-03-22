@@ -7,7 +7,7 @@ import java.util.EnumMap
  * @version 1.0
  */
 object EnchantmentRegistry {
-    private val ENCHANTMENTS: MutableMap<EnchantmentType?, Class<out Enchantment>> = EnumMap(org.jukeboxmc.item.enchantment.EnchantmentType::class.java)
+    private val ENCHANTMENTS: MutableMap<EnchantmentType, Class<out Enchantment>> = EnumMap(EnchantmentType::class.java)
     private val ENCHANTMENT_BY_ID: MutableMap<Short, EnchantmentType> = HashMap()
     fun init() {
         register(EnchantmentType.AQUA_AFFINITY, EnchantmentAquaAffinity::class.java)

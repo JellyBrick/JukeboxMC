@@ -7,7 +7,7 @@ import java.util.EnumMap
  * @version 1.0
  */
 object EffectRegistry {
-    private val EFFECT_MAP: MutableMap<EffectType?, Class<out Effect>> = EnumMap(org.jukeboxmc.potion.EffectType::class.java)
+    private val EFFECT_MAP: MutableMap<EffectType, Class<out Effect>> = EnumMap(EffectType::class.java)
     fun init() {
         register(EffectType.SPEED, SpeedEffect::class.java)
         register(EffectType.SLOWNESS, SlownessEffect::class.java)
