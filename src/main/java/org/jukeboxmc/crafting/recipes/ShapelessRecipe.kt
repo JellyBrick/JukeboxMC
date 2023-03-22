@@ -1,9 +1,13 @@
 package org.jukeboxmc.crafting.recipes
 
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
+import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import java.util.UUID
+import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.item.Item
+import java.util.UUID
 
 /**
  * @author LucGamesYT
@@ -11,10 +15,7 @@ import org.jukeboxmc.item.Item
  */
 class ShapelessRecipe : Recipe() {
     private val ingredients: MutableList<ItemDescriptorWithCount> = ObjectArrayList<ItemDescriptorWithCount>()
-    private override val outputs: MutableList<ItemData?> = ObjectArrayList()
-    override fun getOutputs(): List<ItemData?> {
-        return outputs
-    }
+    override val outputs: MutableList<ItemData?> = ObjectArrayList()
 
     fun addIngredient(vararg items: Item): ShapelessRecipe {
         val itemDataList: MutableList<ItemDescriptorWithCount> = ArrayList<ItemDescriptorWithCount>()
@@ -47,7 +48,7 @@ class ShapelessRecipe : Recipe() {
             UUID.randomUUID(),
             "crafting_table",
             1,
-            craftingManager.getHighestNetworkId() + 1
+            craftingManager.highestNetworkId + 1,
         )
     }
 }
