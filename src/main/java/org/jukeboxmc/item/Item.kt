@@ -466,16 +466,12 @@ open class Item : Cloneable {
         fun create(identifier: Identifier): Item {
             val itemType = ItemRegistry.getItemType(identifier)
             return if (ItemRegistry.itemClassExists(itemType)) {
-                try {
-                    val constructor = ItemRegistry.getItemClass(itemType)
+                val constructor = ItemRegistry.getItemClass(itemType)
                         .getConstructor(
-                            ItemType::class.java,
+                                ItemType::class.java,
                         )
-                    constructor.isAccessible = true
-                    constructor.newInstance(itemType)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                constructor.isAccessible = true
+                constructor.newInstance(itemType)
             } else {
                 Item(itemType)
             }
@@ -486,16 +482,12 @@ open class Item : Cloneable {
 
         fun create(itemType: ItemType): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
-                try {
-                    val constructor = ItemRegistry.getItemClass(itemType)
+                val constructor = ItemRegistry.getItemClass(itemType)
                         .getConstructor(
-                            ItemType::class.java,
+                                ItemType::class.java,
                         )
-                    constructor.isAccessible = true
-                    constructor.newInstance(itemType)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                constructor.isAccessible = true
+                constructor.newInstance(itemType)
             } else {
                 Item(itemType)
             }
@@ -506,16 +498,12 @@ open class Item : Cloneable {
 
         fun create(itemType: ItemType, amount: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
-                try {
-                    val constructor = ItemRegistry.getItemClass(itemType)
+                val constructor = ItemRegistry.getItemClass(itemType)
                         .getConstructor(
-                            ItemType::class.java,
+                                ItemType::class.java,
                         )
-                    constructor.isAccessible = true
-                    constructor.newInstance(itemType).setAmount(amount)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                constructor.isAccessible = true
+                constructor.newInstance(itemType).setAmount(amount)
             } else {
                 Item(itemType, true).setAmount(amount)
             }
@@ -526,16 +514,12 @@ open class Item : Cloneable {
 
         fun create(itemType: ItemType, amount: Int, meta: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
-                try {
-                    val constructor = ItemRegistry.getItemClass(itemType)
+                val constructor = ItemRegistry.getItemClass(itemType)
                         .getConstructor(
-                            ItemType::class.java,
+                                ItemType::class.java,
                         )
-                    constructor.isAccessible = true
-                    constructor.newInstance(itemType).setAmount(amount).setMeta(meta)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                constructor.isAccessible = true
+                constructor.newInstance(itemType).setAmount(amount).setMeta(meta)
             } else {
                 Item(itemType, true).setAmount(amount).setMeta(meta)
             }
@@ -554,12 +538,8 @@ open class Item : Cloneable {
                 .putCompound("tag", if (item.toNbt() != null) item.toNbt() else NbtMap.EMPTY)
                 .build()
             val buffer = Unpooled.buffer()
-            try {
-                NbtUtils.createWriterLE(ByteBufOutputStream(buffer))
+            NbtUtils.createWriterLE(ByteBufOutputStream(buffer))
                     .use { networkWriter -> networkWriter.writeTag(itemNbt) }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
-            }
             return Base64.getMimeEncoder().encodeToString(Utils.array(buffer))
         }
 

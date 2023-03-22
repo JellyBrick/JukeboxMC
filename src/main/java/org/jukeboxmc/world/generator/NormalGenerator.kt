@@ -1,7 +1,5 @@
 package org.jukeboxmc.world.generator
 
-import java.util.Random
-import java.util.concurrent.ThreadLocalRandom
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockStone
@@ -29,8 +27,9 @@ import org.jukeboxmc.world.generator.noise.SimplexOctaveGenerator
 import org.jukeboxmc.world.generator.`object`.OreType
 import org.jukeboxmc.world.generator.populator.OrePopulator
 import org.jukeboxmc.world.generator.populator.Populator
-import org.jukeboxmc.world.generator.populator.biome.BiomePopulator
 import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
+import java.util.Random
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * @author LucGamesYT
@@ -95,24 +94,24 @@ class NormalGenerator(private val world: World) : Generator() {
                         10,
                         33,
                         0,
-                        80
+                        80,
                     ),
                     OreType(
                         Block.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.ANDESITE),
                         10,
                         33,
                         0,
-                        80
+                        80,
                     ),
                     OreType(
                         Block.create<BlockStone>(BlockType.STONE).setStoneType(StoneType.DIORITE),
                         10,
                         33,
                         0,
-                        80
-                    )
-                )
-            )
+                        80,
+                    ),
+                ),
+            ),
         )
     }
 
@@ -245,19 +244,15 @@ class NormalGenerator(private val world: World) : Generator() {
     }
 
     override fun populate(manager: PopulationChunkManager, chunkX: Int, chunkZ: Int) {
-        try {
-            random.setSeed(0XDEADBEEFL xor (chunkX.toLong() shl 8) xor chunkZ.toLong() xor world.seed)
-            val chunk = manager.getChunk(chunkX, chunkZ) ?: return
-            for (populator in populators) {
-                populator.populate(random, chunk.world, manager, chunkX, chunkZ)
-            }
-            val biome = chunk.getBiome(7, 7, 7)
-            val biomePopulator: BiomePopulator = BiomePopulatorRegistry.getBiomePopulator(biome!!) ?: return
-            for (populator in biomePopulator.getPopulators()) {
-                populator.populate(random, chunk.world, manager, chunkX, chunkZ)
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
+        random.setSeed(0XDEADBEEFL xor (chunkX.toLong() shl 8) xor chunkZ.toLong() xor world.seed)
+        val chunk = manager.getChunk(chunkX, chunkZ) ?: return
+        populators.forEach {
+            it.populate(random, chunk.world, manager, chunkX, chunkZ)
+        }
+        val biome = chunk.getBiome(7, 7, 7) ?: return
+        val biomePopulator = BiomePopulatorRegistry.getBiomePopulator(biome) ?: return
+        biomePopulator.getPopulators().forEach {
+            it.populate(random, chunk.world, manager, chunkX, chunkZ)
         }
     }
 
@@ -278,7 +273,7 @@ class NormalGenerator(private val world: World) : Generator() {
                 Biome.COLD_BEACH,
                 Biome.DESERT,
                 Biome.DESERT_HILLS,
-                Biome.DESERT_MUTATED
+                Biome.DESERT_MUTATED,
             )
             setBiomeGround(GroundGeneratorRocky(), Biome.STONE_BEACH)
             setBiomeGround(GroundGeneratorSnowy(), Biome.ICE_PLAINS_SPIKES)
@@ -287,17 +282,17 @@ class NormalGenerator(private val world: World) : Generator() {
             setBiomeGround(
                 GroundGeneratorPatchGravel(),
                 Biome.EXTREME_HILLS_MUTATED,
-                Biome.EXTREME_HILLS_PLUS_TREES_MUTATED
+                Biome.EXTREME_HILLS_PLUS_TREES_MUTATED,
             )
             setBiomeGround(GroundGeneratorPatchDirtAndStone(), Biome.SAVANNA_MUTATED, Biome.SAVANNA_PLATEAU_MUTATED)
             setBiomeGround(
                 GroundGeneratorPatchDirt(),
                 Biome.MEGA_TAIGA,
                 Biome.MEGA_TAIGA_HILLS,
-                Biome.REDWOOD_TAIGA_MUTATED
+                Biome.REDWOOD_TAIGA_MUTATED,
             )
-            //setBiomeGround( new GroundGeneratorMesa(), Biome.MESA, Biome.MESA_PLATEAU, Biome.MESA_PLATEAU_STONE );
-            //setBiomeGround( new GroundGeneratorMesa( GroundGeneratorMesa.MesaType.BRYCE ), Biome.MESA_BRYCE );
+            // setBiomeGround( new GroundGeneratorMesa(), Biome.MESA, Biome.MESA_PLATEAU, Biome.MESA_PLATEAU_STONE );
+            // setBiomeGround( new GroundGeneratorMesa( GroundGeneratorMesa.MesaType.BRYCE ), Biome.MESA_BRYCE );
             // setBiomeGround( new GroundGeneratorMesa( GroundGeneratorMesa.MesaType.FOREST ), Biome.MESA_PLATEAU_STONE, Biome.MESA_PLATEAU_STONE_MUTATED );
             setBiomeHeight(BiomeHeight.OCEAN, Biome.OCEAN, Biome.FROZEN_OCEAN)
             setBiomeHeight(BiomeHeight.DEEP_OCEAN, Biome.DEEP_OCEAN)
@@ -310,7 +305,7 @@ class NormalGenerator(private val world: World) : Generator() {
                 Biome.EXTREME_HILLS,
                 Biome.EXTREME_HILLS_PLUS_TREES,
                 Biome.EXTREME_HILLS_MUTATED,
-                Biome.EXTREME_HILLS_PLUS_TREES_MUTATED
+                Biome.EXTREME_HILLS_PLUS_TREES_MUTATED,
             )
             setBiomeHeight(BiomeHeight.MID_PLAINS, Biome.TAIGA, Biome.COLD_TAIGA, Biome.MEGA_TAIGA)
             setBiomeHeight(BiomeHeight.SWAMPLAND, Biome.SWAMPLAND)
@@ -326,13 +321,13 @@ class NormalGenerator(private val world: World) : Generator() {
                 Biome.COLD_TAIGA_HILLS,
                 Biome.MEGA_TAIGA_HILLS,
                 Biome.MESA_PLATEAU_STONE_MUTATED,
-                Biome.MESA_PLATEAU_MUTATED
-            ) //, Biome.ICE_MOUNTAINS
+                Biome.MESA_PLATEAU_MUTATED,
+            ) // , Biome.ICE_MOUNTAINS
             setBiomeHeight(
                 BiomeHeight.HIGH_PLATEAU,
                 Biome.SAVANNA_PLATEAU,
                 Biome.MESA_PLATEAU_STONE,
-                Biome.MESA_PLATEAU
+                Biome.MESA_PLATEAU,
             )
             setBiomeHeight(BiomeHeight.FLATLANDS_HILLS, Biome.DESERT_MUTATED)
             setBiomeHeight(BiomeHeight.BIG_HILLS, Biome.ICE_PLAINS_SPIKES)
@@ -343,13 +338,13 @@ class NormalGenerator(private val world: World) : Generator() {
                 Biome.JUNGLE_MUTATED,
                 Biome.JUNGLE_EDGE_MUTATED,
                 Biome.BIRCH_FOREST_MUTATED,
-                Biome.ROOFED_FOREST_MUTATED
+                Biome.ROOFED_FOREST_MUTATED,
             )
             setBiomeHeight(
                 BiomeHeight.MID_HILLS,
                 Biome.TAIGA_MUTATED,
                 Biome.COLD_TAIGA_MUTATED,
-                Biome.REDWOOD_TAIGA_MUTATED
+                Biome.REDWOOD_TAIGA_MUTATED,
             )
             setBiomeHeight(BiomeHeight.MID_HILLS2, Biome.FLOWER_FOREST)
             setBiomeHeight(BiomeHeight.LOW_SPIKES, Biome.SAVANNA_MUTATED)

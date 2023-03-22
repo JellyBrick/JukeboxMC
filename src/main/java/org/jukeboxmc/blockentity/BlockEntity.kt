@@ -12,7 +12,6 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Dimension
-import java.lang.reflect.InvocationTargetException
 
 /**
  * @author LucGamesYT
@@ -105,22 +104,12 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
 
     companion object {
         fun create(blockEntityType: BlockEntityType, block: Block): BlockEntity {
-            return try {
-                val constructor = BlockEntityRegistry.getBlockEntityClass(blockEntityType).getConstructor(
+            val constructor = BlockEntityRegistry.getBlockEntityClass(blockEntityType).getConstructor(
                     Block::class.java,
                     BlockEntityType::class.java,
-                )
-                constructor.isAccessible = true
-                constructor.newInstance(block, blockEntityType)
-            } catch (e: NoSuchMethodException) {
-                throw RuntimeException(e)
-            } catch (e: InstantiationException) {
-                throw RuntimeException(e)
-            } catch (e: IllegalAccessException) {
-                throw RuntimeException(e)
-            } catch (e: InvocationTargetException) {
-                throw RuntimeException(e)
-            }
+            )
+            constructor.isAccessible = true
+            return constructor.newInstance(block, blockEntityType)
         }
 
         inline fun <reified T : BlockEntity> create(blockEntityType: BlockEntityType, block: Block): T =

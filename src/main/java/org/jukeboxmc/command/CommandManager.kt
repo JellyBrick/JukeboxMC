@@ -14,7 +14,6 @@ import org.jukeboxmc.command.internal.StatusCommand
 import org.jukeboxmc.command.internal.StopCommand
 import org.jukeboxmc.command.internal.TeleportCommand
 import org.jukeboxmc.command.internal.TimeCommand
-import java.lang.reflect.InvocationTargetException
 import java.util.Arrays
 
 /**
@@ -41,70 +40,56 @@ class CommandManager {
             StatusCommand::class.java,
             TimeCommand::class.java,
         )
-        for (commandClass in commands) {
-            try {
-                registerCommand(commandClass.getConstructor().newInstance())
-            } catch (e: InstantiationException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            } catch (e: NoSuchMethodException) {
-                e.printStackTrace()
-            } catch (e: InvocationTargetException) {
-                e.printStackTrace()
-            }
+        commands.forEach { commandClass ->
+            registerCommand(commandClass.getConstructor().newInstance())
         }
     }
 
     fun handleCommandInput(commandSender: CommandSender, input: String) {
-        try {
-            val commandParts = input.substring(1).split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val commandIdentifier = commandParts[0]
-            var consumed = 0
-            var targetCommand: Command? = null
-            while (targetCommand == null) {
-                for (command in commands) {
-                    if (command.commandData.name.equals(
-                            commandIdentifier,
-                            ignoreCase = true,
-                        ) || command.commandData.getAliases().contains(
-                            commandIdentifier,
-                        )
-                    ) {
-                        targetCommand = command
-                        break
-                    }
-                }
-                consumed++
-                if (targetCommand == null) {
-                    if (commandParts.size == consumed) {
-                        break
-                    }
+        val commandParts = input.substring(1).split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val commandIdentifier = commandParts[0]
+        var consumed = 0
+        var targetCommand: Command? = null
+        while (targetCommand == null) {
+            for (command in commands) {
+                if (command.commandData.name.equals(
+                        commandIdentifier,
+                        ignoreCase = true,
+                    ) || command.commandData.getAliases().contains(
+                        commandIdentifier,
+                    )
+                ) {
+                    targetCommand = command
+                    break
                 }
             }
+            consumed++
             if (targetCommand == null) {
-                commandSender.sendMessage("The command for $commandIdentifier could not be found")
-                return
-            }
-            if (targetCommand.commandData.getPermission() != null && !commandSender.hasPermission(targetCommand.commandData.getPermission()!!)) {
-                if (targetCommand.commandData.getPermissionMessage().isNotEmpty()) {
-                    commandSender.sendMessage(targetCommand.commandData.getPermissionMessage())
-                } else {
-                    commandSender.sendMessage("§cYou don't have permission to do that")
+                if (commandParts.size == consumed) {
+                    break
                 }
-                return
             }
-            val params: Array<String>
-            if (commandParts.size > consumed) {
-                params = Array(commandParts.size - consumed) { "" }
-                System.arraycopy(commandParts, consumed, params, 0, commandParts.size - consumed)
-            } else {
-                params = emptyArray()
-            }
-            targetCommand.execute(commandSender, commandIdentifier, params)
-        } catch (e: Throwable) {
-            e.printStackTrace()
         }
+        if (targetCommand == null) {
+            commandSender.sendMessage("The command for $commandIdentifier could not be found")
+            return
+        }
+        if (targetCommand.commandData.getPermission() != null && !commandSender.hasPermission(targetCommand.commandData.getPermission()!!)) {
+            if (targetCommand.commandData.getPermissionMessage().isNotEmpty()) {
+                commandSender.sendMessage(targetCommand.commandData.getPermissionMessage())
+            } else {
+                commandSender.sendMessage("§cYou don't have permission to do that")
+            }
+            return
+        }
+        val params: Array<String>
+        if (commandParts.size > consumed) {
+            params = Array(commandParts.size - consumed) { "" }
+            System.arraycopy(commandParts, consumed, params, 0, commandParts.size - consumed)
+        } else {
+            params = emptyArray()
+        }
+        targetCommand.execute(commandSender, commandIdentifier, params)
     }
 
     fun registerCommand(command: Command) {

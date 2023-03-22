@@ -33,19 +33,15 @@ import java.util.concurrent.CompletableFuture
  * @author LucGamesYT
  * @version 1.0
  */
-class LevelDB(private val world: World) {
+class LevelDB(private val world: World) : AutoCloseable {
     private var db: DB
 
     init {
-        try {
-            val options = Options()
-                .createIfMissing(true)
-                .compressionType(CompressionType.ZLIB_RAW)
-                .blockSize(64 * 1024)
-            db = LevelDB.PROVIDER.open(File(world.worldFolder, "db"), options)
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
+        val options = Options()
+            .createIfMissing(true)
+            .compressionType(CompressionType.ZLIB_RAW)
+            .blockSize(64 * 1024)
+        db = LevelDB.PROVIDER.open(File(world.worldFolder, "db"), options)
     }
 
     fun readChunk(chunk: Chunk): CompletableFuture<Chunk> {
@@ -238,83 +234,67 @@ class LevelDB(private val world: World) {
             if (!chunk.isGenerated) {
                 return@supplyAsync null
             }
-            try {
-                db.createWriteBatch().use { writeBatch ->
-                    // Write subChunks
-                    val minY = chunk.minY shr 4
-                    for (subY in 0 until chunk.availableSubChunks) {
-                        if (chunk.subChunks[subY] == null) {
-                            continue
-                        }
-                        val subChunkIndex = subY + minY
-                        chunk.saveChunkSlice(chunk.subChunks[subY]!!.blocks, subChunkIndex, writeBatch)
+            db.createWriteBatch().use { writeBatch ->
+                // Write subChunks
+                val minY = chunk.minY shr 4
+                for (subY in 0 until chunk.availableSubChunks) {
+                    if (chunk.subChunks[subY] == null) {
+                        continue
                     }
-
-                    // Write chunkVersion
-                    val chunkVersion = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2c.toByte())
-                    writeBatch.put(chunkVersion, byteArrayOf(Chunk.CHUNK_VERSION.toByte()))
-
-                    // Write blockEntities
-                    val blockEntitiesKey = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x31.toByte())
-                    val buffer = Unpooled.buffer()
-                    val blockEntities = chunk.blockEntities
-                    if (!blockEntities.isEmpty()) {
-                        try {
-                            NbtUtils.createWriterLE(ByteBufOutputStream(buffer)).use { networkWriter ->
-                                for ((_, blockEntity) in blockEntities) {
-                                    try {
-                                        val build = blockEntity!!.toCompound().build()
-                                        networkWriter.writeTag(build)
-                                    } catch (e: IOException) {
-                                        e.printStackTrace()
-                                    }
-                                }
-                            }
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                        if (buffer.readableBytes() > 0) {
-                            writeBatch.put(blockEntitiesKey, Utils.array(buffer))
-                        }
-                        buffer.release()
-                    }
-
-                    // Write biomeAndHeight
-                    val biomeAndHeight = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2b.toByte())
-                    val heightAndBiomesBuffer = Unpooled.buffer()
-                    for (height in chunk.height) {
-                        heightAndBiomesBuffer.writeShortLE(height.toInt())
-                    }
-                    var last: Palette<Biome>? = null
-                    var biomePalette: Palette<Biome>
-                    for (y in chunk.minY shr 4 until (chunk.maxY + 1 shr 4)) {
-                        biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
-                        biomePalette.writeToStorageRuntime(
-                            heightAndBiomesBuffer,
-                            object : RuntimeDataSerializer<Biome> {
-                                override fun serialize(value: Biome): Int {
-                                    return value.id
-                                }
-                            },
-                            last,
-                        )
-                        last = biomePalette
-                    }
-                    writeBatch.put(biomeAndHeight, Utils.array(heightAndBiomesBuffer))
-                    db.write(writeBatch)
-                    return@supplyAsync null
+                    val subChunkIndex = subY + minY
+                    chunk.saveChunkSlice(chunk.subChunks[subY]!!.blocks, subChunkIndex, writeBatch)
                 }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
+
+                // Write chunkVersion
+                val chunkVersion = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2c.toByte())
+                writeBatch.put(chunkVersion, byteArrayOf(Chunk.CHUNK_VERSION.toByte()))
+
+                // Write blockEntities
+                val blockEntitiesKey = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x31.toByte())
+                val buffer = Unpooled.buffer()
+                val blockEntities = chunk.blockEntities
+                if (!blockEntities.isEmpty()) {
+                    NbtUtils.createWriterLE(ByteBufOutputStream(buffer)).use { networkWriter ->
+                        blockEntities.forEach { (_, blockEntity) ->
+                            val build = blockEntity.toCompound().build()
+                            networkWriter.writeTag(build)
+                        }
+                    }
+                    if (buffer.readableBytes() > 0) {
+                        writeBatch.put(blockEntitiesKey, Utils.array(buffer))
+                    }
+                    buffer.release()
+                }
+
+                // Write biomeAndHeight
+                val biomeAndHeight = Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2b.toByte())
+                val heightAndBiomesBuffer = Unpooled.buffer()
+                for (height in chunk.height) {
+                    heightAndBiomesBuffer.writeShortLE(height.toInt())
+                }
+                var last: Palette<Biome>? = null
+                var biomePalette: Palette<Biome>
+                for (y in chunk.minY shr 4 until (chunk.maxY + 1 shr 4)) {
+                    biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
+                    biomePalette.writeToStorageRuntime(
+                        heightAndBiomesBuffer,
+                        object : RuntimeDataSerializer<Biome> {
+                            override fun serialize(value: Biome): Int {
+                                return value.id
+                            }
+                        },
+                        last,
+                    )
+                    last = biomePalette
+                }
+                writeBatch.put(biomeAndHeight, Utils.array(heightAndBiomesBuffer))
+                db.write(writeBatch)
+                return@supplyAsync null
             }
         }, Server.instance.scheduler.chunkExecutor)
     }
 
-    fun close() {
-        try {
-            db!!.close()
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
+    override fun close() {
+        db.close()
     }
 }

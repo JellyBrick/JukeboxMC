@@ -1,6 +1,8 @@
 package org.jukeboxmc.item
 
 import com.google.gson.Gson
+import org.jukeboxmc.Bootstrap
+import org.jukeboxmc.config.ConfigSection
 import org.jukeboxmc.item.behavior.ItemAcaciaSign
 import org.jukeboxmc.item.behavior.ItemAir
 import org.jukeboxmc.item.behavior.ItemAnvil
@@ -200,21 +202,18 @@ import org.jukeboxmc.item.behavior.ItemWoodenSword
 import org.jukeboxmc.item.behavior.ItemWoodenTrapdoor
 import org.jukeboxmc.item.behavior.ItemYellowWool
 import org.jukeboxmc.util.Identifier
-import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.Objects
 import java.util.stream.Collectors
-import org.jukeboxmc.Bootstrap
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 object ItemRegistry {
-    private val ITEMS: MutableMap<ItemType?, ItemRegistryData> = LinkedHashMap()
-    private val ITEM_PROPERTIES: MutableMap<Identifier?, ItemProperties> = LinkedHashMap()
-    private val ITEMCLASS_FROM_ITEMTYPE: MutableMap<ItemType?, Class<out Item>?> = LinkedHashMap()
-    private val ITEMTYPE_FROM_IDENTIFIER: MutableMap<Identifier?, ItemType> = LinkedHashMap()
+    private val ITEMS: MutableMap<ItemType, ItemRegistryData> = LinkedHashMap()
+    private val ITEM_PROPERTIES: MutableMap<Identifier, ItemProperties> = LinkedHashMap()
+    private val ITEMCLASS_FROM_ITEMTYPE: MutableMap<ItemType, Class<out Item>> = LinkedHashMap()
+    private val ITEMTYPE_FROM_IDENTIFIER: MutableMap<Identifier, ItemType> = LinkedHashMap()
     fun init() {
         register(ItemType.ACACIA_BOAT, ItemRegistryData(Identifier.fromString("minecraft:acacia_boat")))
         register(
@@ -3347,32 +3346,26 @@ object ItemRegistry {
     }
 
     fun initItemProperties() {
-        val GSON = Gson()
-        try {
-            Objects.requireNonNull<InputStream>(
-                Bootstrap::class.java.getClassLoader().getResourceAsStream("item_properties.json"),
-            ).use { inputStream ->
-                val inputStreamReader = InputStreamReader(inputStream)
-                val itemEntries =
-                    GSON.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
-                itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
-                    ITEM_PROPERTIES[
-                        Identifier.fromString(
-                            identifier,
-                        ),
-                    ] = ItemProperties((map["max_stack_size"] as Double).toInt())
-                }
+        val gson = Gson()
+        Bootstrap::class.java.classLoader.getResourceAsStream("item_properties.json")!!.use { inputStream ->
+            val inputStreamReader = InputStreamReader(inputStream)
+            val itemEntries =
+                gson.fromJson<Map<String, ConfigSection>>(inputStreamReader, MutableMap::class.java)
+            itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
+                ITEM_PROPERTIES[
+                    Identifier.fromString(
+                        identifier,
+                    ),
+                ] = ItemProperties((map["max_stack_size"] as Double).toInt())
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
     private fun register(itemType: ItemType, registryData: ItemRegistryData) {
         ITEMS[itemType] = registryData
         ITEMTYPE_FROM_IDENTIFIER[registryData.identifier] = itemType
-        if (registryData.itemClass != null) {
-            ITEMCLASS_FROM_ITEMTYPE[itemType] = registryData.itemClass
+        registryData.itemClass?.let {
+            ITEMCLASS_FROM_ITEMTYPE[itemType] = it
         }
     }
 

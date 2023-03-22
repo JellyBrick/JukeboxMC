@@ -1,5 +1,7 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 
@@ -9,8 +11,8 @@ import org.jukeboxmc.player.Player
  */
 class EntityEventHandler : PacketHandler<EntityEventPacket> {
     override fun handle(packet: EntityEventPacket, server: Server, player: Player) {
-        if (packet.getType() == EntityEventType.EATING_ITEM) {
-            if (packet.getData() == 0 || packet.getRuntimeEntityId() != player.entityId) {
+        if (packet.type == EntityEventType.EATING_ITEM) {
+            if (packet.data == 0 || packet.runtimeEntityId != player.entityId) {
                 return
             }
             server.broadcastPacket(packet)

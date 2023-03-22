@@ -31,7 +31,7 @@ import java.util.*
  */
 @Suppress("LeakingThis")
 open class EntityHuman : EntityLiving(), InventoryHolder {
-    var uUID: UUID
+    var uuid: UUID = UUID.randomUUID()
     open var skin: Skin? = null
     protected var deviceInfo: DeviceInfo
     protected val playerInventory: PlayerInventory
@@ -41,7 +41,6 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         private set
 
     init {
-        uUID = UUID.randomUUID()
         deviceInfo = DeviceInfo(
             "Unknown",
             UUID.randomUUID().toString(),
@@ -69,7 +68,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         val addPlayerPacket = AddPlayerPacket()
         addPlayerPacket.runtimeEntityId = this.entityId
         addPlayerPacket.uniqueEntityId = this.entityId
-        addPlayerPacket.uuid = uUID
+        addPlayerPacket.uuid = uuid
         addPlayerPacket.username = name
         addPlayerPacket.platformChatId = deviceInfo.deviceId
         addPlayerPacket.position = this.location.toVector3f()

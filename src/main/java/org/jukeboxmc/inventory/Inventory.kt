@@ -50,7 +50,7 @@ abstract class Inventory {
     }
 
     open fun removeViewer(player: Player) {
-        viewer.removeIf { target: Player -> target.uUID == player.uUID }
+        viewer.removeIf { target: Player -> target.uuid == player.uuid }
     }
 
     fun getViewer(): MutableSet<Player> {

@@ -10,10 +10,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.Block
 import java.io.DataInputStream
-import java.io.IOException
 import java.io.InputStream
-import java.util.Collections
-import java.util.LinkedList
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
 import java.util.zip.GZIPInputStream
@@ -35,22 +33,18 @@ object BlockPalette {
         val resourceAsStream: InputStream? =
             Bootstrap::class.java.classLoader.getResourceAsStream("block_palette.nbt")
         if (resourceAsStream != null) {
-            try {
-                NBTInputStream(DataInputStream(GZIPInputStream(resourceAsStream))).use { nbtReader ->
-                    val nbtMap = nbtReader.readTag() as NbtMap
-                    BLOCK_NBT.addAll(nbtMap.getList("blocks", NbtType.COMPOUND))
-                    for (blockMap in nbtMap.getList("blocks", NbtType.COMPOUND)) {
-                        val runtimeId = RUNTIME_COUNTER.getAndIncrement()
-                        BLOCK_STATE_FROM_RUNTIME.put(runtimeId, blockMap.getCompound("states"))
-                        STATE_FROM_RUNTIME.put(runtimeId, blockMap)
-                        IDENTIFIER_TO_RUNTIME.putIfAbsent(
-                            Identifier.fromString(blockMap.getString("name")),
-                            runtimeId,
-                        )
-                    }
+            NBTInputStream(DataInputStream(GZIPInputStream(resourceAsStream))).use { nbtReader ->
+                val nbtMap = nbtReader.readTag() as NbtMap
+                BLOCK_NBT.addAll(nbtMap.getList("blocks", NbtType.COMPOUND))
+                for (blockMap in nbtMap.getList("blocks", NbtType.COMPOUND)) {
+                    val runtimeId = RUNTIME_COUNTER.getAndIncrement()
+                    BLOCK_STATE_FROM_RUNTIME.put(runtimeId, blockMap.getCompound("states"))
+                    STATE_FROM_RUNTIME.put(runtimeId, blockMap)
+                    IDENTIFIER_TO_RUNTIME.putIfAbsent(
+                        Identifier.fromString(blockMap.getString("name")),
+                        runtimeId,
+                    )
                 }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
             }
         }
     }

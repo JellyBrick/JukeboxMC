@@ -37,7 +37,6 @@ import org.jukeboxmc.world.generator.NormalGenerator
 import org.jukeboxmc.world.leveldb.LevelDB
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.*
@@ -48,7 +47,7 @@ import java.util.stream.Collectors
  * @author LucGamesYT
  * @version 1.0
  */
-class World(var name: String, val server: Server, generatorMap: Map<Dimension, String>) {
+class World(var name: String, val server: Server, generatorMap: Map<Dimension, String>) : AutoCloseable {
     private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
     private val STORAGE_VERSION = 9
     private val gameRules: GameRules
@@ -104,43 +103,35 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
 
     private fun loadLevelFile() {
         if (worldFile.exists()) {
-            try {
-                LittleEndianDataInputStream(Files.newInputStream(worldFile.toPath())).use { inputStream ->
-                    NBTInputStream(inputStream).use { stream ->
-                        val version = inputStream.readInt()
-                        val size = inputStream.readInt()
-                        val nbtTag = stream.readTag() as NbtMap
-                        nbtTag.listenForString("LevelName") { name: String -> this.name = name }
-                        nbtTag.listenForInt("Difficulty") { value: Int -> difficulty = Difficulty.values()[value] }
-                        if (nbtTag.containsKey("SpawnX") && nbtTag.containsKey("SpawnY") && nbtTag.containsKey("SpawnZ")) {
-                            spawnLocation = Location(
-                                this,
-                                nbtTag.getInt("SpawnX"),
-                                nbtTag.getInt("SpawnY"),
-                                nbtTag.getInt("SpawnZ"),
-                            )
-                        }
-                        nbtTag.listenForLong("RandomSeed") { seed: Long -> this.seed = seed }
-                        nbtTag.listenForLong("Time") { value: Long -> worldTime = value.toInt() }
-                        for (value in GameRule.values()) {
-                            val identifer = value.identifier.lowercase(Locale.getDefault())
-                            if (nbtTag.containsKey(identifer)) {
-                                gameRules[value] = nbtTag[identifer]!!
-                            }
+            LittleEndianDataInputStream(Files.newInputStream(worldFile.toPath())).use { inputStream ->
+                NBTInputStream(inputStream).use { stream ->
+                    val version = inputStream.readInt()
+                    val size = inputStream.readInt()
+                    val nbtTag = stream.readTag() as NbtMap
+                    nbtTag.listenForString("LevelName") { name: String -> this.name = name }
+                    nbtTag.listenForInt("Difficulty") { value: Int -> difficulty = Difficulty.values()[value] }
+                    if (nbtTag.containsKey("SpawnX") && nbtTag.containsKey("SpawnY") && nbtTag.containsKey("SpawnZ")) {
+                        spawnLocation = Location(
+                            this,
+                            nbtTag.getInt("SpawnX"),
+                            nbtTag.getInt("SpawnY"),
+                            nbtTag.getInt("SpawnZ"),
+                        )
+                    }
+                    nbtTag.listenForLong("RandomSeed") { seed: Long -> this.seed = seed }
+                    nbtTag.listenForLong("Time") { value: Long -> worldTime = value.toInt() }
+                    for (value in GameRule.values()) {
+                        val identifer = value.identifier.lowercase(Locale.getDefault())
+                        if (nbtTag.containsKey(identifer)) {
+                            gameRules[value] = nbtTag[identifer]!!
                         }
                     }
                 }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
             }
         } else {
             seed = ThreadLocalRandom.current().nextInt().toLong()
-            try {
-                if (worldFile.createNewFile()) {
-                    saveLevelFile()
-                }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
+            if (worldFile.createNewFile()) {
+                saveLevelFile()
             }
         }
     }
@@ -165,24 +156,16 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             }
         }
         var tagBytes: ByteArray
-        try {
-            ByteArrayOutputStream().use { stream ->
-                NbtUtils.createWriterLE(stream).use { nbtOutputStream ->
-                    nbtOutputStream.writeTag(nbtTag.build())
-                    tagBytes = stream.toByteArray()
-                }
+        ByteArrayOutputStream().use { stream ->
+            NbtUtils.createWriterLE(stream).use { nbtOutputStream ->
+                nbtOutputStream.writeTag(nbtTag.build())
+                tagBytes = stream.toByteArray()
             }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
         }
-        try {
-            LittleEndianDataOutputStream(Files.newOutputStream(worldFile.toPath())).use { stream ->
-                stream.writeInt(STORAGE_VERSION)
-                stream.writeInt(tagBytes.size)
-                stream.write(tagBytes)
-            }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
+        LittleEndianDataOutputStream(Files.newOutputStream(worldFile.toPath())).use { stream ->
+            stream.writeInt(STORAGE_VERSION)
+            stream.writeInt(tagBytes.size)
+            stream.write(tagBytes)
         }
     }
 
@@ -629,7 +612,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         }
     }
 
-    fun close() {
+    override fun close() {
         levelDB.close()
         saveLevelFile()
     }

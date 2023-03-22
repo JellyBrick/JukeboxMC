@@ -55,11 +55,7 @@ class Network(val server: Server, inetSocketAddress: InetSocketAddress) : Bedroc
     }
 
     override fun onSessionCreation(bedrockServerSession: BedrockServerSession) {
-        try {
-            server.addPlayer(addPlayer(PlayerConnection(server, bedrockServerSession)).player)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
+        server.addPlayer(addPlayer(PlayerConnection(server, bedrockServerSession)).player)
     }
 
     @Synchronized

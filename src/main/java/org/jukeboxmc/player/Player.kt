@@ -296,36 +296,36 @@ class Player(
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return permissions.containsKey(uUID) && permissions[uUID]!!.contains(permission.lowercase(Locale.getDefault())) || isOp || permission.isEmpty()
+        return permissions.containsKey(uuid) && permissions[uuid]!!.contains(permission.lowercase(Locale.getDefault())) || isOp || permission.isEmpty()
     }
 
     fun addPermission(permission: String) {
-        if (!permissions.containsKey(uUID)) {
-            permissions[uUID] = HashSet()
+        if (!permissions.containsKey(uuid)) {
+            permissions[uuid] = HashSet()
         }
-        permissions[uUID]!!.add(permission.lowercase(Locale.getDefault()))
+        permissions[uuid]!!.add(permission.lowercase(Locale.getDefault()))
         sendCommandData()
     }
 
     fun addPermissions(permissions: Collection<String>) {
-        if (!this.permissions.containsKey(uUID)) {
-            this.permissions[uUID] = HashSet(permissions)
+        if (!this.permissions.containsKey(uuid)) {
+            this.permissions[uuid] = HashSet(permissions)
         } else {
-            this.permissions[uUID]!!.addAll(permissions)
+            this.permissions[uuid]!!.addAll(permissions)
         }
         sendCommandData()
     }
 
     fun removePermission(permission: String) {
-        if (permissions.containsKey(uUID)) {
-            permissions[uUID]!!.remove(permission)
+        if (permissions.containsKey(uuid)) {
+            permissions[uuid]!!.remove(permission)
         }
         sendCommandData()
     }
 
     fun removePermissions(permissions: Collection<String>) {
-        if (this.permissions.containsKey(uUID)) {
-            this.permissions[uUID]!!.removeAll(permissions.toSet())
+        if (this.permissions.containsKey(uuid)) {
+            this.permissions[uuid]!!.removeAll(permissions.toSet())
         }
         sendCommandData()
     }
@@ -662,7 +662,7 @@ class Player(
             field = skin
             val playerChangeSkinEvent = PlayerChangeSkinEvent(this, skin)
             if (playerChangeSkinEvent.isCancelled) return
-            Server.instance.addToTabList(uUID, entityId, name, deviceInfo, xuid, skin)
+            Server.instance.addToTabList(uuid, entityId, name, deviceInfo, xuid, skin)
         }
 
     fun sendServerSettings(player: Player) {
@@ -1047,7 +1047,7 @@ class Player(
 
     override fun equals(obj: Any?): Boolean {
         return if (obj is Player) {
-            obj.entityId == entityId && obj.uUID == uUID
+            obj.entityId == entityId && obj.uuid == uuid
         } else {
             false
         }

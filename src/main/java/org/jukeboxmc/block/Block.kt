@@ -472,14 +472,10 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         val STATES: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
         fun create(blockType: BlockType): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
-                try {
-                    val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
-                    )
-                    constructor.newInstance(BlockRegistry.getIdentifier(blockType))
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
+                    Identifier::class.java,
+                )
+                constructor.newInstance(BlockRegistry.getIdentifier(blockType))
             } else {
                 Block(BlockRegistry.getIdentifier(blockType))
             }
@@ -489,15 +485,11 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
 
         fun create(blockType: BlockType, blockStates: NbtMap): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
-                try {
-                    val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
-                        NbtMap::class.java,
-                    )
-                    constructor.newInstance(BlockRegistry.getIdentifier(blockType), blockStates)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
+                    Identifier::class.java,
+                    NbtMap::class.java,
+                )
+                constructor.newInstance(BlockRegistry.getIdentifier(blockType), blockStates)
             } else {
                 Block(BlockRegistry.getIdentifier(blockType), blockStates)
             }
@@ -509,14 +501,10 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         fun create(identifier: Identifier): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
-                try {
-                    val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
+                val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                         Identifier::class.java,
-                    )
-                    constructor.newInstance(identifier)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                )
+                constructor.newInstance(identifier)
             } else {
                 Block(identifier, null)
             }
@@ -528,15 +516,11 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         fun create(identifier: Identifier, blockStates: NbtMap): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
-                try {
-                    val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
+                val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                         Identifier::class.java,
                         NbtMap::class.java,
-                    )
-                    constructor.newInstance(identifier, blockStates)
-                } catch (e: Exception) {
-                    throw RuntimeException(e)
-                }
+                )
+                constructor.newInstance(identifier, blockStates)
             } else {
                 Block(identifier, blockStates)
             }

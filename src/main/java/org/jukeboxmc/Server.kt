@@ -48,7 +48,6 @@ import org.jukeboxmc.world.generator.Generator
 import org.jukeboxmc.world.generator.NormalGenerator
 import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
 import java.io.File
-import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
 import java.util.Locale
 import java.util.UUID
@@ -357,7 +356,7 @@ class Server(logger: Logger) {
     }
 
     fun removePlayer(player: Player) {
-        players.removeIf { target: Player -> target.uUID == player.uUID }
+        players.removeIf { target: Player -> target.uuid == player.uuid }
     }
 
     val onlinePlayers: Collection<Player>
@@ -445,32 +444,17 @@ class Server(logger: Logger) {
 
     @Synchronized
     fun createGenerator(generatorName: String, world: World, dimension: Dimension): Generator? {
-        val generators = generators[dimension]!!
+        val generators = generators.getValue(dimension)
         val generator = generators[generatorName.lowercase(Locale.getDefault())]
-        return if (generator != null) {
-            try {
-                generator.getConstructor(World::class.java).newInstance(world)
-            } catch (e: InvocationTargetException) {
-                throw RuntimeException(e)
-            } catch (e: InstantiationException) {
-                throw RuntimeException(e)
-            } catch (e: IllegalAccessException) {
-                throw RuntimeException(e)
-            } catch (e: NoSuchMethodException) {
-                throw RuntimeException(e)
-            }
-        } else {
-            null
-        }
+        return generator?.getConstructor(World::class.java)?.newInstance(world)
     }
 
     fun registerGenerator(name: String, clazz: Class<out Generator>, vararg dimensions: Dimension) {
-        var name = name
-        name = name.lowercase(Locale.getDefault())
-        for (dimension in dimensions) {
+        val lowercaseName = name.lowercase(Locale.getDefault())
+        dimensions.forEach { dimension ->
             val generators = generators.computeIfAbsent(dimension) { k: Dimension? -> Object2ObjectOpenHashMap() }
-            if (!generators.containsKey(name)) {
-                generators[name] = clazz
+            if (!generators.containsKey(lowercaseName)) {
+                generators[lowercaseName] = clazz
             }
         }
     }
@@ -489,9 +473,9 @@ class Server(logger: Logger) {
 
     fun addToTabList(player: Player) {
         this.addToTabList(
-            player.uUID,
+            player.uuid,
             player.entityId,
-            player.getName(),
+            player.name,
             player.getDeviceInfo(),
             player.xuid,
             player.skin!!,
@@ -516,9 +500,9 @@ class Server(logger: Logger) {
     fun removeFromTabList(player: Player) {
         val playerListPacket = PlayerListPacket()
         playerListPacket.action = PlayerListPacket.Action.REMOVE
-        playerListPacket.entries.add(PlayerListPacket.Entry(player.uUID))
+        playerListPacket.entries.add(PlayerListPacket.Entry(player.uuid))
         this.broadcastPacket(playerListPacket)
-        playerListEntry.remove(player.uUID)
+        playerListEntry.remove(player.uuid)
     }
 
     fun getPlayerListEntry(): Object2ObjectMap<UUID, PlayerListPacket.Entry> {
@@ -533,16 +517,16 @@ class Server(logger: Logger) {
         players.forEach { player: Player -> player.playerConnection.sendPacket(packet) }
     }
 
-    fun broadcastMessage(message: String?) {
-        for (player in onlinePlayers) {
+    fun broadcastMessage(message: String) {
+        onlinePlayers.forEach { player ->
             player.sendMessage(message)
         }
         logger.info(message)
     }
 
-    fun getPlayer(playerName: String?): Player? {
-        for (player in ArrayList(players)) {
-            if (player.getName().equals(playerName, ignoreCase = true)) {
+    fun getPlayer(playerName: String): Player? {
+        players.forEach { player ->
+            if (player.name.equals(playerName, ignoreCase = true)) {
                 return player
             }
         }
@@ -550,8 +534,8 @@ class Server(logger: Logger) {
     }
 
     fun getPlayer(uuid: UUID): Player? {
-        for (player in ArrayList(players)) {
-            if (player.uUID == uuid) {
+        players.forEach { player ->
+            if (player.uuid == uuid) {
                 return player
             }
         }

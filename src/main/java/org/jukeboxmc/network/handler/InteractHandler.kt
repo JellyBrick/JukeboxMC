@@ -1,5 +1,6 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.InteractPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 
@@ -9,7 +10,7 @@ import org.jukeboxmc.player.Player
  */
 class InteractHandler : PacketHandler<InteractPacket> {
     override fun handle(packet: InteractPacket, server: Server, player: Player) {
-        if (packet.getAction() == InteractPacket.Action.OPEN_INVENTORY) {
+        if (packet.action == InteractPacket.Action.OPEN_INVENTORY) {
             player.openInventory(player.inventory)
         }
     }

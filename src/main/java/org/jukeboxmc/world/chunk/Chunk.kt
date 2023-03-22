@@ -272,16 +272,12 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         }
         byteBuf.writeByte(0) // edu - border blocks
         val blockEntities = getBlockEntities()
-        if (!blockEntities.isEmpty()) {
-            try {
-                NbtUtils.createNetworkWriter(ByteBufOutputStream(byteBuf)).use { writer ->
-                    for (blockEntity in blockEntities) {
-                        val tag = blockEntity.toCompound().build()
-                        writer.writeTag(tag)
-                    }
+        if (blockEntities.isNotEmpty()) {
+            NbtUtils.createNetworkWriter(ByteBufOutputStream(byteBuf)).use { writer ->
+                for (blockEntity in blockEntities) {
+                    val tag = blockEntity.toCompound().build()
+                    writer.writeTag(tag)
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
         }
     }

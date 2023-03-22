@@ -56,7 +56,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
                 field = loginData
                 player.name = loginData!!.displayName!!
                 player.nameTag = loginData.displayName!!
-                player.uUID = loginData.uuid!!
+                player.uuid = loginData.uuid!!
                 player.skin = loginData.skin
                 player.setDeviceInfo(loginData.getDeviceInfo())
             }
@@ -82,24 +82,20 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         session.packetCodec = Network.CODEC
         session.batchHandler =
             BatchHandler { bedrockSession: BedrockSession?, byteBuf: ByteBuf?, packets: Collection<BedrockPacket> ->
-                for (packet in packets) {
-                    try {
-                        server.scheduler.execute {
-                            val packetReceiveEvent = PacketReceiveEvent(player, packet)
-                            server.pluginManager.callEvent(packetReceiveEvent)
-                            if (packetReceiveEvent.isCancelled) {
-                                return@execute
-                            }
-                            val packetHandler =
-                                HandlerRegistry.getPacketHandler(packetReceiveEvent.packet.javaClass) as PacketHandler<BedrockPacket>?
-                            if (packetHandler != null) {
-                                packetHandler.handle(packetReceiveEvent.packet, server, player)
-                            } else {
-                                server.logger.info("Handler missing for packet: " + packet.javaClass.simpleName)
-                            }
+                packets.forEach { packet ->
+                    server.scheduler.execute {
+                        val packetReceiveEvent = PacketReceiveEvent(player, packet)
+                        server.pluginManager.callEvent(packetReceiveEvent)
+                        if (packetReceiveEvent.isCancelled) {
+                            return@execute
                         }
-                    } catch (throwable: Throwable) {
-                        throwable.printStackTrace()
+                        val packetHandler =
+                            HandlerRegistry.getPacketHandler<PacketHandler<BedrockPacket>>(packetReceiveEvent.packet::class.java)
+                        if (packetHandler != null) {
+                            packetHandler.handle(packetReceiveEvent.packet, server, player)
+                        } else {
+                            server.logger.info("Handler missing for packet: " + packet::class.java.simpleName)
+                        }
                     }
                 }
             }
@@ -187,7 +183,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
             val playerListPacket = PlayerListPacket()
             playerListPacket.action = PlayerListPacket.Action.ADD
             server.getPlayerListEntry().forEach { (uuid: UUID, entry: PlayerListPacket.Entry?) ->
-                if (uuid !== player.uUID) {
+                if (uuid !== player.uuid) {
                     playerListPacket.entries.add(entry)
                 }
             }

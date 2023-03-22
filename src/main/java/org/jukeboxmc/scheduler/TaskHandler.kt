@@ -29,11 +29,7 @@ class TaskHandler(val task: Runnable, val taskId: Int, val isAsync: Boolean) {
     private val runOnce = false
     fun onRun(currentTick: Long) {
         lastRunTick = currentTick
-        try {
-            task.run()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        task.run()
     }
 
     fun cancel() {

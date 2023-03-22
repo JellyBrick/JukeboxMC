@@ -51,18 +51,8 @@ object EnchantmentRegistry {
 
     private fun register(enchantmentType: EnchantmentType, enchantmentClass: Class<out Enchantment>) {
         ENCHANTMENTS[enchantmentType] = enchantmentClass
-        try {
-            val enchantment = enchantmentClass.getConstructor().newInstance()
-            ENCHANTMENT_BY_ID[enchantment.id] = enchantmentType
-        } catch (e: InstantiationException) {
-            throw RuntimeException(e)
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        } catch (e: InvocationTargetException) {
-            throw RuntimeException(e)
-        } catch (e: NoSuchMethodException) {
-            throw RuntimeException(e)
-        }
+        val enchantment = enchantmentClass.getConstructor().newInstance()
+        ENCHANTMENT_BY_ID[enchantment.id] = enchantmentType
     }
 
     fun getEnchantmentType(id: Short): EnchantmentType? {

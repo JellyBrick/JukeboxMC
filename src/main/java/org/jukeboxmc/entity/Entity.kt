@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
  * @author LucGamesYT
  * @version 1.0
  */
-abstract class Entity {
+abstract class Entity : AutoCloseable {
     var entityId: Long
         protected set
     val metadata: Metadata
@@ -164,16 +164,14 @@ abstract class Entity {
     }
 
     open fun despawn(): Entity {
-        for (player in world!!.players) {
-            this.despawn(player)
-        }
+        world?.players?.forEach(::despawn)
         return this
     }
 
-    fun close() {
+    override fun close() {
         this.despawn()
-        chunk!!.removeEntity(this)
-        world!!.removeEntity(this)
+        chunk?.removeEntity(this)
+        world?.removeEntity(this)
         isClosed = true
         isDead = true
     }

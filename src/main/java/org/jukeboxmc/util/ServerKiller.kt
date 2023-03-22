@@ -10,11 +10,7 @@ import kotlin.system.exitProcess
  */
 class ServerKiller(private val logger: Logger) : Thread() {
     override fun run() {
-        try {
-            sleep(TimeUnit.SECONDS.toMillis(3))
-        } catch (e: InterruptedException) {
-            throw RuntimeException(e)
-        }
+        sleep(TimeUnit.SECONDS.toMillis(3))
         logger.info("Server shutdown successfully!")
         exitProcess(1)
     }

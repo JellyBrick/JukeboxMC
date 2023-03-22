@@ -19,12 +19,11 @@ class PlayerJoinEvent
      *
      * @param joinMessage which should be modified
      */
-    var joinMessage: String
+    var joinMessage: String,
 ) : PlayerEvent(player) {
     /**
      * Retrieves the player join message
      *
      * @return a fresh [String]
      */
-
 }

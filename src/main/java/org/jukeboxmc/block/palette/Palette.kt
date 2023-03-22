@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBufOutputStream
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList
 import org.jukeboxmc.block.palette.bitarray.BitArray
 import org.jukeboxmc.block.palette.bitarray.BitArrayVersion
-import java.io.IOException
 import java.util.Objects
 
 class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = BitArrayVersion.V2) {
@@ -70,13 +69,9 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         byteBuf.writeByte(getPaletteHeader(bitArray.version, false))
         for (word in bitArray.words) byteBuf.writeIntLE(word)
         byteBuf.writeIntLE(palette.size)
-        try {
-            ByteBufOutputStream(byteBuf).use { bufOutputStream ->
-                NbtUtils.createWriterLE(bufOutputStream)
-                    .use { outputStream -> for (value in palette) outputStream.writeTag(serializer.serialize(value)) }
-            }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
+        ByteBufOutputStream(byteBuf).use { bufOutputStream ->
+            NbtUtils.createWriterLE(bufOutputStream)
+                .use { outputStream -> for (value in palette) outputStream.writeTag(serializer.serialize(value)) }
         }
     }
 
@@ -105,16 +100,12 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         bitArray = version.createArray(SIZE, words)
         palette.clear()
         val paletteSize = byteBuf.readIntLE()
-        try {
-            ByteBufInputStream(byteBuf).use { bufInputStream ->
-                NbtUtils.createReaderLE(bufInputStream).use { inputStream ->
-                    for (i in 0 until paletteSize) palette.add(
-                        deserializer.deserialize(inputStream.readTag() as NbtMap),
-                    )
-                }
+        ByteBufInputStream(byteBuf).use { bufInputStream ->
+            NbtUtils.createReaderLE(bufInputStream).use { inputStream ->
+                for (i in 0 until paletteSize) palette.add(
+                    deserializer.deserialize(inputStream.readTag() as NbtMap),
+                )
             }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
         }
     }
 

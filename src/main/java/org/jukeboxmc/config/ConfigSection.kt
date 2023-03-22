@@ -64,6 +64,8 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
         return this[key, null]
     }
 
+    inline fun <reified T> getTyped(key: String): T = get(key) as T
+
     operator fun set(key: String, value: Any) {
         val subKeys = key.split('.', limit = 2)
         if (subKeys.size > 1) {

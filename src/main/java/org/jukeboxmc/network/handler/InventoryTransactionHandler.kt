@@ -1,12 +1,15 @@
 package org.jukeboxmc.network.handler
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
+import com.nukkitx.protocol.bedrock.data.inventory.InventorySource
 import com.nukkitx.protocol.bedrock.data.inventory.TransactionType
 import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockSlab
 import org.jukeboxmc.block.direction.BlockFace
+import org.jukeboxmc.event.block.BlockPlaceEvent
+import org.jukeboxmc.event.player.PlayerDropItemEvent
 import org.jukeboxmc.event.player.PlayerInteractEvent
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
@@ -24,20 +27,20 @@ import org.jukeboxmc.player.Player
 class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
     private var spamCheckTime: Long = 0
     override fun handle(packet: InventoryTransactionPacket, server: Server, player: Player) {
-        if (packet.getTransactionType() == TransactionType.ITEM_USE) {
+        if (packet.transactionType == TransactionType.ITEM_USE) {
             val blockPosition: Vector = Vector(packet.blockPosition)
             blockPosition.dimension = player.dimension
             val clickPosition: Vector = Vector(packet.clickPosition)
             clickPosition.dimension = player.dimension
-            val blockFace: BlockFace = BlockFace.fromId(packet.getBlockFace()) ?: run {
-                Server.instance.logger.debug("Unknown block face: " + packet.getBlockFace())
+            val blockFace: BlockFace = BlockFace.fromId(packet.blockFace) ?: run {
+                Server.instance.logger.debug("Unknown block face: " + packet.blockFace)
                 return
             }
             val itemInHand = player.inventory.itemInHand
-            when (packet.getActionType()) {
+            when (packet.actionType) {
                 0 -> {
                     if (!canInteract()) {
-                        player.world!!.getBlock(player.world!!.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
+                        player.world.getBlock(player.world.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
                         return
                     }
                     spamCheckTime = System.currentTimeMillis()
@@ -88,12 +91,12 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         val targetItem: Item = Item.create<Item>(action.getToItem())
                         val playerDropItemEvent = PlayerDropItemEvent(player, targetItem)
                         Server.instance.pluginManager.callEvent(playerDropItemEvent)
-                        if (playerDropItemEvent.isCancelled()) {
+                        if (playerDropItemEvent.isCancelled) {
                             player.inventory.sendContents(player)
                             return
                         }
                         val entityItem = player.world.dropItem(
-                            playerDropItemEvent.getItem(),
+                            playerDropItemEvent.item,
                             player.location.add(0f, player.eyeHeight, 0f),
                             player.location.direction.multiply(0.4f, 0.4f, 0.4f),
                         )
@@ -203,10 +206,10 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
             }
             val blockPlaceEvent = BlockPlaceEvent(player, placedBlock, replacedBlock, clickedBlock)
             Server.instance.pluginManager.callEvent(blockPlaceEvent)
-            if (blockPlaceEvent.isCancelled()) {
+            if (blockPlaceEvent.isCancelled) {
                 return false
             }
-            val success: Boolean = blockPlaceEvent.getPlacedBlock()
+            val success: Boolean = blockPlaceEvent.placedBlock
                 .placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
             if (success) {
                 if (player.gameMode == GameMode.SURVIVAL) {

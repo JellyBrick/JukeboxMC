@@ -2210,15 +2210,12 @@ object BlockRegistry {
 
     fun initBlockProperties() {
         val gson = Gson()
-        try {
-            Objects.requireNonNull(
-                Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json"),
-            ).use { inputStream ->
-                val inputStreamReader = InputStreamReader(inputStream)
-                val itemEntries =
+        Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json")!!.use { inputStream ->
+            val inputStreamReader = InputStreamReader(inputStream)
+            val itemEntries =
                     gson.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
-                itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
-                    BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
+            itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
+                BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
                         map["hardness"] as Double,
                         map["solid"] as Boolean,
                         map["transparent"] as Boolean,
@@ -2226,11 +2223,8 @@ object BlockRegistry {
                         TierType.valueOf((map["tier_type"] as String?)!!),
                         map["can_break_with_hand"] as Boolean,
                         map["can_pass_through"] as Boolean,
-                    )
-                }
+                )
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 

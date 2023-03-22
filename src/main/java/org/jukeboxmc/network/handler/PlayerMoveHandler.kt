@@ -10,6 +10,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.ObjectOutputStream
 import kotlin.math.sqrt
 
@@ -81,19 +82,17 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
         }
     }
 
-    private fun getBytesFromObject(`object`: Any): ByteArray {
-        try {
-            val bos = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(bos)
-            oos.writeObject(`object`)
-            val bytes = bos.toByteArray()
-            bos.close()
-            oos.close()
-            return bytes
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun getBytesFromObject(obj: Any): ByteArray {
+        return try {
+            ByteArrayOutputStream().use {
+                ObjectOutputStream(it).use { oos ->
+                    oos.writeObject(obj)
+                }
+                it.toByteArray()
+            }
+        } catch (e: IOException) {
+            ByteArray(0)
         }
-        return ByteArray(0)
     }
 
     private fun move(target: Player, player: Player) {

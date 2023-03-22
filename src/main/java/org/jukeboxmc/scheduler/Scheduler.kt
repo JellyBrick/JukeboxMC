@@ -26,9 +26,6 @@ class Scheduler(server: Server) {
     private val currentId = AtomicInteger()
 
     init {
-        if (instance != null) {
-            throw RuntimeException("Scheduler was already initialized!")
-        }
         instance = this
         this.server = server
         val builder = ThreadFactoryBuilder()

@@ -47,7 +47,7 @@ class LoginData(loginPacket: LoginPacket) {
         decodeSkinData(loginPacket.skinData.toString())
     }
 
-    fun getDeviceInfo(): DeviceInfo? {
+    fun getDeviceInfo(): DeviceInfo {
         return deviceInfo
     }
 

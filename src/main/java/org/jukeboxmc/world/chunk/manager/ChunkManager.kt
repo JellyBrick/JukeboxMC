@@ -54,7 +54,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     @Synchronized
     fun getLoadedChunk(key: Long): Chunk? {
         val chunk = chunks[key]
-        return chunk?.getChunk()
+        return chunk.getChunk()
     }
 
     @Synchronized
@@ -63,20 +63,15 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     }
 
     fun getChunk(x: Int, z: Int): Chunk? {
-        try {
-            var chunk = this.getLoadedChunk(x, z)
-            if (chunk == null) {
-                chunk = this.getChunkFuture(x, z)!!.join()
-            }
-            return chunk
-        } catch (e: Exception) {
-            e.printStackTrace()
+        var chunk = this.getLoadedChunk(x, z)
+        if (chunk == null) {
+            chunk = this.getChunkFuture(x, z).join()
         }
-        return null
+        return chunk
     }
 
-    fun getChunkFuture(x: Int, z: Int): CompletableFuture<Chunk>? {
-        return this.getChunkFuture(x, z, true, true, true)
+    fun getChunkFuture(x: Int, z: Int): CompletableFuture<Chunk> {
+        return this.getChunkFuture(x, z, generate = true, populate = true, finish = true)
     }
 
     @Synchronized
@@ -86,7 +81,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         generate: Boolean,
         populate: Boolean,
         finish: Boolean,
-    ): CompletableFuture<Chunk>? {
+    ): CompletableFuture<Chunk> {
         val chunkKey = Utils.toLong(chunkX, chunkZ)
         chunkLastAccessTimes.put(chunkKey, System.currentTimeMillis())
         val chunk = chunks.computeIfAbsent(
@@ -231,7 +226,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     private inner class LoadingChunk(dimension: Dimension, key: Long, load: Boolean) {
         private val x: Int
         private val z: Int
-        var future: CompletableFuture<Chunk>? = null
+        var future: CompletableFuture<Chunk>
             private set
 
         @Volatile
@@ -249,7 +244,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             z = Utils.fromHashZ(key)
             if (load) {
                 future = world.readChunk(Chunk(world, dimension, x, z))
-                    .thenApply { chunk: Chunk? ->
+                    .thenApply { chunk: Chunk ->
                         Objects.requireNonNullElseGet(chunk) {
                             Chunk(
                                 world,
@@ -259,7 +254,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                             )
                         }
                     }
-                future!!.whenComplete { chunk: Chunk?, throwable: Throwable? ->
+                future.whenComplete { chunk: Chunk, throwable: Throwable? ->
                     if (throwable != null) {
                         log.error("Unable to load chunk $x:$z", throwable)
                         synchronized(this@ChunkManager) { chunks.remove(key) }
@@ -271,7 +266,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             } else {
                 future = CompletableFuture.completedFuture(Chunk(world, dimension, x, z))
             }
-            future!!.whenComplete { chunk: Chunk?, throwable: Throwable? -> this.chunk = chunk }
+            future.whenComplete { chunk: Chunk, throwable: Throwable? -> this.chunk = chunk }
         }
 
         fun getChunk(): Chunk? {

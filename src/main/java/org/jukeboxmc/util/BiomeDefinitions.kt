@@ -13,20 +13,16 @@ object BiomeDefinitions {
         private set
 
     fun init() {
-        try {
-            Bootstrap::class.java.classLoader.getResourceAsStream("biome_definitions.dat").use { inputStream ->
-                if (inputStream == null) {
-                    throw AssertionError("Could not find biome_definitions.dat")
-                }
-                try {
-                    NbtUtils.createNetworkReader(inputStream)
-                        .use { stream -> biomeDefinitions = stream.readTag() as NbtMap }
-                } catch (e: Exception) {
-                    throw AssertionError("Error whilst loading biome_definitions.dat", e)
-                }
+        Bootstrap::class.java.classLoader.getResourceAsStream("biome_definitions.dat").use { inputStream ->
+            if (inputStream == null) {
+                throw AssertionError("Could not find biome_definitions.dat")
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+            try {
+                NbtUtils.createNetworkReader(inputStream)
+                    .use { stream -> biomeDefinitions = stream.readTag() as NbtMap }
+            } catch (e: Exception) {
+                throw AssertionError("Error whilst loading biome_definitions.dat", e)
+            }
         }
     }
 }

@@ -24,9 +24,9 @@ import java.util.LinkedList
  * @version 1.0
  */
 class PluginManager(val server: Server) {
-    private val logger: Logger?
-    private val pluginLoader: PluginLoader
-    private val commandManager: CommandManager
+    private val logger: Logger = server.logger
+    private val pluginLoader: PluginLoader = PluginLoader(logger, this)
+    private val commandManager: CommandManager = CommandManager()
     private val yamlLoader: Yaml = Yaml(CustomClassLoaderConstructor(this.javaClass.classLoader, LoaderOptions()))
     private val pluginMap: Object2ObjectMap<String, Plugin> = Object2ObjectArrayMap()
     private val cachedClasses: Object2ObjectMap<String, Class<*>?> = Object2ObjectArrayMap<String, Class<*>>()
@@ -36,9 +36,6 @@ class PluginManager(val server: Server) {
         HashMap()
 
     init {
-        logger = server.logger
-        pluginLoader = PluginLoader(logger, this)
-        commandManager = CommandManager()
         loadPluginsIn(server.pluginFolder.toPath())
     }
 
@@ -51,7 +48,7 @@ class PluginManager(val server: Server) {
                     .forEach { jarPath: Path -> this.loadPlugin(jarPath, directStartup) }
             }
         } catch (e: IOException) {
-            logger!!.error("Error while filtering plugin files $e")
+            logger.error("Error while filtering plugin files $e")
         }
     }
 
@@ -61,7 +58,7 @@ class PluginManager(val server: Server) {
 
     fun loadPlugin(path: Path, directStartup: Boolean): Plugin? {
         if (!Files.isRegularFile(path) || !PluginLoader.isJarFile(path)) {
-            logger!!.warn("Cannot load plugin: Provided file is no jar file: " + path.fileName)
+            logger.warn("Cannot load plugin: Provided file is no jar file: " + path.fileName)
             return null
         }
         val pluginFile = path.toFile()
@@ -127,24 +124,15 @@ class PluginManager(val server: Server) {
                 }
             }
         }
-        try {
-            plugin.setEnabled(true)
-            logger!!.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
-            return false
-        }
+        plugin.setEnabled(true)
+        logger!!.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
         return true
     }
 
     fun disableAllPlugins() {
         for (plugin in pluginMap.values) {
             logger!!.info("Disabling plugin " + plugin.name + "")
-            try {
-                plugin!!.setEnabled(false)
-            } catch (e: RuntimeException) {
-                e.printStackTrace()
-            }
+            plugin!!.setEnabled(false)
         }
     }
 
@@ -204,13 +192,7 @@ class PluginManager(val server: Server) {
                 val methods: List<RegisteredListener>? = eventPriorityListMap[eventPriority]
                 if (methods != null) {
                     for (registeredListener in methods) {
-                        try {
-                            registeredListener.method.invoke(registeredListener.listener, event)
-                        } catch (e: IllegalAccessException) {
-                            e.printStackTrace()
-                        } catch (e: InvocationTargetException) {
-                            e.printStackTrace()
-                        }
+                        registeredListener.method.invoke(registeredListener.listener, event)
                     }
                 }
             }
