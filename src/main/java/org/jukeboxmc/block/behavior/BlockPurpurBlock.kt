@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.Axis
 import org.jukeboxmc.block.data.PurpurType
@@ -13,6 +12,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -29,7 +29,7 @@ class BlockPurpurBlock : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
             axis = Axis.Y
@@ -43,8 +43,8 @@ class BlockPurpurBlock : Block {
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemPurpurBlock>(ItemType.PURPUR_BLOCK).setPurpurType(
-            purpurType
+        return Item.create<ItemPurpurBlock>(ItemType.PURPUR_BLOCK).setPurpurType(
+            purpurType,
         )
     }
 

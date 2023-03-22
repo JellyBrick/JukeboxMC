@@ -1,20 +1,18 @@
 package org.jukeboxmc.block.palette.bitarray
 
-import java.util.Arrays
-import lombok.Getter
 import org.jukeboxmc.util.Utils
+import java.util.Arrays
 
-@Getter
 class Pow2BitArray internal constructor(
-    private override val version: BitArrayVersion,
-    private override val size: Int,
-    private override val words: IntArray
+    override val version: BitArrayVersion,
+    override val size: Int,
+    override val words: IntArray,
 ) : BitArray {
     init {
         val expectedWordsLength = Utils.ceil(size.toFloat() / version.entriesPerWord)
         require(words.size == expectedWordsLength) {
             "Invalid length given for storage, got: " + words.size +
-                    " but expected: " + expectedWordsLength
+                " but expected: " + expectedWordsLength
         }
     }
 

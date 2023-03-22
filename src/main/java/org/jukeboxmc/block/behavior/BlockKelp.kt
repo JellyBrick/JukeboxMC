@@ -25,12 +25,12 @@ class BlockKelp : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
         if (block.type == BlockType.WATER) {
-            val blockDown = block!!.getSide(BlockFace.DOWN)
-            if (blockDown!!.isSolid || blockDown.type == BlockType.KELP) {
+            val blockDown = block.getSide(BlockFace.DOWN)
+            if (blockDown.isSolid || blockDown.type == BlockType.KELP) {
                 world.setBlock(placePosition, this, 0)
                 world.setBlock(placePosition, block, 1)
                 return true
@@ -44,7 +44,7 @@ class BlockKelp : Block {
         val block = world!!.getBlock(breakPosition, 1)
         if (block is BlockWater) {
             world.setBlock(breakPosition, block, 0)
-            world.setBlock(breakPosition, Block.Companion.create<Block>(BlockType.AIR), 1)
+            world.setBlock(breakPosition, create<Block>(BlockType.AIR), 1)
             return
         }
         super.onBlockBreak(breakPosition)

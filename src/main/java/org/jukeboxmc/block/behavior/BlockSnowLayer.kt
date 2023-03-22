@@ -24,7 +24,7 @@ class BlockSnowLayer : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         var block = world.getBlock(blockPosition)
         if (!world.getBlock(placePosition.subtract(0f, 1f, 0f)).isSolid) {
@@ -37,7 +37,6 @@ class BlockSnowLayer : Block {
             } else {
                 block = world.getBlock(placePosition)
                 if (block is BlockSnowLayer) {
-                    block = block
                     if (block.height != 7) {
                         block.setHeight(block.height + 1)
                         world.setBlock(placePosition, block)

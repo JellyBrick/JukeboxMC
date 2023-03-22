@@ -24,13 +24,13 @@ class BlockTrappedChest : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            //BlockEntityType.CHEST.<BlockEntityChest>createBlockEntity( this ).spawn();
+            // BlockEntityType.CHEST.<BlockEntityChest>createBlockEntity( this ).spawn();
         }
         return value
     }
@@ -40,7 +40,7 @@ class BlockTrappedChest : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         /*
         BlockEntityChest blockEntity = this.getBlockEntity();

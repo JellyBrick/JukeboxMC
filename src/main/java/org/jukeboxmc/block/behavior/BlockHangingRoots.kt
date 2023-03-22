@@ -25,10 +25,10 @@ class BlockHangingRoots : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition).getSide(BlockFace.UP)
-        if (block!!.isSolid && block.type != BlockType.HANGING_ROOTS) {
+        if (block.isSolid && block.type != BlockType.HANGING_ROOTS) {
             world.setBlock(placePosition, this)
             return true
         }

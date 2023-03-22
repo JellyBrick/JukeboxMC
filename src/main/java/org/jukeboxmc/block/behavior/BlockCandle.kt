@@ -27,11 +27,11 @@ class BlockCandle : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val clickedBlock = world.getBlock(blockPosition)
         if (clickedBlock is BlockCandle) {
-            return if (clickedBlock.getIdentifier() == itemInHand.identifier) {
+            return if (clickedBlock.identifier == itemInHand.identifier) {
                 val candles: Int = clickedBlock.candles
                 if (candles < 3) {
                     clickedBlock.setCandles(candles + 1)
@@ -53,18 +53,18 @@ class BlockCandle : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         if (itemInHand is ItemCandle) {
             return false
         }
         if (isLit && itemInHand.type != ItemType.FLINT_AND_STEEL) {
             setLit(false)
-            location.world.playSound(blockPosition, SoundEvent.FIZZ)
+            location.world?.playSound(blockPosition, SoundEvent.FIZZ)
             return true
         } else if (!isLit && itemInHand.type == ItemType.FLINT_AND_STEEL) {
             setLit(true)
-            location.world.playSound(blockPosition, SoundEvent.IGNITE)
+            location.world?.playSound(blockPosition, SoundEvent.IGNITE)
             return true
         }
         return false

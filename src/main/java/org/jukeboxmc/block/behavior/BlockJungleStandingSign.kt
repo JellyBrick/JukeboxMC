@@ -30,25 +30,24 @@ class BlockJungleStandingSign : BlockSign {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.UP) {
-            setSignDirection(
-                SignDirection.values()[FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
-            )
+            signDirection =
+                SignDirection.values()[FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5).toInt() and 0x0f]
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockJungleWallSign =
-                Block.Companion.create<BlockJungleWallSign>(BlockType.JUNGLE_WALL_SIGN)
-            blockWallSign.setBlockFace(blockFace)
+                create<BlockJungleWallSign>(BlockType.JUNGLE_WALL_SIGN)
+            blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.SIGN, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.SIGN, this).spawn()
         return true
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<Item>(ItemType.JUNGLE_SIGN)
+        return Item.create<Item>(ItemType.JUNGLE_SIGN)
     }
 }

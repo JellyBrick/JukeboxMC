@@ -25,7 +25,7 @@ class BlockWeatheredCutCopperSlab : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
@@ -34,12 +34,12 @@ class BlockWeatheredCutCopperSlab : BlockSlab {
                 if (targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB)
+                        create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWeatheredCutCopperSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         } else if (blockFace == BlockFace.UP) {
@@ -47,17 +47,17 @@ class BlockWeatheredCutCopperSlab : BlockSlab {
                 if (!targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB)
+                        create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWeatheredCutCopperSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         } else {
             if (block is BlockWeatheredCutCopperSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.WEATHERED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         }

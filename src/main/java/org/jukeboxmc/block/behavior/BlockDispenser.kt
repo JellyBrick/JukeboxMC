@@ -27,11 +27,11 @@ class BlockDispenser : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.DISPENSER, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.DISPENSER, this).spawn()
         return true
     }
 
@@ -40,9 +40,9 @@ class BlockDispenser : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityDispenser? = blockEntity
+        val blockEntity: BlockEntityDispenser? = blockEntity as BlockEntityDispenser?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -51,7 +51,7 @@ class BlockDispenser : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityDispenser?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityDispenser?
     var isTriggered: Boolean
         get() = stateExists("triggered_bit") && getByteState("triggered_bit").toInt() == 1
         set(value) {

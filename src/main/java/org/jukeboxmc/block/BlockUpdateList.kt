@@ -1,8 +1,8 @@
 package org.jukeboxmc.block
 
+import org.jukeboxmc.math.Vector
 import java.util.LinkedList
 import java.util.Queue
-import org.jukeboxmc.math.Vector
 
 /**
  * @author geNAZt
@@ -11,14 +11,19 @@ import org.jukeboxmc.math.Vector
  */
 class BlockUpdateList {
     private var element: Element? = null
+
     @Synchronized
     fun addElement(timeValue: Long, blockPosition: Vector) {
         if (element == null) {
-            element = Element(timeValue, null, object : LinkedList<Vector?>() {
-                init {
-                    add(blockPosition)
-                }
-            })
+            element = Element(
+                timeValue,
+                null,
+                object : LinkedList<Vector>() {
+                    init {
+                        add(blockPosition)
+                    }
+                },
+            )
         } else {
             var element = element
             var previousElement: Element? = null
@@ -27,18 +32,26 @@ class BlockUpdateList {
                 element = element.nextElement
             }
             if (element == null) {
-                previousElement!!.nextElement = Element(timeValue, null, object : LinkedList<Vector?>() {
-                    init {
-                        add(blockPosition)
-                    }
-                })
-            } else {
-                if (element.timeValue != timeValue) {
-                    val nextElement = Element(timeValue, element, object : LinkedList<Vector?>() {
+                previousElement!!.nextElement = Element(
+                    timeValue,
+                    null,
+                    object : LinkedList<Vector>() {
                         init {
                             add(blockPosition)
                         }
-                    })
+                    },
+                )
+            } else {
+                if (element.timeValue != timeValue) {
+                    val nextElement = Element(
+                        timeValue,
+                        element,
+                        object : LinkedList<Vector>() {
+                            init {
+                                add(blockPosition)
+                            }
+                        },
+                    )
                     if (previousElement != null) {
                         previousElement.nextElement = nextElement
                     } else {
@@ -103,5 +116,5 @@ class BlockUpdateList {
         return false
     }
 
-    class Element(var timeValue: Long, var nextElement: Element, var positionQueue: Queue<Vector>)
+    class Element(var timeValue: Long, var nextElement: Element?, var positionQueue: Queue<Vector>)
 }

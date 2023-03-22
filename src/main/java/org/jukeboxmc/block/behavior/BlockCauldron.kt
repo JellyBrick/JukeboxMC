@@ -1,10 +1,10 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.LiquidType
 import org.jukeboxmc.util.Identifier
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -16,7 +16,7 @@ class BlockCauldron : Block {
 
     var fillLevel: Int
         get() = if (stateExists("fill_level")) getIntState("fill_level") else 0
-        set(value) { //0-6
+        set(value) { // 0-6
             setState<Block>("fill_level", value)
         }
 

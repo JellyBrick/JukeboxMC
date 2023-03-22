@@ -26,10 +26,10 @@ class BlockButton : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
-        if (block!!.isTransparent) {
+        if (block.isTransparent) {
             return false
         }
         this.blockFace = blockFace
@@ -43,21 +43,21 @@ class BlockButton : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         if (isButtonPressed) {
             return false
         }
         isButtonPressed = true
-        location.world.playSound(location, SoundEvent.POWER_ON)
-        location.world.scheduleBlockUpdate(location, 20)
+        location.world?.playSound(location, SoundEvent.POWER_ON)
+        location.world?.scheduleBlockUpdate(location, 20)
         return true
     }
 
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.SCHEDULED) {
             isButtonPressed = false
-            location.world.playSound(location, SoundEvent.POWER_OFF)
+            location.world?.playSound(location, SoundEvent.POWER_OFF)
         }
         return -1
     }

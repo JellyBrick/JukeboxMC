@@ -1,12 +1,12 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.concurrent.ThreadLocalRandom
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.util.Identifier
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * @author LucGamesYT
@@ -23,7 +23,7 @@ class BlockIronOre : Block {
             if (enchantment != null) {
                 amount += ThreadLocalRandom.current().nextInt(0, enchantment.level + 1)
             }
-            return listOf(Item.Companion.create<Item>(ItemType.RAW_IRON).setAmount(amount))
+            return listOf(Item.create<Item>(ItemType.RAW_IRON).setAmount(amount))
         }
         return emptyList()
     }

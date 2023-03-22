@@ -16,10 +16,10 @@ open class BlockSign : Block {
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntitySign?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySign?
     val lines: List<String>?
         get() {
-            val blockEntity: BlockEntitySign? = blockEntity
+            val blockEntity: BlockEntitySign? = blockEntity as BlockEntitySign?
             return if (blockEntity != null) ArrayList(blockEntity.lines) else null
         }
 
@@ -27,9 +27,9 @@ open class BlockSign : Block {
         if (line > 4 || line < 0) {
             return
         }
-        val blockEntity: BlockEntitySign? = blockEntity
+        val blockEntity: BlockEntitySign? = blockEntity as BlockEntitySign?
         if (blockEntity != null) {
-            blockEntity.lines[line] = value
+            blockEntity.lines[line] = value ?: ""
             blockEntity.updateBlockEntitySign()
         }
     }

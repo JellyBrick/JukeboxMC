@@ -30,10 +30,10 @@ class BlockPressurePlate : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val target = world.getBlock(blockPosition)
-        if (target!!.isTransparent) {
+        if (target.isTransparent) {
             return false
         }
         redstoneSignal = 0
@@ -52,10 +52,12 @@ class BlockPressurePlate : Block {
 
     override fun enterBlock(player: Player) {
         val playerInteractEvent = PlayerInteractEvent(
-            player, PlayerInteractEvent.Action.PHYSICAL,
-            player.inventory.itemInHand, this
+            player,
+            PlayerInteractEvent.Action.PHYSICAL,
+            player.inventory.itemInHand,
+            this,
         )
-        Server.Companion.getInstance().getPluginManager().callEvent(playerInteractEvent)
+        Server.instance.pluginManager.callEvent(playerInteractEvent)
         if (playerInteractEvent.isCancelled) {
             return
         }
@@ -68,12 +70,12 @@ class BlockPressurePlate : Block {
 
     override val boundingBox: AxisAlignedBB
         get() = AxisAlignedBB(
-            location!!.x + 0.0625f,
-            location!!.y,
-            location!!.z + 0.0625f,
-            location!!.x + 0.9375f,
-            location!!.y + 1f,
-            location!!.z + 0.9375f
+            location.getX() + 0.0625f,
+            location.getY(),
+            location.getZ() + 0.0625f,
+            location.getX() + 0.9375f,
+            location.getY() + 1f,
+            location.getZ() + 0.9375f,
         )
     var redstoneSignal: Int
         get() = if (stateExists("redstone_signal")) getIntState("redstone_signal") else 0
@@ -83,7 +85,7 @@ class BlockPressurePlate : Block {
     private val redstoneStrength: Int
         private get() {
             val boundingBox = boundingBox
-            for (entity in location.world.getNearbyEntities(boundingBox, location.dimension, null)) {
+            for (entity in location.world!!.getNearbyEntities(boundingBox, location.dimension, null)) {
                 if (entity is EntityHuman) {
                     return 15
                 }
@@ -98,13 +100,13 @@ class BlockPressurePlate : Block {
         if (oldSignal != redstoneStrength) {
             redstoneSignal = redstoneStrength
             if (!isPowered && wasPowered) {
-                location.world.playSound(location, SoundEvent.POWER_OFF)
+                location.world?.playSound(location, SoundEvent.POWER_OFF)
             } else if (isPowered && !wasPowered) {
-                location.world.playSound(location, SoundEvent.POWER_ON)
+                location.world?.playSound(location, SoundEvent.POWER_ON)
             }
         }
         if (isPowered) {
-            location.world.scheduleBlockUpdate(location, 20)
+            location.world?.scheduleBlockUpdate(location, 20)
         }
     }
 }

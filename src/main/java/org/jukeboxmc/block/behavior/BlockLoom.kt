@@ -28,11 +28,11 @@ class BlockLoom : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.opposite()
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.LOOM, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.LOOM, this).spawn()
         return true
     }
 
@@ -41,9 +41,9 @@ class BlockLoom : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityLoom? = blockEntity
+        val blockEntity: BlockEntityLoom? = blockEntity as BlockEntityLoom?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -52,7 +52,7 @@ class BlockLoom : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityLoom?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityLoom?
     var direction: Direction
         get() {
             val value = if (stateExists("direction")) getIntState("direction") else 0

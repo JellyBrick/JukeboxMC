@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.LeverDirection
 import org.jukeboxmc.block.direction.BlockFace
@@ -11,6 +10,7 @@ import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.Sound
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,13 +27,13 @@ class BlockLever : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
-        if (block!!.isTransparent) {
+        if (block.isTransparent) {
             return false
         }
-        leverDirection = LeverDirection.Companion.forDirection(blockFace, player.direction.opposite())
+        leverDirection = LeverDirection.forDirection(blockFace, player.direction.opposite())
         world.setBlock(placePosition, this, 0)
         return true
     }
@@ -43,11 +43,11 @@ class BlockLever : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         val open = isOpen
         isOpen = !open
-        player.playSound(location!!, Sound.RANDOM_CLICK, 0.8f, if (open) 0.5f else 0.58f, true)
+        player.playSound(location, Sound.RANDOM_CLICK, 0.8f, if (open) 0.5f else 0.58f, true)
         return true
     }
 

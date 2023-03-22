@@ -31,26 +31,28 @@ class BlockStandingBanner : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.UP) {
-            signDirection = SignDirection.values()[FastMath.floor((player.location.yaw + 180) * 16 / 360 + 0.5)
-                .toInt() and 0x0f]
+            signDirection = SignDirection.values()[
+                FastMath.floor((player.getLocation().yaw + 180) * 16 / 360 + 0.5)
+                    .toInt() and 0x0f,
+            ]
             world.setBlock(placePosition, this, 0)
         } else {
-            val blockWallBanner: BlockWallBanner = Block.Companion.create<BlockWallBanner>(BlockType.WALL_BANNER)
-            blockWallBanner.setBlockFace(blockFace)
+            val blockWallBanner: BlockWallBanner = create<BlockWallBanner>(BlockType.WALL_BANNER)
+            blockWallBanner.blockFace = blockFace
             world.setBlock(placePosition, blockWallBanner, 0)
         }
-        val type = if (itemInHand.nbt != null) itemInHand.nbt.getInt("Type", 0) else 0
-        BlockEntity.Companion.create<BlockEntityBanner>(BlockEntityType.BANNER, block)
+        val type = if (itemInHand.nbt != null) itemInHand.nbt!!.getInt("Type", 0) else 0
+        BlockEntity.create<BlockEntityBanner>(BlockEntityType.BANNER, block)
             .setColor(BlockColor.values()[itemInHand.meta]).setType(type)
         return true
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBanner?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBanner?
     var signDirection: SignDirection
         get() = if (stateExists("ground_sign_direction")) SignDirection.values()[getIntState("ground_sign_direction")] else SignDirection.SOUTH
         set(signDirection) {

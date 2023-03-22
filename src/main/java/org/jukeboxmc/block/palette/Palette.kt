@@ -7,18 +7,14 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufOutputStream
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList
-import java.io.IOException
-import java.util.Objects
-import lombok.EqualsAndHashCode
-import lombok.Getter
 import org.jukeboxmc.block.palette.bitarray.BitArray
 import org.jukeboxmc.block.palette.bitarray.BitArrayVersion
+import java.io.IOException
+import java.util.Objects
 
-@Getter
-@EqualsAndHashCode
 class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = BitArrayVersion.V2) {
     private val palette: MutableList<V>
-    private var bitArray: BitArray?
+    private var bitArray: BitArray
 
     init {
         bitArray = version.createArray(SIZE)
@@ -27,17 +23,17 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
     }
 
     operator fun get(index: Int): V {
-        return palette[bitArray!![index]]
+        return palette[bitArray[index]]
     }
 
     operator fun set(index: Int, value: V) {
         val paletteIndex = paletteIndexFor(value)
-        bitArray!![index] = paletteIndex
+        bitArray[index] = paletteIndex
     }
 
     fun writeToNetwork(byteBuf: ByteBuf, serializer: RuntimeDataSerializer<V>) {
-        byteBuf.writeByte(getPaletteHeader(bitArray.getVersion(), true))
-        for (word in bitArray.getWords()) byteBuf.writeIntLE(word)
+        byteBuf.writeByte(getPaletteHeader(bitArray.version, true))
+        for (word in bitArray.words) byteBuf.writeIntLE(word)
         bitArray!!.writeSizeToNetwork(byteBuf, palette.size)
         for (value in palette) VarInts.writeInt(byteBuf, serializer.serialize(value))
     }
@@ -52,8 +48,8 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
             byteBuf.writeIntLE(serializer.serialize(palette[0]))
             return
         }
-        byteBuf.writeByte(getPaletteHeader(bitArray.getVersion(), true))
-        for (word in bitArray.getWords()) byteBuf.writeIntLE(word)
+        byteBuf.writeByte(getPaletteHeader(bitArray.version, true))
+        for (word in bitArray.words) byteBuf.writeIntLE(word)
         bitArray!!.writeSizeToNetwork(byteBuf, palette.size)
         for (value in palette) VarInts.writeInt(byteBuf, serializer.serialize(value))
     }
@@ -71,8 +67,8 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
     }
 
     fun writeToStoragePersistent(byteBuf: ByteBuf, serializer: PersistentDataSerializer<V>) {
-        byteBuf.writeByte(getPaletteHeader(bitArray.getVersion(), false))
-        for (word in bitArray.getWords()) byteBuf.writeIntLE(word)
+        byteBuf.writeByte(getPaletteHeader(bitArray.version, false))
+        for (word in bitArray.words) byteBuf.writeIntLE(word)
         byteBuf.writeIntLE(palette.size)
         try {
             ByteBufOutputStream(byteBuf).use { bufOutputStream ->
@@ -94,8 +90,8 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
             byteBuf.writeIntLE(serializer.serialize(palette[0]))
             return
         }
-        byteBuf.writeByte(getPaletteHeader(bitArray.getVersion(), true))
-        for (word in bitArray.getWords()) byteBuf.writeIntLE(word)
+        byteBuf.writeByte(getPaletteHeader(bitArray.version, true))
+        for (word in bitArray.words) byteBuf.writeIntLE(word)
         byteBuf.writeIntLE(palette.size)
         for (value in palette) byteBuf.writeIntLE(serializer.serialize(value))
     }
@@ -113,7 +109,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
             ByteBufInputStream(byteBuf).use { bufInputStream ->
                 NbtUtils.createReaderLE(bufInputStream).use { inputStream ->
                     for (i in 0 until paletteSize) palette.add(
-                        deserializer.deserialize(inputStream.readTag() as NbtMap)
+                        deserializer.deserialize(inputStream.readTag() as NbtMap),
                     )
                 }
             }
@@ -125,7 +121,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
     fun readFromStorageRuntime(byteBuf: ByteBuf, deserializer: RuntimeDataDeserializer<V>, last: Palette<V>?) {
         val header = byteBuf.readUnsignedByte()
         if (hasCopyLastFlag(header)) {
-            Objects.requireNonNull(last).copyTo(this)
+            last!!.copyTo(this)
             return
         }
         val version = Objects.requireNonNull(getVersionFromHeader(header))
@@ -156,7 +152,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         if (index != -1) return index
         index = palette.size
         palette.add(value)
-        val version = bitArray.getVersion()
+        val version = bitArray.version
         if (index > version!!.maxEntryValue) {
             val next = version!!.next
             if (next != null) onResize(next)
@@ -167,7 +163,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
     val isEmpty: Boolean
         get() {
             if (palette.size == 1) return true
-            for (word in bitArray.getWords()) if (Integer.toUnsignedLong(word) != 0L) return false
+            for (word in bitArray.words) if (Integer.toUnsignedLong(word) != 0L) return false
             return true
         }
 
@@ -184,7 +180,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         }
 
         private fun getVersionFromHeader(header: Short): BitArrayVersion? {
-            return BitArrayVersion.Companion.get(header.toInt() shr 1, true)
+            return BitArrayVersion.get(header.toInt() shr 1, true)
         }
 
         private fun hasCopyLastFlag(header: Short): Boolean {

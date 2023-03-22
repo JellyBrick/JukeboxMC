@@ -20,17 +20,17 @@ open class BlockFence : Block {
             val south = canConnect(this.getSide(Direction.SOUTH))
             val west = canConnect(this.getSide(Direction.WEST))
             val east = canConnect(this.getSide(Direction.EAST))
-            val n: Float = if (north) 0 else 0.375f
-            val s: Float = if (south) 1 else 0.625f
-            val w: Float = if (west) 0 else 0.375f
-            val e: Float = if (east) 1 else 0.625f
+            val n: Float = if (north) 0f else 0.375f
+            val s: Float = if (south) 1f else 0.625f
+            val w: Float = if (west) 0f else 0.375f
+            val e: Float = if (east) 1f else 0.625f
             return AxisAlignedBB(
-                location!!.x + w,
-                location!!.y,
-                location!!.z + n,
-                location!!.x + e,
-                location!!.y + 1.5f,
-                location!!.z + s
+                location.getX() + w,
+                location.getY(),
+                location.getZ() + n,
+                location.getX() + e,
+                location.getY() + 1.5f,
+                location.getZ() + s,
             )
         }
 

@@ -25,7 +25,7 @@ class BlockWaxedExposedCutCopperSlab : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
@@ -34,14 +34,14 @@ class BlockWaxedExposedCutCopperSlab : BlockSlab {
                 if (targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB)
+                        create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWaxedExposedCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB)
+                    create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }
@@ -50,14 +50,14 @@ class BlockWaxedExposedCutCopperSlab : BlockSlab {
                 if (!targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        Block.Companion.create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB)
+                        create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWaxedExposedCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB)
+                    create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }
@@ -65,7 +65,7 @@ class BlockWaxedExposedCutCopperSlab : BlockSlab {
             if (block is BlockWaxedExposedCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    Block.Companion.create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB)
+                    create<Block>(BlockType.WAXED_EXPOSED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }

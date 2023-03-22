@@ -15,6 +15,6 @@ class BlockBrownWool : Block {
     constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
-        return Item.Companion.create<Item>(ItemType.BROWN_WOOL)
+        return Item.create<Item>(ItemType.BROWN_WOOL)
     }
 }

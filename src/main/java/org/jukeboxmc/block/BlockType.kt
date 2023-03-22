@@ -1,7 +1,5 @@
 package org.jukeboxmc.block
 
-import java.util.Arrays
-
 /**
  * @author LucGamesYT
  * @version 1.0

@@ -29,17 +29,17 @@ class BlockBarrel : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         if (FastMath.abs(
-                player.x - getLocation()!!
-                    .x
-            ) < 2 && FastMath.abs(player.z - getLocation()!!.z) < 2
+                player.x - getLocation()
+                    .getX(),
+            ) < 2 && FastMath.abs(player.z - getLocation().getZ()) < 2
         ) {
             val y = (player.y + player.eyeHeight).toDouble()
-            if (y - getLocation()!!.y > 2) {
+            if (y - getLocation().getY() > 2) {
                 this.blockFace = BlockFace.UP
-            } else if (getLocation()!!.y - y > 0) {
+            } else if (getLocation().getY() - y > 0) {
                 this.blockFace = BlockFace.DOWN
             } else {
                 this.blockFace = player.direction.toBlockFace().opposite()
@@ -49,7 +49,7 @@ class BlockBarrel : Block {
         }
         isOpen = false
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.BARREL, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.BARREL, this).spawn()
         return true
     }
 
@@ -58,9 +58,9 @@ class BlockBarrel : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityBarrel? = blockEntity
+        val blockEntity: BlockEntityBarrel? = blockEntity as BlockEntityBarrel?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -69,22 +69,22 @@ class BlockBarrel : Block {
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val blockEntity: BlockEntityBarrel? = blockEntity
+        val blockEntity: BlockEntityBarrel? = blockEntity as BlockEntityBarrel?
         if (blockEntity != null) {
             val inventory = blockEntity.barrelInventory
             for (content in inventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
-                    location.world.dropItem(content, breakPosition, null).spawn()
+                if (content.type != ItemType.AIR) {
+                    location.world?.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             inventory.clear()
-            inventory.viewer.clear()
+            inventory.getViewer().clear()
         }
         super.onBlockBreak(breakPosition)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBarrel?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBarrel?
     var isOpen: Boolean
         get() = stateExists("open_bit") && getByteState("open_bit").toInt() == 1
         set(value) {

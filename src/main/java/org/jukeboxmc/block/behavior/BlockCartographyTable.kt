@@ -21,7 +21,7 @@ class BlockCartographyTable : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         player.openInventory(player.cartographyTableInventory, blockPosition)
         return true

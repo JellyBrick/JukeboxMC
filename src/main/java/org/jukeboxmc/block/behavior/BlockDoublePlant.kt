@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.data.PlantType
@@ -14,6 +13,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -30,14 +30,14 @@ class BlockDoublePlant : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val blockAbove = world.getBlock(placePosition.add(0f, 1f, 0f))
         val blockDown = world.getBlock(placePosition.subtract(0f, 1f, 0f))
         if (blockAbove.type == BlockType.AIR && (blockDown.type == BlockType.GRASS || blockDown.type == BlockType.DIRT)) {
             if (!isUpperBlock) {
                 val blockDoublePlant: BlockDoublePlant =
-                    Block.Companion.create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
+                    create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
                 blockDoublePlant.setLocation(Location(world, placePosition.add(0f, 1f, 0f)))
                 blockDoublePlant.setPlantType(plantType)
                 blockDoublePlant.setUpperBlock(true)
@@ -45,7 +45,7 @@ class BlockDoublePlant : Block {
                 world.setBlock(placePosition, this)
             } else {
                 val blockDoublePlant: BlockDoublePlant =
-                    Block.Companion.create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
+                    create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
                 blockDoublePlant.setLocation(Location(world, placePosition))
                 blockDoublePlant.setPlantType(plantType)
                 blockDoublePlant.setUpperBlock(false)
@@ -59,16 +59,16 @@ class BlockDoublePlant : Block {
 
     override fun onBlockBreak(breakPosition: Vector) {
         if (isUpperBlock) {
-            location.world.setBlock(location!!.subtract(0f, 1f, 0f), Block.Companion.create<Block>(BlockType.AIR))
+            location.world?.setBlock(location.subtract(0f, 1f, 0f), create<Block>(BlockType.AIR))
         } else {
-            location.world.setBlock(location!!.add(0f, 1f, 0f), Block.Companion.create<Block>(BlockType.AIR))
+            location.world?.setBlock(location.add(0f, 1f, 0f), create<Block>(BlockType.AIR))
         }
-        location.world.setBlock(location, Block.Companion.create<Block>(BlockType.AIR))
+        location.world?.setBlock(location, create<Block>(BlockType.AIR))
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<ItemDoublePlant>(ItemType.DOUBLE_PLANT).setPlantType(
-            plantType
+        return Item.create<ItemDoublePlant>(ItemType.DOUBLE_PLANT).setPlantType(
+            plantType,
         )
     }
 

@@ -6,11 +6,6 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent
 import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import java.util.LinkedList
-import java.util.Locale
-import java.util.Optional
-import java.util.function.Consumer
-import lombok.ToString
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.behavior.Waterlogable
 import org.jukeboxmc.block.data.BlockProperties
@@ -39,12 +34,15 @@ import org.jukeboxmc.potion.MiningFatigueEffect
 import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.LinkedList
+import java.util.Locale
+import java.util.Optional
+import java.util.function.Consumer
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString(exclude = ["blockProperties"])
 open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates: NbtMap? = null) : Cloneable {
     var runtimeId: Int
         protected set
@@ -53,7 +51,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     protected var blockStates: NbtMap?
     var type: BlockType?
         protected set
-    protected var location: Location? = null
+    protected var location: Location = Location(null, Vector(0, 0, 0))
     protected var layer = 0
     protected var blockProperties: BlockProperties?
 
@@ -66,9 +64,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         if (!STATES.containsKey(this.identifier)) {
             val toRuntimeId: Object2ObjectMap<NbtMap?, Int> = Object2ObjectLinkedOpenHashMap()
             for (blockMap in BlockPalette.searchBlocks { blockMap: NbtMap ->
-                blockMap.getString("name").lowercase(Locale.getDefault()) == this.identifier.getFullName()
+                blockMap.getString("name").lowercase(Locale.getDefault()) == (this.identifier?.fullName ?: "")
             }) {
-                toRuntimeId[blockMap!!.getCompound("states")] = BlockPalette.getRuntimeId(blockMap)
+                toRuntimeId[blockMap.getCompound("states")] = BlockPalette.getRuntimeId(blockMap)
             }
             STATES[this.identifier] = toRuntimeId
         }
@@ -89,13 +87,13 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     }
 
     val world: World?
-        get() = location.getWorld()
+        get() = location.world
 
-    fun getLocation(): Location? {
+    fun getLocation(): Location {
         return location
     }
 
-    fun setLocation(location: Location?) {
+    fun setLocation(location: Location) {
         this.location = location
     }
 
@@ -108,14 +106,14 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     }
 
     fun checkValidity(): Boolean {
-        return location != null && location.getWorld() != null && location.getWorld()
-            .getBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), layer, location.getDimension())
-            .getRuntimeId() == runtimeId
+        return location.world != null && location.world!!
+            .getBlock(location.blockX, location.blockY, location.blockZ, layer, location.dimension)
+            .runtimeId == runtimeId
     }
 
     fun <B : Block?> setState(state: String, value: Any): B {
         if (!blockStates!!.containsKey(state)) {
-            throw AssertionError("State " + state + " was not found in block " + identifier)
+            throw AssertionError("State $state was not found in block $identifier")
         }
         if (blockStates!![state]!!.javaClass != value.javaClass) {
             throw AssertionError("State $state type is not the same for value  $value")
@@ -131,7 +129,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         runtimeId = STATES[identifier]!![blockStates]!!
         if (valid) {
             this.sendUpdate()
-            location.getChunk().setBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ(), layer, this)
+            location.chunk?.setBlock(location.blockX, location.blockY, location.blockZ, layer, this)
         }
         return this as B
     }
@@ -185,24 +183,24 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     }
 
     fun getRelative(position: Vector, layer: Int): Block? {
-        val x = location.getBlockX() + position.blockX
-        val y = location.getBlockY() + position.blockY
-        val z = location.getBlockZ() + position.blockZ
-        return location.getWorld().getBlock(x, y, z, layer, location.getDimension())
+        val x = location.blockX + position.blockX
+        val y = location.blockY + position.blockY
+        val z = location.blockZ + position.blockZ
+        return location.world?.getBlock(x, y, z, layer, location.dimension)
     }
 
     open fun toItem(): Item {
-        return Item.Companion.create<Item>(identifier)
+        return Item.create(identifier)
     }
 
     open val boundingBox: AxisAlignedBB
         get() = AxisAlignedBB(
-            location!!.x,
-            location!!.y,
-            location!!.z,
-            location!!.x + 1,
-            location!!.y + 1,
-            location!!.z + 1
+            location!!.getX(),
+            location!!.getY(),
+            location!!.getZ(),
+            location!!.getX() + 1,
+            location!!.getY() + 1,
+            location!!.getZ() + 1,
         )
 
     fun breakBlock(player: Player, item: Item) {
@@ -217,7 +215,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             getDrops(item)
         }
         val blockBreakEvent = BlockBreakEvent(player, this, itemDropList)
-        Server.Companion.getInstance().getPluginManager().callEvent(blockBreakEvent)
+        Server.instance.pluginManager.callEvent(blockBreakEvent)
         if (blockBreakEvent.isCancelled) {
             player.inventory.sendItemInHand()
             this.sendUpdate(player)
@@ -233,32 +231,32 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             val itemDrops: MutableList<EntityItem> = ArrayList()
             for (droppedItem in blockBreakEvent.drops) {
                 if (droppedItem.type != ItemType.AIR) {
-                    itemDrops.add(player.world.dropItem(droppedItem, breakLocation.clone(), null))
+                    itemDrops.add(player.world!!.dropItem(droppedItem, breakLocation.clone(), null))
                 }
             }
-            if (!itemDrops.isEmpty()) {
+            if (itemDrops.isNotEmpty()) {
                 itemDrops.forEach(Consumer { obj: EntityItem -> obj.spawn() })
             }
         }
         playBreakSound()
-        breakLocation.world.sendLevelEvent(breakLocation, LevelEventType.PARTICLE_DESTROY_BLOCK, runtimeId)
+        breakLocation.world!!.sendLevelEvent(breakLocation, LevelEventType.PARTICLE_DESTROY_BLOCK, runtimeId)
     }
 
     private fun playBreakSound() {
-        location.getWorld().playSound(location, SoundEvent.BREAK, runtimeId)
+        location.world?.playSound(location, SoundEvent.BREAK, runtimeId)
     }
 
     open fun onBlockBreak(breakPosition: Vector) {
-        location.getWorld().setBlock(breakPosition, create(BlockType.AIR), 0, breakPosition.dimension)
+        location.world?.setBlock(breakPosition, create(BlockType.AIR), 0, breakPosition.dimension)
     }
 
     fun sendUpdate() {
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.runtimeId = runtimeId
-        updateBlockPacket.blockPosition = location!!.toVector3i()
+        updateBlockPacket.blockPosition = location.toVector3i()
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         updateBlockPacket.dataLayer = layer
-        location.getWorld().sendChunkPacket(location.getChunkX(), location.getChunkZ(), updateBlockPacket)
+        location.world?.sendChunkPacket(location.chunkX, location.chunkZ, updateBlockPacket)
     }
 
     fun sendUpdate(player: Player) {
@@ -267,7 +265,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         }
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.runtimeId = runtimeId
-        updateBlockPacket.blockPosition = location!!.toVector3i()
+        updateBlockPacket.blockPosition = location.toVector3i()
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         updateBlockPacket.dataLayer = layer
         player.playerConnection.sendPacket(updateBlockPacket)
@@ -276,15 +274,15 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     fun getBreakTime(item: Item, player: Player): Double {
         val hardness = hardness
         if (hardness == 0.0) {
-            return 0
+            return 0.0
         }
         val blockType = type
         val correctTool = correctTool0(
             toolType,
-            item.toolType
+            item.toolType,
         ) ||
-                item.toolType == ToolType.SHEARS &&
-                (blockType == BlockType.WEB || blockType == BlockType.LEAVES || blockType == BlockType.LEAVES2)
+            item.toolType == ToolType.SHEARS &&
+            (blockType == BlockType.WEB || blockType == BlockType.LEAVES || blockType == BlockType.LEAVES2)
         val canBreakWithHand = canBreakWithHand()
         val itemToolType = item.toolType
         val itemTier = item.tierType
@@ -302,9 +300,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             .orElse(0)
         hasteEffectLevel += conduitPowerLevel
         val insideOfWaterWithoutAquaAffinity = player.isInWater && conduitPowerLevel <= 0 &&
-                Optional.ofNullable(player.armorInventory.helmet.getEnchantment(EnchantmentType.AQUA_AFFINITY))
-                    .map { obj: Enchantment -> obj.level }
-                    .map { l: Short -> l >= 1 }.orElse(false)
+            Optional.ofNullable(player.getArmorInventory().helmet.getEnchantment(EnchantmentType.AQUA_AFFINITY))
+                .map { obj: Enchantment -> obj.level }
+                .map { l: Short -> l >= 1 }.orElse(false)
         val outOfWaterButNotOnGround = !player.isInWater && !player.isOnGround
         return breakTime0(
             item,
@@ -318,7 +316,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             hasteEffectLevel,
             miningFatigueLevel,
             insideOfWaterWithoutAquaAffinity,
-            outOfWaterButNotOnGround
+            outOfWaterButNotOnGround,
         )
     }
 
@@ -334,7 +332,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         hasteEffectLevel: Int,
         miningFatigueLevel: Int,
         insideOfWaterWithoutAquaAffinity: Boolean,
-        outOfWaterButNotOnGround: Boolean
+        outOfWaterButNotOnGround: Boolean,
     ): Double {
         val baseTime: Double
         baseTime = if (canHarvest(item) || canHarvestWithHand) {
@@ -363,19 +361,23 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
             return 1.0
         }
-        return if (itemToolType == ToolType.NONE) 1.0 else when (itemTierType) {
-            TierType.WOODEN -> 2.0
-            TierType.STONE -> 4.0
-            TierType.IRON -> 6.0
-            TierType.DIAMOND -> 8.0
-            TierType.NETHERITE -> 9.0
-            TierType.GOLD -> 12.0
-            else -> 1.0
+        return if (itemToolType == ToolType.NONE) {
+            1.0
+        } else {
+            when (itemTierType) {
+                TierType.WOODEN -> 2.0
+                TierType.STONE -> 4.0
+                TierType.IRON -> 6.0
+                TierType.DIAMOND -> 8.0
+                TierType.NETHERITE -> 9.0
+                TierType.GOLD -> 12.0
+                else -> 1.0
+            }
         }
     }
 
     private fun speedBonusByEfficiencyLore0(efficiencyLoreLevel: Int): Double {
-        return if (efficiencyLoreLevel == 0) 0 else (efficiencyLoreLevel * efficiencyLoreLevel + 1).toDouble()
+        return if (efficiencyLoreLevel == 0) 0.0 else (efficiencyLoreLevel * efficiencyLoreLevel + 1).toDouble()
     }
 
     private fun speedRateByHasteLore0(hasteLoreLevel: Int): Double {
@@ -384,7 +386,8 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
 
     fun canHarvest(item: Item): Boolean {
         return tierType == TierType.NONE || toolType == ToolType.NONE || correctTool0(
-            toolType, item.toolType
+            toolType,
+            item.toolType,
         ) && item.tierType.ordinal >= tierType.ordinal
     }
 
@@ -399,7 +402,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         world.setBlock(placePosition, this, 0, player.dimension, true)
         return true
@@ -410,7 +413,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         return false
     }
@@ -419,24 +422,24 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         get() = null
 
     fun canBreakWithHand(): Boolean {
-        return blockProperties.isCanBreakWithHand()
+        return blockProperties!!.canBreakWithHand
     }
 
     val isSolid: Boolean
-        get() = blockProperties.isSolid()
+        get() = blockProperties!!.solid
     val isTransparent: Boolean
-        get() = blockProperties.isTransparent()
+        get() = blockProperties!!.transparent
     val hardness: Double
-        get() = blockProperties.getHardness()
+        get() = blockProperties!!.hardness
 
     open fun canPassThrough(): Boolean {
-        return blockProperties.isCanPassThrough()
+        return blockProperties!!.canPassThrough
     }
 
     val toolType: ToolType
-        get() = blockProperties.getToolType()
+        get() = blockProperties!!.toolType
     val tierType: TierType
-        get() = blockProperties.getTierType()
+        get() = blockProperties!!.tierType
 
     open fun canBeReplaced(block: Block?): Boolean {
         return false
@@ -459,7 +462,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     open fun getDrops(item: Item?): List<Item> {
         return if (item == null || isCorrectToolType(item) && isCorrectTierType(item)) {
             listOf(toItem())
-        } else emptyList()
+        } else {
+            emptyList()
+        }
     }
 
     fun isCorrectToolType(item: Item): Boolean {
@@ -497,26 +502,31 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java
+                        Identifier::class.java,
                     )
                     constructor.newInstance(BlockRegistry.getIdentifier(blockType)) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Block(BlockRegistry.getIdentifier(blockType)) as T
+            } else {
+                Block(BlockRegistry.getIdentifier(blockType)) as T
+            }
         }
 
         fun <T : Block?> create(blockType: BlockType?, blockStates: NbtMap?): T {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java, NbtMap::class.java
+                        Identifier::class.java,
+                        NbtMap::class.java,
                     )
                     constructor.newInstance(BlockRegistry.getIdentifier(blockType), blockStates) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Block(BlockRegistry.getIdentifier(blockType), blockStates) as T
+            } else {
+                Block(BlockRegistry.getIdentifier(blockType), blockStates) as T
+            }
         }
 
         fun <T : Block?> create(identifier: Identifier?): T {
@@ -524,13 +534,15 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java
+                        Identifier::class.java,
                     )
                     constructor.newInstance(identifier) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Block(identifier, null) as T
+            } else {
+                Block(identifier, null) as T
+            }
         }
 
         fun <T : Block?> create(identifier: Identifier?, blockStates: NbtMap?): T {
@@ -538,13 +550,16 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java, NbtMap::class.java
+                        Identifier::class.java,
+                        NbtMap::class.java,
                     )
                     constructor.newInstance(identifier, blockStates) as T
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
-            } else Block(identifier, blockStates) as T
+            } else {
+                Block(identifier, blockStates) as T
+            }
         }
     }
 }

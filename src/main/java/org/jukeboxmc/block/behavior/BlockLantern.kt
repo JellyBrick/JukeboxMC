@@ -24,7 +24,7 @@ class BlockLantern : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val hanging =
             blockFace != BlockFace.UP && isBlockAboveValid && (isBlockUnderValid || blockFace == BlockFace.DOWN)
@@ -46,7 +46,9 @@ class BlockLantern : Block {
                 !up.isTopSlot
             } else if (up is BlockStairs) {
                 !up.isUpsideDown
-            } else up!!.isSolid
+            } else {
+                up.isSolid
+            }
         }
     private val isBlockUnderValid: Boolean
         private get() {
@@ -59,7 +61,9 @@ class BlockLantern : Block {
                 !down.isTopSlot
             } else if (down is BlockStairs) {
                 !down.isUpsideDown
-            } else !down!!.isSolid
+            } else {
+                !down.isSolid
+            }
         }
     var isHanging: Boolean
         get() = stateExists("hanging") && getByteState("hanging").toInt() == 1

@@ -24,10 +24,10 @@ class BlockVine : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
-        if (block!!.isSolid && blockFace.horizontalIndex != -1) {
+        if (block.isSolid && blockFace.horizontalIndex != -1) {
             this.setVineDirection(1 shl blockFace.opposite().horizontalIndex)
             world.setBlock(placePosition, this)
             return true
@@ -40,7 +40,7 @@ class BlockVine : Block {
         return this
     }
 
-    fun setVineDirection(value: Int): BlockVine { //0-15 TODO -> Add Direction Class
+    fun setVineDirection(value: Int): BlockVine { // 0-15 TODO -> Add Direction Class
         setState<Block>("vine_direction_bits", value)
         return this
     }

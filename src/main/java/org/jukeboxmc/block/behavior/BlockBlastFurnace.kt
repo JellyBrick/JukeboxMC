@@ -28,11 +28,11 @@ class BlockBlastFurnace : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.BLAST_FURNACE, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.BLAST_FURNACE, this).spawn()
         return true
     }
 
@@ -41,9 +41,9 @@ class BlockBlastFurnace : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityBlastFurnace? = blockEntity
+        val blockEntity: BlockEntityBlastFurnace? = blockEntity as BlockEntityBlastFurnace?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -52,22 +52,22 @@ class BlockBlastFurnace : Block {
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val blockEntity: BlockEntityBlastFurnace? = blockEntity
+        val blockEntity: BlockEntityBlastFurnace? = blockEntity as BlockEntityBlastFurnace?
         if (blockEntity != null) {
             val furnaceInventory = blockEntity.blastFurnaceInventory
             for (content in furnaceInventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
-                    location.world.dropItem(content, breakPosition, null).spawn()
+                if (content.type != ItemType.AIR) {
+                    location.world?.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             furnaceInventory.clear()
-            furnaceInventory.viewer.clear()
+            furnaceInventory.getViewer().clear()
         }
         super.onBlockBreak(breakPosition)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBlastFurnace?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBlastFurnace?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

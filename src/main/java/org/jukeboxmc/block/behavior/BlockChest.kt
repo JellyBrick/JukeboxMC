@@ -29,17 +29,17 @@ class BlockChest : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
-            BlockEntity.Companion.create<BlockEntity>(BlockEntityType.CHEST, this).spawn()
+            BlockEntity.create<BlockEntity>(BlockEntityType.CHEST, this).spawn()
             for (direction in Direction.values()) {
                 val side = this.getSide(direction)
                 if (side.type == this.type) {
-                    val blockEntity: BlockEntityChest? = blockEntity
+                    val blockEntity: BlockEntityChest? = blockEntity as BlockEntityChest?
                     val sideBlockEntity = side.blockEntity as BlockEntityChest?
                     if (blockEntity != null && sideBlockEntity != null && !blockEntity.isPaired && !sideBlockEntity.isPaired) {
                         blockEntity.pair(sideBlockEntity)
@@ -57,9 +57,9 @@ class BlockChest : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityChest? = blockEntity
+        val blockEntity: BlockEntityChest? = blockEntity as BlockEntityChest?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -68,25 +68,25 @@ class BlockChest : Block {
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val blockEntity: BlockEntityChest? = blockEntity
+        val blockEntity: BlockEntityChest? = blockEntity as BlockEntityChest?
         if (blockEntity != null) {
             if (blockEntity.isPaired) {
                 blockEntity.unpair()
             }
-            val chestInventory = blockEntity.chestInventory
+            val chestInventory = blockEntity.getChestInventory() ?: return
             for (content in chestInventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
-                    location.world.dropItem(content, breakPosition, null).spawn()
+                if (content.type != ItemType.AIR) {
+                    location.world?.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             chestInventory!!.clear()
-            chestInventory!!.viewer.clear()
+            chestInventory.getViewer().clear()
         }
         super.onBlockBreak(breakPosition)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityChest?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityChest?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

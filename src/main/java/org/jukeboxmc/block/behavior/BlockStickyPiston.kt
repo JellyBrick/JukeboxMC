@@ -25,17 +25,17 @@ class BlockStickyPiston : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         if (FastMath.abs(
-                player.x - getLocation()!!
-                    .x
-            ) < 2 && FastMath.abs(player.z - getLocation()!!.z) < 2
+                player.x - getLocation()
+                    .getX(),
+            ) < 2 && FastMath.abs(player.z - getLocation().blockZ) < 2
         ) {
             val y = (player.y + player.eyeHeight).toDouble()
-            if (y - getLocation()!!.y > 2) {
+            if (y - getLocation().getY() > 2) {
                 this.blockFace = BlockFace.UP
-            } else if (getLocation()!!.y - y > 0) {
+            } else if (getLocation().getY() - y > 0) {
                 this.blockFace = BlockFace.DOWN
             } else {
                 this.blockFace = player.direction.toBlockFace()

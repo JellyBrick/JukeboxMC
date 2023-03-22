@@ -25,7 +25,7 @@ class BlockWaterlily : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
         if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {

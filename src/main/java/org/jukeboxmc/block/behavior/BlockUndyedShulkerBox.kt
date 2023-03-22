@@ -30,15 +30,15 @@ class BlockUndyedShulkerBox : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemIndHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val value =
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemIndHand, blockFace)
         if (value) {
             val blockEntityShulkerBox =
-                BlockEntity.Companion.create<BlockEntityShulkerBox>(BlockEntityType.SHULKER_BOX, this).setUndyed(true)
+                BlockEntity.create<BlockEntityShulkerBox>(BlockEntityType.SHULKER_BOX, this).setUndyed(true)
                     .spawn() as BlockEntityShulkerBox
-            if (itemIndHand.nbt != null && itemIndHand.nbt.containsKey("Items")) {
+            if (itemIndHand.nbt != null && itemIndHand.nbt!!.containsKey("Items")) {
                 val nbt = itemIndHand.nbt
                 val items = nbt!!.getList("Items", NbtType.COMPOUND)
                 for (nbtMap in items) {
@@ -60,9 +60,9 @@ class BlockUndyedShulkerBox : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityShulkerBox? = blockEntity
+        val blockEntity: BlockEntityShulkerBox? = blockEntity as BlockEntityShulkerBox?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -71,18 +71,18 @@ class BlockUndyedShulkerBox : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     override fun toItem(): ItemUndyedShulkerBox {
         val itemShulkerBox: ItemUndyedShulkerBox =
-            Item.Companion.create<ItemUndyedShulkerBox>(ItemType.UNDYED_SHULKER_BOX)
-        val blockEntity = blockEntity ?: return itemShulkerBox
+            Item.create(ItemType.UNDYED_SHULKER_BOX)
+        val blockEntity = blockEntity as BlockEntityShulkerBox? ?: return itemShulkerBox
         val shulkerBoxInventory = blockEntity.shulkerBoxInventory
         val builder = NbtMap.builder()
         val itemsCompoundList: MutableList<NbtMap> = ArrayList()
         for (slot in 0 until shulkerBoxInventory.size) {
             val item = shulkerBoxInventory.getItem(slot)
-            if (item != null && item.type != ItemType.AIR) {
+            if (item.type != ItemType.AIR) {
                 val itemCompound = NbtMap.builder()
                 itemCompound.putByte("Slot", slot.toByte())
                 blockEntity.fromItem(item, itemCompound)

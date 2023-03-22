@@ -24,7 +24,7 @@ class BlockStonecutterBlock : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         world.setBlock(placePosition, this)
@@ -36,9 +36,9 @@ class BlockStonecutterBlock : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        player.openInventory(player.stoneCutterInventory, blockPosition)
+        player.openInventory(player.getStoneCutterInventory(), blockPosition)
         return true
     }
 

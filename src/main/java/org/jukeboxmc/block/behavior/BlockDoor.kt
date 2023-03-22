@@ -28,11 +28,11 @@ class BlockDoor : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(placePosition)
-        direction = Direction.Companion.fromAngle(player.yaw)
-        val blockAbove: BlockDoor = Block.Companion.create<BlockDoor>(this.type)
+        direction = Direction.fromAngle(player.yaw)
+        val blockAbove: BlockDoor = create<BlockDoor>(this.type)
         blockAbove.setLocation(Location(world, placePosition.add(0f, 1f, 0f)))
         blockAbove.direction = direction
         blockAbove.setUpperBlock(true)
@@ -63,24 +63,24 @@ class BlockDoor : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
         setOpen(!isOpen)
-        location.world.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
+        location.world?.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
         return true
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val block = location.world.getBlock(breakPosition, 1)
+        val block = location.world?.getBlock(breakPosition, 1) ?: return
         if (isUpperBlock) {
-            location.world.setBlock(location!!.subtract(0f, 1f, 0f), block, 0)
-            location.world.setBlock(location!!.subtract(0f, 1f, 0f), Block.Companion.create<Block>(BlockType.AIR), 1)
+            location.world?.setBlock(location.subtract(0f, 1f, 0f), block, 0)
+            location.world?.setBlock(location.subtract(0f, 1f, 0f), create<Block>(BlockType.AIR), 1)
         } else {
-            location.world.setBlock(location!!.add(0f, 1f, 0f), block, 0)
-            location.world.setBlock(location!!.add(0f, 1f, 0f), Block.Companion.create<Block>(BlockType.AIR), 1)
+            location.world?.setBlock(location.add(0f, 1f, 0f), block, 0)
+            location.world?.setBlock(location.add(0f, 1f, 0f), create<Block>(BlockType.AIR), 1)
         }
-        location.world.setBlock(location, block, 0)
-        location.world.setBlock(location, Block.Companion.create<Block>(BlockType.AIR), 1)
+        location.world?.setBlock(location, block, 0)
+        location.world?.setBlock(location, create<Block>(BlockType.AIR), 1)
     }
 
     fun setOpen(value: Boolean): BlockDoor {

@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import java.util.Locale
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.data.DripstoneThickness
 import org.jukeboxmc.block.direction.BlockFace
@@ -10,6 +9,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -26,15 +26,15 @@ class BlockPointedDripstone : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val upBlock = world.getBlock(placePosition).getSide(BlockFace.UP)
         val downBlock = world.getBlock(placePosition).getSide(BlockFace.DOWN)
-        if (upBlock!!.isSolid) {
+        if (upBlock.isSolid) {
             isHanging = true
             world.setBlock(placePosition, this)
             return true
-        } else if (downBlock!!.isSolid) {
+        } else if (downBlock.isSolid) {
             isHanging = false
             world.setBlock(placePosition, this)
         }

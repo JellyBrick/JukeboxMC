@@ -2,7 +2,7 @@ package org.jukeboxmc.block.palette.bitarray
 
 import io.netty.buffer.ByteBuf
 
-class SingletonBitArray : BitArray {
+class SingletonBitArray @JvmOverloads constructor(override val words: IntArray = IntArray(0)) : BitArray {
     override fun set(index: Int, value: Int) {}
     override fun get(index: Int): Int {
         return 0
@@ -16,10 +16,5 @@ class SingletonBitArray : BitArray {
 
     override fun copy(): SingletonBitArray {
         return SingletonBitArray()
-    }
-
-    companion object {
-        val words = IntArray(0)
-            get() = Companion.field
     }
 }

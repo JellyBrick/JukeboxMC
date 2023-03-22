@@ -29,28 +29,28 @@ abstract class BlockLiquid : Block {
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.NORMAL) {
             if (usesWaterLogging() && layer > 0) {
-                val layer0 = location.world.getBlock(location, 0)
+                val layer0 = location.world!!.getBlock(location, 0)
                 if (layer0.type == BlockType.AIR) {
-                    location.world.setBlock(
+                    location.world!!.setBlock(
                         location,
-                        Block.Companion.create<Block>(BlockType.AIR),
+                        create<Block>(BlockType.AIR),
                         1,
                         location.dimension,
-                        false
+                        false,
                     )
-                    location.world.setBlock(location, this, 0, location.dimension, false)
+                    location.world?.setBlock(location, this, 0, location.dimension, false)
                 } else if (layer0 is Waterlogable && ((layer0 as Waterlogable).waterLoggingLevel <= 0 || (layer0 as Waterlogable).waterLoggingLevel == 1 && liquidDepth > 0)) {
-                    location.world.setBlock(
+                    location.world?.setBlock(
                         location,
-                        Block.Companion.create<Block>(BlockType.AIR),
+                        create<Block>(BlockType.AIR),
                         1,
                         location.dimension,
-                        true
+                        true,
                     )
                 }
             }
             checkForHarden()
-            location.world.scheduleBlockUpdate(location, tickRate.toLong())
+            location.world?.scheduleBlockUpdate(location, tickRate.toLong())
             return 0
         } else if (updateReason == UpdateReason.SCHEDULED) {
             var decay = getFlowDecay(this)
@@ -59,71 +59,75 @@ abstract class BlockLiquid : Block {
                 var smallestFlowDecay = -100
                 adjacentSources = 0
                 smallestFlowDecay = getSmallestFlowDecay(
-                    location.world.getBlock(
-                        location!!.x.toInt(),
-                        location!!.y.toInt(),
-                        location!!.z.toInt() - 1,
+                    location.world!!.getBlock(
+                        location.getX().toInt(),
+                        location.getY().toInt(),
+                        location.getZ().toInt() - 1,
                         0,
-                        location.dimension
-                    ), smallestFlowDecay
+                        location.dimension,
+                    ),
+                    smallestFlowDecay,
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
-                    location.world.getBlock(
-                        location!!.x.toInt(),
-                        location!!.y.toInt(),
-                        location!!.z.toInt() + 1,
+                    location.world!!.getBlock(
+                        location.getX().toInt(),
+                        location.getY().toInt(),
+                        location.getZ().toInt() + 1,
                         0,
-                        location.dimension
-                    ), smallestFlowDecay
+                        location.dimension,
+                    ),
+                    smallestFlowDecay,
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
-                    location.world.getBlock(
-                        location!!.x.toInt() - 1,
-                        location!!.y.toInt(),
-                        location!!.z.toInt(),
+                    location.world!!.getBlock(
+                        location.getY().toInt() - 1,
+                        location.getY().toInt(),
+                        location.getZ().toInt(),
                         0,
-                        location.dimension
-                    ), smallestFlowDecay
+                        location.dimension,
+                    ),
+                    smallestFlowDecay,
                 )
                 smallestFlowDecay = getSmallestFlowDecay(
-                    location.world.getBlock(
-                        location!!.x.toInt() + 1,
-                        location!!.y.toInt(),
-                        location!!.z.toInt(),
+                    location.world!!.getBlock(
+                        location.getX().toInt() + 1,
+                        location.getY().toInt(),
+                        location.getZ().toInt(),
                         0,
-                        location.dimension
-                    ), smallestFlowDecay
+                        location.dimension,
+                    ),
+                    smallestFlowDecay,
                 )
                 var newDecay = smallestFlowDecay + multiplier
                 if (newDecay >= 8 || smallestFlowDecay < 0) {
                     newDecay = -1
                 }
                 val topFlowDecay = getFlowDecay(
-                    location.world.getBlock(
-                        location!!.x.toInt(),
-                        location!!.y.toInt() + 1,
-                        location!!.z.toInt(),
+                    location.world!!.getBlock(
+                        location.getX().toInt(),
+                        location.getY().toInt() + 1,
+                        location.getZ().toInt(),
                         0,
-                        location.dimension
-                    )
+                        location.dimension,
+                    ),
                 )
                 if (topFlowDecay >= 0) {
                     newDecay = topFlowDecay or 0x08
                 }
                 if (adjacentSources >= 2 && this is BlockWater) {
-                    var bottomBlock = location.world.getBlock(
-                        location!!.x.toInt(),
-                        location!!.y.toInt() - 1,
-                        location!!.z.toInt(),
+                    var bottomBlock = location.world!!.getBlock(
+                        location.getX().toInt(),
+                        location.getY().toInt() - 1,
+                        location.getZ().toInt(),
                         0,
-                        location.dimension
+                        location.dimension,
                     )
-                    if (bottomBlock!!.isSolid) {
+                    if (bottomBlock.isSolid) {
                         newDecay = 0
                     } else if (bottomBlock is BlockWater && bottomBlock.liquidDepth == 0) {
                         newDecay = 0
                     } else {
-                        bottomBlock = bottomBlock.location.world.getBlock(location, 1)
+                        bottomBlock = bottomBlock.getLocation().world!!.getBlock(location, 1)
                         if (bottomBlock is BlockWater && bottomBlock.liquidDepth == 0) {
                             newDecay = 0
                         }
@@ -134,29 +138,29 @@ abstract class BlockLiquid : Block {
                     val decayed = decay < 0
                     val to: Block
                     to = if (decayed) {
-                        Block.Companion.create<Block>(BlockType.AIR)
+                        create<Block>(BlockType.AIR)
                     } else {
                         getBlock(decay)
                     }
                     val event = BlockFromToEvent(this, to)
-                    Server.Companion.getInstance().getPluginManager().callEvent(event)
+                    Server.instance.pluginManager.callEvent(event)
                     if (!event.isCancelled) {
-                        location.world.setBlock(location, event.blockTo, layer, location.dimension, true)
+                        location.world!!.setBlock(location, event.blockTo, layer, location.dimension, true)
                         if (!decayed) {
-                            location.world.scheduleBlockUpdate(location, tickRate.toLong())
+                            location.world!!.scheduleBlockUpdate(location, tickRate.toLong())
                         }
                     }
                 }
             }
             if (decay >= 0) {
-                val bottomBlock = location.world.getBlock(
-                    location!!.x.toInt(),
-                    location!!.y.toInt() - 1,
-                    location!!.z.toInt(),
+                val bottomBlock = location.world!!.getBlock(
+                    location.getX().toInt(),
+                    location.getY().toInt() - 1,
+                    location.getZ().toInt(),
                     0,
-                    location.dimension
+                    location.dimension,
                 )
-                flowIntoBlock(bottomBlock!!, decay or 0x08)
+                flowIntoBlock(bottomBlock, decay or 0x08)
                 if (decay == 0 || !(if (usesWaterLogging()) bottomBlock.canWaterloggingFlowInto() else bottomBlock.canBeFlowedInto())) {
                     val adjacentDecay: Int
                     adjacentDecay = if (decay >= 8) {
@@ -168,46 +172,50 @@ abstract class BlockLiquid : Block {
                         val flags = optimalFlowDirections
                         if (flags[0]) {
                             flowIntoBlock(
-                                location.world.getBlock(
-                                    location!!.x.toInt() - 1,
-                                    location!!.y.toInt(),
-                                    location!!.z.toInt(),
+                                location.world!!.getBlock(
+                                    location.getX().toInt() - 1,
+                                    location.getY().toInt(),
+                                    location.getZ().toInt(),
                                     0,
-                                    location.dimension
-                                ), adjacentDecay
+                                    location.dimension,
+                                ),
+                                adjacentDecay,
                             )
                         }
                         if (flags[1]) {
                             flowIntoBlock(
-                                location.world.getBlock(
-                                    location!!.x.toInt() + 1,
-                                    location!!.y.toInt(),
-                                    location!!.z.toInt(),
+                                location.world!!.getBlock(
+                                    location.getX().toInt() + 1,
+                                    location.getY().toInt(),
+                                    location.getZ().toInt(),
                                     0,
-                                    location.dimension
-                                ), adjacentDecay
+                                    location.dimension,
+                                ),
+                                adjacentDecay,
                             )
                         }
                         if (flags[2]) {
                             flowIntoBlock(
-                                location.world.getBlock(
-                                    location!!.x.toInt(),
-                                    location!!.y.toInt(),
-                                    location!!.z.toInt() - 1,
+                                location.world!!.getBlock(
+                                    location.getX().toInt(),
+                                    location.getY().toInt(),
+                                    location.getZ().toInt() - 1,
                                     0,
-                                    location.dimension
-                                ), adjacentDecay
+                                    location.dimension,
+                                ),
+                                adjacentDecay,
                             )
                         }
                         if (flags[3]) {
                             flowIntoBlock(
-                                location.world.getBlock(
-                                    location!!.x.toInt(),
-                                    location!!.y.toInt(),
-                                    location!!.z.toInt() + 1,
+                                location.world!!.getBlock(
+                                    location.getX().toInt(),
+                                    location.getY().toInt(),
+                                    location.getZ().toInt() + 1,
                                     0,
-                                    location.dimension
-                                ), adjacentDecay
+                                    location.dimension,
+                                ),
+                                adjacentDecay,
                             )
                         }
                     }
@@ -233,7 +241,7 @@ abstract class BlockLiquid : Block {
 
     protected fun getFlowDecay(block: Block): Int {
         if (block.type != this.type) {
-            val layer1 = block.location.world.getBlock(location, 1)
+            val layer1 = block.getLocation().world!!.getBlock(location, 1)
             return if (layer1.type != this.type) {
                 -1
             } else {
@@ -258,7 +266,7 @@ abstract class BlockLiquid : Block {
     protected fun canFlowInto(block: Block): Boolean {
         if (usesWaterLogging()) {
             if (block.canWaterloggingFlowInto()) {
-                val blockLayer1 = location.world.getBlock(location, 1)
+                val blockLayer1 = location.world!!.getBlock(location, 1)
                 return !(block is BlockLiquid && block.liquidDepth == 0) && !(blockLayer1 is BlockLiquid && blockLayer1.liquidDepth == 0)
             }
         }
@@ -269,23 +277,23 @@ abstract class BlockLiquid : Block {
         var block = block
         if (canFlowInto(block) && block !is BlockLiquid) {
             if (usesWaterLogging()) {
-                val layer1 = location.world.getBlock(location, 1)
+                val layer1 = location.world!!.getBlock(location, 1)
                 if (layer1 is BlockLiquid) {
                     return
                 }
                 if (block is Waterlogable && (block as Waterlogable).waterLoggingLevel > 1) {
-                    block = layer1!!
+                    block = layer1
                 }
             }
             val event = BlockLiquidFlowEvent(block, this, newFlowDecay)
-            Server.Companion.getInstance().getPluginManager().callEvent(event)
+            Server.instance.pluginManager.callEvent(event)
             if (!event.isCancelled) {
-                if (block.layer == 0 && block.type != BlockType.AIR) {
-                    //TODO DROP ITEM IF LIQUID IS COLLIDED
-                    //this.location.getWorld().breakBlock( null, block.getLocation(), block.getType() == BlockType.WEB ? Item.create( ItemType.WOODEN_SWORD ) : null );
+                if (block.getLayer() == 0 && block.type != BlockType.AIR) {
+                    // TODO DROP ITEM IF LIQUID IS COLLIDED
+                    // this.location.getWorld().breakBlock( null, block.getLocation(), block.getType() == BlockType.WEB ? Item.create( ItemType.WOODEN_SWORD ) : null );
                 }
-                location.world.setBlock(block.location, getBlock(newFlowDecay), block.layer)
-                location.world.scheduleBlockUpdate(block.location, tickRate.toLong())
+                location.world!!.setBlock(block.getLocation(), getBlock(newFlowDecay), block.getLayer())
+                location.world!!.scheduleBlockUpdate(block.getLocation(), tickRate.toLong())
             }
         }
     }
@@ -296,13 +304,13 @@ abstract class BlockLiquid : Block {
                 1000,
                 1000,
                 1000,
-                1000
+                1000,
             )
             var maxCost = 4 / flowDecayPerBlock
             for (j in 0..3) {
-                var x = location!!.x.toInt()
-                val y = location!!.y.toInt()
-                var z = location!!.z.toInt()
+                var x = location.getX().toInt()
+                val y = location.getY().toInt()
+                var z = location.getZ().toInt()
                 if (j == 0) {
                     --x
                 } else if (j == 1) {
@@ -312,12 +320,16 @@ abstract class BlockLiquid : Block {
                 } else {
                     ++z
                 }
-                val block = location.world.getBlock(x, y, z, 0, location.dimension)
-                if (!canFlowInto(block!!)) {
+                val block = location.world!!.getBlock(x, y, z, 0, location.dimension)
+                if (!canFlowInto(block)) {
                     flowCostVisited[Utils.blockHash(x, y, z)] = BLOCKED
-                } else if (if (usesWaterLogging()) location.world.getBlock(x, y - 1, z, 0, location.dimension)
-                        .canWaterloggingFlowInto() else location.world.getBlock(x, y - 1, z, 0, location.dimension)
-                        .canBeFlowedInto()
+                } else if (if (usesWaterLogging()) {
+                        location.world!!.getBlock(x, y - 1, z, 0, location.dimension)
+                            .canWaterloggingFlowInto()
+                    } else {
+                        location.world!!.getBlock(x, y - 1, z, 0, location.dimension)
+                            .canBeFlowedInto()
+                    }
                 ) {
                     flowCostVisited[Utils.blockHash(x, y, z)] = CAN_FLOW_DOWN
                     maxCost = 0
@@ -350,7 +362,7 @@ abstract class BlockLiquid : Block {
         accumulatedCost: Int,
         maxCost: Int,
         originOpposite: Int,
-        lastOpposite: Int
+        lastOpposite: Int,
     ): Int {
         var cost = 1000
         for (j in 0..3) {
@@ -370,12 +382,16 @@ abstract class BlockLiquid : Block {
             }
             val hash = Utils.blockHash(x, blockY, z)
             if (!flowCostVisited.containsKey(hash)) {
-                val blockSide = location.world.getBlock(x, blockY, z, 0, location.dimension)
-                if (!canFlowInto(blockSide!!)) {
+                val blockSide = location.world!!.getBlock(x, blockY, z, 0, location.dimension)
+                if (!canFlowInto(blockSide)) {
                     flowCostVisited[hash] = BLOCKED
-                } else if (if (usesWaterLogging()) location.world.getBlock(x, blockY - 1, z, 0, location.dimension)
-                        .canWaterloggingFlowInto() else location.world.getBlock(x, blockY - 1, z, 0, location.dimension)
-                        .canBeFlowedInto()
+                } else if (if (usesWaterLogging()) {
+                        location.world!!.getBlock(x, blockY - 1, z, 0, location.dimension)
+                            .canWaterloggingFlowInto()
+                    } else {
+                        location.world!!.getBlock(x, blockY - 1, z, 0, location.dimension)
+                            .canBeFlowedInto()
+                    }
                 ) {
                     flowCostVisited[hash] = CAN_FLOW_DOWN
                 } else {
@@ -399,14 +415,14 @@ abstract class BlockLiquid : Block {
         return cost
     }
 
-    fun liquidCollide(result: Block?) {
+    fun liquidCollide(result: Block) {
         val event = BlockFromToEvent(this, result)
-        location.world.server.pluginManager.callEvent(event)
+        location.world!!.server.pluginManager.callEvent(event)
         if (event.isCancelled) {
             return
         }
-        location.world.setBlock(location, event.blockTo, 0)
-        location.world.playSound(location!!.add(0.5f, 0.5f, 0.5f), SoundEvent.FIZZ)
+        location.world!!.setBlock(location, event.blockTo, 0)
+        location.world!!.playSound(location.add(0.5f, 0.5f, 0.5f), SoundEvent.FIZZ)
     }
 
     open val tickRate: Int

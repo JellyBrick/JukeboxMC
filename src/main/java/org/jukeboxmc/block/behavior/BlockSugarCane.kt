@@ -26,14 +26,14 @@ class BlockSugarCane : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val block = world.getBlock(blockPosition)
         if (world.getBlock(placePosition.subtract(0f, 1f, 0f)).type == BlockType.SUGAR_CANE) {
             world.setBlock(blockPosition.add(0f, 1f, 0f), this)
             return true
         } else if (block.type == BlockType.GRASS || block.type == BlockType.DIRT || block.type == BlockType.SAND) {
-            val blockNorth = block!!.getSide(BlockFace.NORTH)
+            val blockNorth = block.getSide(BlockFace.NORTH)
             val blockEast = block.getSide(BlockFace.EAST)
             val blockSouth = block.getSide(BlockFace.SOUTH)
             val blockWest = block.getSide(BlockFace.WEST)
@@ -46,7 +46,7 @@ class BlockSugarCane : Block {
     }
 
     override fun toItem(): Item {
-        return Item.Companion.create<Item>(ItemType.SUGAR_CANE)
+        return Item.create<Item>(ItemType.SUGAR_CANE)
     }
 
     var age: Int

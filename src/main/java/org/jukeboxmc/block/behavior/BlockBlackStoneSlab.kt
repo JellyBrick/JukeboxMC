@@ -25,33 +25,33 @@ class BlockBlackStoneSlab : BlockSlab {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         val targetBlock = world.getBlock(blockPosition)
         val block = world.getBlock(placePosition)
         if (blockFace == BlockFace.DOWN) {
             if (targetBlock is BlockBlackStoneSlab) {
                 if (targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, Block.Companion.create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
+                    world.setBlock(blockPosition, create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
                     return true
                 }
             } else if (block is BlockBlackStoneSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
                 return true
             }
         } else if (blockFace == BlockFace.UP) {
             if (targetBlock is BlockBlackStoneSlab) {
                 if (!targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, Block.Companion.create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
+                    world.setBlock(blockPosition, create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
                     return true
                 }
             } else if (block is BlockBlackStoneSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
                 return true
             }
         } else {
             if (block is BlockBlackStoneSlab) {
-                world.setBlock(placePosition, Block.Companion.create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create<Block>(BlockType.BLACKSTONE_DOUBLE_SLAB))
                 return true
             }
         }

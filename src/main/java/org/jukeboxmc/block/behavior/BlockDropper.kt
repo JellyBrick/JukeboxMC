@@ -27,11 +27,11 @@ class BlockDropper : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemInHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.DROPPER, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.DROPPER, this).spawn()
         return true
     }
 
@@ -40,9 +40,9 @@ class BlockDropper : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntityDropper? = blockEntity
+        val blockEntity: BlockEntityDropper? = blockEntity as BlockEntityDropper?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -51,7 +51,7 @@ class BlockDropper : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityDropper?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityDropper?
     var isTriggered: Boolean
         get() = stateExists("triggered_bit") && getByteState("triggered_bit").toInt() == 1
         set(value) {

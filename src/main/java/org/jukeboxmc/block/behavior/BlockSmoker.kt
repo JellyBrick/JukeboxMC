@@ -27,11 +27,11 @@ class BlockSmoker : Block {
         placePosition: Vector,
         clickedPosition: Vector,
         itemIndHand: Item,
-        blockFace: BlockFace
+        blockFace: BlockFace,
     ): Boolean {
         this.blockFace = player.direction.toBlockFace().opposite()
         world.setBlock(placePosition, this, 0)
-        BlockEntity.Companion.create<BlockEntity>(BlockEntityType.SMOKER, this).spawn()
+        BlockEntity.create<BlockEntity>(BlockEntityType.SMOKER, this).spawn()
         return true
     }
 
@@ -40,9 +40,9 @@ class BlockSmoker : Block {
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item
+        itemInHand: Item,
     ): Boolean {
-        val blockEntity: BlockEntitySmoker? = blockEntity
+        val blockEntity: BlockEntitySmoker? = blockEntity as BlockEntitySmoker?
         if (blockEntity != null) {
             blockEntity.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             return true
@@ -51,7 +51,7 @@ class BlockSmoker : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world.getBlockEntity(getLocation(), location.dimension) as BlockEntitySmoker?
+        get() = location.world?.getBlockEntity(getLocation(), location.dimension) as BlockEntitySmoker?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {
