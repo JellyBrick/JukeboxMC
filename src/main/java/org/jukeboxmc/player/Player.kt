@@ -3,25 +3,63 @@ package org.jukeboxmc.player
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.protocol.bedrock.data.command.CommandData
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
+import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket
+import com.nukkitx.protocol.bedrock.packet.ChangeDimensionPacket
+import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket
+import com.nukkitx.protocol.bedrock.packet.DeathInfoPacket
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket
+import com.nukkitx.protocol.bedrock.packet.ModalFormRequestPacket
+import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
+import com.nukkitx.protocol.bedrock.packet.PlaySoundPacket
+import com.nukkitx.protocol.bedrock.packet.RespawnPacket
+import com.nukkitx.protocol.bedrock.packet.ServerSettingsResponsePacket
+import com.nukkitx.protocol.bedrock.packet.SetPlayerGameTypePacket
+import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
+import com.nukkitx.protocol.bedrock.packet.TextPacket
+import com.nukkitx.protocol.bedrock.packet.ToastRequestPacket
+import com.nukkitx.protocol.bedrock.packet.UpdateAttributesPacket
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import java.util.Locale
-import java.util.Objects
-import java.util.UUID
-import java.util.function.Consumer
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.entity.Entity
+import org.jukeboxmc.entity.EntityLiving
+import org.jukeboxmc.entity.EntityMoveable
 import org.jukeboxmc.entity.attribute.AttributeType
 import org.jukeboxmc.entity.passiv.EntityHuman
 import org.jukeboxmc.entity.projectile.EntityFishingHook
+import org.jukeboxmc.event.entity.EntityDamageByEntityEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
 import org.jukeboxmc.event.entity.EntityHealEvent
+import org.jukeboxmc.event.inventory.InventoryCloseEvent
+import org.jukeboxmc.event.inventory.InventoryOpenEvent
+import org.jukeboxmc.event.player.PlayerChangeSkinEvent
+import org.jukeboxmc.event.player.PlayerDeathEvent
+import org.jukeboxmc.event.player.PlayerExperienceChangeEvent
+import org.jukeboxmc.event.player.PlayerKickEvent
+import org.jukeboxmc.event.player.PlayerRespawnEvent
 import org.jukeboxmc.form.Form
 import org.jukeboxmc.form.FormListener
 import org.jukeboxmc.form.NpcDialogueForm
+import org.jukeboxmc.inventory.AnvilInventory
+import org.jukeboxmc.inventory.CartographyTableInventory
+import org.jukeboxmc.inventory.ContainerInventory
+import org.jukeboxmc.inventory.CraftingGridInventory
+import org.jukeboxmc.inventory.CraftingTableInventory
+import org.jukeboxmc.inventory.CreativeItemCacheInventory
+import org.jukeboxmc.inventory.CursorInventory
+import org.jukeboxmc.inventory.EnderChestInventory
+import org.jukeboxmc.inventory.GrindstoneInventory
+import org.jukeboxmc.inventory.InventoryHolder
+import org.jukeboxmc.inventory.OffHandInventory
+import org.jukeboxmc.inventory.SmallCraftingGridInventory
+import org.jukeboxmc.inventory.SmithingTableInventory
+import org.jukeboxmc.inventory.StoneCutterInventory
+import org.jukeboxmc.inventory.WindowId
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.behavior.ItemArmor
@@ -30,21 +68,29 @@ import org.jukeboxmc.item.enchantment.EnchantmentSharpness
 import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
+import org.jukeboxmc.player.data.LoginData
 import org.jukeboxmc.player.skin.Skin
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.util.Utils
+import org.jukeboxmc.world.Difficulty
 import org.jukeboxmc.world.Sound
 import org.jukeboxmc.world.chunk.ChunkLoader
+import java.util.Locale
+import java.util.Objects
+import java.util.UUID
+import java.util.function.Consumer
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-class Player(override val server: Server, val playerConnection: PlayerConnection) : EntityHuman(), ChunkLoader,
-    CommandSender, InventoryHolder {
+class Player(
+    override val server: Server,
+    val playerConnection: PlayerConnection,
+) : EntityHuman(), ChunkLoader, CommandSender, InventoryHolder {
     val adventureSettings: AdventureSettings
-    private override var name: String? = null
+    override var name: String = ""
     var gameMode: GameMode?
         private set
     var closingWindowId = Int.MIN_VALUE
@@ -93,50 +139,48 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         grindstoneInventory = GrindstoneInventory(this)
         offHandInventory = OffHandInventory(this)
         lasBreakPosition = Vector(0, 0, 0)
-        spawnLocation = location.world.spawnLocation
+        spawnLocation = location.world!!.getSpawnLocation()
     }
 
     override fun update(currentTick: Long) {
-        if (!playerConnection.isLoggedIn) {
+        if (!playerConnection.isLoggedIn()) {
             return
         }
         super.update(currentTick)
-        val nearbyEntities = this.world.getNearbyEntities(getBoundingBox().grow(1f, 0.5f, 1f), location.dimension, null)
-        if (nearbyEntities != null) {
-            for (nearbyEntity in nearbyEntities) {
-                (nearbyEntity as? EntityMoveable)?.onCollideWithPlayer(this)
-            }
+        val nearbyEntities = this.world!!.getNearbyEntities(boundingBox.grow(1f, 0.5f, 1f), location.dimension, null)
+        for (nearbyEntity in nearbyEntities) {
+            (nearbyEntity as? EntityMoveable)?.onCollideWithPlayer(this)
         }
-        if (!onGround && !this.isOnLadder) {
+        if (!isOnGround && !this.isOnLadder) {
             ++inAirTicks
             if (inAirTicks > 5) {
-                if (location.y > highestPosition) {
-                    highestPosition = location.y
+                if (location.getY() > highestPosition) {
+                    highestPosition = location.getY()
                 }
             }
         } else {
             if (inAirTicks > 0) {
                 inAirTicks = 0
             }
-            fallDistance = highestPosition - location.y
+            fallDistance = highestPosition - location.getY()
             if (fallDistance > 0) {
                 fall()
-                highestPosition = location.y
+                highestPosition = location.getY()
                 fallDistance = 0f
             }
         }
         if (!isDead) {
             val hungerAttribute = getAttribute(AttributeType.PLAYER_HUNGER)
-            val hunger = hungerAttribute.currentValue
+            val hunger = hungerAttribute!!.getCurrentValue()
             var health = -1f
-            val difficulty: Difficulty = this.world.difficulty
+            val difficulty: Difficulty = this.world!!.difficulty
             if (difficulty == Difficulty.PEACEFUL && foodTicks % 10 == 0) {
                 if (hunger < hungerAttribute.maxValue) {
                     addHunger(1)
                 }
                 if (foodTicks % 20 == 0) {
                     health = health
-                    if (health < getAttribute(AttributeType.HEALTH).maxValue) {
+                    if (health < getAttribute(AttributeType.HEALTH)!!.maxValue) {
                         this.setHeal(1f, EntityHealEvent.Cause.SATURATION)
                     }
                 }
@@ -166,7 +210,7 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
                 foodTicks = 0
             }
             if (hasEffect(EffectType.HUNGER)) {
-                exhaust(0.1f * (getEffect<Effect>(EffectType.HUNGER).amplifier + 1))
+                exhaust(0.1f * (getEffect<Effect>(EffectType.HUNGER)!!.amplifier + 1))
             }
         }
         val breathing = !this.isInWater || hasEffect(EffectType.WATER_BREATHING)
@@ -195,22 +239,18 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     }
 
     val isSpawned: Boolean
-        get() = playerConnection.isSpawned
+        get() = playerConnection.isSpawned()
     val isLoggedIn: Boolean
-        get() = playerConnection.isLoggedIn
+        get() = playerConnection.isLoggedIn()
 
-    override fun getName(): String {
-        return name!!
-    }
-
-    fun setName(name: String?) {
-        if (!playerConnection.isLoggedIn) {
+    fun setName(name: String) {
+        if (!playerConnection.isLoggedIn()) {
             this.name = name
         }
     }
 
     val xuid: String
-        get() = playerConnection.loginData.xuid
+        get() = playerConnection.loginData?.xuid ?: ""
 
     fun setGameMode(gameMode: GameMode) {
         this.gameMode = gameMode
@@ -223,71 +263,71 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         adventureSettings[AdventureSettings.Type.NO_PVM] = this.gameMode!!.ordinal == 3
         adventureSettings.update()
         val setPlayerGameTypePacket = SetPlayerGameTypePacket()
-        setPlayerGameTypePacket.setGamemode(gameMode.id)
+        setPlayerGameTypePacket.gamemode = gameMode.id
         playerConnection.sendPacket(setPlayerGameTypePacket)
     }
 
-    override fun sendMessage(text: String?) {
+    override fun sendMessage(message: String) {
         val textPacket = TextPacket()
-        textPacket.setType(TextPacket.Type.RAW)
-        textPacket.setMessage(text)
-        textPacket.setNeedsTranslation(false)
-        textPacket.setXuid(xuid)
-        textPacket.setPlatformChatId(deviceInfo.deviceId)
+        textPacket.type = TextPacket.Type.RAW
+        textPacket.message = message
+        textPacket.isNeedsTranslation = false
+        textPacket.xuid = xuid
+        textPacket.platformChatId = deviceInfo.deviceId
         playerConnection.sendPacket(textPacket)
     }
 
-    fun sendTip(text: String?) {
+    fun sendTip(text: String) {
         val textPacket = TextPacket()
-        textPacket.setType(TextPacket.Type.TIP)
-        textPacket.setMessage(text)
-        textPacket.setNeedsTranslation(false)
-        textPacket.setXuid(playerConnection.loginData.xuid)
-        textPacket.setPlatformChatId(deviceInfo.deviceId)
+        textPacket.type = TextPacket.Type.TIP
+        textPacket.message = text
+        textPacket.isNeedsTranslation = false
+        textPacket.xuid = playerConnection.loginData?.xuid
+        textPacket.platformChatId = deviceInfo.deviceId
         playerConnection.sendPacket(textPacket)
     }
 
-    fun sendPopup(text: String?) {
+    fun sendPopup(text: String) {
         val textPacket = TextPacket()
-        textPacket.setType(TextPacket.Type.POPUP)
-        textPacket.setMessage(text)
-        textPacket.setNeedsTranslation(false)
-        textPacket.setXuid(playerConnection.loginData.xuid)
-        textPacket.setPlatformChatId(deviceInfo.deviceId)
+        textPacket.type = TextPacket.Type.POPUP
+        textPacket.message = text
+        textPacket.isNeedsTranslation = false
+        textPacket.xuid = playerConnection.loginData?.xuid
+        textPacket.platformChatId = deviceInfo.deviceId
         playerConnection.sendPacket(textPacket)
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return permissions.containsKey(uuid) && permissions[uuid]!!.contains(permission.lowercase(Locale.getDefault())) || isOp || permission.isEmpty()
+        return permissions.containsKey(uUID) && permissions[uUID]!!.contains(permission.lowercase(Locale.getDefault())) || isOp || permission.isEmpty()
     }
 
     fun addPermission(permission: String) {
-        if (!permissions.containsKey(uuid)) {
-            permissions[uuid] = HashSet()
+        if (!permissions.containsKey(uUID)) {
+            permissions[uUID] = HashSet()
         }
-        permissions[uuid]!!.add(permission.lowercase(Locale.getDefault()))
+        permissions[uUID]!!.add(permission.lowercase(Locale.getDefault()))
         sendCommandData()
     }
 
     fun addPermissions(permissions: Collection<String>) {
-        if (!this.permissions.containsKey(uuid)) {
-            this.permissions[uuid] = HashSet(permissions)
+        if (!this.permissions.containsKey(uUID)) {
+            this.permissions[uUID] = HashSet(permissions)
         } else {
-            this.permissions[uuid]!!.addAll(permissions)
+            this.permissions[uUID]!!.addAll(permissions)
         }
         sendCommandData()
     }
 
     fun removePermission(permission: String) {
-        if (permissions.containsKey(uuid)) {
-            permissions[uuid]!!.remove(permission)
+        if (permissions.containsKey(uUID)) {
+            permissions[uUID]!!.remove(permission)
         }
         sendCommandData()
     }
 
     fun removePermissions(permissions: Collection<String>) {
-        if (this.permissions.containsKey(uuid)) {
-            this.permissions[uuid]!!.removeAll(permissions)
+        if (this.permissions.containsKey(uUID)) {
+            this.permissions[uUID]!!.removeAll(permissions.toSet())
         }
         sendCommandData()
     }
@@ -298,24 +338,24 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
             adventureSettings[AdventureSettings.Type.OPERATOR] = value
             adventureSettings.update()
             if (value) {
-                server.addOperatorToFile(getName())
+                server.addOperatorToFile(name)
             } else {
-                server.removeOperatorFromFile(getName())
+                server.removeOperatorFromFile(name)
             }
             sendCommandData()
         }
     var chunkRadius: Int
-        get() = playerConnection.playerChunkManager.chunkRadius
+        get() = playerConnection.getPlayerChunkManager().chunkRadius
         set(chunkRadius) {
-            playerConnection.playerChunkManager.chunkRadius = chunkRadius
+            playerConnection.getPlayerChunkManager().chunkRadius = chunkRadius
         }
 
     fun isChunkLoaded(chunkX: Int, chunkZ: Int): Boolean {
-        return playerConnection.playerChunkManager.isChunkInView(chunkX, chunkZ)
+        return playerConnection.getPlayerChunkManager().isChunkInView(chunkX, chunkZ)
     }
 
     fun resendChunk(chunkX: Int, chunkZ: Int) {
-        playerConnection.playerChunkManager.resendChunk(chunkX, chunkZ)
+        playerConnection.getPlayerChunkManager().resendChunk(chunkX, chunkZ)
     }
 
     fun getCraftingGridInventory(): CraftingGridInventory {
@@ -378,14 +418,14 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     fun openInventory(
         inventory: ContainerInventory,
         position: Vector = location,
-        windowId: Byte = WindowId.OPEN_CONTAINER.getId().toByte()
+        windowId: Byte = WindowId.OPEN_CONTAINER.id.toByte(),
     ) {
         if (currentInventory != null) {
             return
         }
         val inventoryOpenEvent = InventoryOpenEvent(inventory, this)
-        Server.Companion.getInstance().getPluginManager().callEvent(inventoryOpenEvent)
-        if (inventoryOpenEvent.isCancelled()) {
+        Server.instance.pluginManager.callEvent(inventoryOpenEvent)
+        if (inventoryOpenEvent.isCancelled) {
             return
         }
         inventory.addViewer(this, position, windowId)
@@ -394,21 +434,22 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
 
     fun closeInventory(inventory: ContainerInventory) {
         if (currentInventory === inventory) {
-            this.closeInventory(WindowId.OPEN_CONTAINER.getId().toByte())
+            this.closeInventory(WindowId.OPEN_CONTAINER.id.toByte())
         }
     }
 
     fun closeInventory(windowId: Byte) {
         if (currentInventory != null) {
             val containerClosePacket = ContainerClosePacket()
-            containerClosePacket.setId(windowId)
-            containerClosePacket.setUnknownBool0(closingWindowId != windowId.toInt())
+            containerClosePacket.id = windowId
+            containerClosePacket.isUnknownBool0 = closingWindowId != windowId.toInt()
             playerConnection.sendPacket(containerClosePacket)
-            currentInventory.removeViewer(this)
-            Server.Companion.getInstance().getPluginManager().callEvent(
+            currentInventory!!.removeViewer(this)
+            Server.instance.pluginManager.callEvent(
                 InventoryCloseEvent(
-                    currentInventory, this
-                )
+                    currentInventory!!,
+                    this,
+                ),
             )
             currentInventory = null
         }
@@ -417,32 +458,33 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     fun closeInventory(windowId: Byte, isServerSide: Boolean) {
         if (currentInventory != null) {
             val containerClosePacket = ContainerClosePacket()
-            containerClosePacket.setId(windowId)
-            containerClosePacket.setUnknownBool0(isServerSide)
+            containerClosePacket.id = windowId
+            containerClosePacket.isUnknownBool0 = isServerSide
             playerConnection.sendPacket(containerClosePacket)
-            currentInventory.removeViewer(this)
-            Server.Companion.getInstance().getPluginManager().callEvent(
+            currentInventory!!.removeViewer(this)
+            Server.instance.pluginManager.callEvent(
                 InventoryCloseEvent(
-                    currentInventory, this
-                )
+                    currentInventory!!,
+                    this,
+                ),
             )
             currentInventory = null
         } else {
             val containerClosePacket = ContainerClosePacket()
-            containerClosePacket.setId(windowId)
-            containerClosePacket.setUnknownBool0(isServerSide)
+            containerClosePacket.id = windowId
+            containerClosePacket.isUnknownBool0 = isServerSide
             playerConnection.sendPacket(containerClosePacket)
         }
     }
 
     protected fun checkTeleportPosition() {
         if (teleportLocation != null) {
-            val chunkX = teleportLocation.getChunkX()
-            val chunkZ = teleportLocation.getChunkZ()
+            val chunkX = teleportLocation!!.chunkX
+            val chunkZ = teleportLocation!!.chunkZ
             for (X in -1..1) {
                 for (Z in -1..1) {
                     val index = Utils.toLong(chunkX + X, chunkZ + Z)
-                    if (!playerConnection.playerChunkManager.isChunkInView(index)) {
+                    if (!playerConnection.getPlayerChunkManager().isChunkInView(index)) {
                         return
                     }
                 }
@@ -460,38 +502,38 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         val world = location.world
         val fromDimension = this.location.dimension
         teleportLocation = location
-        playerConnection.playerChunkManager.queueNewChunks(teleportLocation)
+        playerConnection.getPlayerChunkManager().queueNewChunks(teleportLocation!!)
 
-        //TODO DESPAWN PLAYER AND SPAWN TO NEW DIMENSION
+        // TODO DESPAWN PLAYER AND SPAWN TO NEW DIMENSION
         if (fromDimension != location.dimension) {
-            playerConnection.playerChunkManager.clear()
+            playerConnection.getPlayerChunkManager().clear()
             val setSpawnPositionPacket = SetSpawnPositionPacket()
-            setSpawnPositionPacket.setDimensionId(location.dimension.ordinal)
-            setSpawnPositionPacket.setSpawnPosition(location.toVector3i().div(8, 8, 8))
-            setSpawnPositionPacket.setSpawnType(SetSpawnPositionPacket.Type.PLAYER_SPAWN)
+            setSpawnPositionPacket.dimensionId = location.dimension.ordinal
+            setSpawnPositionPacket.spawnPosition = location.toVector3i().div(8, 8, 8)
+            setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
             playerConnection.sendPacket(setSpawnPositionPacket)
             val changeDimensionPacket = ChangeDimensionPacket()
-            changeDimensionPacket.setPosition(this.location.toVector3f())
-            changeDimensionPacket.setDimension(location.dimension.ordinal)
-            changeDimensionPacket.setRespawn(false)
+            changeDimensionPacket.position = this.location.toVector3f()
+            changeDimensionPacket.dimension = location.dimension.ordinal
+            changeDimensionPacket.isRespawn = false
             playerConnection.sendPacket(changeDimensionPacket)
-        } else if (currentWorld.name != world.name) {
-            playerConnection.playerChunkManager.clear()
+        } else if (currentWorld?.name != world?.name) {
+            playerConnection.getPlayerChunkManager().clear()
             this.despawn()
-            currentWorld.players.forEach(Consumer { player: Player? -> player!!.despawn(this) })
+            currentWorld?.players?.forEach { player: Player? -> player!!.despawn(this) }
             val loadedChunk = this.loadedChunk
             if (loadedChunk != null) {
                 loadedChunk.removeEntity(this)
             } else {
-                println("Loaded chunk for removeEntity is null")
+                server.logger.info("Loaded chunk for removeEntity is null")
             }
-            currentWorld.removeEntity(this)
+            currentWorld?.removeEntity(this)
             setLocation(location)
             world!!.addEntity(this)
             if (loadedChunk != null) {
                 loadedChunk.addEntity(this)
             } else {
-                println("Loaded chunk for addEntity is null")
+                server.logger.info("Loaded chunk for addEntity is null")
             }
             this.spawn()
             world.players.forEach(Consumer { player: Player? -> player!!.spawn(this) })
@@ -502,47 +544,49 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
 
     private fun move(location: Location, mode: MovePlayerPacket.Mode) {
         val movePlayerPacket = MovePlayerPacket()
-        movePlayerPacket.setRuntimeEntityId(entityId)
-        movePlayerPacket.setPosition(location.toVector3f().add(0f, this.eyeHeight, 0f))
-        movePlayerPacket.setRotation(Vector3f.from(location.pitch, location.yaw, location.yaw))
-        movePlayerPacket.setMode(mode)
+        movePlayerPacket.runtimeEntityId = entityId
+        movePlayerPacket.position = location.toVector3f().add(0f, this.eyeHeight, 0f)
+        movePlayerPacket.rotation = Vector3f.from(location.pitch, location.yaw, location.yaw)
+        movePlayerPacket.mode = mode
         if (mode == MovePlayerPacket.Mode.TELEPORT) {
-            movePlayerPacket.setTeleportationCause(MovePlayerPacket.TeleportationCause.BEHAVIOR)
+            movePlayerPacket.teleportationCause = MovePlayerPacket.TeleportationCause.BEHAVIOR
         }
-        movePlayerPacket.setOnGround(onGround)
-        movePlayerPacket.setRidingRuntimeEntityId(0)
-        movePlayerPacket.setTick(server.currentTick)
+        movePlayerPacket.isOnGround = isOnGround
+        movePlayerPacket.ridingRuntimeEntityId = 0
+        movePlayerPacket.tick = server.currentTick
         playerConnection.sendPacket(movePlayerPacket)
     }
 
     @JvmOverloads
-    fun kick(reason: String?, hideScreen: Boolean = false) {
+    fun kick(reason: String, hideScreen: Boolean = false) {
         val playerKickEvent = PlayerKickEvent(this, reason)
-        Server.Companion.getInstance().getPluginManager().callEvent(playerKickEvent)
-        if (playerKickEvent.isCancelled()) {
+        Server.instance.pluginManager.callEvent(playerKickEvent)
+        if (playerKickEvent.isCancelled) {
             return
         }
         close()
-        playerConnection.disconnect(playerKickEvent.getReason(), hideScreen)
+        playerConnection.disconnect(playerKickEvent.reason, hideScreen)
     }
 
-    fun sendToast(title: String?, content: String?) {
+    fun sendToast(title: String, content: String) {
         val toastRequestPacket = ToastRequestPacket()
-        toastRequestPacket.setTitle(title)
-        toastRequestPacket.setContent(content)
+        toastRequestPacket.title = title
+        toastRequestPacket.content = content
         playerConnection.sendPacket(toastRequestPacket)
     }
 
     fun sendCommandData() {
         val availableCommandsPacket = AvailableCommandsPacket()
         val commandList: MutableSet<CommandData> = HashSet()
-        for (command in server.pluginManager.commandManager.commands) {
-            if (!hasPermission(command.commandData.permission)) {
-                continue
+        for (command in server.pluginManager.getCommandManager().getCommands()) {
+            if (command.commandData.getPermission() != null) {
+                if (!hasPermission(command.commandData.getPermission()!!)) {
+                    continue
+                }
             }
             commandList.add(command.commandData.toNetwork())
         }
-        availableCommandsPacket.getCommands().addAll(commandList)
+        availableCommandsPacket.commands.addAll(commandList)
         playerConnection.sendPacket(availableCommandsPacket)
     }
 
@@ -557,12 +601,12 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     @JvmOverloads
     fun playSound(position: Vector, sound: Sound, volume: Float = 1f, pitch: Float = 1f, sendInChunk: Boolean = false) {
         val playSoundPacket = PlaySoundPacket()
-        playSoundPacket.setPosition(position.toVector3f())
-        playSoundPacket.setSound(sound.sound)
-        playSoundPacket.setVolume(volume)
-        playSoundPacket.setPitch(pitch)
+        playSoundPacket.position = position.toVector3f()
+        playSoundPacket.sound = sound.sound
+        playSoundPacket.volume = volume
+        playSoundPacket.pitch = pitch
         if (sendInChunk) {
-            this.world.sendChunkPacket(position.chunkX, position.chunkZ, playSoundPacket)
+            this.world?.sendChunkPacket(position.chunkX, position.chunkZ, playSoundPacket)
         } else {
             playerConnection.sendPacket(playSoundPacket)
         }
@@ -571,16 +615,16 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     fun updateAttributes() {
         var updateAttributesPacket: UpdateAttributesPacket? = null
         for (attribute in getAttributes()) {
-            if (attribute.isDirty) {
+            if (attribute.isDirty()) {
                 if (updateAttributesPacket == null) {
                     updateAttributesPacket = UpdateAttributesPacket()
-                    updateAttributesPacket.setRuntimeEntityId(entityId)
+                    updateAttributesPacket.runtimeEntityId = entityId
                 }
-                updateAttributesPacket.getAttributes().add(attribute.toNetwork())
+                updateAttributesPacket.attributes.add(attribute.toNetwork())
             }
         }
         if (updateAttributesPacket != null) {
-            updateAttributesPacket.setTick(server.currentTick)
+            updateAttributesPacket.tick = server.currentTick
             playerConnection.sendPacket(updateAttributesPacket)
         }
     }
@@ -592,10 +636,10 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     fun setSpawnLocation(spawnLocation: Location) {
         this.spawnLocation = spawnLocation
         val setSpawnPositionPacket = SetSpawnPositionPacket()
-        setSpawnPositionPacket.setSpawnType(SetSpawnPositionPacket.Type.PLAYER_SPAWN)
-        setSpawnPositionPacket.setDimensionId(this.spawnLocation.dimension.ordinal)
-        setSpawnPositionPacket.setSpawnPosition(spawnLocation.toVector3i())
-        setSpawnPositionPacket.setBlockPosition(location.world.spawnLocation.toVector3i())
+        setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
+        setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
+        setSpawnPositionPacket.spawnPosition = spawnLocation.toVector3i()
+        setSpawnPositionPacket.blockPosition = location.world!!.getSpawnLocation().toVector3i()
         playerConnection.sendPacket(setSpawnPositionPacket)
     }
 
@@ -611,21 +655,24 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
             adventureSettings.walkSpeed = value
             adventureSettings.update()
         }
-    override var skin: Skin?
+    override var skin: Skin? = null
         get() = super.skin
         set(skin) {
-            super.setSkin(skin)
+            if (skin == null) {
+                throw IllegalArgumentException("Skin cannot be null")
+            }
+            field = skin
             val playerChangeSkinEvent = PlayerChangeSkinEvent(this, skin)
-            if (playerChangeSkinEvent.isCancelled()) return
-            Server.Companion.getInstance().addToTabList(uuid, entityId, name, deviceInfo, xuid, this.skin)
+            if (playerChangeSkinEvent.isCancelled) return
+            Server.instance.addToTabList(uUID, entityId, name, deviceInfo, xuid, skin)
         }
 
     fun sendServerSettings(player: Player) {
         if (serverSettingsForm != -1) {
             val form = forms[serverSettingsForm]
             val response = ServerSettingsResponsePacket()
-            response.setFormId(serverSettingsForm)
-            response.setFormData(form.toJSON().toJSONString())
+            response.formId = serverSettingsForm
+            response.formData = form.toJSON().toJSONString()
             player.playerConnection.sendPacket(response)
         }
     }
@@ -645,9 +692,9 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         playerConnection.sendPacket(packetModalRequest)
         hasOpenForm = true
 
-        //Dirty fix to show image on buttonlist
-        Server.Companion.getInstance().getScheduler()
-            .scheduleDelayed(Runnable { setAttributes(AttributeType.PLAYER_LEVEL, getLevel()) }, 5)
+        // Dirty fix to show image on buttonlist
+        Server.instance.scheduler
+            .scheduleDelayed({ setAttributes(AttributeType.PLAYER_LEVEL, level) }, 5)
         return formListener
     }
 
@@ -709,21 +756,21 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         get() = super.experience
         set(value) {
             val playerExperienceChangeEvent =
-                PlayerExperienceChangeEvent(this, getExperience().toInt(), getLevel().toInt(), value.toInt(), 0)
-            if (playerExperienceChangeEvent.isCancelled()) {
+                PlayerExperienceChangeEvent(this, experience.toInt(), level.toInt(), value.toInt(), 0)
+            if (playerExperienceChangeEvent.isCancelled) {
                 return
             }
-            super.setExperience(playerExperienceChangeEvent.getNewExperience().toFloat())
+            super.experience = playerExperienceChangeEvent.newExperience.toFloat()
         }
     override var level: Float
         get() = super.level
         set(value) {
             val playerExperienceChangeEvent =
-                PlayerExperienceChangeEvent(this, getExperience().toInt(), getLevel().toInt(), 0, value.toInt())
-            if (playerExperienceChangeEvent.isCancelled()) {
+                PlayerExperienceChangeEvent(this, experience.toInt(), level.toInt(), 0, value.toInt())
+            if (playerExperienceChangeEvent.isCancelled) {
                 return
             }
-            super.setExperience(playerExperienceChangeEvent.getNewLevel().toFloat())
+            super.level = playerExperienceChangeEvent.newLevel.toFloat()
         }
     val loginData: LoginData?
         get() = playerConnection.loginData
@@ -732,7 +779,9 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
     override fun damage(event: EntityDamageEvent): Boolean {
         return if (adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] && event.damageSource == DamageSource.FALL) {
             false
-        } else gameMode != GameMode.CREATIVE && gameMode != GameMode.SPECTATOR && super.damage(event)
+        } else {
+            gameMode != GameMode.CREATIVE && gameMode != GameMode.SPECTATOR && super.damage(event)
+        }
     }
 
     override fun applyArmorReduction(event: EntityDamageEvent, damageArmor: Boolean): Float {
@@ -833,16 +882,16 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         if (!isDead) {
             super.killInternal()
             val entityEventPacket = EntityEventPacket()
-            entityEventPacket.setRuntimeEntityId(entityId)
-            entityEventPacket.setType(EntityEventType.DEATH)
+            entityEventPacket.runtimeEntityId = entityId
+            entityEventPacket.type = EntityEventType.DEATH
             playerConnection.sendPacket(entityEventPacket)
             fallDistance = 0f
             highestPosition = 0f
             inAirTicks = 0
-            val deathMessage = when (Objects.requireNonNull(lastDamageSource)) {
+            val deathMessage = when (lastDamageSource!!) {
                 DamageSource.ENTITY_ATTACK -> this.nameTag + " was slain by " + Objects.requireNonNull(
-                    getLastDamageEntity()
-                ).nameTag
+                    lastDamageEntity,
+                )!!.nameTag
 
                 DamageSource.FALL -> this.nameTag + " fell from a high place"
                 DamageSource.LAVA -> this.nameTag + " tried to swim in lava"
@@ -860,29 +909,28 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
             }
             val playerDeathEvent = PlayerDeathEvent(this, deathMessage, true, drops)
             server.pluginManager.callEvent(playerDeathEvent)
-            if (playerDeathEvent.isDropInventory()) {
-                for (drop in playerDeathEvent.getDrops()) {
-                    this.world.dropItem(drop, location, null).spawn()
+            if (playerDeathEvent.isDropInventory) {
+                for (drop in playerDeathEvent.drops) {
+                    this.world?.dropItem(drop, location, null)?.spawn()
                 }
                 playerInventory.clear()
                 cursorInventory.clear()
                 armorInventory.clear()
             }
-            if (playerDeathEvent.getDeathMessage() != null && !playerDeathEvent.getDeathMessage().isEmpty()) {
-                server.broadcastMessage(playerDeathEvent.getDeathMessage())
+            if (playerDeathEvent.deathMessage.isNotEmpty()) {
+                server.broadcastMessage(playerDeathEvent.deathMessage)
             }
-            respawnLocation = this.world.spawnLocation.add(0f, this.eyeHeight, 0f)
+            respawnLocation = this.world!!.getSpawnLocation().add(0f, this.eyeHeight, 0f)
             val respawnPositionPacket = RespawnPacket()
-            respawnPositionPacket.setRuntimeEntityId(entityId)
-            respawnPositionPacket.setState(RespawnPacket.State.SERVER_SEARCHING)
-            respawnPositionPacket.setPosition(respawnLocation!!.toVector3f())
+            respawnPositionPacket.runtimeEntityId = entityId
+            respawnPositionPacket.state = RespawnPacket.State.SERVER_SEARCHING
+            respawnPositionPacket.position = respawnLocation!!.toVector3f()
             playerConnection.sendPacket(respawnPositionPacket)
-            if (playerDeathEvent.getDeathScreenMessage() != null && !playerDeathEvent.getDeathScreenMessage()
-                    .isEmpty()
+            if (playerDeathEvent.deathScreenMessage != null && playerDeathEvent.deathScreenMessage!!.isNotEmpty()
             ) {
                 val deathInfoPacket = DeathInfoPacket()
-                deathInfoPacket.getMessageList().add(getName())
-                deathInfoPacket.setCauseAttackName(playerDeathEvent.getDeathScreenMessage()) //#1e7dfc
+                deathInfoPacket.messageList.add(name)
+                deathInfoPacket.causeAttackName = playerDeathEvent.deathScreenMessage // #1e7dfc
                 playerConnection.sendPacket(deathInfoPacket)
             }
         }
@@ -894,22 +942,18 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
             val success = false
             var damage = this.attackDamage
             if (hasEffect(EffectType.STRENGTH)) {
-                damage = damage * 0.3f * (getEffect<Effect>(EffectType.STRENGTH).amplifier + 1)
+                damage *= 0.3f * (getEffect<Effect>(EffectType.STRENGTH)!!.amplifier + 1)
             }
             if (hasEffect(EffectType.WEAKNESS)) {
-                damage = -(damage * 0.2f * getEffect<Effect>(EffectType.WEAKNESS).amplifier + 1)
+                damage = -(damage * 0.2f * getEffect<Effect>(EffectType.WEAKNESS)!!.amplifier + 1)
             }
             val sharpness = playerInventory.itemInHand.getEnchantment(EnchantmentType.SHARPNESS) as EnchantmentSharpness
-            if (sharpness != null) {
-                damage += sharpness.level * 1.25f
-            }
+            damage += sharpness.level * 1.25f
             var knockbackLevel = 0
             val knockback = playerInventory.itemInHand.getEnchantment(EnchantmentType.KNOCKBACK) as EnchantmentKnockback
-            if (knockback != null) {
-                knockbackLevel += knockback.level.toInt()
-            }
+            knockbackLevel += knockback.level.toInt()
             if (damage > 0) {
-                val crit = fallDistance > 0 && !onGround && !this.isOnLadder && !this.isInWater
+                val crit = fallDistance > 0 && !isOnGround && !this.isOnLadder && !this.isInWater
                 if (crit && damage > 0.0f) {
                     damage *= 1.5.toFloat()
                 }
@@ -918,20 +962,22 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
                             target,
                             this,
                             damage,
-                            DamageSource.ENTITY_ATTACK
-                        )
+                            DamageSource.ENTITY_ATTACK,
+                        ),
                     )
                 ) {
                     if (knockbackLevel > 0) {
-                        val targetVelocity = target.velocity
-                        target.velocity = targetVelocity!!.add(
-                            (-Math.sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
-                            0.1f,
-                            (Math.cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat()
+                        val targetVelocity = target.getVelocity()
+                        target.setVelocity(
+                            targetVelocity!!.add(
+                                (-Math.sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
+                                0.1f,
+                                (Math.cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
+                            ),
                         )
                         val ownVelocity = getVelocity()
-                        ownVelocity.x = ownVelocity.x * 0.6f
-                        ownVelocity.z = ownVelocity.z * 0.6f
+                        ownVelocity.setX(ownVelocity.getX() * 0.6f)
+                        ownVelocity.setZ(ownVelocity.getZ() * 0.6f)
                         this.setVelocity(ownVelocity)
                         this.isSprinting = false
                     }
@@ -947,7 +993,7 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
 
     fun respawn() {
         if (isDead) {
-            val playerRespawnEvent = PlayerRespawnEvent(this, respawnLocation)
+            val playerRespawnEvent = PlayerRespawnEvent(this, respawnLocation!!)
             server.pluginManager.callEvent(playerRespawnEvent)
             lastDamageEntity = null
             lastDamageSource = null
@@ -957,18 +1003,18 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
                 attribute.reset()
             }
             updateAttributes()
-            this.teleport(playerRespawnEvent.getRespawnLocation())
+            this.teleport(playerRespawnEvent.respawnLocation)
             respawnLocation = null
             this.spawn()
             this.isBurning = false
-            this.setVelocity(Vector.Companion.zero())
+            this.setVelocity(Vector.zero())
             playerInventory.sendContents(this)
             cursorInventory.sendContents(this)
             armorInventory.sendContents(this)
             val entityEventPacket = EntityEventPacket()
-            entityEventPacket.setRuntimeEntityId(entityId)
-            entityEventPacket.setType(EntityEventType.RESPAWN)
-            Server.Companion.getInstance().broadcastPacket(entityEventPacket)
+            entityEventPacket.runtimeEntityId = entityId
+            entityEventPacket.type = EntityEventType.RESPAWN
+            Server.instance.broadcastPacket(entityEventPacket)
             playerInventory.itemInHand.addToHand(this)
             isDead = false
         }
@@ -978,21 +1024,21 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
         get() {
             val drops: MutableList<Item> = ArrayList()
             for (content in playerInventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
+                if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
                     }
                 }
             }
-            for (content in cursorInventory.getContents()) {
-                if (content != null && content.type != ItemType.AIR) {
+            for (content in cursorInventory.contents) {
+                if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
                     }
                 }
             }
             for (content in armorInventory.contents) {
-                if (content != null && content.type != ItemType.AIR) {
+                if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
                     }
@@ -1003,7 +1049,9 @@ class Player(override val server: Server, val playerConnection: PlayerConnection
 
     override fun equals(obj: Any?): Boolean {
         return if (obj is Player) {
-            obj.getEntityId() == entityId && obj.getUUID() == uuid
-        } else false
+            obj.entityId == entityId && obj.uUID == uUID
+        } else {
+            false
+        }
     }
 }

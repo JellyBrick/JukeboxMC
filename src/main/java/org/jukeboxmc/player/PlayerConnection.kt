@@ -1,22 +1,46 @@
 package org.jukeboxmc.player
 
+import com.nukkitx.math.vector.Vector2f
 import com.nukkitx.nbt.NbtMap
+import com.nukkitx.network.util.DisconnectReason
 import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.BedrockServerSession
+import com.nukkitx.protocol.bedrock.BedrockSession
+import com.nukkitx.protocol.bedrock.data.AuthoritativeMovementMode
+import com.nukkitx.protocol.bedrock.data.ChatRestrictionLevel
+import com.nukkitx.protocol.bedrock.data.GamePublishSetting
+import com.nukkitx.protocol.bedrock.data.PlayerPermission
+import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
+import com.nukkitx.protocol.bedrock.handler.BatchHandler
+import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
+import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
+import com.nukkitx.protocol.bedrock.packet.CraftingDataPacket
+import com.nukkitx.protocol.bedrock.packet.CreativeContentPacket
+import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
+import com.nukkitx.protocol.bedrock.packet.PlayerListPacket
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
+import com.nukkitx.protocol.bedrock.packet.SetTimePacket
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
+import com.nukkitx.protocol.bedrock.packet.UpdateAttributesPacket
 import io.netty.buffer.ByteBuf
-import java.util.UUID
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 import org.jukeboxmc.Server
+import org.jukeboxmc.crafting.CraftingManager
+import org.jukeboxmc.event.network.PacketReceiveEvent
+import org.jukeboxmc.event.network.PacketSendEvent
+import org.jukeboxmc.event.player.PlayerQuitEvent
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.network.Network
+import org.jukeboxmc.network.handler.HandlerRegistry
 import org.jukeboxmc.network.handler.PacketHandler
+import org.jukeboxmc.player.data.LoginData
+import org.jukeboxmc.player.manager.PlayerChunkManager
 import org.jukeboxmc.util.BiomeDefinitions
 import org.jukeboxmc.util.CreativeItems
 import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author LucGamesYT
@@ -30,11 +54,11 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         set(loginData) {
             if (this.loginData == null) {
                 field = loginData
-                player.name = loginData.getDisplayName()
-                player.nameTag = loginData.getDisplayName()
-                player.uuid = loginData.getUuid()
-                player.skin = loginData.getSkin()
-                player.deviceInfo = loginData.getDeviceInfo()
+                player.name = loginData!!.displayName!!
+                player.nameTag = loginData.displayName!!
+                player.uUID = loginData.uuid!!
+                player.skin = loginData.skin
+                player.setDeviceInfo(loginData.getDeviceInfo())
             }
         }
     val player: Player
@@ -43,41 +67,42 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 
     init {
         this.session = session
-        this.session.getHardcodedBlockingId().set(Item.Companion.create<Item>(ItemType.SHIELD).getRuntimeId())
-        this.session.addDisconnectHandler(Consumer<DisconnectReason> { disconnectReason: DisconnectReason? ->
+        this.session.hardcodedBlockingId.set(Item.create<Item>(ItemType.SHIELD).runtimeId)
+        this.session.addDisconnectHandler { disconnectReason: DisconnectReason? ->
             server.scheduler.execute {
                 onDisconnect(
-                    disconnectReason
+                    disconnectReason,
                 )
             }
-        })
+        }
         loggedIn = AtomicBoolean(false)
         spawned = AtomicBoolean(false)
         player = Player(server, this)
         playerChunkManager = PlayerChunkManager(player)
-        session.setPacketCodec(Network.Companion.CODEC)
-        session.setBatchHandler(BatchHandler { bedrockSession: BedrockSession?, byteBuf: ByteBuf?, packets: Collection<BedrockPacket> ->
-            for (packet in packets) {
-                try {
-                    server.scheduler.execute {
-                        val packetReceiveEvent = PacketReceiveEvent(player, packet)
-                        server.pluginManager.callEvent(packetReceiveEvent)
-                        if (packetReceiveEvent.isCancelled()) {
-                            return@execute
+        session.packetCodec = Network.CODEC
+        session.batchHandler =
+            BatchHandler { bedrockSession: BedrockSession?, byteBuf: ByteBuf?, packets: Collection<BedrockPacket> ->
+                for (packet in packets) {
+                    try {
+                        server.scheduler.execute {
+                            val packetReceiveEvent = PacketReceiveEvent(player, packet)
+                            server.pluginManager.callEvent(packetReceiveEvent)
+                            if (packetReceiveEvent.isCancelled) {
+                                return@execute
+                            }
+                            val packetHandler =
+                                HandlerRegistry.getPacketHandler(packetReceiveEvent.packet.javaClass) as PacketHandler<BedrockPacket>?
+                            if (packetHandler != null) {
+                                packetHandler.handle(packetReceiveEvent.packet, server, player)
+                            } else {
+                                server.logger.info("Handler missing for packet: " + packet.javaClass.simpleName)
+                            }
                         }
-                        val packetHandler =
-                            HandlerRegistry.getPacketHandler(packetReceiveEvent.getPacket().javaClass) as PacketHandler<BedrockPacket>
-                        if (packetHandler != null) {
-                            packetHandler.handle(packetReceiveEvent.getPacket(), server, player)
-                        } else {
-                            server.logger.info("Handler missing for packet: " + packet.javaClass.simpleName)
-                        }
+                    } catch (throwable: Throwable) {
+                        throwable.printStackTrace()
                     }
-                } catch (throwable: Throwable) {
-                    throwable.printStackTrace()
                 }
             }
-        })
     }
 
     fun update() {
@@ -88,104 +113,108 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
             playerChunkManager.queueNewChunks()
         }
         playerChunkManager.sendQueued()
-        if (playerChunkManager.getChunksSent() >= 25 && !spawned.get() && player.teleportLocation == null) {
+        if (playerChunkManager.chunksSent >= 25 && !spawned.get() && player.teleportLocation == null) {
             doFirstSpawn()
         }
     }
 
     private fun onDisconnect(disconnectReason: DisconnectReason?) {
         server.removePlayer(player)
-        player.world.removeEntity(player)
-        player.chunk.removeEntity(player)
+        player.world?.removeEntity(player)
+        player.chunk?.removeEntity(player)
         player.inventory.removeViewer(player)
-        player.armorInventory.removeViewer(player)
-        player.cursorInventory.removeViewer(player)
-        player.creativeItemCacheInventory.removeViewer(player)
-        player.craftingGridInventory.removeViewer(player)
-        player.craftingTableInventory.removeViewer(player)
-        player.cartographyTableInventory.removeViewer(player)
-        player.smithingTableInventory.removeViewer(player)
-        player.anvilInventory.removeViewer(player)
-        //this.player.getEnderChestInventory().removeViewer( this.player );
-        player.stoneCutterInventory.removeViewer(player)
-        player.grindstoneInventory.removeViewer(player)
-        player.offHandInventory.removeViewer(player)
+        player.getArmorInventory().removeViewer(player)
+        player.getCurrentInventory()?.removeViewer(player)
+        player.getCreativeItemCacheInventory().removeViewer(player)
+        player.getCraftingGridInventory().removeViewer(player)
+        player.getCraftingTableInventory().removeViewer(player)
+        player.getCartographyTableInventory().removeViewer(player)
+        player.getSmithingTableInventory().removeViewer(player)
+        player.getAnvilInventory().removeViewer(player)
+        // this.player.getEnderChestInventory().removeViewer( this.player );
+        player.getStoneCutterInventory().removeViewer(player)
+        player.getCraftingGridInventory().removeViewer(player)
+        player.getOffHandInventory().removeViewer(player)
         server.removeFromTabList(player)
         playerChunkManager.clear()
         player.close()
         val playerQuitEvent = PlayerQuitEvent(player, "§e" + player.name + " left the game")
-        Server.Companion.getInstance().getPluginManager().callEvent(playerQuitEvent)
-        if (playerQuitEvent.getQuitMessage() != null && !playerQuitEvent.getQuitMessage().isEmpty()) {
-            server.broadcastMessage(playerQuitEvent.getQuitMessage())
+        Server.instance.pluginManager.callEvent(playerQuitEvent)
+        if (playerQuitEvent.quitMessage.isNotEmpty()) {
+            server.broadcastMessage(playerQuitEvent.quitMessage)
         }
         server.logger.info(
-            player.name + " logged out reason: " + if (disconnectMessage == null) parseDisconnectMessage(
-                disconnectReason
-            ) else disconnectMessage
+            player.name + " logged out reason: " + if (disconnectMessage == null) {
+                parseDisconnectMessage(
+                    disconnectReason,
+                )
+            } else {
+                disconnectMessage
+            },
         )
     }
 
     private fun doFirstSpawn() {
         spawned.set(true)
-        player.world.addEntity(player)
+        player.world!!.addEntity(player)
         val setEntityDataPacket = SetEntityDataPacket()
         setEntityDataPacket.runtimeEntityId = player.entityId
-        setEntityDataPacket.metadata.putAll(player.metadata.entityDataMap)
+        setEntityDataPacket.metadata.putAll(player.metadata.getEntityDataMap())
         setEntityDataPacket.tick = server.currentTick
         sendPacket(setEntityDataPacket)
         val adventureSettings = player.adventureSettings
         if (server.isOperatorInFile(player.name)) {
             adventureSettings[AdventureSettings.Type.OPERATOR] = true
         }
-        adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = player.gameMode.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = player.gameMode.ordinal > 0
-        adventureSettings[AdventureSettings.Type.NO_CLIP] = player.gameMode.ordinal == 3
-        adventureSettings[AdventureSettings.Type.FLYING] = player.gameMode.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = player.gameMode.ordinal < 2
-        adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = player.gameMode.ordinal < 2
-        adventureSettings[AdventureSettings.Type.NO_PVM] = player.gameMode.ordinal == 3
+        adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = player.gameMode!!.ordinal == 3
+        adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = player.gameMode!!.ordinal > 0
+        adventureSettings[AdventureSettings.Type.NO_CLIP] = player.gameMode!!.ordinal == 3
+        adventureSettings[AdventureSettings.Type.FLYING] = player.gameMode!!.ordinal == 3
+        adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = player.gameMode!!.ordinal < 2
+        adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = player.gameMode!!.ordinal < 2
+        adventureSettings[AdventureSettings.Type.NO_PVM] = player.gameMode!!.ordinal == 3
         adventureSettings.update()
         player.sendCommandData()
         val updateAttributesPacket = UpdateAttributesPacket()
-        updateAttributesPacket.setRuntimeEntityId(player.entityId)
-        for (attribute in player.attributes) {
-            updateAttributesPacket.getAttributes().add(attribute.toNetwork())
+        updateAttributesPacket.runtimeEntityId = player.entityId
+        for (attribute in player.getAttributes()) {
+            updateAttributesPacket.attributes.add(attribute.toNetwork())
         }
-        updateAttributesPacket.setTick(server.currentTick)
+        updateAttributesPacket.tick = server.currentTick
         sendPacket(updateAttributesPacket)
         server.addToTabList(player)
         if (server.onlinePlayers.size > 1) {
             val playerListPacket = PlayerListPacket()
-            playerListPacket.setAction(PlayerListPacket.Action.ADD)
-            server.playerListEntry.forEach(BiConsumer<UUID, PlayerListPacket.Entry> { uuid: UUID, entry: PlayerListPacket.Entry? ->
-                if (uuid !== player.uuid) {
-                    playerListPacket.getEntries().add(entry)
+            playerListPacket.action = PlayerListPacket.Action.ADD
+            server.getPlayerListEntry().forEach { (uuid: UUID, entry: PlayerListPacket.Entry?) ->
+                if (uuid !== player.uUID) {
+                    playerListPacket.entries.add(entry)
                 }
-            })
+            }
             player.playerConnection.sendPacket(playerListPacket)
         }
         player.inventory.addViewer(player)
         player.inventory.sendContents(player)
-        player.cursorInventory.addViewer(player)
-        player.cursorInventory.sendContents(player)
-        player.armorInventory.addViewer(player)
-        player.armorInventory.sendContents(player)
+        player.getCursorInventory().addViewer(player)
+        player.getCursorInventory().sendContents(player)
+        player.getArmorInventory().addViewer(player)
+        player.getArmorInventory().sendContents(player)
         val playStatusPacket = PlayStatusPacket()
-        playStatusPacket.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN)
+        playStatusPacket.status = PlayStatusPacket.Status.PLAYER_SPAWN
         sendPacket(playStatusPacket)
         val setTimePacket = SetTimePacket()
-        setTimePacket.setTime(player.world.worldTime)
+        setTimePacket.time = player.world!!.getWorldTime()
         sendPacket(setTimePacket)
         for (onlinePlayer in server.onlinePlayers) {
-            if (onlinePlayer != null && onlinePlayer.dimension == player.dimension) {
+            if (onlinePlayer.dimension == player.dimension) {
                 player.spawn(onlinePlayer)
                 onlinePlayer.spawn(player)
             }
         }
         server.logger.info(
-            player.name + " logged in [World=" + player.world.name + ", X=" +
-                    player.blockX + ", Y=" + player.blockY + ", Z=" + player.blockZ +
-                    ", Dimension=" + player.location.dimension.name + "]"
+            player.name + " logged in [World=" + player.world!!.name + ", X=" +
+                player.blockX + ", Y=" + player.blockY + ", Z=" + player.blockZ +
+                ", Dimension=" + player.getLocation().dimension.dimensionName + "]",
         )
     }
 
@@ -195,15 +224,15 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.serverEngine = "JukeboxMC"
         startGamePacket.uniqueEntityId = player.entityId
         startGamePacket.runtimeEntityId = player.entityId
-        startGamePacket.playerGameType = player.gameMode.toGameType()
-        startGamePacket.playerPosition = player.location.toVector3f().add(0f, 2f, 0f) //TODO
-        startGamePacket.defaultSpawn = player.location.toVector3i().add(0, 2, 0) //TODO
+        startGamePacket.playerGameType = player.gameMode!!.toGameType()
+        startGamePacket.playerPosition = player.getLocation().toVector3f().add(0f, 2f, 0f) // TODO
+        startGamePacket.defaultSpawn = player.getLocation().toVector3i().add(0, 2, 0) // TODO
         startGamePacket.rotation = Vector2f.from(player.pitch, player.yaw)
-        startGamePacket.seed = 0L //TODO
-        startGamePacket.dimensionId = player.location.dimension.ordinal
+        startGamePacket.seed = 0L // TODO
+        startGamePacket.dimensionId = player.getLocation().dimension.ordinal
         startGamePacket.isTrustingPlayers = true
         startGamePacket.levelGameType = server.gameMode.toGameType()
-        startGamePacket.difficulty = player.world.difficulty.ordinal
+        startGamePacket.difficulty = player.world!!.difficulty.ordinal
         startGamePacket.isAchievementsDisabled = true
         startGamePacket.dayCycleStopTime = 0
         startGamePacket.rainLevel = 0f
@@ -211,16 +240,16 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.isCommandsEnabled = true
         startGamePacket.isMultiplayerGame = true
         startGamePacket.isBroadcastingToLan = true
-        startGamePacket.gamerules.addAll(player.world.gameRules.gameRules)
+        startGamePacket.gamerules.addAll(player.world!!.getGameRules().getGameRules())
         startGamePacket.levelId = ""
-        startGamePacket.levelName = player.world.name
+        startGamePacket.levelName = player.world!!.name
         startGamePacket.generatorId = 1
-        startGamePacket.itemEntries = ItemPalette.getEntries()
+        startGamePacket.itemEntries = ItemPalette.entries
         startGamePacket.xblBroadcastMode = GamePublishSetting.PUBLIC
         startGamePacket.platformBroadcastMode = GamePublishSetting.PUBLIC
         startGamePacket.defaultPlayerPermission = PlayerPermission.MEMBER
         startGamePacket.serverChunkTickRange = 4
-        startGamePacket.vanillaVersion = Network.Companion.CODEC.getMinecraftVersion()
+        startGamePacket.vanillaVersion = Network.CODEC.getMinecraftVersion()
         startGamePacket.premiumWorldTemplateId = ""
         startGamePacket.multiplayerCorrelationId = ""
         startGamePacket.isInventoriesServerAuthoritative = true
@@ -233,20 +262,20 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.isClientSideGenerationEnabled = false
         sendPacket(startGamePacket)
         val availableEntityIdentifiersPacket = AvailableEntityIdentifiersPacket()
-        availableEntityIdentifiersPacket.setIdentifiers(EntityIdentifiers.getIdentifiers())
+        availableEntityIdentifiersPacket.identifiers = EntityIdentifiers.identifiers
         sendPacket(availableEntityIdentifiersPacket)
         val biomeDefinitionListPacket = BiomeDefinitionListPacket()
-        biomeDefinitionListPacket.setDefinitions(BiomeDefinitions.getBiomeDefinitions())
+        biomeDefinitionListPacket.definitions = BiomeDefinitions.biomeDefinitions
         sendPacket(biomeDefinitionListPacket)
         val creativeContentPacket = CreativeContentPacket()
-        creativeContentPacket.setContents(CreativeItems.getCreativeItems().toTypedArray())
+        creativeContentPacket.contents = CreativeItems.creativeItems.toTypedArray()
         sendPacket(creativeContentPacket)
-        val craftingManager: CraftingManager = server.craftingManager
+        val craftingManager: CraftingManager = server.getCraftingManager()
         val craftingDataPacket = CraftingDataPacket()
-        craftingDataPacket.getCraftingData().addAll(craftingManager.getCraftingData())
-        craftingDataPacket.getPotionMixData().addAll(craftingDataPacket.getPotionMixData())
-        craftingDataPacket.getContainerMixData().addAll(craftingManager.getContainerMixData())
-        craftingDataPacket.setCleanRecipes(true)
+        craftingDataPacket.craftingData.addAll(craftingDataPacket.craftingData)
+        craftingDataPacket.potionMixData.addAll(craftingManager.potionMixData)
+        craftingDataPacket.containerMixData.addAll(craftingManager.containerMixData)
+        craftingDataPacket.isCleanRecipes = true
         sendPacket(craftingDataPacket)
     }
 
@@ -281,20 +310,20 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         onDisconnect(null)
     }
 
-    fun sendPlayStatus(status: PlayStatusPacket.Status?) {
+    fun sendPlayStatus(status: PlayStatusPacket.Status) {
         val playStatusPacket = PlayStatusPacket()
-        playStatusPacket.setStatus(status)
+        playStatusPacket.status = status
         sendPacketImmediately(playStatusPacket)
     }
 
-    fun sendPacket(packet: BedrockPacket?) {
-        if (!isClosed && session.getPacketCodec() != null) {
+    fun sendPacket(packet: BedrockPacket) {
+        if (!isClosed && session.packetCodec != null) {
             val packetSendEvent = PacketSendEvent(player, packet)
-            Server.Companion.getInstance().getPluginManager().callEvent(packetSendEvent)
-            if (packetSendEvent.isCancelled()) {
+            Server.instance.pluginManager.callEvent(packetSendEvent)
+            if (packetSendEvent.isCancelled) {
                 return
             }
-            session.sendPacket(packetSendEvent.getPacket())
+            session.sendPacket(packetSendEvent.packet)
         }
     }
 
@@ -305,7 +334,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     val isClosed: Boolean
-        get() = session.isClosed()
+        get() = session.isClosed
 
     fun getSession(): BedrockServerSession {
         return session
@@ -327,9 +356,9 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         private val SYNCED_PLAYER_MOVEMENT_SETTINGS: SyncedPlayerMovementSettings = SyncedPlayerMovementSettings()
 
         init {
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.setMovementMode(AuthoritativeMovementMode.CLIENT)
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.setRewindHistorySize(0)
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.setServerAuthoritativeBlockBreaking(false)
+            SYNCED_PLAYER_MOVEMENT_SETTINGS.movementMode = AuthoritativeMovementMode.CLIENT
+            SYNCED_PLAYER_MOVEMENT_SETTINGS.rewindHistorySize = 0
+            SYNCED_PLAYER_MOVEMENT_SETTINGS.isServerAuthoritativeBlockBreaking = false
         }
     }
 }

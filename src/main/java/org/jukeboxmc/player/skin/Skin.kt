@@ -1,13 +1,17 @@
 package org.jukeboxmc.player.skin
 
+import com.nukkitx.protocol.bedrock.data.skin.AnimatedTextureType
+import com.nukkitx.protocol.bedrock.data.skin.AnimationData
+import com.nukkitx.protocol.bedrock.data.skin.ImageData
+import com.nukkitx.protocol.bedrock.data.skin.PersonaPieceData
+import com.nukkitx.protocol.bedrock.data.skin.PersonaPieceTintData
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin
 import java.util.UUID
-import lombok.ToString
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
 class Skin {
     var skinId: String? = null
     private var resourcePatch: String? = null
@@ -70,42 +74,44 @@ class Skin {
     }
 
     fun toNetwork(): SerializedSkin {
-        val animationDataList: MutableList<AnimationData> = ArrayList<AnimationData>()
+        val animationDataList: MutableList<AnimationData> = ArrayList()
         for (animation in skinAnimations) {
             animationDataList.add(
                 AnimationData(
                     ImageData.of(
-                        animation.getImage().width,
-                        animation.getImage().height,
-                        animation.getImage().data
-                    ), AnimatedTextureType.values().get(animation.getType()), animation.getFrames()
-                )
+                        animation!!.image.width,
+                        animation!!.image.height,
+                        animation!!.image.data,
+                    ),
+                    AnimatedTextureType.values()[animation.type],
+                    animation.frames,
+                ),
             )
         }
-        val personaPieceDataList: MutableList<PersonaPieceData> = ArrayList<PersonaPieceData>()
+        val personaPieceDataList: MutableList<PersonaPieceData> = ArrayList()
         for (piece in personaPieces) {
             personaPieceDataList.add(
                 PersonaPieceData(
-                    piece.getPieceId(),
-                    piece.getPieceType(),
-                    piece.getPackId(),
+                    piece!!.pieceId,
+                    piece!!.pieceType,
+                    piece!!.packId,
                     piece!!.isDefault,
-                    piece.productId
-                )
+                    piece!!.productId,
+                ),
             )
         }
-        val personaPieceTintList: MutableList<PersonaPieceTintData> = ArrayList<PersonaPieceTintData>()
+        val personaPieceTintList: MutableList<PersonaPieceTintData> = ArrayList()
         for (pieceTint in personaPieceTints) {
-            personaPieceTintList.add(PersonaPieceTintData(pieceTint.getPieceType(), pieceTint.getColors()))
+            personaPieceTintList.add(PersonaPieceTintData(pieceTint!!.pieceType, pieceTint.colors))
         }
         return SerializedSkin.builder()
             .skinId(skinId)
             .playFabId(playFabId)
             .geometryName(geometryName)
             .skinResourcePatch(resourcePatch)
-            .skinData(ImageData.of(skinData.getWidth(), skinData.getHeight(), skinData.getData()))
+            .skinData(ImageData.of(skinData!!.width, skinData!!.height, skinData!!.data))
             .animations(animationDataList)
-            .capeData(ImageData.of(capeData.getWidth(), capeData.getHeight(), capeData.getData()))
+            .capeData(ImageData.of(capeData!!.width, capeData!!.height, capeData!!.data))
             .geometryData(geometryData)
             .animationData(animationData)
             .premium(isPremium)
@@ -127,64 +133,64 @@ class Skin {
         const val SKIN_128_128_SIZE = 65536
         fun fromNetwork(serializedSkin: SerializedSkin): Skin {
             val skin = Skin()
-            skin.skinId = serializedSkin.getSkinId()
-            skin.playFabId = serializedSkin.getPlayFabId()
-            skin.geometryName = serializedSkin.getGeometryName()
-            skin.setResourcePatch(serializedSkin.getSkinResourcePatch())
+            skin.skinId = serializedSkin.skinId
+            skin.playFabId = serializedSkin.playFabId
+            skin.geometryName = serializedSkin.geometryName
+            skin.setResourcePatch(serializedSkin.skinResourcePatch)
             skin.skinData = Image(
-                serializedSkin.getSkinData().getWidth(),
-                serializedSkin.getSkinData().getHeight(),
-                serializedSkin.getSkinData().getImage()
+                serializedSkin.skinData.width,
+                serializedSkin.skinData.height,
+                serializedSkin.skinData.image,
             )
             val skinAnimations: MutableList<SkinAnimation?> = ArrayList()
-            for (animation in serializedSkin.getAnimations()) {
+            for (animation in serializedSkin.animations) {
                 val image = Image(
-                    animation.getImage().getWidth(),
-                    animation.getImage().getHeight(),
-                    animation.getImage().getImage()
+                    animation.image.width,
+                    animation.image.height,
+                    animation.image.image,
                 )
                 skinAnimations.add(
                     SkinAnimation(
                         image,
-                        animation.getTextureType().ordinal,
-                        animation.getFrames(),
-                        animation.getExpressionType().ordinal
-                    )
+                        animation.textureType.ordinal,
+                        animation.frames,
+                        animation.expressionType.ordinal,
+                    ),
                 )
             }
             skin.skinAnimations = skinAnimations
             skin.setCapeData(
                 Image(
-                    serializedSkin.getCapeData().getWidth(),
-                    serializedSkin.getCapeData().getHeight(),
-                    serializedSkin.getCapeData().getImage()
-                )
+                    serializedSkin.capeData.width,
+                    serializedSkin.capeData.height,
+                    serializedSkin.capeData.image,
+                ),
             )
-            skin.setGeometryData(serializedSkin.getGeometryData())
-            skin.setAnimationData(serializedSkin.getAnimationData())
-            skin.isPremium = serializedSkin.isPremium()
-            skin.isPersona = serializedSkin.isPersona()
-            skin.isCapeOnClassic = serializedSkin.isCapeOnClassic()
-            skin.setCapeId(serializedSkin.getCapeId())
-            skin.fullSkinId = serializedSkin.getFullSkinId()
-            skin.armSize = serializedSkin.getArmSize()
-            skin.skinColor = serializedSkin.getSkinColor()
+            skin.setGeometryData(serializedSkin.geometryData)
+            skin.setAnimationData(serializedSkin.animationData)
+            skin.isPremium = serializedSkin.isPremium
+            skin.isPersona = serializedSkin.isPersona
+            skin.isCapeOnClassic = serializedSkin.isCapeOnClassic
+            skin.setCapeId(serializedSkin.capeId)
+            skin.fullSkinId = serializedSkin.fullSkinId
+            skin.armSize = serializedSkin.armSize
+            skin.skinColor = serializedSkin.skinColor
             val personaPieces: MutableList<PersonaPiece?> = ArrayList()
-            for (personaPiece in serializedSkin.getPersonaPieces()) {
+            for (personaPiece in serializedSkin.personaPieces) {
                 personaPieces.add(
                     PersonaPiece(
-                        personaPiece.getId(),
-                        personaPiece.getType(),
-                        personaPiece.getPackId(),
-                        personaPiece.getProductId(),
-                        personaPiece.isDefault()
-                    )
+                        personaPiece.id,
+                        personaPiece.type,
+                        personaPiece.packId,
+                        personaPiece.productId,
+                        personaPiece.isDefault,
+                    ),
                 )
             }
             skin.personaPieces = personaPieces
             val pieceTints: MutableList<PersonaPieceTint?> = ArrayList()
-            for (tintColor in serializedSkin.getTintColors()) {
-                pieceTints.add(PersonaPieceTint(tintColor.getType(), tintColor.getColors()))
+            for (tintColor in serializedSkin.tintColors) {
+                pieceTints.add(PersonaPieceTint(tintColor.type, tintColor.colors))
             }
             skin.personaPieceTints = pieceTints
             return skin
