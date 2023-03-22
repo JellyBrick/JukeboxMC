@@ -9,7 +9,7 @@ import org.jukeboxmc.command.CommandSender
  */
 class ConsoleSender(override val server: Server) : CommandSender {
 
-    override fun sendMessage(message: String?) {
+    override fun sendMessage(message: String) {
         server.logger.info(message)
     }
 
