@@ -1,10 +1,10 @@
 package org.jukeboxmc.network.handler
 
 import com.nukkitx.protocol.bedrock.packet.CommandRequestPacket
-import java.util.Locale
 import org.jukeboxmc.Server
 import org.jukeboxmc.event.player.PlayerCommandPreprocessEvent
 import org.jukeboxmc.player.Player
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -23,7 +23,7 @@ class CommandRequestHandler : PacketHandler<CommandRequestPacket> {
         }
         server.pluginManager.getCommandManager().handleCommandInput(
             player,
-            packet.command.lowercase(Locale.getDefault())
+            packet.command.lowercase(Locale.getDefault()),
         )
     }
 }

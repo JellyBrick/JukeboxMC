@@ -19,6 +19,7 @@ import com.nukkitx.protocol.bedrock.packet.ItemStackResponsePacket
 import com.nukkitx.protocol.bedrock.packet.ItemStackResponsePacket.ContainerEntry
 import org.jukeboxmc.Server
 import org.jukeboxmc.event.inventory.InventoryClickEvent
+import org.jukeboxmc.event.player.PlayerDropItemEvent
 import org.jukeboxmc.inventory.CraftingGridInventory
 import org.jukeboxmc.inventory.Inventory
 import org.jukeboxmc.item.Item
@@ -249,11 +250,23 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         val source: StackRequestSlotInfoData = actionData.source
         val destination: StackRequestSlotInfoData = actionData.destination
         val containerEntryList: MutableList<ContainerEntry> = LinkedList<ContainerEntry>()
-        var sourceItem = getItem(player, source.container, source.slot.toInt())!!
-        var destinationItem = getItem(player, destination.container, destination.slot.toInt())!!
+        var sourceItem = getItem(player, source.container, source.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown source item slot ${source.slot.toInt()}")
+            return emptyList()
+        }
+        var destinationItem = getItem(player, destination.container, destination.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown destination item slot ${destination.slot}")
+            return emptyList()
+        }
         if (source.container == ContainerSlotType.CREATIVE_OUTPUT) {
-            val sourceInventory = getInventory(player, source.container)!!
-            val destinationInventory = getInventory(player, destination.container)!!
+            val sourceInventory = getInventory(player, source.container) ?: run {
+                Server.instance.logger.debug("Unknown source inventory ${destination.container.name}")
+                return emptyList()
+            }
+            val destinationInventory = getInventory(player, destination.container) ?: run {
+                Server.instance.logger.debug("Unknown destination inventory ${destination.container.name}")
+                return emptyList()
+            }
             val inventoryClickEvent = InventoryClickEvent(
                 sourceInventory,
                 destinationInventory,
@@ -264,7 +277,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             )
             Server.instance.pluginManager.callEvent(inventoryClickEvent)
             if (inventoryClickEvent.isCancelled) {
-                sourceInventory!!.setItem(source.slot.toInt(), sourceItem!!)
+                sourceInventory.setItem(source.slot.toInt(), sourceItem)
                 return listOf(
                     ItemStackResponsePacket.Response(
                         ItemStackResponsePacket.ResponseStatus.ERROR,
@@ -273,14 +286,14 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                     ),
                 )
             }
-            sourceItem!!.setStackNetworkId(Item.stackNetworkCount++)
+            sourceItem.setStackNetworkId(Item.stackNetworkCount++)
             if (destinationItem.type != ItemType.AIR) {
-                sourceItem.setAmount(Math.min(destinationItem.amount + sourceItem.amount, sourceItem.maxStackSize))
+                sourceItem.setAmount((destinationItem.amount + sourceItem.amount).coerceAtMost(sourceItem.maxStackSize))
             }
             this.setItem(player, destination.container, destination.slot.toInt(), sourceItem)
             containerEntryList.add(
                 ContainerEntry(
-                    destination.getContainer(),
+                    destination.container,
                     listOf(
                         ItemStackResponsePacket.ItemEntry(
                             destination.slot,
@@ -294,61 +307,64 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                 ),
             )
         } else {
-            val sourceInventory = getInventory(player, source.getContainer())
-            val destinationInventory = getInventory(player, destination.getContainer())
+            val sourceInventory = getInventory(player, source.container) ?: run {
+                Server.instance.logger.debug("Unknown source inventory ${source.container.name}")
+                return emptyList()
+            }
+            val destinationInventory = getInventory(player, destination.container)!!
             val inventoryClickEvent = InventoryClickEvent(
                 sourceInventory,
                 destinationInventory,
                 player,
                 sourceItem,
                 destinationItem,
-                source.getSlot().toInt(),
+                source.slot.toInt(),
             )
             Server.instance.pluginManager.callEvent(inventoryClickEvent)
-            if (inventoryClickEvent.isCancelled || sourceInventory.type == InventoryType.ARMOR && sourceItem!!.getEnchantment(
+            if (inventoryClickEvent.isCancelled || sourceInventory.type == InventoryType.ARMOR && sourceItem.getEnchantment(
                     EnchantmentType.CURSE_OF_BINDING,
                 ) != null
             ) {
-                sourceInventory!!.setItem(source.getSlot().toInt(), sourceItem!!)
+                sourceInventory.setItem(source.slot.toInt(), sourceItem)
                 return listOf(
                     ItemStackResponsePacket.Response(
                         ItemStackResponsePacket.ResponseStatus.ERROR,
-                        itemStackRequest.getRequestId(),
+                        itemStackRequest.requestId,
                         emptyList<ContainerEntry>(),
                     ),
                 )
             }
             if (destinationItem == sourceItem && sourceItem.amount > 0) {
-                sourceItem!!.amount = sourceItem.amount - amount
+                sourceItem.setAmount(sourceItem.amount - amount)
                 if (sourceItem.amount <= 0) {
                     sourceItem = Item.create<Item>(ItemType.AIR)
                 }
-                destinationItem!!.amount = destinationItem.amount + amount
+                destinationItem.setAmount(destinationItem.amount + amount)
             } else if (destinationItem.type == ItemType.AIR) {
                 if (sourceItem.amount == amount.toInt()) {
-                    destinationItem = sourceItem!!.clone()
+                    destinationItem = sourceItem.clone()
                     sourceItem = Item.create<Item>(ItemType.AIR)
                 } else {
-                    destinationItem = sourceItem!!.clone()
-                    destinationItem.amount = amount.toInt()
-                    destinationItem.stackNetworkId = Item.stackNetworkCount++
-                    sourceItem.amount = sourceItem.amount - amount
+                    destinationItem = sourceItem.clone()
+                    destinationItem.setAmount(amount.toInt())
+                    destinationItem.setStackNetworkId(Item.stackNetworkCount++)
+                    sourceItem.setAmount(sourceItem.amount - amount)
                 }
             }
-            this.setItem(player, source.getContainer(), source.getSlot().toInt(), sourceItem)
-            this.setItem(player, destination.getContainer(), destination.getSlot().toInt(), destinationItem)
+            this.setItem(player, source.container, source.slot.toInt(), sourceItem)
+            this.setItem(player, destination.container, destination.slot.toInt(), destinationItem)
             val finalSourceItem = sourceItem
             containerEntryList.add(
                 ContainerEntry(
-                    source.getContainer(),
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    source.container,
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
-                            source.getSlot(),
-                            source.getSlot(),
+                            source.slot,
+                            source.slot,
                             finalSourceItem.amount.toByte(),
-                            finalSourceItem.getStackNetworkId(),
-                            finalSourceItem.getDisplayname(),
-                            finalSourceItem.getDurability(),
+                            finalSourceItem.stackNetworkId,
+                            finalSourceItem.displayname,
+                            finalSourceItem.durability,
                         ),
                     ),
                 ),
@@ -356,24 +372,24 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             val finalDestinationItem = destinationItem
             containerEntryList.add(
                 ContainerEntry(
-                    destination.getContainer(),
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    destination.container,
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
-                            destination.getSlot(),
-                            destination.getSlot(),
+                            destination.slot,
+                            destination.slot,
                             finalDestinationItem.amount.toByte(),
-                            finalDestinationItem.getStackNetworkId(),
-                            finalDestinationItem.getDisplayname(),
-                            finalDestinationItem.getDurability(),
+                            finalDestinationItem.stackNetworkId,
+                            finalDestinationItem.displayname,
+                            finalDestinationItem.durability,
                         ),
                     ),
                 ),
             )
         }
-        return listOf<ItemStackResponsePacket.Response>(
+        return listOf(
             ItemStackResponsePacket.Response(
                 ItemStackResponsePacket.ResponseStatus.OK,
-                itemStackRequest.getRequestId(),
+                itemStackRequest.requestId,
                 containerEntryList,
             ),
         )
@@ -384,46 +400,58 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         actionData: TakeStackRequestActionData,
         itemStackRequest: ItemStackRequest,
     ): List<ItemStackResponsePacket.Response> {
-        val amount: Byte = actionData.getCount()
-        val source: StackRequestSlotInfoData = actionData.getSource()
-        val destination: StackRequestSlotInfoData = actionData.getDestination()
+        val amount: Byte = actionData.count
+        val source: StackRequestSlotInfoData = actionData.source
+        val destination: StackRequestSlotInfoData = actionData.destination
         val entryList: MutableList<ContainerEntry> = LinkedList<ContainerEntry>()
-        var sourceItem = getItem(player, source.getContainer(), source.getSlot().toInt())
-        var destinationItem = getItem(player, destination.getContainer(), destination.getSlot().toInt())
-        if (source.getContainer() == ContainerSlotType.CREATIVE_OUTPUT) {
-            val sourceInventory = getInventory(player, source.getContainer())
-            val destinationInventory = getInventory(player, destination.getContainer())
+        var sourceItem = getItem(player, source.container, source.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown source item slot ${source.slot.toInt()}")
+            return emptyList()
+        }
+        var destinationItem = getItem(player, destination.container, destination.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown destination item slot ${destination.slot.toInt()}")
+            return emptyList()
+        }
+        if (source.container == ContainerSlotType.CREATIVE_OUTPUT) {
+            val sourceInventory = getInventory(player, source.container) ?: run {
+                Server.instance.logger.debug("Unknown source inventory ${source.container.name}")
+                return emptyList()
+            }
+            val destinationInventory = getInventory(player, destination.container) ?: run {
+                Server.instance.logger.debug("Unknown destination inventory ${source.container.name}")
+                return emptyList()
+            }
             val inventoryClickEvent = InventoryClickEvent(
                 sourceInventory,
                 destinationInventory,
                 player,
                 sourceItem,
                 destinationItem,
-                source.getSlot().toInt(),
+                source.slot.toInt(),
             )
             Server.instance.pluginManager.callEvent(inventoryClickEvent)
-            if (inventoryClickEvent.isCancelled()) {
-                sourceInventory!!.setItem(source.getSlot().toInt(), sourceItem!!)
-                return java.util.List.of<ItemStackResponsePacket.Response>(
+            if (inventoryClickEvent.isCancelled) {
+                sourceInventory.setItem(source.slot.toInt(), sourceItem)
+                return java.util.List.of(
                     ItemStackResponsePacket.Response(
                         ItemStackResponsePacket.ResponseStatus.ERROR,
-                        itemStackRequest.getRequestId(),
+                        itemStackRequest.requestId,
                         emptyList<ContainerEntry>(),
                     ),
                 )
             }
-            sourceItem!!.stackNetworkId = Item.stackNetworkCount++
+            sourceItem.setStackNetworkId(Item.stackNetworkCount++)
             if (destinationItem.type != ItemType.AIR) {
-                sourceItem.amount = Math.min(destinationItem.amount + sourceItem.amount, sourceItem.maxStackSize)
+                sourceItem.setAmount(Math.min(destinationItem.amount + sourceItem.amount, sourceItem.maxStackSize))
             }
-            this.setItem(player, destination.getContainer(), destination.getSlot().toInt(), sourceItem)
+            this.setItem(player, destination.container, destination.slot.toInt(), sourceItem)
             entryList.add(
                 ContainerEntry(
-                    destination.getContainer(),
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    destination.container,
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
-                            destination.getSlot(),
-                            destination.getSlot(),
+                            destination.slot,
+                            destination.slot,
                             sourceItem.amount.toByte(),
                             sourceItem.stackNetworkId,
                             sourceItem.displayname,
@@ -433,61 +461,67 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                 ),
             )
         } else {
-            val sourceInventory = getInventory(player, source.getContainer())
-            val destinationInventory = getInventory(player, destination.getContainer())
+            val sourceInventory = getInventory(player, source.container) ?: run {
+                Server.instance.logger.debug("Unknown source inventory ${source.container.name}")
+                return emptyList()
+            }
+            val destinationInventory = getInventory(player, destination.container) ?: run {
+                Server.instance.logger.debug("Unknown destination inventory ${source.container.name}")
+                return emptyList()
+            }
             val inventoryClickEvent = InventoryClickEvent(
                 sourceInventory,
                 destinationInventory,
                 player,
                 sourceItem,
                 destinationItem,
-                source.getSlot().toInt(),
+                source.slot.toInt(),
             )
             Server.instance.pluginManager.callEvent(inventoryClickEvent)
-            if (inventoryClickEvent.isCancelled() || sourceInventory.type == InventoryType.ARMOR && sourceItem!!.getEnchantment(
+            if (inventoryClickEvent.isCancelled || sourceInventory.type == InventoryType.ARMOR && sourceItem.getEnchantment(
                     EnchantmentType.CURSE_OF_BINDING,
                 ) != null
             ) {
-                sourceInventory!!.setItem(source.getSlot().toInt(), sourceItem!!)
-                return java.util.List.of<ItemStackResponsePacket.Response>(
+                sourceInventory.setItem(source.slot.toInt(), sourceItem)
+                return listOf(
                     ItemStackResponsePacket.Response(
                         ItemStackResponsePacket.ResponseStatus.ERROR,
-                        itemStackRequest.getRequestId(),
+                        itemStackRequest.requestId,
                         emptyList<ContainerEntry>(),
                     ),
                 )
             }
             if (destinationItem == sourceItem && sourceItem.amount > 0) {
-                sourceItem!!.amount = sourceItem.amount - amount
+                sourceItem.setAmount(sourceItem.amount - amount)
                 if (sourceItem.amount <= 0) {
                     sourceItem = Item.create<Item>(ItemType.AIR)
                 }
-                destinationItem!!.amount = destinationItem.amount + amount
+                destinationItem.setAmount(destinationItem.amount + amount)
             } else if (destinationItem.type == ItemType.AIR) {
                 if (sourceItem.amount == amount.toInt()) {
-                    destinationItem = sourceItem!!.clone()
+                    destinationItem = sourceItem.clone()
                     sourceItem = Item.create<Item>(ItemType.AIR)
                 } else {
-                    destinationItem = sourceItem!!.clone()
-                    destinationItem.amount = amount.toInt()
-                    destinationItem.stackNetworkId = Item.stackNetworkCount++
-                    sourceItem.amount = sourceItem.amount - amount
+                    destinationItem = sourceItem.clone()
+                    destinationItem.setAmount(amount.toInt())
+                    destinationItem.setStackNetworkId(Item.stackNetworkCount++)
+                    sourceItem.setAmount(sourceItem.amount - amount)
                 }
             }
-            this.setItem(player, source.getContainer(), source.getSlot().toInt(), sourceItem)
-            this.setItem(player, destination.getContainer(), destination.getSlot().toInt(), destinationItem)
+            this.setItem(player, source.container, source.slot.toInt(), sourceItem)
+            this.setItem(player, destination.container, destination.slot.toInt(), destinationItem)
             val finalSourceItem = sourceItem
             entryList.add(
                 ContainerEntry(
-                    source.getContainer(),
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    source.container,
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
-                            source.getSlot(),
-                            source.getSlot(),
+                            source.slot,
+                            source.slot,
                             finalSourceItem.amount.toByte(),
-                            finalSourceItem.getStackNetworkId(),
-                            finalSourceItem.getDisplayname(),
-                            finalSourceItem.getDurability(),
+                            finalSourceItem.stackNetworkId,
+                            finalSourceItem.displayname,
+                            finalSourceItem.durability,
                         ),
                     ),
                 ),
@@ -495,24 +529,24 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             val finalDestinationItem = destinationItem
             entryList.add(
                 ContainerEntry(
-                    destination.getContainer(),
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    destination.container,
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
-                            destination.getSlot(),
-                            destination.getSlot(),
+                            destination.slot,
+                            destination.slot,
                             finalDestinationItem.amount.toByte(),
-                            finalDestinationItem.getStackNetworkId(),
-                            finalDestinationItem.getDisplayname(),
-                            finalDestinationItem.getDurability(),
+                            finalDestinationItem.stackNetworkId,
+                            finalDestinationItem.displayname,
+                            finalDestinationItem.durability,
                         ),
                     ),
                 ),
             )
         }
-        return listOf<ItemStackResponsePacket.Response>(
+        return listOf(
             ItemStackResponsePacket.Response(
                 ItemStackResponsePacket.ResponseStatus.OK,
-                itemStackRequest.getRequestId(),
+                itemStackRequest.requestId,
                 entryList,
             ),
         )
@@ -523,47 +557,53 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         actionData: SwapStackRequestActionData,
         itemStackRequest: ItemStackRequest,
     ): List<ItemStackResponsePacket.Response> {
-        val source: StackRequestSlotInfoData = actionData.getSource()
-        val destination: StackRequestSlotInfoData = actionData.getDestination()
-        val sourceItem = getItem(player, source.getContainer(), source.getSlot().toInt())
-        val destinationItem = getItem(player, destination.getContainer(), destination.getSlot().toInt())
-        this.setItem(player, source.getContainer(), source.getSlot().toInt(), destinationItem)
-        this.setItem(player, destination.getContainer(), destination.getSlot().toInt(), sourceItem)
+        val source: StackRequestSlotInfoData = actionData.source
+        val destination: StackRequestSlotInfoData = actionData.destination
+        val sourceItem = getItem(player, source.container, source.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown source item slot ${source.slot.toInt()}")
+            return emptyList()
+        }
+        val destinationItem = getItem(player, destination.container, destination.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown destination item slot ${destination.slot.toInt()}")
+            return emptyList()
+        }
+        this.setItem(player, source.container, source.slot.toInt(), destinationItem)
+        this.setItem(player, destination.container, destination.slot.toInt(), sourceItem)
         val containerEntryList: MutableList<ContainerEntry> = LinkedList<ContainerEntry>()
         containerEntryList.add(
             ContainerEntry(
-                destination.getContainer(),
-                listOf<ItemStackResponsePacket.ItemEntry>(
+                destination.container,
+                listOf(
                     ItemStackResponsePacket.ItemEntry(
-                        destination.getSlot(),
-                        destination.getSlot(),
+                        destination.slot,
+                        destination.slot,
                         sourceItem.amount.toByte(),
-                        sourceItem.getStackNetworkId(),
-                        sourceItem.getDisplayname(),
-                        sourceItem.getDurability(),
+                        sourceItem.stackNetworkId,
+                        sourceItem.displayname,
+                        sourceItem.durability,
                     ),
                 ),
             ),
         )
         containerEntryList.add(
             ContainerEntry(
-                source.getContainer(),
-                listOf<ItemStackResponsePacket.ItemEntry>(
+                source.container,
+                listOf(
                     ItemStackResponsePacket.ItemEntry(
-                        source.getSlot(),
-                        source.getSlot(),
+                        source.slot,
+                        source.slot,
                         destinationItem.amount.toByte(),
-                        destinationItem.getStackNetworkId(),
-                        destinationItem.getDisplayname(),
-                        destinationItem.getDurability(),
+                        destinationItem.stackNetworkId,
+                        destinationItem.displayname,
+                        destinationItem.durability,
                     ),
                 ),
             ),
         )
-        return listOf<ItemStackResponsePacket.Response>(
+        return listOf(
             ItemStackResponsePacket.Response(
                 ItemStackResponsePacket.ResponseStatus.OK,
-                itemStackRequest.getRequestId(),
+                itemStackRequest.requestId,
                 containerEntryList,
             ),
         )
@@ -574,26 +614,29 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         actionData: DestroyStackRequestActionData,
         itemStackRequest: ItemStackRequest,
     ): List<ItemStackResponsePacket.Response> {
-        val amount: Byte = actionData.getCount()
-        val source: StackRequestSlotInfoData = actionData.getSource()
-        var sourceItem = getItem(player, source.getContainer(), source.getSlot().toInt())
-        sourceItem!!.amount = sourceItem.amount - amount
+        val amount: Byte = actionData.count
+        val source: StackRequestSlotInfoData = actionData.source
+        var sourceItem = getItem(player, source.container, source.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown source item slot ${source.slot.toInt()}")
+            return emptyList()
+        }
+        sourceItem.setAmount(sourceItem.amount - amount)
         if (sourceItem.amount <= 0) {
             sourceItem = Item.create<Item>(ItemType.AIR)
-            this.setItem(player, source.getContainer(), source.getSlot().toInt(), sourceItem)
+            this.setItem(player, source.container, source.slot.toInt(), sourceItem)
         }
         val finalSourceItem = sourceItem
-        return listOf<ItemStackResponsePacket.Response>(
+        return listOf(
             ItemStackResponsePacket.Response(
                 ItemStackResponsePacket.ResponseStatus.OK,
-                itemStackRequest.getRequestId(),
-                listOf<ContainerEntry>(
+                itemStackRequest.requestId,
+                listOf(
                     ContainerEntry(
-                        source.getContainer(),
-                        listOf<ItemStackResponsePacket.ItemEntry>(
+                        source.container,
+                        listOf(
                             ItemStackResponsePacket.ItemEntry(
-                                source.getSlot(),
-                                source.getSlot(),
+                                source.slot,
+                                source.slot,
                                 finalSourceItem.amount.toByte(),
                                 finalSourceItem.stackNetworkId,
                                 finalSourceItem.displayname,
@@ -611,51 +654,57 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         dropStackRequestActionData: DropStackRequestActionData,
         itemStackRequest: ItemStackRequest,
     ): List<ItemStackResponsePacket.Response> {
-        val amount: Byte = dropStackRequestActionData.getCount()
-        val source: StackRequestSlotInfoData = dropStackRequestActionData.getSource()
-        val sourceInventory = getInventory(player, source.getContainer())
-        var sourceItem = getItem(player, source.getContainer(), source.getSlot().toInt())
+        val amount: Byte = dropStackRequestActionData.count
+        val source: StackRequestSlotInfoData = dropStackRequestActionData.source
+        val sourceInventory = getInventory(player, source.container) ?: run {
+            Server.instance.logger.debug("Unknown source inventory ${source.container.name}")
+            return emptyList()
+        }
+        var sourceItem = getItem(player, source.container, source.slot.toInt()) ?: run {
+            Server.instance.logger.debug("Unknown source item slot ${source.slot.toInt()}")
+            return emptyList()
+        }
         val playerDropItemEvent = PlayerDropItemEvent(player, sourceItem)
         Server.instance.pluginManager.callEvent(playerDropItemEvent)
-        if (playerDropItemEvent.isCancelled() || sourceInventory.type == InventoryType.ARMOR && sourceItem!!.getEnchantment(
+        if (playerDropItemEvent.isCancelled || sourceInventory.type == InventoryType.ARMOR && sourceItem.getEnchantment(
                 EnchantmentType.CURSE_OF_BINDING,
             ) != null
         ) {
-            sourceInventory!!.setItem(source.getSlot().toInt(), sourceItem!!)
-            return java.util.List.of<ItemStackResponsePacket.Response>(
+            sourceInventory.setItem(source.slot.toInt(), sourceItem)
+            return listOf(
                 ItemStackResponsePacket.Response(
                     ItemStackResponsePacket.ResponseStatus.ERROR,
-                    itemStackRequest.getRequestId(),
+                    itemStackRequest.requestId,
                     emptyList<ContainerEntry>(),
                 ),
             )
         }
-        sourceItem!!.amount = sourceItem.amount - amount
+        sourceItem.setAmount(sourceItem.amount - amount)
         val dropItem = sourceItem.clone()
-        dropItem.amount = amount.toInt()
+        dropItem.setAmount(amount.toInt())
         if (sourceItem.amount <= 0) {
             sourceItem = Item.create<Item>(ItemType.AIR)
         }
-        this.setItem(player, source.getContainer(), source.getSlot().toInt(), sourceItem)
-        val entityItem = player.world.dropItem(
+        this.setItem(player, source.container, source.slot.toInt(), sourceItem)
+        val entityItem = player.world?.dropItem(
             dropItem,
             player.location.add(0f, player.eyeHeight, 0f),
             player.location.direction.multiply(0.4f, 0.4f, 0.4f),
-        )
+        )!!
         entityItem.playerHasThrown = player
         entityItem.spawn()
         val finalSourceItem = sourceItem
-        return listOf<ItemStackResponsePacket.Response>(
+        return listOf(
             ItemStackResponsePacket.Response(
                 ItemStackResponsePacket.ResponseStatus.OK,
-                itemStackRequest.getRequestId(),
-                listOf<ContainerEntry>(
+                itemStackRequest.requestId,
+                listOf(
                     ContainerEntry(
-                        source.getContainer(),
-                        listOf<ItemStackResponsePacket.ItemEntry>(
+                        source.container,
+                        listOf(
                             ItemStackResponsePacket.ItemEntry(
-                                source.getSlot(),
-                                source.getSlot(),
+                                source.slot,
+                                source.slot,
                                 finalSourceItem.amount.toByte(),
                                 finalSourceItem.stackNetworkId,
                                 finalSourceItem.displayname,
@@ -678,7 +727,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         sourceItem: Item,
         destinationItem: Item,
     ): ItemStackResponsePacket.Response {
-        Server.instance.getScheduler().scheduleDelayed(
+        Server.instance.scheduler.scheduleDelayed(
             Runnable {
                 sourceInventory.setItem(sourceSlot, sourceItem)
                 sourceInventory.sendContents(sourceSlot, player)
@@ -690,10 +739,10 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         return ItemStackResponsePacket.Response(
             ItemStackResponsePacket.ResponseStatus.OK,
             requestId,
-            Arrays.asList<ContainerEntry>(
+            listOf(
                 ContainerEntry(
                     ContainerSlotType.HOTBAR,
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
                             sourceSlot.toByte(),
                             sourceSlot.toByte(),
@@ -723,8 +772,8 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
 
     private fun getInventory(player: Player, containerSlotType: ContainerSlotType): Inventory? {
         return when (containerSlotType) {
-            ContainerSlotType.CREATIVE_OUTPUT -> player.creativeItemCacheInventory
-            ContainerSlotType.CURSOR -> player.cursorInventory
+            ContainerSlotType.CREATIVE_OUTPUT -> player.getCreativeItemCacheInventory()
+            ContainerSlotType.CURSOR -> player.getCursorInventory()
             ContainerSlotType.INVENTORY, ContainerSlotType.HOTBAR, ContainerSlotType.HOTBAR_AND_INVENTORY -> player.inventory
             ContainerSlotType.ARMOR -> player.getArmorInventory()
             ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory
@@ -740,36 +789,36 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
 
     private fun getItem(player: Player, containerSlotType: ContainerSlotType, slot: Int): Item? {
         return when (containerSlotType) {
-            ContainerSlotType.CREATIVE_OUTPUT -> player.creativeItemCacheInventory.getItem(0)
-            ContainerSlotType.CURSOR -> player.cursorInventory.getItem(slot)
-            ContainerSlotType.OFFHAND -> player.offHandInventory.getItem(slot)
+            ContainerSlotType.CREATIVE_OUTPUT -> player.getCreativeItemCacheInventory().getItem(0)
+            ContainerSlotType.CURSOR -> player.getCursorInventory().getItem(slot)
+            ContainerSlotType.OFFHAND -> player.getOffHandInventory().getItem(slot)
             ContainerSlotType.INVENTORY, ContainerSlotType.HOTBAR, ContainerSlotType.HOTBAR_AND_INVENTORY -> player.inventory.getItem(
                 slot,
             )
 
-            ContainerSlotType.ARMOR -> player.getArmorInventory().getItem(slot)
-            ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory.getItem(
+            ContainerSlotType.ARMOR -> player.armorInventory.getItem(slot)
+            ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory?.getItem(
                 slot,
             )
 
-            ContainerSlotType.CRAFTING_INPUT -> player.craftingGridInventory.getItem(slot)
-            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.cartographyTableInventory.getItem(
+            ContainerSlotType.CRAFTING_INPUT -> player.getCraftingGridInventory().getItem(slot)
+            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.getCartographyTableInventory().getItem(
                 slot,
             )
 
-            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.smithingTableInventory.getItem(
+            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.getSmithingTableInventory().getItem(
                 slot,
             )
 
-            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.anvilInventory.getItem(
+            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.getAnvilInventory().getItem(
                 slot,
             )
 
-            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.stoneCutterInventory.getItem(
+            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.getStoneCutterInventory().getItem(
                 slot,
             )
 
-            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.grindstoneInventory.getItem(
+            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.getGrindstoneInventory().getItem(
                 slot,
             )
 
@@ -777,7 +826,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         }
     }
 
-    private fun setItem(player: Player, containerSlotType: ContainerSlotType, slot: Int, item: Item?) {
+    private fun setItem(player: Player, containerSlotType: ContainerSlotType, slot: Int, item: Item) {
         this.setItem(player, containerSlotType, slot, item, true)
     }
 
@@ -785,12 +834,12 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         player: Player,
         containerSlotType: ContainerSlotType,
         slot: Int,
-        item: Item?,
+        item: Item,
         sendContent: Boolean,
     ) {
         when (containerSlotType) {
-            ContainerSlotType.CURSOR -> player.cursorInventory.setItem(slot, item, sendContent)
-            ContainerSlotType.OFFHAND -> player.offHandInventory.setItem(slot, item, sendContent)
+            ContainerSlotType.CURSOR -> player.getCursorInventory().setItem(slot, item, sendContent)
+            ContainerSlotType.OFFHAND -> player.getOffHandInventory().setItem(slot, item, sendContent)
             ContainerSlotType.INVENTORY, ContainerSlotType.HOTBAR, ContainerSlotType.HOTBAR_AND_INVENTORY -> player.inventory.setItem(
                 slot,
                 item,
@@ -804,32 +853,32 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                 sendContent,
             )
 
-            ContainerSlotType.CRAFTING_INPUT -> player.craftingGridInventory.setItem(slot, item, sendContent)
-            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.cartographyTableInventory.setItem(
+            ContainerSlotType.CRAFTING_INPUT -> player.getCraftingGridInventory().setItem(slot, item, sendContent)
+            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.getCartographyTableInventory().setItem(
                 slot,
                 item,
                 sendContent,
             )
 
-            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.smithingTableInventory.setItem(
+            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.getSmithingTableInventory().setItem(
                 slot,
                 item,
                 sendContent,
             )
 
-            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.anvilInventory.setItem(
+            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.getAnvilInventory().setItem(
                 slot,
                 item,
                 sendContent,
             )
 
-            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.stoneCutterInventory.setItem(
+            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.getStoneCutterInventory().setItem(
                 slot,
                 item,
                 sendContent,
             )
 
-            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.grindstoneInventory.setItem(
+            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.getGrindstoneInventory().setItem(
                 slot,
                 item,
                 sendContent,

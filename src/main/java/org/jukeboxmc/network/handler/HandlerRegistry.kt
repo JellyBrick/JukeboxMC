@@ -37,6 +37,8 @@ import com.nukkitx.protocol.bedrock.packet.TextPacket
  */
 object HandlerRegistry {
     private val packetHandlerMap: MutableMap<Class<out BedrockPacket>, PacketHandler<out BedrockPacket>> = HashMap()
+
+    @JvmStatic
     fun init() {
         packetHandlerMap[PacketViolationWarningPacket::class.java] = PacketViolationWarningHandler()
         packetHandlerMap[RequestNetworkSettingsPacket::class.java] = RequestNetworkSettingsHandler()

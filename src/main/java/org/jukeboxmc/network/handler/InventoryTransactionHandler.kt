@@ -39,18 +39,19 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
             val itemInHand = player.inventory.itemInHand
             when (packet.actionType) {
                 0 -> {
+                    val world = player.world ?: return
                     if (!canInteract()) {
-                        player.world.getBlock(player.world.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
+                        world.getBlock(world.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
                         return
                     }
                     spamCheckTime = System.currentTimeMillis()
-                    val placePosition = player.world.getSidePosition(blockPosition, blockFace)
+                    val placePosition = world.getSidePosition(blockPosition, blockFace)
                     placePosition.dimension = player.dimension
                     player.setAction(false)
                     if (!useItemOn(player, blockPosition, placePosition, clickPosition, blockFace)) {
-                        val blockClicked = player.world.getBlock(blockPosition)
+                        val blockClicked = world.getBlock(blockPosition)
                         blockClicked.sendUpdate(player)
-                        val replacedBlock = player.world.getBlock(blockPosition).getSide(blockFace)
+                        val replacedBlock = world.getBlock(blockPosition).getSide(blockFace)
                         replacedBlock.sendUpdate(player)
                     }
                 }
@@ -67,7 +68,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                     if (itemInHand.useInAir(player, directionVector)) {
                         if (!player.hasAction()) {
                             player.setAction(true)
-                            break
+                            return
                         }
                         player.setAction(false)
                         if (!itemInHand.onUse(player)) {
@@ -77,25 +78,26 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                 }
 
                 2 -> {
-                    val breakPosition: Vector = Vector(packet.getBlockPosition())
+                    val world = player.world ?: return
+                    val breakPosition: Vector = Vector(packet.blockPosition)
                     breakPosition.dimension = player.dimension
-                    val block = player.world.getBlock(breakPosition)
+                    val block = world.getBlock(breakPosition)
                     if (block.type == BlockType.AIR) return
                     block.breakBlock(player, itemInHand)
                 }
             }
-        } else if (packet.getTransactionType() == TransactionType.NORMAL) {
-            for (action in packet.getActions()) {
-                if (action.getSource().getType() == InventorySource.Type.WORLD_INTERACTION) {
-                    if (action.getSource().getFlag() == InventorySource.Flag.DROP_ITEM) {
-                        val targetItem: Item = Item.create<Item>(action.getToItem())
+        } else if (packet.transactionType == TransactionType.NORMAL) {
+            for (action in packet.actions) {
+                if (action.source.type == InventorySource.Type.WORLD_INTERACTION) {
+                    if (action.source.flag == InventorySource.Flag.DROP_ITEM) {
+                        val targetItem: Item = Item.create<Item>(action.toItem)
                         val playerDropItemEvent = PlayerDropItemEvent(player, targetItem)
                         Server.instance.pluginManager.callEvent(playerDropItemEvent)
                         if (playerDropItemEvent.isCancelled) {
                             player.inventory.sendContents(player)
                             return
                         }
-                        val entityItem = player.world.dropItem(
+                        val entityItem = player.world!!.dropItem(
                             playerDropItemEvent.item,
                             player.location.add(0f, player.eyeHeight, 0f),
                             player.location.direction.multiply(0.4f, 0.4f, 0.4f),
@@ -103,30 +105,31 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         entityItem.playerHasThrown = player
                         entityItem.spawn()
                     }
-                } else if (action.getSource().getType() == InventorySource.Type.CONTAINER) {
-                    val containerId: Int = action.getSource().getContainerId()
+                } else if (action.source.type == InventorySource.Type.CONTAINER) {
+                    val containerId: Int = action.source.containerId
                     if (containerId == 0) {
-                        val check = player.inventory.getItem(action.getSlot())
-                        val sourceItem: Item = Item(action.getFromItem(), false)
-                        val targetItem: Item = Item(action.getToItem(), false)
+                        val check = player.inventory.getItem(action.slot)
+                        val sourceItem: Item = Item(action.fromItem, false)
+                        val targetItem: Item = Item(action.toItem, false)
                         if (check.equalsExact(sourceItem)) {
                             check.removeFromHand(player)
-                            player.inventory.setItem(action.getSlot(), targetItem, false)
+                            player.inventory.setItem(action.slot, targetItem, false)
                         } else {
-                            player.inventory.sendContents(action.getSlot(), player)
+                            player.inventory.sendContents(action.slot, player)
                         }
                     }
                 }
             }
-        } else if (packet.getTransactionType() == TransactionType.ITEM_USE_ON_ENTITY) {
-            when (packet.getActionType()) {
+        } else if (packet.transactionType == TransactionType.ITEM_USE_ON_ENTITY) {
+            val world = player.world ?: return
+            when (packet.actionType) {
                 0 -> {
-                    val interactEntity = player.world.getEntity(packet.getRuntimeEntityId())
-                    interactEntity?.interact(player, Vector(packet.getClickPosition()))
+                    val interactEntity = world.getEntity(packet.runtimeEntityId)
+                    interactEntity?.interact(player, Vector(packet.clickPosition))
                 }
 
                 1 -> {
-                    val entity = player.world.getEntity(packet.getRuntimeEntityId())
+                    val entity = world.getEntity(packet.runtimeEntityId)
                     if (entity != null) {
                         if (player.attackWithItemInHand(entity)) {
                             if (player.gameMode != GameMode.CREATIVE) {
@@ -139,8 +142,8 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
 
                 else -> {}
             }
-        } else if (packet.getTransactionType() == TransactionType.ITEM_RELEASE) {
-            if (packet.getActionType() == 0) {
+        } else if (packet.transactionType == TransactionType.ITEM_RELEASE) {
+            if (packet.actionType == 0) {
                 if (player.inventory.itemInHand is ItemBow) {
                     (player.inventory.itemInHand as ItemBow).shoot(player)
                 }
@@ -155,11 +158,11 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
         player: Player,
         blockPosition: Vector,
         placePosition: Vector,
-        clickedPosition: Vector?,
-        blockFace: BlockFace?,
+        clickedPosition: Vector,
+        blockFace: BlockFace,
     ): Boolean {
         var placePosition = placePosition
-        val world = player.world
+        val world = player.world ?: return false
         val clickedBlock = world.getBlock(blockPosition)
         if (clickedBlock.type == BlockType.AIR) {
             return false
@@ -168,18 +171,18 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
         val replacedBlock = world.getBlock(placePosition)
         val placedBlock = itemInHand.toBlock()
         val location = Location(world, placePosition, player.dimension)
-        placedBlock!!.location = location
+        placedBlock.location = location
         val playerInteractEvent = PlayerInteractEvent(
             player,
             if (clickedBlock.type == BlockType.AIR) PlayerInteractEvent.Action.RIGHT_CLICK_AIR else PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
             player.inventory.itemInHand,
-            clickedBlock!!,
+            clickedBlock,
         )
         Server.instance.pluginManager.callEvent(playerInteractEvent)
         var interact = false
         if (!player.isSneaking) {
             if (!playerInteractEvent.isCancelled) {
-                interact = clickedBlock!!.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
+                interact = clickedBlock.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             }
         }
         val itemInteract = itemInHand.interact(player, blockFace, clickedPosition, clickedBlock)
@@ -190,12 +193,12 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
             return interact
         }
         if (!interact && !itemInteract || player.isSneaking) {
-            if (clickedBlock!!.canBeReplaced(placedBlock)) {
+            if (clickedBlock.canBeReplaced(placedBlock)) {
                 placePosition = blockPosition
-            } else if (!(replacedBlock!!.canBeReplaced(placedBlock) || player.inventory.itemInHand.toBlock() is BlockSlab && replacedBlock is BlockSlab)) {
+            } else if (!(replacedBlock.canBeReplaced(placedBlock) || player.inventory.itemInHand.toBlock() is BlockSlab && replacedBlock is BlockSlab)) {
                 return false
             }
-            if (placedBlock!!.isSolid) {
+            if (placedBlock.isSolid) {
                 val boundingBox = player.boundingBox
                 if (placedBlock.boundingBox.intersectsWith(boundingBox)) {
                     return false
@@ -220,7 +223,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         player.inventory.itemInHand =
                             Item.create<Item>(ItemType.AIR)
                     }
-                    player.inventory.sendContents(player.inventory.itemInHandSlot, player)
+                    player.inventory.sendContents(player.inventory.getItemInHandSlot(), player)
                 }
                 world.playSound(placePosition, SoundEvent.PLACE, placedBlock.runtimeId)
             }
