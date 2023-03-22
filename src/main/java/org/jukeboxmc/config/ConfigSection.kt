@@ -1,87 +1,87 @@
 package org.jukeboxmc.config
 
-import java.util.Locale
-import java.util.function.Consumer
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
 
 /**
  * @author LucGamesYT, NukkitX
  * @version 1.0
  */
-class ConfigSection() : LinkedHashMap<String?, Any?>() {
-    constructor(map: LinkedHashMap<String?, Any?>?) : this() {
-        if (map == null || map.isEmpty()) return
-        for ((key, value) in map) {
-            if (value is LinkedHashMap<*, *>) {
-                super.put(key, ConfigSection(value as LinkedHashMap<String?, Any?>))
-            } else if (value is List<*>) {
-                super.put(key, parseList(value as List<Any>))
-            } else {
-                super.put(key, value)
+class ConfigSection() : LinkedHashMap<String, Any>() {
+    constructor(map: Map<*, *>) : this() {
+        if (map.isEmpty()) return
+        map.forEach { (key, value) ->
+            when (value) {
+                is LinkedHashMap<*, *> -> super.put(key.toString(), ConfigSection(value))
+                is List<*> -> super.put(key.toString(), parseList(value))
+                else -> value?.let {
+                    super.put(key.toString(), it)
+                }
             }
         }
     }
 
-    private fun parseList(list: List<Any>): List<Any> {
-        val newList: MutableList<Any> = ArrayList()
-        for (o in list) {
-            if (o is LinkedHashMap<*, *>) {
-                newList.add(ConfigSection(o as LinkedHashMap<String?, Any?>))
+    private fun parseList(list: List<*>): List<Any?> {
+        val newList = mutableListOf<Any?>()
+        list.forEach {
+            if (it is LinkedHashMap<*, *>) {
+                newList.add(ConfigSection(it))
             } else {
-                newList.add(o)
+                newList.add(it)
             }
         }
         return newList
     }
 
-    val allMap: LinkedHashMap<String?, Any?>
+    val allMap: MutableMap<String?, Any?>
         get() = LinkedHashMap(this)
     val all: ConfigSection
         get() = ConfigSection(this)
 
-    operator fun <T> get(key: String?, defaultValue: T?): T? {
-        if (key == null || key.isEmpty()) {
+    operator fun <T> get(key: String, defaultValue: T): T {
+        if (key.isEmpty()) {
             return defaultValue
         }
         if (super.containsKey(key)) {
-            return super.get(key) as T?
+            return super.get(key) as T
         }
-        val keys = key.split("\\.".toRegex(), limit = 2).toTypedArray()
+        val keys = key.split('.', limit = 2)
         if (!super.containsKey(keys[0])) {
             return defaultValue
         }
         val value = super.get(keys[0])
         return if (value is ConfigSection) {
-            value.get<T?>(keys[1], defaultValue)
+            value[keys[1], defaultValue]
         } else {
             defaultValue
         }
     }
 
-    override fun get(key: String?): Any? {
+    override fun get(key: String): Any? {
         return this.get<Any?>(key, null)
     }
 
-    operator fun set(key: String, value: Any?) {
-        val subKeys = key.split("\\.".toRegex(), limit = 2).toTypedArray()
+    operator fun set(key: String, value: Any) {
+        val subKeys = key.split('.', limit = 2)
         if (subKeys.size > 1) {
-            var childSection: ConfigSection? = ConfigSection()
+            var childSection = ConfigSection()
             if (this.containsKey(subKeys[0]) && super.get(subKeys[0]) is ConfigSection) {
-                childSection = super.get(subKeys[0]) as ConfigSection?
+                childSection = super.get(subKeys[0]) as ConfigSection
             }
-            childSection!![subKeys[1]] = value
+            childSection[subKeys[1]] = value
             super.put(subKeys[0], childSection)
         } else {
             super.put(subKeys[0], value)
         }
     }
 
-    fun isSection(key: String?): Boolean {
+    fun isSection(key: String): Boolean {
         val value = this[key]
         return value is ConfigSection
     }
 
-    fun getSection(key: String?): ConfigSection {
-        return this[key, ConfigSection()]!!
+    fun getSection(key: String): ConfigSection {
+        return this[key, ConfigSection()]
     }
 
     val sections: ConfigSection
@@ -89,7 +89,12 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
 
     fun getSections(key: String?): ConfigSection {
         val sections = ConfigSection()
-        val parent = (if (key.isNullOrEmpty()) all else getSection(key))
+        val parent = if (key.isNullOrEmpty()) {
+            all
+        } else {
+            getSection(key)
+        }
+
         parent.forEach { key1, value ->
             if (value is ConfigSection) {
                 sections[key1] = value
@@ -98,166 +103,153 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         return sections
     }
 
-    fun getInt(key: String?): Int {
+    fun getInt(key: String): Int {
         return this.getInt(key, 0)
     }
 
-    fun getInt(key: String?, defaultValue: Int): Int {
-        return this[key, defaultValue as Number]!!.toInt()
+    fun getInt(key: String, defaultValue: Int): Int {
+        return this[key, defaultValue].toInt()
     }
 
-    fun isInt(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Int
+    fun isInt(key: String): Boolean {
+        return get(key) is Int
     }
 
-    fun getLong(key: String?): Long {
+    fun getLong(key: String): Long {
         return this.getLong(key, 0)
     }
 
-    fun getLong(key: String?, defaultValue: Long): Long {
-        return this.get(key, defaultValue as Number)!!.toLong()
+    fun getLong(key: String, defaultValue: Long): Long {
+        return this[key, defaultValue].toLong()
     }
 
-    fun isLong(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Long
+    fun isLong(key: String): Boolean {
+        return get(key) is Long
     }
 
-    fun getDouble(key: String?): Double {
+    fun getDouble(key: String): Double {
         return this.getDouble(key, 0.0)
     }
 
-    fun getDouble(key: String?, defaultValue: Double): Double {
-        return this[key, defaultValue]!!.toDouble()
+    fun getDouble(key: String, defaultValue: Double): Double {
+        return this[key, defaultValue].toDouble()
     }
 
-    fun isDouble(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Double
+    fun isDouble(key: String): Boolean {
+        return get(key) is Double
     }
 
-    fun getString(key: String?): String {
+    fun getString(key: String): String {
         return this.getString(key, "")
     }
 
-    fun getString(key: String?, defaultValue: String): String {
-        val result: Any = this[key, defaultValue]!!
-        return result.toString()
+    fun getString(key: String, defaultValue: String): String {
+        return this[key, defaultValue].toString()
     }
 
-    fun isString(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is String
+    fun isString(key: String): Boolean {
+        return get(key) is String
     }
 
-    fun getBoolean(key: String?): Boolean {
+    fun getBoolean(key: String): Boolean {
         return this.getBoolean(key, false)
     }
 
-    fun getBoolean(key: String?, defaultValue: Boolean): Boolean {
-        return this[key, defaultValue]!!
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return this[key, defaultValue]
     }
 
-    fun isBoolean(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Boolean
+    fun isBoolean(key: String): Boolean {
+        return get(key) is Boolean
     }
 
-    fun getFloat(key: String?): Float {
+    fun getFloat(key: String): Float {
         return this.getFloat(key, 0f)
     }
 
-    fun getFloat(key: String?, defaultValue: Float): Float {
-        return this.get(key, defaultValue as Number)!!.toFloat()
+    fun getFloat(key: String, defaultValue: Float): Float {
+        return this[key, defaultValue].toFloat()
     }
 
-    fun isFloat(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Float
+    fun isFloat(key: String): Boolean {
+        return get(key) is Float
     }
 
-    fun getByte(key: String?): Byte {
+    fun getByte(key: String): Byte {
         return this.getByte(key, 0.toByte())
     }
 
-    fun getByte(key: String?, defaultValue: Byte): Byte {
-        return this.get(key, defaultValue as Number)!!.toByte()
+    fun getByte(key: String, defaultValue: Byte): Byte {
+        return this[key, defaultValue].toByte()
     }
 
-    fun isByte(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Byte
+    fun isByte(key: String): Boolean {
+        return get(key) is Byte
     }
 
-    fun getShort(key: String?): Short {
-        return this.getShort(key, 0.toShort())
+    fun getShort(key: String): Short {
+        return this.getShort(key, 0)
     }
 
-    fun getShort(key: String?, defaultValue: Short): Short {
-        return this.get(key, defaultValue as Number)!!.toShort()
+    fun getShort(key: String, defaultValue: Short): Short {
+        return this[key, defaultValue].toShort()
     }
 
-    fun isShort(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is Short
+    fun isShort(key: String): Boolean {
+        val value = get(key)
+        return value is Short
     }
 
-    fun getList(key: String?): List<*> {
-        return this.getList(key, null)
+    fun getList(key: String): List<*> {
+        return this.getList(key, emptyList<Any>())
     }
 
-    fun getList(key: String?, defaultList: List<*>?): List<*> {
-        return this[key, defaultList]!!
+    fun getList(key: String, defaultList: List<*>): List<*> {
+        return this[key, defaultList]
     }
 
-    fun isList(key: String?): Boolean {
-        val `val` = get(key)
-        return `val` is List<*>
+    fun isList(key: String): Boolean {
+        return get(key) is List<*>
     }
 
-    fun getStringList(key: String?): MutableList<String> {
+    fun getStringList(key: String): MutableList<String> {
         val value = this.getList(key)
-        val result: MutableList<String> = ArrayList()
-        for (o in value) {
-            if (o is String || o is Number || o is Boolean || o is Char) {
-                result.add(o.toString())
+        val result = mutableListOf<String>()
+        value.forEach {
+            if (it is String || it is Number || it is Boolean || it is Char) {
+                result.add(it.toString())
             }
         }
         return result
     }
 
-    fun getIntegerList(key: String?): List<Int> {
+    fun getIntegerList(key: String): List<Int> {
         val list = getList(key)
-        val result: MutableList<Int> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Int) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(Integer.valueOf(`object` as String?))
-                } catch (ex: Exception) {
+        val result = mutableListOf<Int>()
+        list.forEach {
+            when (it) {
+                is Int -> result.add(it)
+                is String -> try {
+                    result.add(it.toInt())
+                } catch (ex: NumberFormatException) {
                     // ignore
                 }
-            } else if (`object` is Char) {
-                result.add(`object`.code)
-            } else if (`object` is Number) {
-                result.add(`object`.toInt())
+                is Char -> result.add(it.code)
+                is Number -> result.add(it.toInt())
             }
         }
         return result
     }
 
-    fun getBooleanList(key: String?): List<Boolean> {
+    fun getBooleanList(key: String): List<Boolean> {
         val list = getList(key)
-        val result: MutableList<Boolean> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Boolean) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                if (java.lang.Boolean.TRUE.toString() == `object`) {
+        val result = mutableListOf<Boolean>()
+        list.forEach {
+            when (it) {
+                is Boolean -> result.add(it)
+                is String -> if (TRUE.toString() == it) {
                     result.add(true)
-                } else if (java.lang.Boolean.FALSE.toString() == `object`) {
+                } else if (FALSE.toString() == it) {
                     result.add(false)
                 }
             }
@@ -265,137 +257,120 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         return result
     }
 
-    fun getDoubleList(key: String?): List<Double> {
+    fun getDoubleList(key: String): List<Double> {
         val list = getList(key)
-        val result: MutableList<Double> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Double) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(java.lang.Double.valueOf(`object` as String?))
+        val result = mutableListOf<Double>()
+        list.forEach {
+            when (it) {
+                is Double -> result.add(it)
+                is String -> try {
+                    result.add(it.toDouble())
+                } catch (ex: NumberFormatException) {
+                    // ignore
+                }
+                is Char -> result.add(it.code.toDouble())
+                is Number -> result.add(it.toDouble())
+            }
+        }
+        return result
+    }
+
+    fun getFloatList(key: String): List<Float> {
+        val list = getList(key)
+        val result = mutableListOf<Float>()
+        list.forEach {
+            when (it) {
+                is Float -> result.add(it)
+                is String -> try {
+                    result.add(it.toFloat())
+                } catch (ex: NumberFormatException) {
+                    // ignore
+                }
+                is Char -> result.add(it.code.toFloat())
+                is Number -> result.add(it.toFloat())
+            }
+        }
+        return result
+    }
+
+    fun getLongList(key: String): List<Long> {
+        val list = getList(key)
+        val result = mutableListOf<Long>()
+        list.forEach {
+            when (it) {
+                is Long -> result.add(it)
+                is String -> try {
+                    result.add(it.toLong())
+                } catch (ex: NumberFormatException) {
+                    // ignore
+                }
+                is Char -> result.add(it.code.toLong())
+                is Number -> result.add(it.toLong())
+            }
+        }
+        return result
+    }
+
+    fun getByteList(key: String): List<Byte> {
+        val list = getList(key)
+        val result = mutableListOf<Byte>()
+        list.forEach {
+            when (it) {
+                is Byte -> result.add(it)
+                is String -> try {
+                    result.add(it.toByte())
                 } catch (ex: Exception) {
                     // ignore
                 }
-            } else if (`object` is Char) {
-                result.add(`object`.code.toDouble())
-            } else if (`object` is Number) {
-                result.add(`object`.toDouble())
+                is Char -> result.add(it.code.toByte())
+                is Number -> result.add(it.toByte())
             }
         }
         return result
     }
 
-    fun getFloatList(key: String?): List<Float> {
+    fun getCharacterList(key: String): List<Char> {
         val list = getList(key)
-        val result: MutableList<Float> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Float) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(java.lang.Float.valueOf(`object` as String?))
-                } catch (ex: Exception) {
+        val result = mutableListOf<Char>()
+        list.forEach {
+            when (it) {
+                is Char -> result.add(it)
+                is String -> if (it.length == 1) {
+                    result.add(it[0])
+                }
+                is Number -> result.add(it.toInt().toChar())
+            }
+        }
+        return result
+    }
+
+    fun getShortList(key: String): List<Short> {
+        val list = getList(key)
+        val result = mutableListOf<Short>()
+        list.forEach {
+            when (it) {
+                is Short -> result.add(it)
+                is String -> try {
+                    result.add(it.toShort())
+                } catch (ex: NumberFormatException) {
                     // ignore
                 }
-            } else if (`object` is Char) {
-                result.add(`object`.code.toFloat())
-            } else if (`object` is Number) {
-                result.add(`object`.toFloat())
+                is Char -> result.add(it.code.toShort())
+                is Number -> result.add(it.toShort())
             }
         }
         return result
     }
 
-    fun getLongList(key: String?): List<Long> {
+    fun getMapList(key: String): List<Map<*, *>> {
         val list = getList(key)
-        val result: MutableList<Long> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Long) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(java.lang.Long.valueOf(`object` as String?))
-                } catch (ex: Exception) {
-                    // ignore
-                }
-            } else if (`object` is Char) {
-                result.add(`object`.code.toLong())
-            } else if (`object` is Number) {
-                result.add(`object`.toLong())
-            }
-        }
-        return result
-    }
-
-    fun getByteList(key: String?): List<Byte> {
-        val list = getList(key)
-        val result: MutableList<Byte> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Byte) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(java.lang.Byte.valueOf(`object` as String?))
-                } catch (ex: Exception) {
-                    // ignore
-                }
-            } else if (`object` is Char) {
-                result.add(`object`.code.toByte())
-            } else if (`object` is Number) {
-                result.add(`object`.toByte())
-            }
-        }
-        return result
-    }
-
-    fun getCharacterList(key: String?): List<Char> {
-        val list = getList(key)
-        val result: MutableList<Char> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Char) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                if (`object`.length == 1) {
-                    result.add(`object`[0])
-                }
-            } else if (`object` is Number) {
-                result.add(`object`.toInt().toChar())
-            }
-        }
-        return result
-    }
-
-    fun getShortList(key: String?): List<Short> {
-        val list = getList(key)
-        val result: MutableList<Short> = ArrayList()
-        for (`object` in list) {
-            if (`object` is Short) {
-                result.add(`object`)
-            } else if (`object` is String) {
-                try {
-                    result.add(`object`.toShort())
-                } catch (ex: Exception) {
-                    // ignore
-                }
-            } else if (`object` is Char) {
-                result.add(`object`.code.toShort())
-            } else if (`object` is Number) {
-                result.add(`object`.toShort())
-            }
-        }
-        return result
-    }
-
-    fun getMapList(key: String?): List<Map<String, Any>> {
-        val list = getList(key)
-        val result: MutableList<Map<String, Any>> = ArrayList()
-        if (list == null) {
+        val result = mutableListOf<Map<*, *>>()
+        if (list.isEmpty()) {
             return result
         }
-        for (`object` in list) {
-            if (`object` is Map<*, *>) {
-                result.add(`object` as Map<String, Any>)
+        list.forEach {
+            if (it is Map<*, *>) {
+                result.add(it)
             }
         }
         return result
@@ -403,22 +378,20 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
 
     @JvmOverloads
     fun exists(key: String, ignoreCase: Boolean = false): Boolean {
-        var key = key
-        if (ignoreCase) key = key.lowercase(Locale.getDefault())
-        for (existKey in getKeys(true)) {
-            var existKey = existKey
-            if (ignoreCase) existKey = existKey?.lowercase(Locale.getDefault())
-            if (existKey == key) return true
+        getKeys(true).forEach {
+            if (key.equals(it, ignoreCase)) {
+                return true
+            }
         }
         return false
     }
 
-    override fun remove(key: String?) {
-        if (key.isNullOrEmpty()) return
+    override fun remove(key: String) {
+        if (key.isEmpty()) return
         if (super.containsKey(key)) {
             super.remove(key)
         } else if (this.containsKey(".")) {
-            val keys = key.split("\\.".toRegex(), limit = 2).toTypedArray()
+            val keys = key.split('.', limit = 2)
             if (super.get(keys[0]) is ConfigSection) {
                 val section = super.get(keys[0]) as ConfigSection
                 section.remove(keys[1])
@@ -426,18 +399,14 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         }
     }
 
-    fun getKeys(child: Boolean): Set<String?> {
-        val keys: MutableSet<String?> = LinkedHashSet()
-        this.forEach { key, value ->
+    fun getKeys(child: Boolean): MutableSet<String> {
+        val keys = linkedSetOf<String>()
+        this.forEach { (key, value) ->
             keys.add(key)
-            if (value is ConfigSection) {
-                if (child) {
-                    value.getKeys(true).forEach(
-                        Consumer { childKey: String? ->
-                            keys.add(
-                                "$key.$childKey",
-                            )
-                        },
+            if (value is ConfigSection && child) {
+                value.getKeys(true).forEach { childKey ->
+                    keys.add(
+                        "$key.$childKey",
                     )
                 }
             }
@@ -445,6 +414,6 @@ class ConfigSection() : LinkedHashMap<String?, Any?>() {
         return keys
     }
 
-    override val keys: MutableSet<String?>
-        get() = getKeys(true).toMutableSet()
+    override val keys: MutableSet<String>
+        get() = getKeys(true)
 }
