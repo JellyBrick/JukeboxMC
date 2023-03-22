@@ -212,7 +212,6 @@ import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.util.Identifier
-import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.Objects
 
@@ -221,10 +220,10 @@ import java.util.Objects
  * @version 1.0
  */
 object BlockRegistry {
-    private val IDENTIFIER_FROM_BLOCKTYPE: MutableMap<BlockType?, Identifier> = LinkedHashMap()
-    private val BLOCKTYPE_FROM_IDENTIFIER: MutableMap<Identifier?, BlockType> = LinkedHashMap()
-    private val BLOCK_PROPERTIES: MutableMap<Identifier?, BlockProperties> = LinkedHashMap()
-    private val BLOCKCLASS_FROM_BLOCKTYPE: MutableMap<BlockType?, Class<out Block>> = LinkedHashMap()
+    private val IDENTIFIER_FROM_BLOCKTYPE: MutableMap<BlockType?, Identifier> = linkedMapOf()
+    private val BLOCKTYPE_FROM_IDENTIFIER: MutableMap<Identifier?, BlockType> = linkedMapOf()
+    private val BLOCK_PROPERTIES: MutableMap<Identifier?, BlockProperties> = linkedMapOf()
+    private val BLOCKCLASS_FROM_BLOCKTYPE: MutableMap<BlockType?, Class<out Block>> = linkedMapOf()
     fun init() {
         register(
             BlockType.ACACIA_BUTTON,
@@ -2210,14 +2209,14 @@ object BlockRegistry {
     }
 
     fun initBlockProperties() {
-        val GSON = Gson()
+        val gson = Gson()
         try {
             Objects.requireNonNull(
                 Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json"),
             ).use { inputStream ->
                 val inputStreamReader = InputStreamReader(inputStream)
                 val itemEntries =
-                    GSON.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
+                    gson.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
                 itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
                     BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
                         map["hardness"] as Double,
@@ -2243,23 +2242,23 @@ object BlockRegistry {
         }
     }
 
-    fun getIdentifier(blockType: BlockType?): Identifier? {
-        return IDENTIFIER_FROM_BLOCKTYPE[blockType]
+    fun getIdentifier(blockType: BlockType): Identifier {
+        return IDENTIFIER_FROM_BLOCKTYPE.getValue(blockType)
     }
 
-    fun getBlockType(identifier: Identifier?): BlockType? {
-        return BLOCKTYPE_FROM_IDENTIFIER[identifier]
+    fun getBlockType(identifier: Identifier): BlockType {
+        return BLOCKTYPE_FROM_IDENTIFIER.getValue(identifier)
     }
 
-    fun getBlockClass(blockType: BlockType?): Class<out Block> {
-        return BLOCKCLASS_FROM_BLOCKTYPE[blockType]!!
+    fun getBlockClass(blockType: BlockType): Class<out Block> {
+        return BLOCKCLASS_FROM_BLOCKTYPE.getValue(blockType)
     }
 
-    fun blockClassExists(blockType: BlockType?): Boolean {
+    fun blockClassExists(blockType: BlockType): Boolean {
         return BLOCKCLASS_FROM_BLOCKTYPE.containsKey(blockType)
     }
 
-    fun getBlockProperties(identifier: Identifier?): BlockProperties? {
-        return BLOCK_PROPERTIES[identifier]
+    fun getBlockProperties(identifier: Identifier): BlockProperties {
+        return BLOCK_PROPERTIES.getValue(identifier)
     }
 }

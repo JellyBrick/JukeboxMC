@@ -11,6 +11,7 @@ import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.entity.attribute.Attribute
 import org.jukeboxmc.entity.attribute.AttributeType
+import org.jukeboxmc.event.player.PlayerFoodLevelChangeEvent
 import org.jukeboxmc.inventory.ArmorInventory
 import org.jukeboxmc.inventory.InventoryHolder
 import org.jukeboxmc.inventory.PlayerInventory
@@ -22,9 +23,7 @@ import org.jukeboxmc.player.skin.Skin
 import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
-import java.util.Random
-import java.util.UUID
-import org.jukeboxmc.event.player.PlayerFoodLevelChangeEvent
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -63,7 +62,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
     override val width: Float = 0.6f
     override val height: Float = 1.8f
     override val type: EntityType = EntityType.HUMAN
-    val identifier: Identifier = Identifier.fromString("minecraft:player")
+    override val identifier: Identifier = Identifier.fromString("minecraft:player")
     override val eyeHeight: Float = 1.62f
 
     override fun createSpawnPacket(): BedrockPacket {

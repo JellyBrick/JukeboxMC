@@ -38,12 +38,12 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     val all: ConfigSection
         get() = ConfigSection(this)
 
-    operator fun <T> get(key: String, defaultValue: T): T {
+    operator fun get(key: String, defaultValue: Any): Any {
         if (key.isEmpty()) {
             return defaultValue
         }
         if (super.containsKey(key)) {
-            return super.get(key) as T
+            return super.get(key)!!
         }
         val keys = key.split('.', limit = 2)
         if (!super.containsKey(keys[0])) {
@@ -57,8 +57,11 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
         }
     }
 
+    inline operator fun <reified T> get(key: String, defaultValue: T): T =
+        this[key, defaultValue as Any] as T
+
     override fun get(key: String): Any? {
-        return this.get<Any?>(key, null)
+        return this[key, null]
     }
 
     operator fun set(key: String, value: Any) {
@@ -81,7 +84,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getSection(key: String): ConfigSection {
-        return this[key, ConfigSection()]
+        return this.get<ConfigSection>(key, ConfigSection())
     }
 
     val sections: ConfigSection
@@ -108,7 +111,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getInt(key: String, defaultValue: Int): Int {
-        return this[key, defaultValue].toInt()
+        return get<Int>(key, defaultValue)
     }
 
     fun isInt(key: String): Boolean {
@@ -120,7 +123,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getLong(key: String, defaultValue: Long): Long {
-        return this[key, defaultValue].toLong()
+        return get<Long>(key, defaultValue)
     }
 
     fun isLong(key: String): Boolean {
@@ -132,7 +135,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getDouble(key: String, defaultValue: Double): Double {
-        return this[key, defaultValue].toDouble()
+        return get<Double>(key, defaultValue)
     }
 
     fun isDouble(key: String): Boolean {
@@ -156,7 +159,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return this[key, defaultValue]
+        return get<Boolean>(key, defaultValue)
     }
 
     fun isBoolean(key: String): Boolean {
@@ -168,7 +171,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getFloat(key: String, defaultValue: Float): Float {
-        return this[key, defaultValue].toFloat()
+        return get<Float>(key, defaultValue)
     }
 
     fun isFloat(key: String): Boolean {
@@ -180,7 +183,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getByte(key: String, defaultValue: Byte): Byte {
-        return this[key, defaultValue].toByte()
+        return get<Byte>(key, defaultValue)
     }
 
     fun isByte(key: String): Boolean {
@@ -192,7 +195,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getShort(key: String, defaultValue: Short): Short {
-        return this[key, defaultValue].toShort()
+        return get<Short>(key, defaultValue)
     }
 
     fun isShort(key: String): Boolean {
@@ -205,7 +208,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getList(key: String, defaultList: List<*>): List<*> {
-        return this[key, defaultList]
+        return get<List<*>>(key, defaultList)
     }
 
     fun isList(key: String): Boolean {

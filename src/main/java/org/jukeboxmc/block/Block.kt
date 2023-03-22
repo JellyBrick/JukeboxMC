@@ -41,22 +41,20 @@ import java.util.function.Consumer
  * @author LucGamesYT
  * @version 1.0
  */
-open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates: NbtMap? = null) : Cloneable {
+open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: NbtMap? = null) : Cloneable {
     var runtimeId: Int
         protected set
-    var identifier: Identifier?
+    var identifier: Identifier
         protected set
-    var blockStates: NbtMap?
+    var blockStates: NbtMap
     var type: BlockType?
         protected set
     var location: Location = Location(null, Vector(0, 0, 0))
     var layer = 0
-    protected var blockProperties: BlockProperties?
+    protected var blockProperties: BlockProperties
 
     init {
-        var variableBlockStates = blockStates
         this.identifier = identifier
-        this.blockStates = variableBlockStates
         type = BlockRegistry.getBlockType(identifier)
         blockProperties = BlockRegistry.getBlockProperties(identifier)
         if (!STATES.containsKey(this.identifier)) {
@@ -68,12 +66,15 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
             STATES[this.identifier] = toRuntimeId
         }
-        if (variableBlockStates == null) {
-            val states: List<NbtMap?> = LinkedList(STATES[this.identifier]!!.keys)
+        val variableBlockStates: NbtMap
+        if (blockStates == null) {
+            val states: List<NbtMap> = LinkedList(STATES.getValue(this.identifier).keys)
             variableBlockStates = if (states.isEmpty()) NbtMap.EMPTY else states[0]
+        } else {
+            variableBlockStates = blockStates
         }
         this.blockStates = variableBlockStates
-        runtimeId = STATES[this.identifier]!![this.blockStates]!!
+        runtimeId = STATES.getValue(this.identifier).getValue(this.blockStates)
     }
 
     val world: World?
@@ -85,47 +86,49 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             .runtimeId == runtimeId
     }
 
-    fun <B : Block?> setState(state: String, value: Any): B {
-        if (!blockStates!!.containsKey(state)) {
+    fun setState(state: String, value: Any): Block {
+        if (!blockStates.containsKey(state)) {
             throw AssertionError("State $state was not found in block $identifier")
         }
-        if (blockStates!![state]!!.javaClass != value.javaClass) {
+        if (blockStates.getValue(state).javaClass != value.javaClass) {
             throw AssertionError("State $state type is not the same for value  $value")
         }
         val valid = checkValidity()
-        val nbtMapBuilder = blockStates!!.toBuilder()
+        val nbtMapBuilder = blockStates.toBuilder()
         nbtMapBuilder[state] = value
-        for ((blockMap) in STATES[identifier]!!) {
+        STATES.getValue(identifier).forEach { (blockMap) ->
             if (blockMap == nbtMapBuilder) {
                 blockStates = blockMap
             }
         }
-        runtimeId = STATES[identifier]!![blockStates]!!
+        runtimeId = STATES.getValue(identifier).getValue(blockStates)
         if (valid) {
             this.sendUpdate()
             location.chunk?.setBlock(location.blockX, location.blockY, location.blockZ, layer, this)
         }
-        return this as B
+        return this
     }
 
+    inline fun <reified T : Block> setState(state: String, value: Any): T = setState(state, value) as T
+
     fun stateExists(value: String): Boolean {
-        return blockStates!!.containsKey(value)
+        return blockStates.containsKey(value)
     }
 
     fun getStringState(value: String): String {
-        return blockStates!!.getString(value).uppercase(Locale.getDefault())
+        return blockStates.getString(value).uppercase(Locale.getDefault())
     }
 
     fun getByteState(value: String): Byte {
-        return blockStates!!.getByte(value)
+        return blockStates.getByte(value)
     }
 
     fun getBooleanState(value: String): Boolean {
-        return blockStates!!.getByte(value).toInt() == 1
+        return blockStates.getBoolean(value)
     }
 
     fun getIntState(value: String): Int {
-        return blockStates!!.getInt(value)
+        return blockStates.getInt(value)
     }
 
     fun getSide(direction: Direction): Block {
@@ -169,12 +172,12 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
 
     open val boundingBox: AxisAlignedBB
         get() = AxisAlignedBB(
-            location!!.x,
-            location!!.y,
-            location!!.z,
-            location!!.x + 1,
-            location!!.y + 1,
-            location!!.z + 1,
+            location.x,
+            location.y,
+            location.z,
+            location.x + 1,
+            location.y + 1,
+            location.z + 1,
         )
 
     fun breakBlock(player: Player, item: Item) {
@@ -182,8 +185,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             this.sendUpdate(player)
             return
         }
-        val itemDropList: List<Item>
-        itemDropList = if (item.getEnchantment(EnchantmentType.SILK_TOUCH) != null) {
+        val itemDropList = if (item.getEnchantment(EnchantmentType.SILK_TOUCH) != null) {
             listOf(toItem())
         } else {
             getDrops(item)
@@ -234,9 +236,6 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     }
 
     fun sendUpdate(player: Player) {
-        if (location == null) {
-            return
-        }
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.runtimeId = runtimeId
         updateBlockPacket.blockPosition = location.toVector3i()
@@ -308,8 +307,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         insideOfWaterWithoutAquaAffinity: Boolean,
         outOfWaterButNotOnGround: Boolean,
     ): Double {
-        val baseTime: Double
-        baseTime = if (canHarvest(item) || canHarvestWithHand) {
+        val baseTime = if (canHarvest(item) || canHarvestWithHand) {
             1.5 * blockHardness
         } else {
             5.0 * blockHardness
@@ -396,24 +394,24 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         get() = null
 
     fun canBreakWithHand(): Boolean {
-        return blockProperties!!.canBreakWithHand
+        return blockProperties.canBreakWithHand
     }
 
     val isSolid: Boolean
-        get() = blockProperties!!.solid
+        get() = blockProperties.solid
     val isTransparent: Boolean
-        get() = blockProperties!!.transparent
+        get() = blockProperties.transparent
     val hardness: Double
-        get() = blockProperties!!.hardness
+        get() = blockProperties.hardness
 
     open fun canPassThrough(): Boolean {
-        return blockProperties!!.canPassThrough
+        return blockProperties.canPassThrough
     }
 
     val toolType: ToolType
-        get() = blockProperties!!.toolType
+        get() = blockProperties.toolType
     val tierType: TierType
-        get() = blockProperties!!.tierType
+        get() = blockProperties.tierType
 
     open fun canBeReplaced(block: Block?): Boolean {
         return false
@@ -472,54 +470,62 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
 
     companion object {
         val STATES: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
-        fun <T : Block> create(blockType: BlockType): T {
+        fun create(blockType: BlockType): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                         Identifier::class.java,
                     )
-                    constructor.newInstance(BlockRegistry.getIdentifier(blockType)) as T
+                    constructor.newInstance(BlockRegistry.getIdentifier(blockType))
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
             } else {
-                Block(BlockRegistry.getIdentifier(blockType)) as T
+                Block(BlockRegistry.getIdentifier(blockType))
             }
         }
 
-        fun <T : Block?> create(blockType: BlockType, blockStates: NbtMap): T {
+        inline fun <reified T : Block> create(blockType: BlockType): T = create(blockType) as T
+
+        fun create(blockType: BlockType, blockStates: NbtMap): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                         Identifier::class.java,
                         NbtMap::class.java,
                     )
-                    constructor.newInstance(BlockRegistry.getIdentifier(blockType), blockStates) as T
+                    constructor.newInstance(BlockRegistry.getIdentifier(blockType), blockStates)
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
             } else {
-                Block(BlockRegistry.getIdentifier(blockType), blockStates) as T
+                Block(BlockRegistry.getIdentifier(blockType), blockStates)
             }
         }
 
-        fun <T : Block> create(identifier: Identifier): T {
+        inline fun <reified T : Block> create(blockType: BlockType, blockStates: NbtMap): T =
+            create(blockType, blockStates) as T
+
+        fun create(identifier: Identifier): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                         Identifier::class.java,
                     )
-                    constructor.newInstance(identifier) as T
+                    constructor.newInstance(identifier)
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
             } else {
-                Block(identifier, null) as T
+                Block(identifier, null)
             }
         }
 
-        fun <T : Block> create(identifier: Identifier?, blockStates: NbtMap): T {
+        inline fun <reified T : Block> create(identifier: Identifier): T =
+            create(identifier) as T
+
+        fun create(identifier: Identifier, blockStates: NbtMap): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
@@ -527,13 +533,16 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
                         Identifier::class.java,
                         NbtMap::class.java,
                     )
-                    constructor.newInstance(identifier, blockStates) as T
+                    constructor.newInstance(identifier, blockStates)
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
             } else {
-                Block(identifier, blockStates) as T
+                Block(identifier, blockStates)
             }
         }
+
+        inline fun <reified T : Block> create(identifier: Identifier, blockStates: NbtMap): T =
+            create(identifier, blockStates) as T
     }
 }

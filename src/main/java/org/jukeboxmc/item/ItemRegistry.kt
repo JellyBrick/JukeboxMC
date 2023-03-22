@@ -3376,11 +3376,11 @@ object ItemRegistry {
         }
     }
 
-    fun getItemClass(itemType: ItemType?): Class<out Item>? {
-        return ITEMCLASS_FROM_ITEMTYPE[itemType]
+    fun getItemClass(itemType: ItemType): Class<out Item> {
+        return ITEMCLASS_FROM_ITEMTYPE.getValue(itemType)
     }
 
-    fun itemClassExists(itemType: ItemType?): Boolean {
+    fun itemClassExists(itemType: ItemType): Boolean {
         return ITEMCLASS_FROM_ITEMTYPE.containsKey(itemType)
     }
 
@@ -3388,16 +3388,16 @@ object ItemRegistry {
         get() = ITEMS.values.stream().map { registryData: ItemRegistryData -> registryData.identifier }
             .collect(Collectors.toList())
 
-    fun getItemType(identifier: Identifier?): ItemType? {
-        return ITEMTYPE_FROM_IDENTIFIER[identifier]
+    fun getItemType(identifier: Identifier): ItemType {
+        return ITEMTYPE_FROM_IDENTIFIER.getValue(identifier)
     }
 
-    fun getItemRegistryData(itemType: ItemType?): ItemRegistryData? {
-        return ITEMS[itemType]
+    fun getItemRegistryData(itemType: ItemType): ItemRegistryData {
+        return ITEMS.getValue(itemType)
     }
 
-    fun getItemProperties(identifier: Identifier?): ItemProperties? {
-        return ITEM_PROPERTIES[identifier]
+    fun getItemProperties(identifier: Identifier): ItemProperties {
+        return ITEM_PROPERTIES.getValue(identifier)
     }
 
     class ItemRegistryData {

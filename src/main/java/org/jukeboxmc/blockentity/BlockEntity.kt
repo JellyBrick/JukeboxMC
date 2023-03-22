@@ -104,14 +104,14 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     }
 
     companion object {
-        fun <T : BlockEntity?> create(blockEntityType: BlockEntityType?, block: Block?): T {
+        fun create(blockEntityType: BlockEntityType, block: Block): BlockEntity {
             return try {
                 val constructor = BlockEntityRegistry.getBlockEntityClass(blockEntityType).getConstructor(
                     Block::class.java,
                     BlockEntityType::class.java,
                 )
                 constructor.isAccessible = true
-                constructor.newInstance(block, blockEntityType) as T
+                constructor.newInstance(block, blockEntityType)
             } catch (e: NoSuchMethodException) {
                 throw RuntimeException(e)
             } catch (e: InstantiationException) {
@@ -122,5 +122,8 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
                 throw RuntimeException(e)
             }
         }
+
+        inline fun <reified T : BlockEntity> create(blockEntityType: BlockEntityType, block: Block): T =
+            create(blockEntityType, block) as T
     }
 }

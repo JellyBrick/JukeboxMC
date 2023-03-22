@@ -2,7 +2,6 @@ package org.jukeboxmc.potion
 
 import org.jukeboxmc.entity.EntityLiving
 import java.awt.Color
-import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 
 /**
@@ -53,18 +52,11 @@ abstract class Effect {
         }
 
     companion object {
-        fun <T : Effect?> create(effectType: EffectType?): T {
-            return try {
-                EffectRegistry.getEffectClass(effectType).getConstructor().newInstance() as T
-            } catch (e: InstantiationException) {
-                throw RuntimeException(e)
-            } catch (e: IllegalAccessException) {
-                throw RuntimeException(e)
-            } catch (e: InvocationTargetException) {
-                throw RuntimeException(e)
-            } catch (e: NoSuchMethodException) {
-                throw RuntimeException(e)
-            }
+        fun create(effectType: EffectType): Effect {
+            return EffectRegistry.getEffectClass(effectType).getConstructor().newInstance()
         }
+
+        inline fun <reified T : Effect> create(effectType: EffectType): T =
+            create(effectType) as T
     }
 }

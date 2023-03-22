@@ -392,7 +392,7 @@ abstract class Entity {
 
     protected val isOnLadder: Boolean
         protected get() {
-            val location = getLocation()
+            val location = this.location
             val loadedChunk =
                 location.world!!.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
                     ?: return false
@@ -438,13 +438,15 @@ abstract class Entity {
 
     companion object {
         var entityCount: Long = 1
-        fun <T : Entity?> create(entityType: EntityType?): T? {
-            try {
-                return EntityRegistry.getEntityClass(entityType).getConstructor().newInstance() as T
-            } catch (e: Exception) {
-                e.printStackTrace()
+        fun create(entityType: EntityType): Entity? {
+            return try {
+                EntityRegistry.getEntityClass(entityType).getConstructor().newInstance()
+            } catch (e: ReflectiveOperationException) {
+                null
             }
-            return null
         }
+
+        inline fun <reified T : Entity> create(entityType: EntityType): T? =
+            create(entityType) as? T
     }
 }
