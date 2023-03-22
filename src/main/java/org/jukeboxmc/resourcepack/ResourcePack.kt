@@ -1,15 +1,13 @@
 package org.jukeboxmc.resourcepack
 
 import java.io.File
-import java.io.IOException
+import java.io.FileInputStream
 import java.util.UUID
-import lombok.ToString
 
 /**
  * @author Kaooot
  * @version 1.0
  */
-@ToString(exclude = ["file"])
 class ResourcePack(
     private val file: File,
     val name: String,
@@ -17,25 +15,21 @@ class ResourcePack(
     val version: String,
     val size: Long,
     val sha256: ByteArray,
-    private var chunk: ByteArray
+    private var chunk: ByteArray,
 ) {
     fun getUuid(): UUID {
         return UUID.fromString(uuid)
     }
 
     fun getChunk(offset: Int, length: Int): ByteArray {
-        if (size - offset > length) {
-            chunk = ByteArray(length)
+        chunk = if (size - offset > length) {
+            ByteArray(length)
         } else {
-            chunk = ByteArray((size - offset).toInt())
+            ByteArray((size - offset).toInt())
         }
-        try {
-            FileInputStream(file).use { fileInputStream ->
-                fileInputStream.skip(offset.toLong())
-                fileInputStream.read(chunk)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
+        FileInputStream(file).use { fileInputStream ->
+            fileInputStream.skip(offset.toLong())
+            fileInputStream.read(chunk)
         }
         return chunk
     }

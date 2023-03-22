@@ -1,13 +1,12 @@
 package org.jukeboxmc.entity.attribute
 
-import lombok.ToString
+import com.nukkitx.protocol.bedrock.data.AttributeData
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
-class Attribute(val key: String, var minValue: Float, var maxValue: Float, private var currentValue: Float) :
+data class Attribute(val key: String, var minValue: Float, var maxValue: Float, private var currentValue: Float) :
     Cloneable {
     private val defaultValue: Float
     private var dirty: Boolean

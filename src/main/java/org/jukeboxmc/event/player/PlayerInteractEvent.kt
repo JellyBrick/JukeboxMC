@@ -1,6 +1,5 @@
 package org.jukeboxmc.event.player
 
-import lombok.ToString
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.event.Cancellable
 import org.jukeboxmc.item.Item
@@ -11,7 +10,6 @@ import org.jukeboxmc.player.Player
  * @author Kaooot
  * @version 1.0
  */
-@ToString
 class PlayerInteractEvent : PlayerEvent, Cancellable {
     /**
      * Retrieves the [Action]

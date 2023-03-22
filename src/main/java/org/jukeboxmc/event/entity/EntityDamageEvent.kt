@@ -1,6 +1,5 @@
 package org.jukeboxmc.event.entity
 
-import lombok.ToString
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.event.Cancellable
 
@@ -8,8 +7,8 @@ import org.jukeboxmc.event.Cancellable
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
-open class EntityDamageEvent(entity: Entity, var damage: Float, val damageSource: DamageSource) : EntityEvent(entity),
+open class EntityDamageEvent(entity: Entity, var damage: Float, val damageSource: DamageSource) :
+    EntityEvent(entity),
     Cancellable {
     var finalDamage = 0f
 
