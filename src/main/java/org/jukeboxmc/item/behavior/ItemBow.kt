@@ -65,7 +65,7 @@ class ItemBow : Item, Durability, Burnable {
             flameModifier = flame.level.toInt()
         }
         val arrow = Objects.requireNonNull<EntityArrow>(Entity.create<EntityArrow>(EntityType.ARROW))
-        arrow.setShooter(player)
+        arrow.shooter = player
         arrow.location = Location(
             player.world,
             player.x,

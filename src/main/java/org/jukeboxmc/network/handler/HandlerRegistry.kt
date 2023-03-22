@@ -72,10 +72,10 @@ object HandlerRegistry {
         packetHandlerMap[ResourcePackChunkRequestPacket::class.java] = ResourcePackChunkRequestHandler()
     }
 
-    fun getPacketHandler(clazz: Class<out BedrockPacket>): PacketHandler<out BedrockPacket>? {
+    fun getPacketHandlerAsPacketHandler(clazz: Class<out BedrockPacket>): PacketHandler<out BedrockPacket>? {
         return packetHandlerMap[clazz]
     }
 
     inline fun <reified T : PacketHandler<out BedrockPacket>> getPacketHandler(clazz: Class<out BedrockPacket>): T? =
-        getPacketHandler(clazz) as? T
+        getPacketHandlerAsPacketHandler(clazz) as? T
 }

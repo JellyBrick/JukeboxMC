@@ -78,7 +78,7 @@ class BlockBarrel : Block {
                 }
             }
             inventory.clear()
-            inventory.getViewer().clear()
+            inventory.viewer.clear()
         }
         super.onBlockBreak(breakPosition)
     }

@@ -103,7 +103,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     }
 
     companion object {
-        fun create(blockEntityType: BlockEntityType, block: Block): BlockEntity {
+        fun createBlockEntity(blockEntityType: BlockEntityType, block: Block): BlockEntity {
             val constructor = BlockEntityRegistry.getBlockEntityClass(blockEntityType).getConstructor(
                     Block::class.java,
                     BlockEntityType::class.java,
@@ -113,6 +113,6 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
         }
 
         inline fun <reified T : BlockEntity> create(blockEntityType: BlockEntityType, block: Block): T =
-            create(blockEntityType, block) as T
+            createBlockEntity(blockEntityType, block) as T
     }
 }

@@ -15,7 +15,25 @@ import java.util.jar.JarFile
  * @version 1.0
  */
 abstract class Plugin {
-    protected var enabled = false
+    var enabled = false
+        set(value) {
+            if (value == field) {
+                return
+            }
+            field = enabled
+            try {
+                if (enabled) {
+                    onEnable()
+                } else {
+                    onDisable()
+                }
+            } catch (e: Exception) {
+                throw RuntimeException(
+                    "Can not ${if (enabled) "enable" else "disable"} plugin ${description?.name}!",
+                    e,
+                )
+            }
+        }
     var description: PluginYAML? = null
         private set
     var server: Server? = null
@@ -116,32 +134,6 @@ abstract class Plugin {
 
     fun isEnabled(): Boolean {
         return enabled
-    }
-
-    /**
-     * Changes the plugin's state
-     *
-     * @param enabled whether the plugin should be enabled or disabled
-     * @throws RuntimeException Thrown whenever an uncaught error occurred in onEnable() or onDisable() of a plugin
-     */
-    @Throws(RuntimeException::class)
-    fun setEnabled(enabled: Boolean) {
-        if (this.enabled == enabled) {
-            return
-        }
-        this.enabled = enabled
-        try {
-            if (enabled) {
-                onEnable()
-            } else {
-                onDisable()
-            }
-        } catch (e: Exception) {
-            throw RuntimeException(
-                "Can not " + (if (enabled) "enable" else "disable") + " plugin " + description!!.name + "!",
-                e,
-            )
-        }
     }
 
     val name: String?

@@ -11,7 +11,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 abstract class Inventory {
-    protected val viewer: MutableSet<Player>
+    val viewer: MutableSet<Player>
     protected var holder: InventoryHolder?
     open var size: Int
         protected set
@@ -51,10 +51,6 @@ abstract class Inventory {
 
     open fun removeViewer(player: Player) {
         viewer.removeIf { target: Player -> target.uuid == player.uuid }
-    }
-
-    fun getViewer(): MutableSet<Player> {
-        return viewer
     }
 
     open fun setItem(slot: Int, item: Item) {

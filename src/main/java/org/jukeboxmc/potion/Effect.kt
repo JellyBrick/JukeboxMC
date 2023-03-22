@@ -52,11 +52,11 @@ abstract class Effect {
         }
 
     companion object {
-        fun create(effectType: EffectType): Effect {
+        fun createEffect(effectType: EffectType): Effect {
             return EffectRegistry.getEffectClass(effectType).getConstructor().newInstance()
         }
 
         inline fun <reified T : Effect> create(effectType: EffectType): T =
-            create(effectType) as T
+            createEffect(effectType) as T
     }
 }

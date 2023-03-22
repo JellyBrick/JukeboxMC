@@ -187,7 +187,7 @@ abstract class EntityMoveable : Entity() {
                 isOnGround,
             )
         }
-        if (diffMotion > 0.0025 || diffMotion > 0.0001 && getVelocity().squaredLength() <= 0.0001) {
+        if (diffMotion > 0.0025 || diffMotion > 0.0001 && velocity.squaredLength() <= 0.0001) {
             lastVector.x = velocity.x
             lastVector.y = velocity.y
             lastVector.z = velocity.z

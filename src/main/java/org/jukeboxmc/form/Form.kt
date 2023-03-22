@@ -9,9 +9,13 @@ import org.json.simple.JSONObject
  */
 abstract class Form<R> @JvmOverloads constructor(
     val title: String,
-    var icon: String = "",
+    icon: String = "",
 ) {
-
+    var icon = icon
+        set(value) {
+            field = value
+            dirty = true
+        }
     // Caching
     protected var cache: JSONObject? = null
     protected var dirty = false
@@ -22,14 +26,6 @@ abstract class Form<R> @JvmOverloads constructor(
      * @return type of form
      */
     abstract val formType: String
-    fun setIcon(icon: String) {
-        this.icon = icon
-        dirty = true
-    }
-
-    fun getIcon(): String {
-        return icon
-    }
 
     /**
      * Get the JSON representation of this form

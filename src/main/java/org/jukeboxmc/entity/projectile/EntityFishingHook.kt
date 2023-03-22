@@ -27,11 +27,11 @@ class EntityFishingHook : EntityProjectile() {
         }
         if (isCollided && isInsideLiquid) {
             if (velocity != Vector(0f, 0.1f, 0f)) {
-                this.setVelocity(Vector(0f, 0.1f, 0f))
+                this.velocity = Vector(0f, 0.1f, 0f)
             }
         } else if (isCollided) {
             if (!isReset && velocity.squaredLength() < 0.0025) {
-                this.setVelocity(Vector.zero())
+                this.velocity = Vector.zero()
                 isReset = true
             }
         }

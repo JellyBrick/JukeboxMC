@@ -3,7 +3,16 @@ package org.jukeboxmc.world.generator.noise.bukkit
 /**
  * Creates noise using unbiased octaves
  */
-abstract class OctaveGenerator protected constructor(protected val octaves: Array<NoiseGenerator?>) {
+abstract class OctaveGenerator protected constructor(octaves: Array<NoiseGenerator>) {
+    private val originalOctaves = octaves
+    val octaves
+        /**
+         * Gets a clone of the individual octaves used within this generator
+         *
+         * @return Clone of the individual octaves
+         */
+        get() = originalOctaves.clone()
+
     /**
      * Gets the scale used for each X-coordinates passed
      *
@@ -51,15 +60,6 @@ abstract class OctaveGenerator protected constructor(protected val octaves: Arra
         xScale = scale
         yScale = scale
         zScale = scale
-    }
-
-    /**
-     * Gets a clone of the individual octaves used within this generator
-     *
-     * @return Clone of the individual octaves
-     */
-    fun getOctaves(): Array<NoiseGenerator?> {
-        return octaves.clone()
     }
 
     /**

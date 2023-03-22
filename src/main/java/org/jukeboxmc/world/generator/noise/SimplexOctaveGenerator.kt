@@ -4,7 +4,7 @@ import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import java.util.Arrays
 import java.util.Random
 
-class SimplexOctaveGenerator @JvmOverloads constructor(
+class SimplexOctaveGenerator(
     rand: Random,
     octaves: Int,
     sizeX: Int = 0,
@@ -52,12 +52,10 @@ class SimplexOctaveGenerator @JvmOverloads constructor(
     }
 
     companion object {
-        protected fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator?> {
-            val result = arrayOfNulls<NoiseGenerator>(octaves)
-            for (i in 0 until octaves) {
-                result[i] = SimplexNoise(rand)
+        protected fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator> {
+            return Array(octaves) {
+                SimplexNoise(rand)
             }
-            return result
         }
     }
 }

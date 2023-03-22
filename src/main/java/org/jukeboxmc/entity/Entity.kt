@@ -39,14 +39,15 @@ abstract class Entity : AutoCloseable {
     var entityId: Long
         protected set
     val metadata: Metadata
-    var location: Location = Location(null, Vector(0, 0, 0))
+    var location: Location = Server.instance.defaultWorld!!.spawnLocation
         set(location) {
             field = location
             recalculateBoundingBox()
         }
-    var lastLocation: Location
-    protected var velocity: Vector
-    var lastVector: Vector
+    var lastLocation: Location = Server.instance.defaultWorld!!.spawnLocation
+    var velocity: Vector = Vector(0, 0, 0, location.dimension)
+        set(value) = this.setVelocity(velocity, true)
+    var lastVector: Vector = Vector(0, 0, 0, location.dimension)
     val boundingBox: AxisAlignedBB
     var isOnGround = false
     var isClosed = false
@@ -74,10 +75,6 @@ abstract class Entity : AutoCloseable {
         metadata.setFlag(EntityFlag.HAS_COLLISION, true)
         metadata.setFlag(EntityFlag.CAN_CLIMB, true)
         metadata.setFlag(EntityFlag.BREATHING, true)
-        location = Objects.requireNonNull<World?>(Server.instance.defaultWorld).spawnLocation
-        lastLocation = Objects.requireNonNull<World?>(Server.instance.defaultWorld).spawnLocation
-        velocity = Vector(0, 0, 0, location.dimension)
-        lastVector = Vector(0, 0, 0, location.dimension)
         boundingBox = AxisAlignedBB(0f, 0f, 0f, 0f, 0f, 0f)
         recalculateBoundingBox()
     }
@@ -176,10 +173,6 @@ abstract class Entity : AutoCloseable {
         isDead = true
     }
 
-    fun getVelocity(): Vector {
-        return velocity
-    }
-
     fun setVelocity(velocity: Vector, sendVelocity: Boolean) {
         val entityVelocityEvent = EntityVelocityEvent(this, velocity)
         Server.instance.pluginManager.callEvent(entityVelocityEvent)
@@ -193,10 +186,6 @@ abstract class Entity : AutoCloseable {
             entityVelocityPacket.motion = entityVelocityEvent.velocity.toVector3f()
             Server.instance.broadcastPacket(entityVelocityPacket)
         }
-    }
-
-    fun setVelocity(velocity: Vector) {
-        this.setVelocity(velocity, true)
     }
 
     val world: World?
@@ -436,7 +425,7 @@ abstract class Entity : AutoCloseable {
 
     companion object {
         var entityCount: Long = 1
-        fun create(entityType: EntityType): Entity? {
+        fun createEntity(entityType: EntityType): Entity? {
             return try {
                 EntityRegistry.getEntityClass(entityType).getConstructor().newInstance()
             } catch (e: ReflectiveOperationException) {
@@ -445,6 +434,6 @@ abstract class Entity : AutoCloseable {
         }
 
         inline fun <reified T : Entity> create(entityType: EntityType): T? =
-            create(entityType) as? T
+            createEntity(entityType) as? T
     }
 }

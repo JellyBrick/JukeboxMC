@@ -79,7 +79,7 @@ class EntityArrow : EntityProjectile() {
                     0.1f,
                     velocity.z * punchModifier * 0.6f / sqrtMotion,
                 )
-                hitEntity.setVelocity(hitEntity.getVelocity().add(toAdd.x, toAdd.y, toAdd.z))
+                hitEntity.velocity = hitEntity.velocity.add(toAdd.x, toAdd.y, toAdd.z)
             }
         }
     }

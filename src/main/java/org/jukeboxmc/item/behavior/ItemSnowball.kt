@@ -24,7 +24,7 @@ class ItemSnowball : Item {
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val entitySnowball =
             Objects.requireNonNull<EntitySnowball>(Entity.create<EntitySnowball>(EntityType.SNOWBALL))
-        entitySnowball.setShooter(player)
+        entitySnowball.shooter = player
         entitySnowball.location = player.location.add(0f, player.eyeHeight, 0f)
         entitySnowball.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entitySnowball.yaw = player.yaw

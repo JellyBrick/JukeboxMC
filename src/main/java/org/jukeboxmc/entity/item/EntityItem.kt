@@ -57,7 +57,7 @@ class EntityItem : EntityMoveable() {
             this.updateMovement()
         }
         if (this.isCollided && !isReset && this.velocity.squaredLength() < 0.01f) {
-            this.setVelocity(Vector.zero())
+            this.velocity = Vector.zero()
             isReset = true
         }
         if (this.age >= TimeUnit.MINUTES.toMillis(5) / 50 || this.location.y <= -64) {

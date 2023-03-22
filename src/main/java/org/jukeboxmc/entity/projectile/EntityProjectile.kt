@@ -22,7 +22,12 @@ import kotlin.math.sqrt
  * @version 1.0
  */
 abstract class EntityProjectile : EntityMoveable() {
-    protected var shooter: EntityLiving? = null
+    var shooter: EntityLiving? = null
+        get() = if (field == null || field!!.isDead) null else field
+        set(value) {
+            field = value!!
+            this.metadata.setLong(EntityData.OWNER_EID, field!!.entityId)
+        }
     protected var hitEntity: Entity? = null
     var hadCollision = false
     override fun update(currentTick: Long) {
@@ -137,12 +142,4 @@ abstract class EntityProjectile : EntityMoveable() {
     protected open fun applyCustomDamageEffects(hitEntity: Entity) {}
     protected open fun applyCustomKnockback(hitEntity: Entity) {}
     open fun onCollidedWithEntity(entity: Entity) {}
-    fun getShooter(): EntityLiving? {
-        return if (shooter == null || shooter!!.isDead) null else shooter
-    }
-
-    fun setShooter(shooter: EntityLiving) {
-        this.shooter = shooter
-        this.metadata.setLong(EntityData.OWNER_EID, shooter.entityId)
-    }
 }

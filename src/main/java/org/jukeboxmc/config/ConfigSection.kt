@@ -38,7 +38,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     val all: ConfigSection
         get() = ConfigSection(this)
 
-    operator fun get(key: String, defaultValue: Any): Any {
+    fun getAny(key: String, defaultValue: Any): Any {
         if (key.isEmpty()) {
             return defaultValue
         }
@@ -58,7 +58,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     inline operator fun <reified T> get(key: String, defaultValue: T): T =
-        this[key, defaultValue as Any] as T
+        this.getAny(key, defaultValue as Any) as T
 
     override fun get(key: String): Any? {
         return this[key, null]

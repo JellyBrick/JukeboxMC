@@ -6,7 +6,7 @@ import java.util.Arrays
 import java.util.Random
 
 open class PerlinOctaveGenerator(
-    octaves: Array<NoiseGenerator?>,
+    octaves: Array<NoiseGenerator>,
     rand: Random?,
     val sizeX: Int,
     val sizeY: Int,
@@ -120,12 +120,10 @@ open class PerlinOctaveGenerator(
     }
 
     companion object {
-        protected fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator?> {
-            val result = arrayOfNulls<NoiseGenerator>(octaves)
-            for (i in 0 until octaves) {
-                result[i] = PerlinNoise(rand)
+        protected fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator> {
+            return Array(octaves) {
+                PerlinNoise(rand)
             }
-            return result
         }
 
         protected fun floor(x: Double): Long {

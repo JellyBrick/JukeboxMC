@@ -89,6 +89,11 @@ class Player(
 ) : EntityHuman(), ChunkLoader, CommandSender, InventoryHolder {
     val adventureSettings: AdventureSettings
     override var name: String = ""
+        set(value) {
+            if (!playerConnection.isLoggedIn()) {
+                field = name
+            }
+        }
     var gameMode: GameMode = playerConnection.server.gameMode
         set(gameMode) {
             field = gameMode
@@ -260,12 +265,6 @@ class Player(
         get() = playerConnection.isSpawned()
     val isLoggedIn: Boolean
         get() = playerConnection.isLoggedIn()
-
-    fun setName(name: String) {
-        if (!playerConnection.isLoggedIn()) {
-            this.name = name
-        }
-    }
 
     val xuid: String
         get() = playerConnection.loginData?.xuid ?: ""
@@ -945,18 +944,16 @@ class Player(
                     )
                 ) {
                     if (knockbackLevel > 0) {
-                        val targetVelocity = target.getVelocity()
-                        target.setVelocity(
-                            targetVelocity!!.add(
-                                (-Math.sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
-                                0.1f,
-                                (Math.cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
-                            ),
+                        val targetVelocity = target.velocity
+                        target.velocity = targetVelocity!!.add(
+                            (-Math.sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
+                            0.1f,
+                            (Math.cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
                         )
-                        val ownVelocity = getVelocity()
+                        val ownVelocity = velocity
                         ownVelocity.x = ownVelocity.x * 0.6f
                         ownVelocity.z = ownVelocity.z * 0.6f
-                        this.setVelocity(ownVelocity)
+                        this.velocity = ownVelocity
                         this.isSprinting = false
                     }
                 }
@@ -985,7 +982,7 @@ class Player(
             respawnLocation = null
             this.spawn()
             this.isBurning = false
-            this.setVelocity(Vector.zero())
+            this.velocity = Vector.zero()
             playerInventory.sendContents(this)
             cursorInventory.sendContents(this)
             armorInventory.sendContents(this)

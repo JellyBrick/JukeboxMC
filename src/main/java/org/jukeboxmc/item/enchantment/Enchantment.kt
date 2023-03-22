@@ -10,11 +10,11 @@ abstract class Enchantment {
     abstract val maxLevel: Int
 
     companion object {
-        fun create(enchantmentType: EnchantmentType): Enchantment {
+        fun createEnchantment(enchantmentType: EnchantmentType): Enchantment {
             return EnchantmentRegistry.getEnchantmentClass(enchantmentType).getConstructor().newInstance()
         }
 
         inline fun <reified T : Enchantment> create(enchantmentType: EnchantmentType): T =
-            create(enchantmentType) as T
+            createEnchantment(enchantmentType) as T
     }
 }

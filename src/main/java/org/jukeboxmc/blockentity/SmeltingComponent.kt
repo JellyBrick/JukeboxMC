@@ -164,13 +164,13 @@ open class SmeltingComponent(
     }
 
     private fun broadcastCookTime() {
-        for (viewer in inventory!!.getViewer()) {
+        for (viewer in inventory!!.viewer) {
             sendTickProgress(viewer)
         }
     }
 
     private fun broadcastFuelInfo() {
-        for (viewer in inventory!!.getViewer()) {
+        for (viewer in inventory!!.viewer) {
             sendFuelInfo(viewer)
         }
     }

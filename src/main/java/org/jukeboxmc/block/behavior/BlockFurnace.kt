@@ -61,7 +61,7 @@ class BlockFurnace : Block {
                 }
             }
             furnaceInventory.clear()
-            furnaceInventory.getViewer().clear()
+            furnaceInventory.viewer.clear()
         }
         super.onBlockBreak(breakPosition)
     }

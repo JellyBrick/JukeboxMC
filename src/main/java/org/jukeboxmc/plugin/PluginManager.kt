@@ -74,7 +74,7 @@ class PluginManager(val server: Server) {
         plugin.onStartup()
         if (directStartup) {
             try {
-                plugin.setEnabled(true)
+                plugin.enabled = true
             } catch (e: Exception) {
                 logger!!.error("Direct startup failed!" + e.message)
             }
@@ -123,7 +123,7 @@ class PluginManager(val server: Server) {
                 }
             }
         }
-        plugin.setEnabled(true)
+        plugin.enabled = true
         logger!!.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
         return true
     }
@@ -131,7 +131,7 @@ class PluginManager(val server: Server) {
     fun disableAllPlugins() {
         for (plugin in pluginMap.values) {
             logger!!.info("Disabling plugin " + plugin.name + "")
-            plugin!!.setEnabled(false)
+            plugin!!.enabled = false
         }
     }
 

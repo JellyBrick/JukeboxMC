@@ -27,7 +27,7 @@ class ItemFishingRod : Item, Durability, Burnable {
         if (player.entityFishingHook == null) {
             val entityFishingHook =
                 Objects.requireNonNull<EntityFishingHook>(Entity.create<EntityFishingHook>(EntityType.FISHING_HOOK))
-            entityFishingHook.setShooter(player)
+            entityFishingHook.shooter = player
             entityFishingHook.location = player.location.add(0f, player.eyeHeight, 0f)
             val force = 1.6f
             entityFishingHook.setVelocity(

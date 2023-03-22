@@ -98,12 +98,10 @@ class SimplexOctaveGenerator
     }
 
     companion object {
-        private fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator?> {
-            val result = arrayOfNulls<NoiseGenerator>(octaves)
-            for (i in 0 until octaves) {
-                result[i] = SimplexNoiseGenerator(rand)
+        private fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator> {
+            return Array(octaves) {
+                SimplexNoiseGenerator(rand)
             }
-            return result
         }
     }
 }

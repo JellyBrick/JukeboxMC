@@ -80,7 +80,7 @@ class BlockChest : Block {
                 }
             }
             chestInventory!!.clear()
-            chestInventory.getViewer().clear()
+            chestInventory.viewer.clear()
         }
         super.onBlockBreak(breakPosition)
     }

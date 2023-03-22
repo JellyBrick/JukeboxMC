@@ -22,7 +22,6 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.ItemPalette
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
-import java.io.IOException
 import java.util.*
 
 /**
@@ -48,7 +47,8 @@ open class Item : Cloneable {
         protected set
     var displayname: String
         protected set
-    protected var lore: MutableList<String>
+    var lore: MutableList<String>
+        protected set
     var nbt: NbtMap?
         protected set
     var canPlace: List<String>
@@ -177,10 +177,6 @@ open class Item : Cloneable {
     fun setDisplayname(displayname: String): Item {
         this.displayname = displayname
         return this
-    }
-
-    fun getLore(): List<String> {
-        return lore
     }
 
     fun setLore(lore: MutableList<String>): Item {
@@ -445,7 +441,7 @@ open class Item : Cloneable {
 
     companion object {
         var stackNetworkCount = 0
-        fun create(itemData: ItemData): Item {
+        fun createItem(itemData: ItemData): Item {
             if (itemData.id == 0) {
                 return create(ItemType.AIR)
             }
@@ -461,15 +457,15 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> create(itemData: ItemData): T =
-            create(itemData) as T
+            createItem(itemData) as T
 
-        fun create(identifier: Identifier): Item {
+        fun createItem(identifier: Identifier): Item {
             val itemType = ItemRegistry.getItemType(identifier)
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType)
             } else {
@@ -478,14 +474,14 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> create(identifier: Identifier): T =
-            create(identifier) as T
+            createItem(identifier) as T
 
-        fun create(itemType: ItemType): Item {
+        fun createItem(itemType: ItemType): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType)
             } else {
@@ -494,14 +490,14 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> create(itemType: ItemType): T =
-            create(itemType) as T
+            createItem(itemType) as T
 
-        fun create(itemType: ItemType, amount: Int): Item {
+        fun createItem(itemType: ItemType, amount: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType).setAmount(amount)
             } else {
@@ -510,14 +506,14 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> create(itemType: ItemType, amount: Int): T =
-            create(itemType, amount) as T
+            createItem(itemType, amount) as T
 
-        fun create(itemType: ItemType, amount: Int, meta: Int): Item {
+        fun createItem(itemType: ItemType, amount: Int, meta: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType).setAmount(amount).setMeta(meta)
             } else {
@@ -526,7 +522,7 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> create(itemType: ItemType, amount: Int, meta: Int): T =
-            create(itemType, amount, meta) as T
+            createItem(itemType, amount, meta) as T
 
         fun toBase64(item: Item): String {
             val itemNbt = NbtMap.builder()
@@ -539,11 +535,11 @@ open class Item : Cloneable {
                 .build()
             val buffer = Unpooled.buffer()
             NbtUtils.createWriterLE(ByteBufOutputStream(buffer))
-                    .use { networkWriter -> networkWriter.writeTag(itemNbt) }
+                .use { networkWriter -> networkWriter.writeTag(itemNbt) }
             return Base64.getMimeEncoder().encodeToString(Utils.array(buffer))
         }
 
-        fun fromBase64(json: String): Item {
+        fun fromBase64AsItem(json: String): Item {
             val decode = Base64.getMimeDecoder().decode(json)
             NbtUtils.createReaderLE(ByteBufInputStream(Unpooled.wrappedBuffer(decode))).use { reader ->
                 val compound = reader.readTag() as NbtMap
@@ -570,6 +566,6 @@ open class Item : Cloneable {
             }
         }
 
-        inline fun <reified T : Item> fromBase64(json: String): T = fromBase64(json) as T
+        inline fun <reified T : Item> fromBase64(json: String): T = fromBase64AsItem(json) as T
     }
 }

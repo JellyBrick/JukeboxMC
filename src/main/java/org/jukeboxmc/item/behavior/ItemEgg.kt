@@ -23,7 +23,7 @@ class ItemEgg : Item {
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val entityEgg = Objects.requireNonNull<EntityEgg>(Entity.create<EntityEgg>(EntityType.EGG))
-        entityEgg.setShooter(player)
+        entityEgg.shooter = player
         entityEgg.location = player.location.add(0f, player.eyeHeight, 0f)
         entityEgg.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entityEgg.yaw = player.yaw

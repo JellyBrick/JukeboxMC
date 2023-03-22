@@ -9,12 +9,10 @@ class PerlinOctaveGenerator(rand: Random, octaves: Int) : OctaveGenerator(create
     constructor(seed: Long, octaves: Int) : this(Random(seed), octaves)
 
     companion object {
-        private fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator?> {
-            val result = arrayOfNulls<NoiseGenerator>(octaves)
-            for (i in 0 until octaves) {
-                result[i] = PerlinNoiseGenerator(rand)
+        private fun createOctaves(rand: Random, octaves: Int): Array<NoiseGenerator> {
+            return Array(octaves) {
+                PerlinNoiseGenerator(rand)
             }
-            return result
         }
     }
 }

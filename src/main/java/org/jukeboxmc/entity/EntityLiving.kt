@@ -143,7 +143,7 @@ abstract class EntityLiving : Entity() {
             if (distance > 0.0) {
                 val baseModifier = 0.3f
                 distance = 1 / distance
-                var velocity = getVelocity()
+                var velocity = velocity
                 velocity = velocity.divide(2f, 2f, 2f)
                 velocity = velocity.add(
                     diffX * distance * baseModifier,
@@ -272,12 +272,12 @@ abstract class EntityLiving : Entity() {
         effects.keys.forEach(::removeEffect)
     }
 
-    fun getEffect(effectType: EffectType): Effect? {
+    fun getEffectAsEffect(effectType: EffectType): Effect? {
         return effects[effectType]
     }
 
     inline fun <reified T : Effect> getEffect(effectType: EffectType): T? {
-        return getEffect(effectType) as? T
+        return getEffectAsEffect(effectType) as? T
     }
 
     fun hasEffect(effectType: EffectType): Boolean {

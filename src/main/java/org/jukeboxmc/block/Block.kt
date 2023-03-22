@@ -86,7 +86,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             .runtimeId == runtimeId
     }
 
-    fun setState(state: String, value: Any): Block {
+    fun setStateBlock(state: String, value: Any): Block {
         if (!blockStates.containsKey(state)) {
             throw AssertionError("State $state was not found in block $identifier")
         }
@@ -109,7 +109,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         return this
     }
 
-    inline fun <reified T : Block> setState(state: String, value: Any): T = setState(state, value) as T
+    inline fun <reified T : Block> setState(state: String, value: Any): T = setStateBlock(state, value) as T
 
     fun stateExists(value: String): Boolean {
         return blockStates.containsKey(value)
@@ -470,7 +470,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
 
     companion object {
         val STATES: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
-        fun create(blockType: BlockType): Block {
+        fun createBlock(blockType: BlockType): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                     Identifier::class.java,
@@ -481,9 +481,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             }
         }
 
-        inline fun <reified T : Block> create(blockType: BlockType): T = create(blockType) as T
+        inline fun <reified T : Block> create(blockType: BlockType): T = createBlock(blockType) as T
 
-        fun create(blockType: BlockType, blockStates: NbtMap): Block {
+        fun createBlock(blockType: BlockType, blockStates: NbtMap): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
                     Identifier::class.java,
@@ -496,13 +496,13 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         }
 
         inline fun <reified T : Block> create(blockType: BlockType, blockStates: NbtMap): T =
-            create(blockType, blockStates) as T
+            createBlock(blockType, blockStates) as T
 
-        fun create(identifier: Identifier): Block {
+        fun createBlock(identifier: Identifier): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
+                    Identifier::class.java,
                 )
                 constructor.newInstance(identifier)
             } else {
@@ -511,14 +511,14 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         }
 
         inline fun <reified T : Block> create(identifier: Identifier): T =
-            create(identifier) as T
+            createBlock(identifier) as T
 
-        fun create(identifier: Identifier, blockStates: NbtMap): Block {
+        fun createBlock(identifier: Identifier, blockStates: NbtMap): Block {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
-                        NbtMap::class.java,
+                    Identifier::class.java,
+                    NbtMap::class.java,
                 )
                 constructor.newInstance(identifier, blockStates)
             } else {
@@ -527,6 +527,6 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         }
 
         inline fun <reified T : Block> create(identifier: Identifier, blockStates: NbtMap): T =
-            create(identifier, blockStates) as T
+            createBlock(identifier, blockStates) as T
     }
 }
