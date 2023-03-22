@@ -45,7 +45,7 @@ open class Item : Cloneable {
         protected set
     var durability: Int
         protected set
-    var displayname: String
+    var displayName: String
         protected set
     var lore: MutableList<String>
         protected set
@@ -77,7 +77,7 @@ open class Item : Cloneable {
         amount = 1
         meta = 0
         durability = 0
-        displayname = ""
+        displayName = ""
         lore = LinkedList()
         nbt = null
         canPlace = LinkedList()
@@ -104,7 +104,7 @@ open class Item : Cloneable {
         amount = 1
         meta = 0
         durability = 0
-        displayname = ""
+        displayName = ""
         lore = LinkedList()
         nbt = null
         canPlace = LinkedList()
@@ -127,7 +127,7 @@ open class Item : Cloneable {
         amount = itemData.count
         meta = itemData.damage
         durability = 0
-        displayname = ""
+        displayName = ""
         lore = LinkedList()
         nbt = itemData.tag
         canPlace = LinkedList()
@@ -175,7 +175,7 @@ open class Item : Cloneable {
     }
 
     fun setDisplayname(displayname: String): Item {
-        this.displayname = displayname
+        this.displayName = displayname
         return this
     }
 
@@ -258,8 +258,8 @@ open class Item : Cloneable {
             nbtBuilder.putInt("Damage", durability)
         }
         val displayBuilder = NbtMap.builder()
-        if (displayname.isNotEmpty()) {
-            displayBuilder["Name"] = displayname
+        if (displayName.isNotEmpty()) {
+            displayBuilder["Name"] = displayName
         }
         if (lore.isNotEmpty()) {
             displayBuilder.putList("Lore", NbtType.STRING, lore)
@@ -414,7 +414,7 @@ open class Item : Cloneable {
             clone.amount = amount
             clone.meta = meta
             clone.durability = durability
-            clone.displayname = displayname
+            clone.displayName = displayName
             clone.lore = lore
             clone.nbt = nbt
             clone.canPlace = canPlace

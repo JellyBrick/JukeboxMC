@@ -207,7 +207,7 @@ abstract class Inventory {
     operator fun contains(item: Item): Boolean {
         for (content in contents) {
             if (content.identifier == item.identifier && content.runtimeId == item.runtimeId &&
-                (content.blockRuntimeId == item.blockRuntimeId || content.blockRuntimeId == 0 || item.blockRuntimeId == 0) && content.meta == item.meta && content.displayname == item.displayname &&
+                (content.blockRuntimeId == item.blockRuntimeId || content.blockRuntimeId == 0 || item.blockRuntimeId == 0) && content.meta == item.meta && content.displayName == item.displayName &&
                 content.entchantments.containsAll(item.entchantments) && content.amount == item.amount
             ) {
                 return true
