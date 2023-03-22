@@ -18,19 +18,19 @@ open class BlockSlab : Block {
             AxisAlignedBB(
                 location.x,
                 location.y + 0.5f,
-                location.getZ(),
+                location.z,
                 location.x + 1,
                 location.y + 1,
-                location.getZ() + 1,
+                location.z + 1,
             )
         } else {
             AxisAlignedBB(
                 location.x,
                 location.y,
-                location.getZ(),
+                location.z,
                 location.x + 1,
                 location.y + 0.5f,
-                location.getZ() + 1,
+                location.z + 1,
             )
         }
 

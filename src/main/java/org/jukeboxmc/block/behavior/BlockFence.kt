@@ -27,10 +27,10 @@ open class BlockFence : Block {
             return AxisAlignedBB(
                 location.x + w,
                 location.y,
-                location.getZ() + n,
+                location.z + n,
                 location.x + e,
                 location.y + 1.5f,
-                location.getZ() + s,
+                location.z + s,
             )
         }
 

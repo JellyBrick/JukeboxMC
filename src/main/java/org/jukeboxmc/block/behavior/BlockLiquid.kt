@@ -62,7 +62,7 @@ abstract class BlockLiquid : Block {
                     location.world!!.getBlock(
                         location.x.toInt(),
                         location.y.toInt(),
-                        location.getZ().toInt() - 1,
+                        location.z.toInt() - 1,
                         0,
                         location.dimension,
                     ),
@@ -72,7 +72,7 @@ abstract class BlockLiquid : Block {
                     location.world!!.getBlock(
                         location.x.toInt(),
                         location.y.toInt(),
-                        location.getZ().toInt() + 1,
+                        location.z.toInt() + 1,
                         0,
                         location.dimension,
                     ),
@@ -82,7 +82,7 @@ abstract class BlockLiquid : Block {
                     location.world!!.getBlock(
                         location.y.toInt() - 1,
                         location.y.toInt(),
-                        location.getZ().toInt(),
+                        location.z.toInt(),
                         0,
                         location.dimension,
                     ),
@@ -92,7 +92,7 @@ abstract class BlockLiquid : Block {
                     location.world!!.getBlock(
                         location.x.toInt() + 1,
                         location.y.toInt(),
-                        location.getZ().toInt(),
+                        location.z.toInt(),
                         0,
                         location.dimension,
                     ),
@@ -106,7 +106,7 @@ abstract class BlockLiquid : Block {
                     location.world!!.getBlock(
                         location.x.toInt(),
                         location.y.toInt() + 1,
-                        location.getZ().toInt(),
+                        location.z.toInt(),
                         0,
                         location.dimension,
                     ),
@@ -118,7 +118,7 @@ abstract class BlockLiquid : Block {
                     var bottomBlock = location.world!!.getBlock(
                         location.x.toInt(),
                         location.y.toInt() - 1,
-                        location.getZ().toInt(),
+                        location.z.toInt(),
                         0,
                         location.dimension,
                     )
@@ -156,7 +156,7 @@ abstract class BlockLiquid : Block {
                 val bottomBlock = location.world!!.getBlock(
                     location.x.toInt(),
                     location.y.toInt() - 1,
-                    location.getZ().toInt(),
+                    location.z.toInt(),
                     0,
                     location.dimension,
                 )
@@ -175,7 +175,7 @@ abstract class BlockLiquid : Block {
                                 location.world!!.getBlock(
                                     location.x.toInt() - 1,
                                     location.y.toInt(),
-                                    location.getZ().toInt(),
+                                    location.z.toInt(),
                                     0,
                                     location.dimension,
                                 ),
@@ -187,7 +187,7 @@ abstract class BlockLiquid : Block {
                                 location.world!!.getBlock(
                                     location.x.toInt() + 1,
                                     location.y.toInt(),
-                                    location.getZ().toInt(),
+                                    location.z.toInt(),
                                     0,
                                     location.dimension,
                                 ),
@@ -199,7 +199,7 @@ abstract class BlockLiquid : Block {
                                 location.world!!.getBlock(
                                     location.x.toInt(),
                                     location.y.toInt(),
-                                    location.getZ().toInt() - 1,
+                                    location.z.toInt() - 1,
                                     0,
                                     location.dimension,
                                 ),
@@ -211,7 +211,7 @@ abstract class BlockLiquid : Block {
                                 location.world!!.getBlock(
                                     location.x.toInt(),
                                     location.y.toInt(),
-                                    location.getZ().toInt() + 1,
+                                    location.z.toInt() + 1,
                                     0,
                                     location.dimension,
                                 ),
@@ -310,7 +310,7 @@ abstract class BlockLiquid : Block {
             for (j in 0..3) {
                 var x = location.x.toInt()
                 val y = location.y.toInt()
-                var z = location.getZ().toInt()
+                var z = location.z.toInt()
                 if (j == 0) {
                     --x
                 } else if (j == 1) {

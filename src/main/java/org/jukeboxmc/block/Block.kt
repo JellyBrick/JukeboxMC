@@ -60,7 +60,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         type = BlockRegistry.getBlockType(identifier)
         blockProperties = BlockRegistry.getBlockProperties(identifier)
         if (!STATES.containsKey(this.identifier)) {
-            val toRuntimeId: Object2ObjectMap<NbtMap?, Int> = Object2ObjectLinkedOpenHashMap()
+            val toRuntimeId: Object2ObjectMap<NbtMap, Int> = Object2ObjectLinkedOpenHashMap()
             for (blockMap in BlockPalette.searchBlocks { blockMap: NbtMap ->
                 blockMap.getString("name").lowercase(Locale.getDefault()) == (this.identifier?.fullName ?: "")
             }) {
@@ -171,10 +171,10 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
         get() = AxisAlignedBB(
             location!!.x,
             location!!.y,
-            location!!.getZ(),
+            location!!.z,
             location!!.x + 1,
             location!!.y + 1,
-            location!!.getZ() + 1,
+            location!!.z + 1,
         )
 
     fun breakBlock(player: Player, item: Item) {
@@ -471,8 +471,8 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
     }
 
     companion object {
-        val STATES: Object2ObjectMap<Identifier?, Object2ObjectMap<NbtMap?, Int>> = Object2ObjectLinkedOpenHashMap()
-        fun <T : Block?> create(blockType: BlockType?): T {
+        val STATES: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
+        fun <T : Block> create(blockType: BlockType): T {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
@@ -487,7 +487,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
         }
 
-        fun <T : Block?> create(blockType: BlockType?, blockStates: NbtMap?): T {
+        fun <T : Block?> create(blockType: BlockType, blockStates: NbtMap): T {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
                     val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
@@ -503,7 +503,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
         }
 
-        fun <T : Block?> create(identifier: Identifier?): T {
+        fun <T : Block> create(identifier: Identifier): T {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {
@@ -519,7 +519,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier?, blockStates:
             }
         }
 
-        fun <T : Block?> create(identifier: Identifier?, blockStates: NbtMap?): T {
+        fun <T : Block> create(identifier: Identifier?, blockStates: NbtMap): T {
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 try {

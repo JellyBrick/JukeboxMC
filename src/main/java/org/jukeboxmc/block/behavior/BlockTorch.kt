@@ -51,10 +51,10 @@ class BlockTorch : Block {
                     return AxisAlignedBB(
                         location.x,
                         location.y + 0.2f,
-                        location.getZ() + 0.5f - size,
+                        location.z + 0.5f - size,
                         location.x + size * 2f,
                         location.y + 0.8f,
-                        location.getZ() + 0.5f + size,
+                        location.z + 0.5f + size,
                     )
                 }
 
@@ -62,10 +62,10 @@ class BlockTorch : Block {
                     return AxisAlignedBB(
                         location.x + 1.0f - size * 2f,
                         location.y + 0.2f,
-                        location.getZ() + 0.5f - size,
+                        location.z + 0.5f - size,
                         location.x + 1f,
                         location.y + 0.8f,
-                        location.getZ() + 0.5f + size,
+                        location.z + 0.5f + size,
                     )
                 }
 
@@ -73,10 +73,10 @@ class BlockTorch : Block {
                     return AxisAlignedBB(
                         location.x + 0.5f - size,
                         location.y + 0.2f,
-                        location.getZ(),
+                        location.z,
                         location.x + 0.5f + size,
                         location.y + 0.8f,
-                        location.getZ() + size * 2f,
+                        location.z + size * 2f,
                     )
                 }
 
@@ -84,10 +84,10 @@ class BlockTorch : Block {
                     return AxisAlignedBB(
                         location.x + 0.5f - size,
                         location.y + 0.2f,
-                        location.getZ() + 1f - size * 2f,
+                        location.z + 1f - size * 2f,
                         location.x + 0.5f + size,
                         location.y + 0.8f,
-                        location.getZ() + 1f,
+                        location.z + 1f,
                     )
                 }
 
@@ -97,10 +97,10 @@ class BlockTorch : Block {
             return AxisAlignedBB(
                 location.x + 0.5f - size,
                 location.y + 0.0f,
-                location.getZ() + 0.5f - size,
+                location.z + 0.5f - size,
                 location.x + 0.5f + size,
                 location.y + 0.6f,
-                location.getZ() + 0.5f + size,
+                location.z + 0.5f + size,
             )
         }
     var torchFacing: TorchFacing

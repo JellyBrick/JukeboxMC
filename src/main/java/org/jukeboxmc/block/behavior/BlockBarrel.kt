@@ -34,7 +34,7 @@ class BlockBarrel : Block {
         if (FastMath.abs(
                 player.x - getLocation()
                     .x,
-            ) < 2 && FastMath.abs(player.z - getLocation().getZ()) < 2
+            ) < 2 && FastMath.abs(player.z - getLocation().z) < 2
         ) {
             val y = (player.y + player.eyeHeight).toDouble()
             if (y - getLocation().y > 2) {

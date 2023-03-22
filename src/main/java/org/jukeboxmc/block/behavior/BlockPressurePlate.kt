@@ -72,10 +72,10 @@ class BlockPressurePlate : Block {
         get() = AxisAlignedBB(
             location.x + 0.0625f,
             location.y,
-            location.getZ() + 0.0625f,
+            location.z + 0.0625f,
             location.x + 0.9375f,
             location.y + 1f,
-            location.getZ() + 0.9375f,
+            location.z + 0.9375f,
         )
     var redstoneSignal: Int
         get() = if (stateExists("redstone_signal")) getIntState("redstone_signal") else 0

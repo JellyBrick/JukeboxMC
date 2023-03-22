@@ -975,7 +975,7 @@ class Player(
                         )
                         val ownVelocity = getVelocity()
                         ownVelocity.setX(ownVelocity.x * 0.6f)
-                        ownVelocity.setZ(ownVelocity.getZ() * 0.6f)
+                        ownVelocity.setZ(ownVelocity.z * 0.6f)
                         this.setVelocity(ownVelocity)
                         this.isSprinting = false
                     }
