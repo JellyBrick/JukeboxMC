@@ -1,5 +1,9 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.data.PacketCompressionAlgorithm
+import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
+import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
+import com.nukkitx.protocol.bedrock.packet.RequestNetworkSettingsPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.network.Network
 import org.jukeboxmc.player.Player
@@ -10,21 +14,21 @@ import org.jukeboxmc.player.Player
  */
 class RequestNetworkSettingsHandler : PacketHandler<RequestNetworkSettingsPacket> {
     override fun handle(packet: RequestNetworkSettingsPacket, server: Server, player: Player) {
-        if (player.playerConnection.isLoggedIn) {
+        if (player.playerConnection.isLoggedIn()) {
             player.playerConnection.disconnect("Player is already logged in.")
             return
         }
-        val protocolVersion: Int = packet.getProtocolVersion()
-        val currentProtocol: Int = Network.Companion.CODEC.getProtocolVersion()
+        val protocolVersion: Int = packet.protocolVersion
+        val currentProtocol: Int = Network.CODEC.protocolVersion
         if (protocolVersion != currentProtocol) {
             player.playerConnection.sendPlayStatus(if (protocolVersion > currentProtocol) PlayStatusPacket.Status.LOGIN_FAILED_SERVER_OLD else PlayStatusPacket.Status.LOGIN_FAILED_CLIENT_OLD)
             return
         }
-        val compressionAlgorithm: PacketCompressionAlgorithm? = server.compressionAlgorithm
+        val compressionAlgorithm: PacketCompressionAlgorithm = server.compressionAlgorithm
         val networkSettingsPacket = NetworkSettingsPacket()
-        networkSettingsPacket.setCompressionThreshold(0)
-        networkSettingsPacket.setCompressionAlgorithm(compressionAlgorithm)
+        networkSettingsPacket.compressionThreshold = 0
+        networkSettingsPacket.compressionAlgorithm = compressionAlgorithm
         player.playerConnection.sendPacketImmediately(networkSettingsPacket)
-        player.playerConnection.session.setCompression(compressionAlgorithm)
+        player.playerConnection.getSession().setCompression(compressionAlgorithm)
     }
 }

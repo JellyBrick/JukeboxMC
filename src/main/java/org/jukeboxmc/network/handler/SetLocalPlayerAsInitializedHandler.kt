@@ -1,6 +1,8 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket
 import org.jukeboxmc.Server
+import org.jukeboxmc.event.player.PlayerJoinEvent
 import org.jukeboxmc.player.Player
 
 /**
@@ -10,9 +12,9 @@ import org.jukeboxmc.player.Player
 class SetLocalPlayerAsInitializedHandler : PacketHandler<SetLocalPlayerAsInitializedPacket?> {
     override fun handle(packet: SetLocalPlayerAsInitializedPacket?, server: Server, player: Player) {
         val playerJoinEvent = PlayerJoinEvent(player, "§e" + player.name + " has joined the game")
-        Server.Companion.getInstance().getPluginManager().callEvent(playerJoinEvent)
-        if (playerJoinEvent.getJoinMessage() != null && !playerJoinEvent.getJoinMessage().isEmpty()) {
-            Server.Companion.getInstance().broadcastMessage(playerJoinEvent.getJoinMessage())
+        Server.instance.pluginManager.callEvent(playerJoinEvent)
+        if (playerJoinEvent.joinMessage != null && !playerJoinEvent.joinMessage.isEmpty()) {
+            Server.instance.broadcastMessage(playerJoinEvent.joinMessage)
         }
     }
 }

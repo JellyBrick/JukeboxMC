@@ -1,7 +1,10 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.ResourcePackChunkDataPacket
+import com.nukkitx.protocol.bedrock.packet.ResourcePackChunkRequestPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
+import org.jukeboxmc.resourcepack.ResourcePack
 
 /**
  * @author pooooooon
@@ -13,14 +16,14 @@ class ResourcePackChunkRequestHandler : PacketHandler<ResourcePackChunkRequestPa
             packet.getPackId().toString().split("_".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()
         val resourcePackEntryUuid = resourcePackEntryElements[0]
-        val resourcePack: ResourcePack? = server.resourcePackManager.retrieveResourcePackById(resourcePackEntryUuid)
+        val resourcePack: ResourcePack? = server.getResourcePackManager().retrieveResourcePackById(resourcePackEntryUuid)
         if (resourcePack != null) {
             val resourcePackChunkDataPacket = ResourcePackChunkDataPacket()
-            resourcePackChunkDataPacket.setPackId(packet.getPackId())
-            resourcePackChunkDataPacket.setPackVersion(packet.getPackVersion())
-            resourcePackChunkDataPacket.setChunkIndex(packet.getChunkIndex())
-            resourcePackChunkDataPacket.setData(resourcePack.getChunk(1048576 * packet.getChunkIndex(), 1048576))
-            resourcePackChunkDataPacket.setProgress(1048576L * packet.getChunkIndex())
+            resourcePackChunkDataPacket.packId = packet.packId
+            resourcePackChunkDataPacket.packVersion = packet.packVersion
+            resourcePackChunkDataPacket.chunkIndex = packet.chunkIndex
+            resourcePackChunkDataPacket.data = resourcePack.getChunk(1048576 * packet.chunkIndex, 1048576)
+            resourcePackChunkDataPacket.progress = 1048576L * packet.chunkIndex
             player.playerConnection.sendPacketImmediately(resourcePackChunkDataPacket)
         }
     }
