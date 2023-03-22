@@ -104,19 +104,6 @@ abstract class NoiseGenerator {
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x          X-coordinate
-     * @param y          Y-coordinate
-     * @param z          Z-coordinate
-     * @param octaves    Number of octaves to use
-     * @param frequency  How much to alter the frequency by each octave
-     * @param amplitude  How much to alter the amplitude by each octave
-     * @param normalized If true, normalize the value to [-1, 1]
-     * @return Resulting noise
-     */
-    /**
-     * Generates noise for the 3D coordinates using the specified number of
-     * octaves and parameters
-     *
      * @param x         X-coordinate
      * @param y         Y-coordinate
      * @param z         Z-coordinate

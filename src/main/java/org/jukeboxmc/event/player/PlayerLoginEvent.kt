@@ -13,7 +13,7 @@ class PlayerLoginEvent
  *
  * @param player who represents the player which comes with this event
  */
-    (player: Player) : PlayerEvent(player), Cancellable {
+(player: Player) : PlayerEvent(player), Cancellable {
     var kickReason = "Disconnected"
     private var canJoinFullServer = false
     fun canJoinFullServer(): Boolean {

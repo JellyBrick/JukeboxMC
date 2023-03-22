@@ -19,12 +19,11 @@ class PlayerQuitEvent
      *
      * @param quitMessage which should be modified
      */
-    var quitMessage: String
+    var quitMessage: String,
 ) : PlayerEvent(player) {
     /**
      * Retrieves the leave message
      *
      * @return a fresh [String]
      */
-
 }

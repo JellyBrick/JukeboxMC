@@ -20,5 +20,5 @@ class PlayerToggleSneakEvent
      *
      * @return whether the player is sneaking
      */
-    val isSneaking: Boolean
+    val isSneaking: Boolean,
 ) : PlayerEvent(player), Cancellable

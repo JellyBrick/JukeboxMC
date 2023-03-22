@@ -1,8 +1,8 @@
 package org.jukeboxmc.potion
 
-import java.awt.Color
 import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.attribute.AttributeType
+import java.awt.Color
 
 /**
  * @author LucGamesYT

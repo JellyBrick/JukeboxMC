@@ -20,5 +20,5 @@ class PlayerToggleSwimEvent
      *
      * @return whether the player is swimming
      */
-    val isSwimming: Boolean
+    val isSwimming: Boolean,
 ) : PlayerEvent(player), Cancellable

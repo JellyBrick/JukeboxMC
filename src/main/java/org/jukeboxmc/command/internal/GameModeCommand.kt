@@ -25,13 +25,14 @@ class GameModeCommand : Command(
         .setParameters(
             arrayOf(
                 CommandParameter("gamemode", CommandParamType.INT, false),
-                CommandParameter("target", CommandParamType.TARGET, true)
-            ), arrayOf<CommandParameter>(
+                CommandParameter("target", CommandParamType.TARGET, true),
+            ),
+            arrayOf<CommandParameter>(
                 CommandParameter("gamemode", mutableListOf("survival", "creative", "adventure", "spectator"), false),
-                CommandParameter("target", CommandParamType.TARGET, true)
-            )
+                CommandParameter("target", CommandParamType.TARGET, true),
+            ),
         )
-        .build()
+        .build(),
 ) {
     override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (commandSender is Player) {

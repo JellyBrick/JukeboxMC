@@ -19,7 +19,8 @@ class InventoryClickEvent
  * @param targetItem which is the new item
  * @param slot       the slot where the item was placed at
  */(
-    inventory: Inventory, val destinationInventory: Inventory,
+    inventory: Inventory,
+    val destinationInventory: Inventory,
     /**
      * Retrieves the [Player] who caused this [InventoryClickEvent]
      *
@@ -43,5 +44,5 @@ class InventoryClickEvent
      *
      * @return a fresh int value
      */
-    val slot: Int
+    val slot: Int,
 ) : InventoryEvent(inventory), Cancellable

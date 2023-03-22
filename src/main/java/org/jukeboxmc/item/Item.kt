@@ -22,7 +22,6 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.ItemPalette
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
-import java.io.IOException
 import java.util.*
 
 /**
@@ -467,9 +466,9 @@ open class Item : Cloneable {
             val itemType = ItemRegistry.getItemType(identifier)
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType)
             } else {
@@ -483,9 +482,9 @@ open class Item : Cloneable {
         fun create(itemType: ItemType): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType)
             } else {
@@ -499,9 +498,9 @@ open class Item : Cloneable {
         fun create(itemType: ItemType, amount: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType).setAmount(amount)
             } else {
@@ -515,9 +514,9 @@ open class Item : Cloneable {
         fun create(itemType: ItemType, amount: Int, meta: Int): Item {
             return if (ItemRegistry.itemClassExists(itemType)) {
                 val constructor = ItemRegistry.getItemClass(itemType)
-                        .getConstructor(
-                                ItemType::class.java,
-                        )
+                    .getConstructor(
+                        ItemType::class.java,
+                    )
                 constructor.isAccessible = true
                 constructor.newInstance(itemType).setAmount(amount).setMeta(meta)
             } else {
@@ -539,7 +538,7 @@ open class Item : Cloneable {
                 .build()
             val buffer = Unpooled.buffer()
             NbtUtils.createWriterLE(ByteBufOutputStream(buffer))
-                    .use { networkWriter -> networkWriter.writeTag(itemNbt) }
+                .use { networkWriter -> networkWriter.writeTag(itemNbt) }
             return Base64.getMimeEncoder().encodeToString(Utils.array(buffer))
         }
 

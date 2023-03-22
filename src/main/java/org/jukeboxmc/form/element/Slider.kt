@@ -12,7 +12,7 @@ class Slider(
     private val min: Float,
     private val max: Float,
     private val step: Float,
-    private var defaultValue: Float
+    private var defaultValue: Float,
 ) : Element(id, text) {
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()

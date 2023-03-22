@@ -22,14 +22,13 @@ import org.jukeboxmc.event.inventory.InventoryClickEvent
 import org.jukeboxmc.event.player.PlayerDropItemEvent
 import org.jukeboxmc.inventory.CraftingGridInventory
 import org.jukeboxmc.inventory.Inventory
+import org.jukeboxmc.inventory.InventoryType
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.CreativeItems
-import java.util.Arrays
 import java.util.LinkedList
-import org.jukeboxmc.inventory.InventoryType
 
 /**
  * @author LucGamesYT

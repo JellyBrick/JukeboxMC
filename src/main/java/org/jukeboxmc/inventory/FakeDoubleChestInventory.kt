@@ -6,7 +6,6 @@ import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
-import java.util.Arrays
 
 /**
  * @author LucGamesYT
@@ -35,7 +34,7 @@ class FakeDoubleChestInventory : FakeChestInventory {
                 containerOpenPacket.id = windowId
                 containerOpenPacket.uniqueEntityId = holderId
                 containerOpenPacket.type = this.windowTypeId
-                containerOpenPacket.blockPosition = vector!!.toVector3i()
+                containerOpenPacket.blockPosition = vector.toVector3i()
                 player.playerConnection.sendPacket(containerOpenPacket)
                 this.sendContents(player)
             },

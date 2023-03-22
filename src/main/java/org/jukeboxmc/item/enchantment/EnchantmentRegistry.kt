@@ -1,7 +1,5 @@
 package org.jukeboxmc.item.enchantment
 
-import java.lang.reflect.InvocationTargetException
-
 /**
  * @author LucGamesYT
  * @version 1.0

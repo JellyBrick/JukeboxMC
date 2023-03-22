@@ -2,10 +2,10 @@ package org.jukeboxmc.inventory
 
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket
 import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
-import java.util.concurrent.ConcurrentHashMap
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author LucGamesYT

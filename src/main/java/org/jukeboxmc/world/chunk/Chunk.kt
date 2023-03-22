@@ -26,7 +26,6 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
-import java.io.IOException
 import java.util.Collections
 import java.util.IdentityHashMap
 import java.util.concurrent.CopyOnWriteArraySet

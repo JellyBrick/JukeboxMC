@@ -502,7 +502,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
+                    Identifier::class.java,
                 )
                 constructor.newInstance(identifier)
             } else {
@@ -517,8 +517,8 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             val blockType = BlockRegistry.getBlockType(identifier)
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
-                        Identifier::class.java,
-                        NbtMap::class.java,
+                    Identifier::class.java,
+                    NbtMap::class.java,
                 )
                 constructor.newInstance(identifier, blockStates)
             } else {

@@ -343,14 +343,6 @@ class Server(logger: Logger) {
         return mainThread
     }
 
-    fun getDifficulty(): Difficulty {
-        return difficulty
-    }
-
-    fun getCompressionAlgorithm(): PacketCompressionAlgorithm {
-        return compressionAlgorithm
-    }
-
     fun addPlayer(player: Player) {
         players.add(player)
     }

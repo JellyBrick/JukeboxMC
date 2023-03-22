@@ -19,31 +19,31 @@ class Location @JvmOverloads constructor(
     z: Float,
     var yaw: Float = 0f,
     var pitch: Float = 0f,
-    dimension: Dimension = Dimension.OVERWORLD
+    dimension: Dimension = Dimension.OVERWORLD,
 ) : Vector(x, y, z), Cloneable {
 
     init {
         this.dimension = dimension
     }
 
-    constructor(world: World?, x: Float, y: Float, z: Float, dimension: Dimension) : this(
+    constructor(world: World?, x: Float, y: Float, z: Float, dimension: Dimension?) : this(
         world,
         x,
         y,
         z,
         0f,
         0f,
-        dimension
+        dimension ?: Dimension.OVERWORLD,
     )
 
-    constructor(world: World?, x: Int, y: Int, z: Int, dimension: Dimension) : this(
+    constructor(world: World?, x: Int, y: Int, z: Int, dimension: Dimension?) : this(
         world,
         x.toFloat(),
         y.toFloat(),
         z.toFloat(),
         0f,
         0f,
-        dimension
+        dimension ?: Dimension.OVERWORLD,
     )
 
     constructor(world: World?, x: Int, y: Int, z: Int) : this(
@@ -53,17 +53,17 @@ class Location @JvmOverloads constructor(
         z.toFloat(),
         0f,
         0f,
-        Dimension.OVERWORLD
+        Dimension.OVERWORLD,
     )
 
-    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension) : this(
+    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension?) : this(
         world,
         vector.x,
         vector.y,
         vector.z,
         yaw,
         pitch,
-        dimension
+        dimension ?: Dimension.OVERWORLD,
     )
 
     constructor(world: World?, vector: Vector, yaw: Float, pitch: Float) : this(
@@ -73,17 +73,17 @@ class Location @JvmOverloads constructor(
         vector.z,
         yaw,
         pitch,
-        Dimension.OVERWORLD
+        Dimension.OVERWORLD,
     )
 
-    constructor(world: World?, vector: Vector, dimension: Dimension) : this(
+    constructor(world: World?, vector: Vector, dimension: Dimension?) : this(
         world,
         vector.x,
         vector.y,
         vector.z,
         0f,
         0f,
-        dimension
+        dimension ?: Dimension.OVERWORLD,
     )
 
     constructor(world: World?, vector: Vector) : this(
@@ -93,7 +93,7 @@ class Location @JvmOverloads constructor(
         vector.z,
         0f,
         0f,
-        Dimension.OVERWORLD
+        Dimension.OVERWORLD,
     )
 
     override fun add(x: Float, y: Float, z: Float): Location {

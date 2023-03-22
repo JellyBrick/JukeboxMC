@@ -20,5 +20,5 @@ class InventoryCloseEvent
      *
      * @return a fresh [Player]
      */
-    val player: Player
+    val player: Player,
 ) : InventoryEvent(inventory)

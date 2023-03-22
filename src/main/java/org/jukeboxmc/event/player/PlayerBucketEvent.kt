@@ -37,7 +37,7 @@ abstract class PlayerBucketEvent
      *
      * @param clickedBlock which will be changed
      */
-    var clickedBlock: Block?
+    var clickedBlock: Block?,
 ) : PlayerEvent(player), Cancellable {
 
     /**
@@ -45,5 +45,4 @@ abstract class PlayerBucketEvent
      *
      * @return a fresh [Block]
      */
-
 }

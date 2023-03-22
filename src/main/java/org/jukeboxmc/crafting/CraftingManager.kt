@@ -20,7 +20,6 @@ import org.jukeboxmc.util.ItemPalette
 import java.util.LinkedList
 import java.util.Optional
 import java.util.UUID
-import java.util.function.Predicate
 
 /**
  * @author LucGamesYT
@@ -199,7 +198,7 @@ class CraftingManager {
 
     fun getSmeltingRecipe(input: Item): SmeltingRecipe? {
         return smeltingRecipes.stream().filter(
-            Predicate<SmeltingRecipe?> { smeltingRecipe: SmeltingRecipe? ->
+            { smeltingRecipe: SmeltingRecipe? ->
                 smeltingRecipe?.input?.type == input.type
             },
         ).findFirst().orElse(null)

@@ -8,7 +8,7 @@ import org.json.simple.JSONObject
  */
 abstract class Element(
     val id: String,
-    val text: String
+    val text: String,
 ) {
 
     /**

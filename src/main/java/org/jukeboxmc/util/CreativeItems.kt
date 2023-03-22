@@ -6,11 +6,9 @@ import com.nukkitx.nbt.NbtUtils
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import org.jukeboxmc.Bootstrap
 import java.io.ByteArrayInputStream
-import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.Base64
 import java.util.LinkedList
-import java.util.Objects
 
 /**
  * @author LucGamesYT

@@ -62,7 +62,9 @@ class ButtonList(title: String) : Form<String?>(title) {
             val buttonId = json.trim { it <= ' ' }.toInt()
             if (buttonId + 1 > buttons.size) {
                 null
-            } else buttons[buttonId].id
+            } else {
+                buttons[buttonId].id
+            }
         } catch (e: NumberFormatException) {
             null
         }

@@ -33,5 +33,5 @@ class BlockLiquidFlowEvent
      *
      * @return a fresh flow decay value
      */
-    val newFlowDecay: Int
+    val newFlowDecay: Int,
 ) : BlockEvent(blockTo), Cancellable

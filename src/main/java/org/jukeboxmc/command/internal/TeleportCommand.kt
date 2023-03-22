@@ -1,7 +1,6 @@
 package org.jukeboxmc.command.internal
 
 import com.nukkitx.protocol.bedrock.data.command.CommandParamType
-import java.util.Locale
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
@@ -14,6 +13,7 @@ import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.world.Dimension
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -27,16 +27,18 @@ class TeleportCommand : Command(
         .addAlias("tp")
         .setParameters(
             arrayOf<CommandParameter>(
-                CommandParameter("player", CommandParamType.TARGET, false)
-            ), arrayOf<CommandParameter>(
-                CommandParameter("position", CommandParamType.POSITION, false),
-                CommandParameter("dimension", mutableListOf("overworld", "nether", "the_end"), true)
-            ), arrayOf<CommandParameter>(
                 CommandParameter("player", CommandParamType.TARGET, false),
-                CommandParameter("target", CommandParamType.TARGET, false)
-            )
+            ),
+            arrayOf<CommandParameter>(
+                CommandParameter("position", CommandParamType.POSITION, false),
+                CommandParameter("dimension", mutableListOf("overworld", "nether", "the_end"), true),
+            ),
+            arrayOf<CommandParameter>(
+                CommandParameter("player", CommandParamType.TARGET, false),
+                CommandParameter("target", CommandParamType.TARGET, false),
+            ),
         )
-        .build()
+        .build(),
 ) {
     override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (commandSender is Player) {
@@ -92,12 +94,16 @@ class TeleportCommand : Command(
                         Location(
                             commandSender.world,
                             Vector(x, y, z),
-                            if (dimension == null) commandSender.dimension else Dimension.valueOf(
-                                dimension.uppercase(
-                                    Locale.getDefault()
+                            if (dimension == null) {
+                                commandSender.dimension
+                            } else {
+                                Dimension.valueOf(
+                                    dimension.uppercase(
+                                        Locale.getDefault(),
+                                    ),
                                 )
-                            )
-                        )
+                            },
+                        ),
                     )
                     commandSender.sendMessage("You have benn teleported to $x, $y, $z")
                 } catch (e: NumberFormatException) {

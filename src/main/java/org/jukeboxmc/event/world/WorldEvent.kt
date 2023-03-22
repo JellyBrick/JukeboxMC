@@ -18,5 +18,5 @@ abstract class WorldEvent
      *
      * @return a fresh [World]
      */
-    open val world: World
+    open val world: World,
 ) : Event()
