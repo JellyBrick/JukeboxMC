@@ -183,26 +183,24 @@ class CraftingManager {
     val highestNetworkId: Int
         get() {
             val optional: Optional<CraftingData> = craftingData.stream().max(
-                Comparator.comparing<CraftingData, Int>(
-                    Function<CraftingData, Int> { obj: CraftingData -> obj.getNetworkId() },
-                ),
+                Comparator.comparing { obj: CraftingData -> obj.networkId },
             )
-            return optional.map(Function<CraftingData, Int> { obj: CraftingData -> obj.getNetworkId() }).orElse(-1)
+            return optional.map { obj: CraftingData -> obj.networkId }.orElse(-1)
         }
 
-    fun getResultItem(recipeNetworkId: Int): List<Item>? {
+    fun getResultItem(recipeNetworkId: Int): List<Item> {
         val optional: Optional<CraftingData> = craftingData.stream()
-            .filter(Predicate<CraftingData> { craftingData: CraftingData -> craftingData.getNetworkId() == recipeNetworkId })
+            .filter { craftingData: CraftingData -> craftingData.networkId == recipeNetworkId }
             .findFirst()
-        if (optional.isPresent()) {
+        if (optional.isPresent) {
             val craftingData: CraftingData = optional.get()
             val items: MutableList<Item> = LinkedList()
-            for (output in craftingData.getOutputs()) {
+            for (output in craftingData.outputs) {
                 items.add(Item(output, false))
             }
             return items
         }
-        return null
+        return emptyList()
     }
 
     fun getSmeltingRecipe(input: Item): SmeltingRecipe? {
