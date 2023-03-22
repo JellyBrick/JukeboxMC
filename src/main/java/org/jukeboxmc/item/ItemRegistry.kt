@@ -1,8 +1,8 @@
 package org.jukeboxmc.item
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.jukeboxmc.Bootstrap
-import org.jukeboxmc.config.ConfigSection
 import org.jukeboxmc.item.behavior.ItemAcaciaSign
 import org.jukeboxmc.item.behavior.ItemAir
 import org.jukeboxmc.item.behavior.ItemAnvil
@@ -3346,17 +3346,14 @@ object ItemRegistry {
     }
 
     fun initItemProperties() {
-        val gson = Gson()
         Bootstrap::class.java.classLoader.getResourceAsStream("item_properties.json")!!.use { inputStream ->
             val inputStreamReader = InputStreamReader(inputStream)
             val itemEntries =
-                gson.fromJson<Map<String, ConfigSection>>(inputStreamReader, MutableMap::class.java)
+                jacksonObjectMapper().readValue<Map<String, Map<String, Any>>>(inputStreamReader)
             itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
                 ITEM_PROPERTIES[
-                    Identifier.fromString(
-                        identifier,
-                    ),
-                ] = ItemProperties((map["max_stack_size"] as Double).toInt())
+                    Identifier.fromString(identifier),
+                ] = ItemProperties(map["max_stack_size"] as Int)
             }
         }
     }
@@ -3389,8 +3386,8 @@ object ItemRegistry {
         return ITEMS.getValue(itemType)
     }
 
-    fun getItemProperties(identifier: Identifier): ItemProperties {
-        return ITEM_PROPERTIES.getValue(identifier)
+    fun getItemProperties(identifier: Identifier): ItemProperties? {
+        return ITEM_PROPERTIES[identifier]
     }
 
     class ItemRegistryData {

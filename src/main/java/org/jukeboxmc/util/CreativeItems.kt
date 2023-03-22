@@ -1,6 +1,7 @@
 package org.jukeboxmc.util
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtUtils
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
@@ -18,22 +19,21 @@ object CreativeItems {
     private val CREATIVE_ITEMS: MutableList<ItemData> = LinkedList()
     private val IDENTIFIER_BY_NETWORK_ID: MutableMap<Int, Identifier> = LinkedHashMap()
     fun init() {
-        val gson = Gson()
         Bootstrap::class.java.classLoader.getResourceAsStream("creative_items.json")!!.use { inputStream ->
             val inputStreamReader = InputStreamReader(inputStream)
             val itemEntries =
-                gson.fromJson<Map<String, List<Map<String, Any>>>>(inputStreamReader, MutableMap::class.java)
+                jacksonObjectMapper().readValue<Map<String, List<Map<String, Any>>>>(inputStreamReader)
             var netIdCounter = 0
             itemEntries.getValue("items").forEach { itemEntry ->
                 val item: ItemData.Builder
                 val identifier: Identifier = Identifier.fromString((itemEntry["id"] as String?)!!)
                 item = if (itemEntry.containsKey("blockRuntimeId")) {
-                    toItemData(identifier, (itemEntry["blockRuntimeId"] as Double).toInt())
+                    toItemData(identifier, itemEntry["blockRuntimeId"] as Int)
                 } else {
                     toItemData(identifier, 0)
                 }
                 if (itemEntry.containsKey("damage")) {
-                    item.damage((itemEntry["damage"] as Double).toInt().toShort().toInt())
+                    item.damage((itemEntry["damage"] as Int).toShort().toInt())
                 }
                 val nbtTag = itemEntry["nbt_b64"] as String?
                 if (nbtTag != null) {

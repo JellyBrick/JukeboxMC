@@ -11,7 +11,6 @@ import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemTagDescriptor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import org.jukeboxmc.Server
 import org.jukeboxmc.config.Config
-import org.jukeboxmc.config.ConfigSection
 import org.jukeboxmc.config.ConfigType
 import org.jukeboxmc.crafting.recipes.Recipe
 import org.jukeboxmc.crafting.recipes.SmeltingRecipe
@@ -38,29 +37,31 @@ class CraftingManager {
                 ?: throw AssertionError("Unable to find recipes.json")
             ).use { recipesStream ->
             val config = Config(recipesStream, ConfigType.JSON)
-            config.map.getTyped<List<ConfigSection>>("recipes").forEach { recipe ->
-                val craftingDataType: CraftingDataType = CraftingDataType.valueOf(recipe.getString("type"))
-                val recipeId = recipe.getString("recipeId")
-                val width = (recipe["width"] as Double).toInt()
-                val height = (recipe["height"] as Double).toInt()
-                val inputId = (recipe["inputId"] as Double).toInt()
-                val inputDamage = (recipe["inputDamage"] as Double).toInt()
-                val inputItems: MutableList<ItemDescriptorWithCount> = ArrayList()
+            config.map.getTyped<List<Map<String, *>>>("recipes").forEach { recipe ->
+                val craftingDataType: CraftingDataType = CraftingDataType.valueOf(recipe["type"] as String)
+                val recipeId = recipe["recipeId"] as String?
+                val width = recipe["width"] as Int
+                val height = recipe["height"] as Int
+                val inputId = recipe["inputId"] as Int
+                val inputDamage = recipe["inputDamage"] as Int
+                val inputItems = mutableListOf<ItemDescriptorWithCount>()
                 if (recipe.containsKey("inputs")) {
-                    recipe.getTyped<List<ConfigSection>>("inputs").forEach { input ->
+                    (recipe["inputs"] as List<*>).forEach {
+                        val input = it as Map<*, *>
                         if (input.containsKey("descriptor")) {
-                            input.getTyped<List<ConfigSection>>("descriptor").forEach { map ->
+                            (input["descriptor"] as List<*>).forEach { anyMap ->
+                                val map = anyMap as Map<*, *>
                                 val type = map["descriptorType"] as String?
                                 if (type.equals("DEFAULT", ignoreCase = true)) {
-                                    val id = (map["id"] as Double).toInt()
-                                    val damage = (map["damage"] as Double).toInt()
-                                    val count = (map["count"] as Double).toInt()
-                                    val canPlace = map.getTyped<List<Any>>("canPlace")
-                                    val canBreak = map.getTyped<List<Any>>("canBreak")
-                                    val blockingTicks = (map["blockingTicks"] as Double).toInt()
-                                    val blockRuntimeId = (map["blockRuntimeId"] as Double).toInt()
+                                    val id = map["id"] as Int
+                                    val damage = map["damage"] as Int
+                                    val count = map["count"] as Int
+                                    val canPlace = map["canPlace"] as List<String>
+                                    val canBreak = map["canBreak"] as List<String>
+                                    val blockingTicks = map["blockingTicks"] as Int
+                                    val blockRuntimeId = map["blockRuntimeId"] as Int
                                     val usingNetId = map["usingNetId"] as Boolean
-                                    val netId = (map["netId"] as Double).toInt()
+                                    val netId = map["netId"] as Int
                                     inputItems.add(
                                         ItemDescriptorWithCount.fromItem(
                                             ItemData.builder()
@@ -70,6 +71,8 @@ class CraftingManager {
                                                 .blockingTicks(blockingTicks.toLong())
                                                 .blockRuntimeId(blockRuntimeId)
                                                 .usingNetId(usingNetId)
+                                                .canBreak(canBreak.toTypedArray())
+                                                .canPlace(canPlace.toTypedArray())
                                                 .netId(netId)
                                                 .build(),
                                         ),
@@ -85,18 +88,19 @@ class CraftingManager {
                     }
                 }
                 val outputItems: MutableList<ItemData> = ArrayList()
-                val outputs = recipe.getTyped<List<ConfigSection>>("outputs")
                 if (recipe.containsKey("outputs")) {
-                    outputs.forEach { output ->
-                        val id = (output["id"] as Double).toInt()
-                        val damage = (output["damage"] as Double).toInt()
-                        val count = (output["count"] as Double).toInt()
-                        val canPlace = output.getTyped<List<Any>>("canPlace")
-                        val canBreak = output.getTyped<List<Any>>("canBreak")
-                        val blockingTicks = output.getInt("blockingTicks")
-                        val blockRuntimeId = output.getInt("blockRuntimeId")
-                        val usingNetId = output.getBoolean("usingNetId")
-                        val netId = output.getInt("netId")
+                    val outputs = recipe["outputs"] as List<*>
+                    outputs.forEach {
+                        val output = it as Map<*, *>
+                        val id = output["id"] as Int
+                        val damage = output["damage"] as Int
+                        val count = output["count"] as Int
+                        val canPlace = output["canPlace"] as List<String>
+                        val canBreak = output["canBreak"] as List<String>
+                        val blockingTicks = output["blockingTicks"] as Int
+                        val blockRuntimeId = output["blockRuntimeId"] as Int
+                        val usingNetId = output["usingNetId"] as Boolean
+                        val netId = output["netId"] as Int
                         outputItems.add(
                             ItemData.builder()
                                 .id(id)
@@ -105,6 +109,8 @@ class CraftingManager {
                                 .blockingTicks(blockingTicks.toLong())
                                 .blockRuntimeId(blockRuntimeId)
                                 .usingNetId(usingNetId)
+                                .canPlace(canPlace.toTypedArray())
+                                .canBreak(canBreak.toTypedArray())
                                 .netId(netId)
                                 .build(),
                         )
@@ -123,8 +129,8 @@ class CraftingManager {
                 }
                 val uuid = if (recipe["uuid"] != null) UUID.fromString(recipe["uuid"] as String?) else null
                 val craftingTag = recipe["craftingTag"] as String?
-                val priority = (recipe["priority"] as Double).toInt()
-                val networkId = (recipe["networkId"] as Double).toInt()
+                val priority = recipe["priority"] as Int
+                val networkId = recipe["networkId"] as Int
                 craftingData.add(
                     CraftingData(
                         craftingDataType,
@@ -142,21 +148,23 @@ class CraftingManager {
                     ),
                 )
             }
-            val containerMixes = config.map["containerMixes"] as List<Map<String, Any>>?
-            for (recipe in containerMixes!!) {
-                val inputId = (recipe["inputId"] as Double).toInt()
-                val reagentId = (recipe["reagentId"] as Double).toInt()
-                val outputId = (recipe["outputId"] as Double).toInt()
+            val containerMixes = config.map["containerMixes"] as List<*>
+            containerMixes.forEach {
+                val recipe = it as Map<*, *>
+                val inputId = recipe["inputId"] as Int
+                val reagentId = recipe["reagentId"] as Int
+                val outputId = recipe["outputId"] as Int
                 containerMixData.add(ContainerMixData(inputId, reagentId, outputId))
             }
-            val potionMixes = config.map["potionMixes"] as List<Map<String, Any>>?
-            for (recipe in potionMixes!!) {
-                val inputId = (recipe["inputId"] as Double).toInt()
-                val inputMeta = (recipe["inputMeta"] as Double).toInt()
-                val reagentId = (recipe["reagentId"] as Double).toInt()
-                val reagentMeta = (recipe["reagentMeta"] as Double).toInt()
-                val outputId = (recipe["outputId"] as Double).toInt()
-                val outputMeta = (recipe["outputMeta"] as Double).toInt()
+            val potionMixes = config.map["potionMixes"] as List<*>
+            potionMixes.forEach {
+                val recipe = it as Map<*, *>
+                val inputId = recipe["inputId"] as Int
+                val inputMeta = recipe["inputMeta"] as Int
+                val reagentId = recipe["reagentId"] as Int
+                val reagentMeta = recipe["reagentMeta"] as Int
+                val outputId = recipe["outputId"] as Int
+                val outputMeta = recipe["outputMeta"] as Int
                 potionMixData.add(PotionMixData(inputId, inputMeta, reagentId, reagentMeta, outputId, outputMeta))
             }
         }

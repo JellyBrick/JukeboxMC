@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.LockSupport
 import java.util.function.Consumer
+import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
 /**
@@ -169,6 +170,11 @@ class Server(logger: Logger) {
         pluginManager.enableAllPlugins(PluginLoadOrder.POSTWORLD)
         network = Network(this, InetSocketAddress(serverAddress, port))
         this.logger.info("JukeboxMC started in " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime) + " seconds!")
+        Runtime.getRuntime().addShutdownHook(
+            thread(start = false) {
+                shutdown()
+            },
+        )
         finishedState.set(true)
         startTick()
         shutdown()
@@ -435,9 +441,9 @@ class Server(logger: Logger) {
     }
 
     @Synchronized
-    fun createGenerator(generatorName: String, world: World, dimension: Dimension): Generator? {
+    fun createGenerator(generatorName: String?, world: World, dimension: Dimension): Generator? {
         val generators = generators.getValue(dimension)
-        val generator = generators[generatorName.lowercase(Locale.getDefault())]
+        val generator = generators[generatorName?.lowercase(Locale.getDefault())]
         return generator?.getConstructor(World::class.java)?.newInstance(world)
     }
 
@@ -477,7 +483,7 @@ class Server(logger: Logger) {
     fun addToTabList(uuid: UUID?, entityId: Long, name: String?, deviceInfo: DeviceInfo, xuid: String?, skin: Skin) {
         val playerListPacket = PlayerListPacket()
         playerListPacket.action = PlayerListPacket.Action.ADD
-        val entry: PlayerListPacket.Entry = PlayerListPacket.Entry(uuid)
+        val entry = PlayerListPacket.Entry(uuid)
         entry.entityId = entityId
         entry.name = name
         entry.xuid = xuid

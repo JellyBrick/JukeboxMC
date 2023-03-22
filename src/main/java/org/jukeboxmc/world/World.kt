@@ -64,15 +64,24 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     private val STORAGE_VERSION = 9
     private val gameRules: GameRules = GameRules()
     private val blockUpdateList: BlockUpdateList = BlockUpdateList()
-    val worldFolder: File = File("./worlds/$name")
-    private val worldFile: File
-    private val levelDB: LevelDB
-    private val chunkManagers: MutableMap<Dimension, ChunkManager>
+    val worldFolder = File("./worlds/$name")
+    private val worldFile = run {
+        if (!worldFolder.exists()) {
+            worldFolder.mkdirs()
+        }
+        File(worldFolder, "level.dat")
+    }
+    private val levelDB = LevelDB(this)
+    private val chunkManagers: MutableMap<Dimension, ChunkManager> = Object2ObjectOpenHashMap<Dimension, ChunkManager>().also {
+        Dimension.values().forEach { dimension ->
+            it[dimension] = ChunkManager(this, dimension)
+        }
+    }
     private val generators: MutableMap<Dimension, ThreadLocal<Generator>> =
         Object2ObjectOpenHashMap<Dimension, ThreadLocal<Generator>>().also {
             val sendWarning = AtomicBoolean(false)
             Dimension.values().forEach { dimension ->
-                val generatorName = generatorMap.getValue(dimension)
+                val generatorName = generatorMap[dimension]
                 it[dimension] = ThreadLocal.withInitial {
                     val generator = server.createGenerator(generatorName, this, dimension)
                     if (generator != null && generator.javaClass == NormalGenerator::class.java && !sendWarning.get()) {
@@ -103,21 +112,10 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     var seed: Long = 0
     private var worldTime = 0
     private var nextTimeSendTick: Long = 0
-    private val entities: MutableMap<Long, Entity>
-    private val blockUpdateNormals: Queue<BlockUpdateNormal>
+    private val entities: MutableMap<Long, Entity> = ConcurrentHashMap<Long, Entity>()
+    private val blockUpdateNormals: Queue<BlockUpdateNormal> = ConcurrentLinkedQueue()
 
     init {
-        worldFile = File(worldFolder, "level.dat")
-        if (!worldFolder.exists()) {
-            worldFolder.mkdirs()
-        }
-        levelDB = LevelDB(this)
-        chunkManagers = Object2ObjectOpenHashMap()
-        for (dimension in Dimension.values()) {
-            chunkManagers[dimension] = ChunkManager(this, dimension)
-        }
-        entities = ConcurrentHashMap<Long, Entity>()
-        blockUpdateNormals = ConcurrentLinkedQueue()
         loadLevelFile()
     }
 

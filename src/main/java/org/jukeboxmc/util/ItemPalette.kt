@@ -1,9 +1,9 @@
 package org.jukeboxmc.util
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
 import org.jukeboxmc.Bootstrap
-import org.jukeboxmc.config.ConfigSection
 import java.io.InputStreamReader
 import java.util.stream.Collectors
 
@@ -12,17 +12,16 @@ import java.util.stream.Collectors
  * @version 1.0
  */
 object ItemPalette {
-    private val GSON = Gson()
     val IDENTIFIER_TO_RUNTIME: MutableMap<Identifier, Short> = LinkedHashMap()
     val RUNTIME_TO_IDENTIFIER: MutableMap<Short, Identifier> = LinkedHashMap()
     val MAPPING_IDENTIEFER: MutableMap<Identifier, Identifier> = LinkedHashMap()
     fun init() {
         Bootstrap::class.java.classLoader.getResourceAsStream("runtime_item_states.json")!!.use { inputStream ->
             val parseItem =
-                GSON.fromJson<List<ConfigSection>>(InputStreamReader(inputStream), MutableList::class.java)
+                jacksonObjectMapper().readValue<List<Map<String, *>>>(InputStreamReader(inputStream))
             for (entry in parseItem) {
-                val name: Identifier = Identifier.fromString(entry.getString("name"))
-                val runtimeId = entry.getShort("id")
+                val name: Identifier = Identifier.fromString(entry["name"] as String)
+                val runtimeId = (entry["id"] as Int).toShort()
                 IDENTIFIER_TO_RUNTIME[name] = runtimeId
                 RUNTIME_TO_IDENTIFIER[runtimeId] = name
             }

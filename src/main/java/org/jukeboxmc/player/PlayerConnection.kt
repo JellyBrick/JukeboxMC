@@ -52,7 +52,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     private val spawned: AtomicBoolean
     var loginData: LoginData? = null
         set(loginData) {
-            if (this.loginData == null && loginData !== null) {
+            if (field == null && loginData !== null) {
                 field = loginData
                 player.name = loginData.displayName
                 player.nameTag = loginData.displayName

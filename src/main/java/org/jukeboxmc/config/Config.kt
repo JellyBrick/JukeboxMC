@@ -1,12 +1,10 @@
 package org.jukeboxmc.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
@@ -16,7 +14,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.lang.reflect.Type
 import java.util.Properties
 
 /**
@@ -27,20 +24,7 @@ class Config {
     private val configType: ConfigType
     var configSection: ConfigSection
         private set
-    private val gson: Gson = GsonBuilder()
-        .setPrettyPrinting()
-        .registerTypeAdapter(
-            Double::class.java,
-            JsonSerializer { src: Double, typeOfSrc: Type?, context: JsonSerializationContext? ->
-                if (src.toInt() == src.toInt()) {
-                    return@JsonSerializer JsonPrimitive(src.toInt())
-                } else if (src.toLong() == src.toLong()) {
-                    return@JsonSerializer JsonPrimitive(src.toLong())
-                }
-                JsonPrimitive(src)
-            } as JsonSerializer<Double>,
-        )
-        .create()
+    private val jackson = jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
     private val yaml: Yaml = Yaml(
         DumperOptions().apply {
             defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
@@ -84,12 +68,12 @@ class Config {
             ).use { reader ->
                 when (configType) {
                     ConfigType.JSON -> {
-                        val gson = GsonBuilder()
                         configSection = ConfigSection(
-                            this.gson.fromJson(
-                                reader,
-                                object : TypeToken<LinkedHashMap<String?, Any?>?>() {}.type,
-                            ),
+                            try {
+                                this.jackson.readValue<LinkedHashMap<String, Any>>(reader)
+                            } catch (ignored: MismatchedInputException) {
+                                emptyMap()
+                            },
                         )
                     }
 
@@ -232,11 +216,7 @@ class Config {
         }
         OutputStreamWriter(FileOutputStream(file)).use { writer ->
             when (configType) {
-                ConfigType.JSON -> gson.toJson(
-                    configSection,
-                    writer,
-                )
-
+                ConfigType.JSON -> jackson.writeValueAsString(configSection)
                 ConfigType.YAML -> yaml.dump(configSection, writer)
                 ConfigType.PROPERTIES -> properties.store(writer, "")
             }

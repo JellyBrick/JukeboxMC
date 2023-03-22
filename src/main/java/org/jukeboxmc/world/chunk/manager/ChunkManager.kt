@@ -230,12 +230,15 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         var future: CompletableFuture<Chunk>
             private set
 
+        @JvmField
         @Volatile
         var generationRunning = 0
 
+        @JvmField
         @Volatile
         var populationRunning = 0
 
+        @JvmField
         @Volatile
         var finishRunning = 0
         private var chunk: Chunk? = null
@@ -245,7 +248,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             z = Utils.fromHashZ(key)
             if (load) {
                 future = world.readChunk(Chunk(world, dimension, x, z))
-                    .thenApply { chunk: Chunk ->
+                    .thenApply { chunk: Chunk? ->
                         Objects.requireNonNullElseGet(chunk) {
                             Chunk(
                                 world,
@@ -255,7 +258,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                             )
                         }
                     }
-                future.whenComplete { chunk: Chunk, throwable: Throwable? ->
+                future.whenComplete { chunk: Chunk?, throwable: Throwable? ->
                     if (throwable != null) {
                         log.error("Unable to load chunk $x:$z", throwable)
                         synchronized(this@ChunkManager) { chunks.remove(key) }
@@ -267,7 +270,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             } else {
                 future = CompletableFuture.completedFuture(Chunk(world, dimension, x, z))
             }
-            future.whenComplete { chunk: Chunk, throwable: Throwable? -> this.chunk = chunk }
+            future.whenComplete { chunk: Chunk?, throwable: Throwable? -> this.chunk = chunk }
         }
 
         fun getChunk(): Chunk? {

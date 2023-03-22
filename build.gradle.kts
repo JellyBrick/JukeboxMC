@@ -33,6 +33,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("com.github.Kaooot.Protocol:bedrock-v575:215edc744c")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.googlecode.json-simple:json-simple:1.1.1")

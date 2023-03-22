@@ -637,7 +637,6 @@ open class Player(
             adventureSettings.update()
         }
     override var skin: Skin = Skin()
-        get() = super.skin
         set(skin) {
             field = skin
             val playerChangeSkinEvent = PlayerChangeSkinEvent(this, skin)

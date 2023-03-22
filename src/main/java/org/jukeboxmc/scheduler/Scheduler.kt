@@ -37,11 +37,11 @@ class Scheduler(server: Server) {
     }
 
     fun onTick(currentTick: Long) {
-        var task: TaskHandler
+        var task: TaskHandler?
         while (pendingTasks.poll().also { task = it } != null) {
-            val tick = max(currentTick, task.nextRunTick)
-            assignedTasks.computeIfAbsent(tick) { integer: Long? -> LinkedList() }
-                .add(task)
+            val tick = max(currentTick, task!!.nextRunTick)
+            assignedTasks.computeIfAbsent(tick) { _ -> LinkedList() }
+                .add(task!!)
         }
         val queued = assignedTasks.remove(currentTick) ?: return
         for (taskHandler in queued) {
