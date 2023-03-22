@@ -29,7 +29,7 @@ class BlockEntityBanner(block: Block, blockEntityType: BlockEntityType) : BlockE
 
     override fun toCompound(): NbtMapBuilder {
         val compound = super.toCompound()
-        compound!!.putInt("Base", baseColor)
+        compound.putInt("Base", baseColor)
         compound.putInt("Type", type)
         if (patterns.size > 0) {
             val pattern: MutableList<NbtMap> = ArrayList()

@@ -35,7 +35,7 @@ object BlockEntityRegistry {
     private fun register(
         blockEntityType: BlockEntityType,
         blockEntityClass: Class<out BlockEntity>,
-        blockEntityId: String
+        blockEntityId: String,
     ) {
         BLOCKENTITYCLASS_FROM_BLOCKENTITYTYPE[blockEntityType] = blockEntityClass
         BLOCKENTITYID[blockEntityType] = blockEntityId

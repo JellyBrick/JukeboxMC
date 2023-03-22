@@ -21,7 +21,7 @@ class BlockEntitySkull(block: Block, blockEntityType: BlockEntityType) : BlockEn
 
     override fun toCompound(): NbtMapBuilder {
         val nbtMapBuilder = super.toCompound()
-        nbtMapBuilder!!.putByte("SkullType", skullMeta)
+        nbtMapBuilder.putByte("SkullType", skullMeta)
         nbtMapBuilder.putByte("Rot", rotation)
         return nbtMapBuilder
     }

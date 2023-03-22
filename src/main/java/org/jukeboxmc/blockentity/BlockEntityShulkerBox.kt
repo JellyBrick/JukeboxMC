@@ -5,6 +5,7 @@ import com.nukkitx.nbt.NbtMapBuilder
 import com.nukkitx.nbt.NbtType
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
+import org.jukeboxmc.inventory.InventoryHolder
 import org.jukeboxmc.inventory.ShulkerBoxInventory
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.math.Vector
@@ -14,8 +15,10 @@ import org.jukeboxmc.player.Player
  * @author LucGamesYT
  * @version 1.0
  */
-class BlockEntityShulkerBox(block: Block, blockEntityType: BlockEntityType) : BlockEntity(block, blockEntityType),
-    InventoryHolder {
+class BlockEntityShulkerBox(
+    block: Block,
+    blockEntityType: BlockEntityType,
+) : BlockEntity(block, blockEntityType), InventoryHolder {
     var facing: Byte = 1
         private set
     var isUndyed = false
@@ -31,7 +34,7 @@ class BlockEntityShulkerBox(block: Block, blockEntityType: BlockEntityType) : Bl
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item?
+        itemInHand: Item?,
     ): Boolean {
         player.openInventory(shulkerBoxInventory, blockPosition)
         return true
@@ -44,9 +47,9 @@ class BlockEntityShulkerBox(block: Block, blockEntityType: BlockEntityType) : Bl
             val item = toItem(nbtMap)
             val slot = nbtMap.getByte("Slot", 127.toByte())
             if (slot.toInt() == 127) {
-                shulkerBoxInventory.addItem(item!!, false)
+                shulkerBoxInventory.addItem(item, false)
             } else {
-                shulkerBoxInventory.setItem(slot.toInt(), item!!, false)
+                shulkerBoxInventory.setItem(slot.toInt(), item, false)
             }
         }
         facing = compound.getByte("facing")
@@ -60,10 +63,10 @@ class BlockEntityShulkerBox(block: Block, blockEntityType: BlockEntityType) : Bl
             val itemCompound = NbtMap.builder()
             val item = shulkerBoxInventory.getItem(slot)
             itemCompound.putByte("Slot", slot.toByte())
-            fromItem(item!!, itemCompound)
+            fromItem(item, itemCompound)
             itemsCompoundList.add(itemCompound.build())
         }
-        builder!!.putList("Items", NbtType.COMPOUND, itemsCompoundList)
+        builder.putList("Items", NbtType.COMPOUND, itemsCompoundList)
         builder.putByte("facing", facing)
         builder.putBoolean("isUndyed", isUndyed)
         return builder

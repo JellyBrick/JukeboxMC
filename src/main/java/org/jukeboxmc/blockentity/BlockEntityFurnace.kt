@@ -6,6 +6,7 @@ import com.nukkitx.nbt.NbtType
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.inventory.FurnaceInventory
+import org.jukeboxmc.inventory.InventoryHolder
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
@@ -14,8 +15,10 @@ import org.jukeboxmc.player.Player
  * @author LucGamesYT
  * @version 1.0
  */
-class BlockEntityFurnace(block: Block, blockEntityType: BlockEntityType) : SmeltingComponent(block, blockEntityType),
-    InventoryHolder {
+class BlockEntityFurnace(
+    block: Block,
+    blockEntityType: BlockEntityType,
+) : SmeltingComponent(block, blockEntityType), InventoryHolder {
     val furnaceInventory: FurnaceInventory
 
     init {
@@ -28,7 +31,7 @@ class BlockEntityFurnace(block: Block, blockEntityType: BlockEntityType) : Smelt
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item?
+        itemInHand: Item?,
     ): Boolean {
         player.openInventory(furnaceInventory, blockPosition)
         return super.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
@@ -41,9 +44,9 @@ class BlockEntityFurnace(block: Block, blockEntityType: BlockEntityType) : Smelt
             val item = toItem(nbtMap)
             val slot = nbtMap.getByte("Slot", 127.toByte())
             if (slot.toInt() == 127) {
-                furnaceInventory.addItem(item!!, false)
+                furnaceInventory.addItem(item, false)
             } else {
-                furnaceInventory.setItem(slot.toInt(), item!!, false)
+                furnaceInventory.setItem(slot.toInt(), item, false)
             }
         }
     }
@@ -55,10 +58,10 @@ class BlockEntityFurnace(block: Block, blockEntityType: BlockEntityType) : Smelt
             val itemCompound = NbtMap.builder()
             val item = furnaceInventory.getItem(slot)
             itemCompound.putByte("Slot", slot.toByte())
-            fromItem(item!!, itemCompound)
+            fromItem(item, itemCompound)
             itemsCompoundList.add(itemCompound.build())
         }
-        builder!!.putList("Items", NbtType.COMPOUND, itemsCompoundList)
+        builder.putList("Items", NbtType.COMPOUND, itemsCompoundList)
         return builder
     }
 }

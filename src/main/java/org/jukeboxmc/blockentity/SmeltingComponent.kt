@@ -1,22 +1,28 @@
 package org.jukeboxmc.blockentity
 
-import java.time.Duration
+import com.nukkitx.protocol.bedrock.packet.ContainerSetDataPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
+import org.jukeboxmc.crafting.recipes.SmeltingRecipe
 import org.jukeboxmc.inventory.FurnaceInventory
 import org.jukeboxmc.inventory.Inventory
+import org.jukeboxmc.inventory.WindowId
 import org.jukeboxmc.item.Burnable
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
+import java.time.Duration
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-open class SmeltingComponent(block: Block, blockEntityType: BlockEntityType) : BlockEntity(block, blockEntityType) {
+open class SmeltingComponent(
+    block: Block,
+    blockEntityType: BlockEntityType,
+) : BlockEntity(block, blockEntityType) {
     private var cookTime: Short = 0
     private var burnTime: Short = 0
     private var burnDuration: Short = 0
@@ -31,7 +37,7 @@ open class SmeltingComponent(block: Block, blockEntityType: BlockEntityType) : B
         blockPosition: Vector,
         clickedPosition: Vector?,
         blockFace: BlockFace?,
-        itemInHand: Item?
+        itemInHand: Item?,
     ): Boolean {
         sendDataProperties(player)
         return true
@@ -44,14 +50,14 @@ open class SmeltingComponent(block: Block, blockEntityType: BlockEntityType) : B
         if (input != null && input.type != ItemType.AIR && fuelItem != null && fuelItem.type != ItemType.AIR && outputItem.amount < 64) {
             checkForRecipe(input)
         }
-        if (output != null && input != null && output.getType() != ItemType.AIR && input.type != ItemType.AIR && outputItem.amount < 64 && burnTime > 0) {
+        if (output != null && output!!.type != ItemType.AIR && input.type != ItemType.AIR && outputItem.amount < 64 && burnTime > 0) {
             cookTime++
             if (cookTime >= (if (inventory is FurnaceInventory) 200 else 100)) {
                 val itemStack = inventory!!.getItem(2)
-                if (itemStack.type != output.getType()) {
+                if (itemStack.type != output!!.type) {
                     inventory!!.setItem(2, output!!.setAmount(1))
                 } else {
-                    itemStack!!.amount = itemStack.amount + 1
+                    itemStack.setAmount(itemStack.amount + 1)
                     inventory!!.setItem(2, itemStack)
                 }
                 inventory!!.setItem(0, input.decreaseAmount())
@@ -83,25 +89,21 @@ open class SmeltingComponent(block: Block, blockEntityType: BlockEntityType) : B
 
     private fun checkForRecipe(input: Item) {
         output = null
-        val recipe: SmeltingRecipe = Server.Companion.getInstance().getCraftingManager().getSmeltingRecipe(input)
-        if (recipe != null) {
-            output = recipe.getOutput().clone()
-        }
+        val recipe: SmeltingRecipe = Server.instance.getCraftingManager().getSmeltingRecipe(input)
+        output = recipe.output.clone()
     }
 
     private fun checkForRefuel(): Boolean {
         if (canProduceOutput()) {
             val fuelItem = inventory!!.getItem(1)
             if (fuelItem is Burnable) {
-                val duration: Duration = fuelItem.burnTime
-                if (duration != null) {
-                    if (fuelItem.amount > 0) {
-                        inventory!!.setItem(1, fuelItem.decreaseAmount())
-                        val diff = if (inventory is FurnaceInventory) 1 else 2
-                        burnDuration = Math.ceil(duration.toMillis().toDouble() / diff.toDouble()).toShort()
-                        burnTime = burnDuration
-                        return true
-                    }
+                val duration: Duration = fuelItem.burnTime!!
+                if (fuelItem.amount > 0) {
+                    inventory!!.setItem(1, fuelItem.decreaseAmount())
+                    val diff = if (inventory is FurnaceInventory) 1 else 2
+                    burnDuration = Math.ceil(duration.toMillis().toDouble() / diff.toDouble()).toInt().toShort()
+                    burnTime = burnDuration
+                    return true
                 }
             }
         }
@@ -117,59 +119,61 @@ open class SmeltingComponent(block: Block, blockEntityType: BlockEntityType) : B
             return false
         }
         val itemStack = inventory!!.getItem(2)
-        return if (itemStack.type == output.getType()) {
+        return if (itemStack.type == output!!.type) {
             itemStack.amount <= itemStack.maxStackSize
-        } else true
+        } else {
+            true
+        }
     }
 
     private fun sendTickProgress(player: Player) {
         val containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_TICK_COUNT)
-        containerData.setValue(cookTime.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_TICK_COUNT
+        containerData.value = cookTime.toInt()
         player.playerConnection.sendPacket(containerData)
     }
 
     private fun sendFuelInfo(player: Player) {
         var containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_LIT_TIME)
-        containerData.setValue(burnTime.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_LIT_TIME
+        containerData.value = burnTime.toInt()
         player.playerConnection.sendPacket(containerData)
         containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_LIT_DURATION)
-        containerData.setValue(burnDuration.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_LIT_DURATION
+        containerData.value = burnDuration.toInt()
         player.playerConnection.sendPacket(containerData)
     }
 
     private fun sendDataProperties(player: Player) {
         var containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_TICK_COUNT)
-        containerData.setValue(cookTime.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_TICK_COUNT
+        containerData.value = cookTime.toInt()
         player.playerConnection.sendPacket(containerData)
         containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_LIT_TIME)
-        containerData.setValue(burnTime.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_LIT_TIME
+        containerData.value = burnTime.toInt()
         player.playerConnection.sendPacket(containerData)
         containerData = ContainerSetDataPacket()
-        containerData.setWindowId(WindowId.OPEN_CONTAINER.getId().toByte())
-        containerData.setProperty(CONTAINER_PROPERTY_LIT_DURATION)
-        containerData.setValue(burnDuration.toInt())
+        containerData.windowId = WindowId.OPEN_CONTAINER.id.toByte()
+        containerData.property = CONTAINER_PROPERTY_LIT_DURATION
+        containerData.value = burnDuration.toInt()
         player.playerConnection.sendPacket(containerData)
     }
 
     private fun broadcastCookTime() {
-        for (viewer in inventory!!.viewer) {
-            sendTickProgress(viewer!!)
+        for (viewer in inventory!!.getViewer()) {
+            sendTickProgress(viewer)
         }
     }
 
     private fun broadcastFuelInfo() {
-        for (viewer in inventory!!.viewer) {
-            sendFuelInfo(viewer!!)
+        for (viewer in inventory!!.getViewer()) {
+            sendFuelInfo(viewer)
         }
     }
 
