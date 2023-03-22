@@ -26,7 +26,7 @@ class Location @JvmOverloads constructor(
         this.dimension = dimension
     }
 
-    constructor(world: World?, x: Float, y: Float, z: Float, dimension: Dimension?) : this(
+    constructor(world: World?, x: Float, y: Float, z: Float, dimension: Dimension) : this(
         world,
         x,
         y,
@@ -36,7 +36,7 @@ class Location @JvmOverloads constructor(
         dimension
     )
 
-    constructor(world: World?, x: Int, y: Int, z: Int, dimension: Dimension?) : this(
+    constructor(world: World?, x: Int, y: Int, z: Int, dimension: Dimension) : this(
         world,
         x.toFloat(),
         y.toFloat(),
@@ -56,7 +56,7 @@ class Location @JvmOverloads constructor(
         Dimension.OVERWORLD
     )
 
-    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension?) : this(
+    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension) : this(
         world,
         vector.x,
         vector.y,
@@ -76,7 +76,7 @@ class Location @JvmOverloads constructor(
         Dimension.OVERWORLD
     )
 
-    constructor(world: World?, vector: Vector, dimension: Dimension?) : this(
+    constructor(world: World?, vector: Vector, dimension: Dimension) : this(
         world,
         vector.x,
         vector.y,
@@ -142,7 +142,7 @@ class Location @JvmOverloads constructor(
 
     override fun toString(): String {
         return "Location{" +
-                "world=" + world.name +
+                "world=" + world?.name +
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +

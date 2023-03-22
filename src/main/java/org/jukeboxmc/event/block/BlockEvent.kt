@@ -18,5 +18,5 @@ abstract class BlockEvent
      *
      * @return a fresh [Block]
      */
-    val block: Block
+    open val block: Block
 ) : Event()

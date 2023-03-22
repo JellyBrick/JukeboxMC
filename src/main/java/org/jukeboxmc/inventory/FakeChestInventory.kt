@@ -28,7 +28,7 @@ open class FakeChestInventory : FakeInventory {
     override val type: InventoryType
         get() = InventoryType.FAKE_CHEST
 
-    override fun onOpenChest(player: Player): List<Vector?> {
+    override fun onOpenChest(player: Player): List<Vector> {
         val position = Vector(player.blockX, player.blockY + 2, player.blockZ)
         placeFakeChest(player, position)
         return listOf(position)

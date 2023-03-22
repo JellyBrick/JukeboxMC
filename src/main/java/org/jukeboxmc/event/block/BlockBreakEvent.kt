@@ -34,7 +34,7 @@ class BlockBreakEvent
      *
      * @param drops which should be updated
      */
-    var drops: List<Item>
+    var drops: List<Item>,
 ) : BlockEvent(block), Cancellable {
 
     /**
@@ -42,5 +42,4 @@ class BlockBreakEvent
      *
      * @return a fresh [<]
      */
-
 }

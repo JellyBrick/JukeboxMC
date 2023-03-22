@@ -34,5 +34,5 @@ class BlockFromToEvent
          *
          * @return a fresh [Block]
          */
-        get() = super.getBlock()
+        get() = super.block
 }

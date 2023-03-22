@@ -43,7 +43,7 @@ class FakeDoubleChestInventory : FakeChestInventory {
         )
     }
 
-    override fun onOpenChest(player: Player): List<Vector?> {
+    override fun onOpenChest(player: Player): List<Vector> {
         val positionA = Vector(player.blockX, player.blockY + 2, player.blockZ)
         val positionB = positionA.add(1f, 0f, 0f)
         placeFakeChest(player, positionA)

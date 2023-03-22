@@ -61,7 +61,7 @@ object JukeboxMC {
         return server.isWorldLoaded(name)
     }
 
-    fun getPlayer(name: String?): Player? {
+    fun getPlayer(name: String): Player? {
         return server.getPlayer(name)
     }
 
@@ -88,7 +88,7 @@ object JukeboxMC {
         server.dispatchCommand(consoleSender, command)
     }
 
-    fun broadcastMessage(message: String?) {
+    fun broadcastMessage(message: String) {
         server.broadcastMessage(message)
     }
 }

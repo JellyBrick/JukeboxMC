@@ -124,7 +124,16 @@ class Player(
     var isBreakingBlock = false
     var teleportLocation: Location? = null
         private set
-    private var spawnLocation: Location
+    var spawnLocation: Location = location.world!!.spawnLocation
+        set(value) {
+            field = spawnLocation
+            val setSpawnPositionPacket = SetSpawnPositionPacket()
+            setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
+            setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
+            setSpawnPositionPacket.spawnPosition = spawnLocation.toVector3i()
+            setSpawnPositionPacket.blockPosition = location.world!!.spawnLocation.toVector3i()
+            playerConnection.sendPacket(setSpawnPositionPacket)
+        }
     var respawnLocation: Location? = null
     private val permissions: MutableMap<UUID?, MutableSet<String>> = HashMap()
     var entityFishingHook: EntityFishingHook? = null
@@ -149,7 +158,6 @@ class Player(
         grindstoneInventory = GrindstoneInventory(this)
         offHandInventory = OffHandInventory(this)
         lasBreakPosition = Vector(0, 0, 0)
-        spawnLocation = location.world!!.spawnLocation
     }
 
     override fun update(currentTick: Long) {
@@ -614,20 +622,6 @@ class Player(
             updateAttributesPacket.tick = server.currentTick
             playerConnection.sendPacket(updateAttributesPacket)
         }
-    }
-
-    fun getSpawnLocation(): Location {
-        return spawnLocation
-    }
-
-    fun setSpawnLocation(spawnLocation: Location) {
-        this.spawnLocation = spawnLocation
-        val setSpawnPositionPacket = SetSpawnPositionPacket()
-        setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
-        setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
-        setSpawnPositionPacket.spawnPosition = spawnLocation.toVector3i()
-        setSpawnPositionPacket.blockPosition = location.world!!.spawnLocation.toVector3i()
-        playerConnection.sendPacket(setSpawnPositionPacket)
     }
 
     var flySpeed: Float

@@ -1,13 +1,11 @@
 package org.jukeboxmc.logger
 
-import lombok.extern.log4j.Log4j2
 import org.apache.logging.log4j.LogManager
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@Log4j2
 class Logger {
     private val log = LogManager.getLogger()
     fun info(message: String?) {

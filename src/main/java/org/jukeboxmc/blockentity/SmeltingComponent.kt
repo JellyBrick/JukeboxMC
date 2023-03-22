@@ -88,9 +88,7 @@ open class SmeltingComponent(
     }
 
     private fun checkForRecipe(input: Item) {
-        output = null
-        val recipe: SmeltingRecipe = Server.instance.getCraftingManager().getSmeltingRecipe(input)
-        output = recipe.output.clone()
+        output = Server.instance.getCraftingManager().getSmeltingRecipe(input)?.output?.clone()
     }
 
     private fun checkForRefuel(): Boolean {

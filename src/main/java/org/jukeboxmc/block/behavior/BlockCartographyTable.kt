@@ -23,7 +23,7 @@ class BlockCartographyTable : Block {
         blockFace: BlockFace?,
         itemInHand: Item,
     ): Boolean {
-        player.openInventory(player.cartographyTableInventory, blockPosition)
+        player.openInventory(player.getCartographyTableInventory(), blockPosition)
         return true
     }
 }

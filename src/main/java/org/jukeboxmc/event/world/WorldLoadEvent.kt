@@ -18,7 +18,8 @@ class WorldLoadEvent
      *
      * @param world which should be modified
      */
-    override var world: World, val loadType: LoadType
+    override var world: World,
+    val loadType: LoadType,
 ) : WorldEvent(world), Cancellable {
 
     enum class LoadType {

@@ -75,7 +75,7 @@ class BlockUndyedShulkerBox : Block {
 
     override fun toItem(): ItemUndyedShulkerBox {
         val itemShulkerBox: ItemUndyedShulkerBox =
-            Item.create(ItemType.UNDYED_SHULKER_BOX)
+            Item.create<ItemUndyedShulkerBox>(ItemType.UNDYED_SHULKER_BOX)
         val blockEntity = blockEntity as BlockEntityShulkerBox? ?: return itemShulkerBox
         val shulkerBoxInventory = blockEntity.shulkerBoxInventory
         val builder = NbtMap.builder()

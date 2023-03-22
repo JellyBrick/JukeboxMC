@@ -11,40 +11,40 @@ enum class AttributeType(
     private val defaultValue: Float,
 ) {
     // Base Entity
-    ABSORPTION("minecraft:absorption", 0, Float.MAX_VALUE, 0), KNOCKBACK_RESISTENCE(
+    ABSORPTION("minecraft:absorption", 0f, Float.MAX_VALUE, 0f), KNOCKBACK_RESISTENCE(
         "minecraft:knockback_resistance",
-        0,
-        1,
-        0,
+        0f,
+        1f,
+        0f,
     ),
-    HEALTH("minecraft:health", 0, 20, 20), MOVEMENT(
+    HEALTH("minecraft:health", 0f, 20f, 20f), MOVEMENT(
         "minecraft:movement",
         0.1f,
-        1,
+        1f,
         0.1f,
     ),
-    FOLLOW_RANGE("minecraft:follow_range", 0, 2048, 16), ATTACK_DAMAGE(
+    FOLLOW_RANGE("minecraft:follow_range", 0f, 2048f, 16f), ATTACK_DAMAGE(
         "minecraft:attack_damage",
-        1,
+        1f,
         Float.MAX_VALUE,
-        1,
+        1f,
     ),
-    LUCK("minecraft:luck", -1024, 1024, 0), FALL_DAMAGE("minecraft:fall_damage", 0, Float.MAX_VALUE, 1), // Horse
-    HORSE_JUMP_STRENGTH("minecraft:horse.jump_strength", 0, 20, 0.7f), // Zombie
-    ZOMBIE_SPAWN_REINFORCEMENTS("minecraft:zombie.spawn_reinforcements", 0, 1, 0), // Player
-    PLAYER_HUNGER("minecraft:player.hunger", 0, 20, 20), PLAYER_SATURATION(
+    LUCK("minecraft:luck", -1024f, 1024f, 0f), FALL_DAMAGE("minecraft:fall_damage", 0f, Float.MAX_VALUE, 1f), // Horse
+    HORSE_JUMP_STRENGTH("minecraft:horse.jump_strength", 0f, 20f, 0.7f), // Zombie
+    ZOMBIE_SPAWN_REINFORCEMENTS("minecraft:zombie.spawn_reinforcements", 0f, 1f, 0f), // Player
+    PLAYER_HUNGER("minecraft:player.hunger", 0f, 20f, 20f), PLAYER_SATURATION(
         "minecraft:player.saturation",
-        0,
-        20,
-        20,
+        0f,
+        20f,
+        20f,
     ),
-    PLAYER_EXHAUSTION("minecraft:player.exhaustion", 0, 5, 0.41f), PLAYER_LEVEL(
+    PLAYER_EXHAUSTION("minecraft:player.exhaustion", 0f, 5f, 0.41f), PLAYER_LEVEL(
         "minecraft:player.level",
-        0,
-        24791,
-        0,
+        0f,
+        24791f,
+        0f,
     ),
-    PLAYER_EXPERIENCE("minecraft:player.experience", 0, 1, 0),
+    PLAYER_EXPERIENCE("minecraft:player.experience", 0f, 1f, 0f),
     ;
 
     val attribute: Attribute

@@ -46,7 +46,7 @@ class GameModeCommand : Command(
                     commandSender.sendMessage("§cGamemode $gamemodeName not found.")
                     return
                 }
-                commandSender.setGameMode(gameMode)
+                commandSender.gameMode = gameMode
                 commandSender.sendMessage("Your game mode has been updated to " + gameMode.identifier)
             } else if (args.size == 2) {
                 val gamemodeName = args[0]
@@ -69,7 +69,7 @@ class GameModeCommand : Command(
                     commandSender.sendMessage("§cGamemode $gamemodeName not found.")
                     return
                 }
-                target.setGameMode(gameMode)
+                target.gameMode = gameMode
                 target.sendMessage("Your game mode has been updated to " + gameMode.identifier)
                 if (target === commandSender) {
                     commandSender.sendMessage("Set own game mode to " + gameMode.identifier)

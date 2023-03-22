@@ -23,7 +23,7 @@ class EntitySnowball : EntityProjectile() {
         }
     }
 
-    override fun onCollidedWithEntity(entity: Entity?) {
+    override fun onCollidedWithEntity(entity: Entity) {
         close()
     }
 
