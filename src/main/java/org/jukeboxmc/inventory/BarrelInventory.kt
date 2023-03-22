@@ -12,7 +12,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class BarrelInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 27) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: BlockEntityBarrel
         get() = holder as BlockEntityBarrel
     override val type: InventoryType
         get() = InventoryType.BARREL
@@ -22,11 +22,11 @@ class BarrelInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1,
     override fun onOpen(player: Player) {
         super.onOpen(player)
         if (viewer.size == 1) {
-            val block: Block = inventoryHolder.getBlock()
+            val block: Block = inventoryHolder.block
             if (block is BlockBarrel) {
                 if (!block.isOpen) {
                     block.isOpen = true
-                    player.world.playSound(block.getLocation(), SoundEvent.BARREL_OPEN)
+                    player.world?.playSound(block.getLocation(), SoundEvent.BARREL_OPEN)
                 }
             }
         }
@@ -34,11 +34,11 @@ class BarrelInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1,
 
     override fun onClose(player: Player) {
         if (viewer.size == 0) {
-            val block: Block = inventoryHolder.getBlock()
+            val block: Block = inventoryHolder.block
             if (block is BlockBarrel) {
                 if (block.isOpen) {
                     block.isOpen = false
-                    player.world.playSound(block.getLocation(), SoundEvent.BARREL_CLOSE)
+                    player.world?.playSound(block.getLocation(), SoundEvent.BARREL_CLOSE)
                 }
             }
         }

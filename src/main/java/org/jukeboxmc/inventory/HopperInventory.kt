@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityHopper
  * @version 1.0
  */
 class HopperInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 5) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityHopper
     override val type: InventoryType
         get() = InventoryType.HOPPER

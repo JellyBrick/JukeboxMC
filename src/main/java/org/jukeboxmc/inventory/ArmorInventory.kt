@@ -1,5 +1,8 @@
 package org.jukeboxmc.inventory
 
+import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket
+import com.nukkitx.protocol.bedrock.packet.MobArmorEquipmentPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
@@ -12,7 +15,7 @@ import org.jukeboxmc.world.Sound
  * @version 1.0
  */
 class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: Player
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.ARMOR
@@ -20,8 +23,8 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
     override fun sendContents(player: Player) {
         if (inventoryHolder == player) {
             val inventoryContentPacket = InventoryContentPacket()
-            inventoryContentPacket.setContainerId(WindowId.ARMOR_DEPRECATED.id)
-            inventoryContentPacket.setContents(this.itemDataContents)
+            inventoryContentPacket.containerId = WindowId.ARMOR_DEPRECATED.id
+            inventoryContentPacket.contents = this.itemDataContents
             player.playerConnection.sendPacket(inventoryContentPacket)
         } else {
             sendMobArmor(player)
@@ -31,9 +34,9 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
     override fun sendContents(slot: Int, player: Player) {
         if (inventoryHolder == player) {
             val inventorySlotPacket = InventorySlotPacket()
-            inventorySlotPacket.setContainerId(WindowId.ARMOR_DEPRECATED.id)
-            inventorySlotPacket.setSlot(slot)
-            inventorySlotPacket.setItem(content[slot].toItemData())
+            inventorySlotPacket.containerId = WindowId.ARMOR_DEPRECATED.id
+            inventorySlotPacket.slot = slot
+            inventorySlotPacket.item = contents[slot].toItemData()
             player.playerConnection.sendPacket(inventorySlotPacket)
         } else {
             sendMobArmor(player)
@@ -43,23 +46,24 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
     override fun setItem(slot: Int, item: Item, sendContent: Boolean) {
         super.setItem(slot, item, sendContent)
         if (holder is Player) {
+            val player = holder as Player
             val armorInventory: ArmorInventory = player.getArmorInventory()
             val mobArmorEquipmentPacket = MobArmorEquipmentPacket()
-            mobArmorEquipmentPacket.setRuntimeEntityId(holderId)
-            mobArmorEquipmentPacket.setHelmet(armorInventory.helmet.toItemData())
-            mobArmorEquipmentPacket.setChestplate(armorInventory.chestplate.toItemData())
-            mobArmorEquipmentPacket.setLeggings(armorInventory.leggings.toItemData())
-            mobArmorEquipmentPacket.setBoots(armorInventory.boots.toItemData())
-            for (onlinePlayer in Server.Companion.getInstance().getOnlinePlayers()) {
+            mobArmorEquipmentPacket.runtimeEntityId = holderId
+            mobArmorEquipmentPacket.helmet = armorInventory.helmet.toItemData()
+            mobArmorEquipmentPacket.chestplate = armorInventory.chestplate.toItemData()
+            mobArmorEquipmentPacket.leggings = armorInventory.leggings.toItemData()
+            mobArmorEquipmentPacket.boots = armorInventory.boots.toItemData()
+            for (onlinePlayer in Server.instance.onlinePlayers) {
                 if (onlinePlayer == player) {
                     val inventorySlotPacket = InventorySlotPacket()
-                    inventorySlotPacket.setContainerId(WindowId.ARMOR_DEPRECATED.id)
-                    inventorySlotPacket.setSlot(slot)
-                    inventorySlotPacket.setItem(content[slot].toItemData())
-                    onlinePlayer.getPlayerConnection().sendPacket(inventorySlotPacket)
-                    onlinePlayer.getPlayerConnection().sendPacket(mobArmorEquipmentPacket)
+                    inventorySlotPacket.containerId = WindowId.ARMOR_DEPRECATED.id
+                    inventorySlotPacket.slot = slot
+                    inventorySlotPacket.item = contents[slot].toItemData()
+                    onlinePlayer.playerConnection.sendPacket(inventorySlotPacket)
+                    onlinePlayer.playerConnection.sendPacket(mobArmorEquipmentPacket)
                 } else {
-                    onlinePlayer.getPlayerConnection().sendPacket(mobArmorEquipmentPacket)
+                    onlinePlayer.playerConnection.sendPacket(mobArmorEquipmentPacket)
                 }
             }
         }
@@ -67,38 +71,38 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
 
     private fun sendMobArmor(player: Player) {
         val mobArmorEquipmentPacket = MobArmorEquipmentPacket()
-        mobArmorEquipmentPacket.setRuntimeEntityId(inventoryHolder.getEntityId())
-        mobArmorEquipmentPacket.setHelmet(content[0].toItemData())
-        mobArmorEquipmentPacket.setChestplate(content[1].toItemData())
-        mobArmorEquipmentPacket.setLeggings(content[2].toItemData())
-        mobArmorEquipmentPacket.setBoots(content[3].toItemData())
+        mobArmorEquipmentPacket.runtimeEntityId = inventoryHolder.entityId
+        mobArmorEquipmentPacket.helmet = contents[0].toItemData()
+        mobArmorEquipmentPacket.chestplate = contents[1].toItemData()
+        mobArmorEquipmentPacket.leggings = contents[2].toItemData()
+        mobArmorEquipmentPacket.boots = contents[3].toItemData()
         player.playerConnection.sendPacket(mobArmorEquipmentPacket)
     }
 
     var helmet: Item
-        get() = content[0]
+        get() = contents[0].clone()
         set(item) {
             this.setItem(0, item)
         }
     var chestplate: Item
-        get() = content[1]
+        get() = contents[1].clone()
         set(item) {
             this.setItem(1, item)
         }
     var leggings: Item
-        get() = content[2]
+        get() = contents[2].clone()
         set(item) {
             this.setItem(2, item)
         }
     var boots: Item
-        get() = content[3]
+        get() = contents[3].clone()
         set(item) {
             this.setItem(3, item)
         }
     val totalArmorValue: Float
         get() {
             var armorValue = 0f
-            for (itemStack in content) {
+            for (itemStack in contents) {
                 if (itemStack is ItemArmor) {
                     armorValue += itemStack.armorPoints.toFloat()
                 }
@@ -113,37 +117,38 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
             damage = 1.0f
         }
         if (holder is Player) {
+            val player = holder as Player
             val helmet = helmet
-            if (helmet != null && helmet.type != ItemType.AIR) {
+            if (helmet.type != ItemType.AIR) {
                 if (helmet.calculateDurability(damage.toInt())) {
-                    this.helmet = Item.Companion.create<Item>(ItemType.AIR)
+                    this.helmet = Item.create<Item>(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.helmet = helmet
                 }
             }
             val chestplate = chestplate
-            if (chestplate != null && chestplate.type != ItemType.AIR) {
+            if (chestplate.type != ItemType.AIR) {
                 if (chestplate.calculateDurability(damage.toInt())) {
-                    this.chestplate = Item.Companion.create<Item>(ItemType.AIR)
+                    this.chestplate = Item.create<Item>(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.chestplate = chestplate
                 }
             }
             val leggings = leggings
-            if (leggings != null && leggings.type != ItemType.AIR) {
+            if (leggings.type != ItemType.AIR) {
                 if (leggings.calculateDurability(damage.toInt())) {
-                    this.leggings = Item.Companion.create<Item>(ItemType.AIR)
+                    this.leggings = Item.create<Item>(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.leggings = leggings
                 }
             }
             val boots = boots
-            if (boots != null && boots.type != ItemType.AIR) {
+            if (boots.type != ItemType.AIR) {
                 if (boots.calculateDurability(damage.toInt())) {
-                    this.boots = Item.Companion.create<Item>(ItemType.AIR)
+                    this.boots = Item.create<Item>(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.boots = boots

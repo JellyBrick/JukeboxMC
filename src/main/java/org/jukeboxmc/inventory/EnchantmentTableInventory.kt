@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityEnchantmentTable
  * @version 1.0
  */
 class EnchantmentTableInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 2) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityEnchantmentTable
     override val type: InventoryType
         get() = InventoryType.ENCHANTMENT_TABLE

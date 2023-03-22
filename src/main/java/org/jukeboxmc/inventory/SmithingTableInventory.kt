@@ -8,7 +8,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class SmithingTableInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 3) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.SMITHING_TABLE

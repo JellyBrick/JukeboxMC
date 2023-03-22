@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityDispenser
  * @version 1.0
  */
 class DispenserInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 9) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityDispenser
     override val type: InventoryType
         get() = InventoryType.DISPENSER

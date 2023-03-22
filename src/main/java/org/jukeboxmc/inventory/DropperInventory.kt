@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityDropper
  * @version 1.0
  */
 class DropperInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 9) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityDropper
     override val type: InventoryType
         get() = InventoryType.DROPPER

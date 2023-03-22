@@ -8,7 +8,7 @@ import org.jukeboxmc.player.Player
  * @version 1.0
  */
 class BigCraftingGridInventory(holder: InventoryHolder?) : CraftingGridInventory(holder, -1, 9) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as Player
     override val type: InventoryType
         get() = InventoryType.BIG_CRAFTING_GRID
@@ -17,7 +17,7 @@ class BigCraftingGridInventory(holder: InventoryHolder?) : CraftingGridInventory
         super.setItem(slot - offset, item, sendContent)
     }
 
-    override fun getItem(slot: Int): Item? {
+    override fun getItem(slot: Int): Item {
         return super.getItem(slot - offset)
     }
 

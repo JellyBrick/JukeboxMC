@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityFurnace
  * @version 1.0
  */
 class FurnaceInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 3) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityFurnace
     override val type: InventoryType
         get() = InventoryType.FURNACE

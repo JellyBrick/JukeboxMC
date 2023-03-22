@@ -8,7 +8,7 @@ import org.jukeboxmc.blockentity.BlockEntityBlastFurnace
  * @version 1.0
  */
 class BlastFurnaceInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1, 3) {
-    override val inventoryHolder: InventoryHolder?
+    override val inventoryHolder: InventoryHolder
         get() = holder as BlockEntityBlastFurnace
     override val type: InventoryType
         get() = InventoryType.BLAST_FURNACE
