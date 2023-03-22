@@ -1,6 +1,8 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.TextPacket
 import org.jukeboxmc.Server
+import org.jukeboxmc.event.player.PlayerChatEvent
 import org.jukeboxmc.player.Player
 
 /**
@@ -9,16 +11,16 @@ import org.jukeboxmc.player.Player
  */
 class TextHandler : PacketHandler<TextPacket> {
     override fun handle(packet: TextPacket, server: Server, player: Player) {
-        if (packet.getType() == TextPacket.Type.CHAT) {
+        if (packet.type == TextPacket.Type.CHAT) {
             val playerChatEvent = PlayerChatEvent(player, "<" + player.name + "> ", packet.getMessage())
             server.pluginManager.callEvent(playerChatEvent)
-            if (playerChatEvent.isCancelled()) {
+            if (playerChatEvent.isCancelled) {
                 return
             }
             for (onlinePlayer in player.server.onlinePlayers) {
-                onlinePlayer!!.sendMessage(playerChatEvent.getFormat() + playerChatEvent.getMessage())
+                onlinePlayer.sendMessage(playerChatEvent.format + playerChatEvent.message)
             }
-            server.logger.info(playerChatEvent.getFormat() + playerChatEvent.getMessage())
+            server.logger.info(playerChatEvent.format + playerChatEvent.message)
         }
     }
 }

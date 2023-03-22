@@ -1,9 +1,17 @@
 package org.jukeboxmc.network.handler
 
 import com.nukkitx.protocol.bedrock.data.LevelEventType
+import com.nukkitx.protocol.bedrock.data.PlayerActionType
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
+import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.event.player.PlayerInteractEvent
+import org.jukeboxmc.event.player.PlayerJumpEvent
+import org.jukeboxmc.event.player.PlayerToggleGlideEvent
+import org.jukeboxmc.event.player.PlayerToggleSneakEvent
+import org.jukeboxmc.event.player.PlayerToggleSprintEvent
+import org.jukeboxmc.event.player.PlayerToggleSwimEvent
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
@@ -15,18 +23,18 @@ import org.jukeboxmc.world.Particle
  */
 class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
     override fun handle(packet: PlayerActionPacket, server: Server, player: Player) {
-        val lasBreakPosition: Vector = Vector(packet.getBlockPosition())
-        when (packet.getAction()) {
+        val lasBreakPosition: Vector = Vector(packet.blockPosition)
+        when (packet.action) {
             PlayerActionType.DIMENSION_CHANGE_SUCCESS -> {
                 val playerActionPacket = PlayerActionPacket()
-                playerActionPacket.setAction(PlayerActionType.DIMENSION_CHANGE_SUCCESS)
+                playerActionPacket.action = PlayerActionType.DIMENSION_CHANGE_SUCCESS
                 player.playerConnection.sendPacket(playerActionPacket)
             }
 
             PlayerActionType.START_SNEAK -> {
                 val playerToggleSneakEvent = PlayerToggleSneakEvent(player, true)
                 server.pluginManager.callEvent(playerToggleSneakEvent)
-                if (playerToggleSneakEvent.isCancelled()) {
+                if (playerToggleSneakEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSneaking = true
@@ -35,8 +43,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_SNEAK -> {
                 val playerToggleSneakEvent = PlayerToggleSneakEvent(player, false)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleSneakEvent)
-                if (playerToggleSneakEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleSneakEvent)
+                if (playerToggleSneakEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSneaking = false
@@ -45,8 +53,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.START_SPRINT -> {
                 val playerToggleSprintEvent = PlayerToggleSprintEvent(player, true)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleSprintEvent)
-                if (playerToggleSprintEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleSprintEvent)
+                if (playerToggleSprintEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSprinting = true
@@ -55,8 +63,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_SPRINT -> {
                 val playerToggleSprintEvent = PlayerToggleSprintEvent(player, false)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleSprintEvent)
-                if (playerToggleSprintEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleSprintEvent)
+                if (playerToggleSprintEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSprinting = false
@@ -65,8 +73,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.START_SWIMMING -> {
                 val playerToggleSwimEvent = PlayerToggleSwimEvent(player, true)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleSwimEvent)
-                if (playerToggleSwimEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleSwimEvent)
+                if (playerToggleSwimEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSwimming = true
@@ -75,8 +83,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_SWIMMING -> {
                 val playerToggleSwimEvent = PlayerToggleSwimEvent(player, false)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleSwimEvent)
-                if (playerToggleSwimEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleSwimEvent)
+                if (playerToggleSwimEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isSwimming = false
@@ -85,8 +93,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.START_GLIDE -> {
                 val playerToggleGlideEvent = PlayerToggleGlideEvent(player, true)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleGlideEvent)
-                if (playerToggleGlideEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleGlideEvent)
+                if (playerToggleGlideEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isGliding = true
@@ -95,8 +103,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_GLIDE -> {
                 val playerToggleGlideEvent = PlayerToggleGlideEvent(player, false)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerToggleGlideEvent)
-                if (playerToggleGlideEvent.isCancelled()) {
+                Server.instance.pluginManager.callEvent(playerToggleGlideEvent)
+                if (playerToggleGlideEvent.isCancelled) {
                     player.updateMetadata()
                 } else {
                     player.isGliding = false
@@ -105,17 +113,17 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.START_BREAK -> {
                 val currentBreakTime = System.currentTimeMillis()
-                val startBreakBlock = player.world.getBlock(lasBreakPosition)
+                val startBreakBlock = player.world!!.getBlock(lasBreakPosition)
                 val playerInteractEvent = PlayerInteractEvent(
                     player,
                     if (startBreakBlock.type == BlockType.AIR) PlayerInteractEvent.Action.LEFT_CLICK_AIR else PlayerInteractEvent.Action.LEFT_CLICK_BLOCK,
                     player.inventory.itemInHand,
-                    startBreakBlock
+                    startBreakBlock,
                 )
-                Server.Companion.getInstance().getPluginManager().callEvent(playerInteractEvent)
+                Server.instance.pluginManager.callEvent(playerInteractEvent)
                 if (player.gameMode == GameMode.SURVIVAL) {
                     if (player.lasBreakPosition == lasBreakPosition && currentBreakTime - player.lastBreakTime < 10 || lasBreakPosition.distanceSquared(
-                            player.location
+                            player.getLocation(),
                         ) > 100
                     ) {
                         return
@@ -123,10 +131,14 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                     val breakTime = Math.ceil(startBreakBlock.getBreakTime(player.inventory.itemInHand, player) * 20)
                     if (breakTime > 0) {
                         val levelEventPacket = LevelEventPacket()
-                        levelEventPacket.setType(LevelEventType.BLOCK_START_BREAK)
-                        levelEventPacket.setPosition(packet.getBlockPosition().toFloat())
-                        levelEventPacket.setData((65535 / breakTime).toInt())
-                        player.world.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)
+                        levelEventPacket.type = LevelEventType.BLOCK_START_BREAK
+                        levelEventPacket.position = packet.blockPosition.toFloat()
+                        levelEventPacket.data = (65535 / breakTime).toInt()
+                        player.world?.sendChunkPacket(
+                            lasBreakPosition.chunkX,
+                            lasBreakPosition.chunkZ,
+                            levelEventPacket,
+                        )
                     }
                 }
                 player.isBreakingBlock = true
@@ -136,29 +148,32 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_BREAK, PlayerActionType.ABORT_BREAK -> {
                 val levelEventPacket = LevelEventPacket()
-                levelEventPacket.setType(LevelEventType.BLOCK_STOP_BREAK)
-                levelEventPacket.setPosition(packet.getBlockPosition().toFloat())
-                levelEventPacket.setData(0)
-                player.world.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)
+                levelEventPacket.type = LevelEventType.BLOCK_STOP_BREAK
+                levelEventPacket.position = packet.blockPosition.toFloat()
+                levelEventPacket.data = 0
+                player.world?.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)
                 player.isBreakingBlock = false
             }
 
             PlayerActionType.CONTINUE_BREAK -> {
                 if (player.isBreakingBlock) {
-                    val continueBlockBreak = player.world.getBlock(lasBreakPosition)
-                    player.world.spawnParticle(
+                    val continueBlockBreak = player.world!!.getBlock(lasBreakPosition)
+                    player.world!!.spawnParticle(
                         null,
                         Particle.CRACK_BLOCK,
                         lasBreakPosition,
-                        continueBlockBreak.runtimeId or (packet.getFace() shl 24)
+                        continueBlockBreak.runtimeId or (packet.face shl 24),
                     )
                 }
             }
 
-            PlayerActionType.RESPAWN -> player.respawn()
+            PlayerActionType.RESPAWN -> {
+                player.respawn()
+            }
+
             PlayerActionType.JUMP -> {
                 val playerJumpEvent = PlayerJumpEvent(player)
-                Server.Companion.getInstance().getPluginManager().callEvent(playerJumpEvent)
+                Server.instance.pluginManager.callEvent(playerJumpEvent)
                 if (player.isSprinting) {
                     if (player.gameMode == GameMode.SURVIVAL) {
                         player.exhaust(0.8f)
@@ -169,6 +184,8 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                     }
                 }
             }
+
+            else -> {}
         }
     }
 }

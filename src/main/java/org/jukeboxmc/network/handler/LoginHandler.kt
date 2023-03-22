@@ -1,7 +1,12 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.LoginPacket
+import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
+import com.nukkitx.protocol.bedrock.packet.ResourcePacksInfoPacket
 import org.jukeboxmc.Server
+import org.jukeboxmc.event.player.PlayerLoginEvent
 import org.jukeboxmc.player.Player
+import org.jukeboxmc.player.data.LoginData
 
 /**
  * @author LucGamesYT
@@ -9,41 +14,41 @@ import org.jukeboxmc.player.Player
  */
 class LoginHandler : PacketHandler<LoginPacket> {
     override fun handle(packet: LoginPacket, server: Server, player: Player) {
-        player.playerConnection.setLoginData(LoginData(packet))
-        if (!player.playerConnection.loginData.isXboxAuthenticated && server.isOnlineMode) {
+        player.playerConnection.loginData = LoginData(packet)
+        if (!player.playerConnection.loginData!!.isXboxAuthenticated && server.isOnlineMode) {
             player.kick("You must be logged in with your xbox account.")
             return
         }
         val playerLoginEvent = PlayerLoginEvent(player)
-        if (Server.Companion.getInstance().getOnlinePlayers().size >= Server.Companion.getInstance()
-                .getMaxPlayers() && !playerLoginEvent.canJoinFullServer()
+        if (Server.instance.onlinePlayers.size >= Server.instance
+                .maxPlayers && !playerLoginEvent.canJoinFullServer()
         ) {
-            playerLoginEvent.setCancelled(true)
-            playerLoginEvent.setKickReason("Server is full.")
+            playerLoginEvent.isCancelled = true
+            playerLoginEvent.kickReason = ("Server is full.")
         }
-        if (playerLoginEvent.isCancelled()) {
-            player.kick(playerLoginEvent.getKickReason())
+        if (playerLoginEvent.isCancelled) {
+            player.kick(playerLoginEvent.kickReason)
         }
-        Server.Companion.getInstance().getPluginManager().callEvent(playerLoginEvent)
+        Server.instance.pluginManager.callEvent(playerLoginEvent)
         player.playerConnection.sendPlayStatus(PlayStatusPacket.Status.LOGIN_SUCCESS)
         val resourcePacksInfoPacket = ResourcePacksInfoPacket()
-        for (resourcePack in server.resourcePackManager.retrieveResourcePacks()) {
-            resourcePacksInfoPacket.getBehaviorPackInfos().add(
+        for (resourcePack in server.getResourcePackManager().retrieveResourcePacks()) {
+            resourcePacksInfoPacket.behaviorPackInfos.add(
                 ResourcePacksInfoPacket.Entry(
-                    resourcePack.uuid.toString(),
+                    resourcePack.getUuid().toString(),
                     resourcePack.version,
                     resourcePack.size,
                     "",
                     "",
-                    resourcePack.uuid.toString(),
+                    resourcePack.getUuid().toString(),
                     false,
-                    false
-                )
+                    false,
+                ),
             )
         }
-        resourcePacksInfoPacket.setForcedToAccept(false)
-        resourcePacksInfoPacket.setForcingServerPacksEnabled(false)
-        resourcePacksInfoPacket.setScriptingEnabled(false)
+        resourcePacksInfoPacket.isForcedToAccept = false
+        resourcePacksInfoPacket.isForcingServerPacksEnabled = false
+        resourcePacksInfoPacket.isScriptingEnabled = false
         player.playerConnection.sendPacket(resourcePacksInfoPacket)
     }
 }

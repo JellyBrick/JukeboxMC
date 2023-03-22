@@ -70,7 +70,7 @@ class NpcDialogueForm {
                 .setString(EntityData.INTERACTIVE_TAG, dialogue)
                 .entityDataMap
         )
-        Server.Companion.getInstance().broadcastPacket(setEntityDataPacket)
+        Server.instance.broadcastPacket(setEntityDataPacket)
         val npcDialoguePacket = NpcDialoguePacket()
         npcDialoguePacket.uniqueEntityId = npc.getEntityId()
         npcDialoguePacket.action = NpcDialoguePacket.Action.OPEN

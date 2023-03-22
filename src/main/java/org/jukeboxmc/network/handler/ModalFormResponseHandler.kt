@@ -1,5 +1,6 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.packet.ModalFormResponsePacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 
@@ -9,6 +10,6 @@ import org.jukeboxmc.player.Player
  */
 class ModalFormResponseHandler : PacketHandler<ModalFormResponsePacket> {
     override fun handle(packet: ModalFormResponsePacket, server: Server, player: Player) {
-        player.parseGUIResponse(packet.getFormId(), packet.getFormData())
+        player.parseGUIResponse(packet.formId, packet.formData)
     }
 }

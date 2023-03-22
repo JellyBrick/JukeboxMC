@@ -18,7 +18,7 @@ class BlockPickRequestHandler : PacketHandler<BlockPickRequestPacket> {
         if (player.gameMode == GameMode.CREATIVE) {
             val item = pickedBlock.toItem()
             if (item.type == ItemType.AIR) {
-                Server.Companion.getInstance().getLogger().warn("User try to pick air")
+                Server.instance.getLogger().warn("User try to pick air")
                 return
             }
             if (!player.inventory.contains(item)) {

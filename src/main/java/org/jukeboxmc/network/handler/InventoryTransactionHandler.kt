@@ -1,6 +1,8 @@
 package org.jukeboxmc.network.handler
 
 import com.nukkitx.protocol.bedrock.data.SoundEvent
+import com.nukkitx.protocol.bedrock.data.inventory.TransactionType
+import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockSlab
@@ -23,17 +25,19 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
     private var spamCheckTime: Long = 0
     override fun handle(packet: InventoryTransactionPacket, server: Server, player: Player) {
         if (packet.getTransactionType() == TransactionType.ITEM_USE) {
-            val blockPosition: Vector = Vector(packet.getBlockPosition())
+            val blockPosition: Vector = Vector(packet.blockPosition)
             blockPosition.dimension = player.dimension
-            val clickPosition: Vector = Vector(packet.getClickPosition())
+            val clickPosition: Vector = Vector(packet.clickPosition)
             clickPosition.dimension = player.dimension
-            val blockFace: BlockFace = BlockFace.Companion.fromId(packet.getBlockFace())
+            val blockFace: BlockFace = BlockFace.fromId(packet.getBlockFace()) ?: run {
+                Server.instance.logger.debug("Unknown block face: " + packet.getBlockFace())
+                return
+            }
             val itemInHand = player.inventory.itemInHand
             when (packet.getActionType()) {
                 0 -> {
-                    assert(blockFace != null)
                     if (!canInteract()) {
-                        player.world.getBlock(player.world.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
+                        player.world!!.getBlock(player.world!!.getSidePosition(blockPosition, blockFace)).sendUpdate(player)
                         return
                     }
                     spamCheckTime = System.currentTimeMillis()
@@ -54,9 +58,9 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         player,
                         PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
                         itemInHand,
-                        directionVector
+                        directionVector,
                     )
-                    Server.Companion.getInstance().getPluginManager().callEvent(playerInteractEvent)
+                    Server.instance.pluginManager.callEvent(playerInteractEvent)
                     if (itemInHand.useInAir(player, directionVector)) {
                         if (!player.hasAction()) {
                             player.setAction(true)
@@ -81,9 +85,9 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
             for (action in packet.getActions()) {
                 if (action.getSource().getType() == InventorySource.Type.WORLD_INTERACTION) {
                     if (action.getSource().getFlag() == InventorySource.Flag.DROP_ITEM) {
-                        val targetItem: Item = Item.Companion.create<Item>(action.getToItem())
+                        val targetItem: Item = Item.create<Item>(action.getToItem())
                         val playerDropItemEvent = PlayerDropItemEvent(player, targetItem)
-                        Server.Companion.getInstance().getPluginManager().callEvent(playerDropItemEvent)
+                        Server.instance.pluginManager.callEvent(playerDropItemEvent)
                         if (playerDropItemEvent.isCancelled()) {
                             player.inventory.sendContents(player)
                             return
@@ -91,7 +95,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         val entityItem = player.world.dropItem(
                             playerDropItemEvent.getItem(),
                             player.location.add(0f, player.eyeHeight, 0f),
-                            player.location.direction.multiply(0.4f, 0.4f, 0.4f)
+                            player.location.direction.multiply(0.4f, 0.4f, 0.4f),
                         )
                         entityItem.playerHasThrown = player
                         entityItem.spawn()
@@ -149,7 +153,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
         blockPosition: Vector,
         placePosition: Vector,
         clickedPosition: Vector?,
-        blockFace: BlockFace?
+        blockFace: BlockFace?,
     ): Boolean {
         var placePosition = placePosition
         val world = player.world
@@ -166,16 +170,16 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
             player,
             if (clickedBlock.type == BlockType.AIR) PlayerInteractEvent.Action.RIGHT_CLICK_AIR else PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
             player.inventory.itemInHand,
-            clickedBlock!!
+            clickedBlock!!,
         )
-        Server.Companion.getInstance().getPluginManager().callEvent(playerInteractEvent)
+        Server.instance.pluginManager.callEvent(playerInteractEvent)
         var interact = false
         if (!player.isSneaking) {
             if (!playerInteractEvent.isCancelled) {
                 interact = clickedBlock!!.interact(player, blockPosition, clickedPosition, blockFace, itemInHand)
             }
         }
-        val itemInteract = itemInHand.interact(player, blockFace, clickedPosition, clickedBlock!!)
+        val itemInteract = itemInHand.interact(player, blockFace, clickedPosition, clickedBlock)
         if (!interact && itemInHand.useOnBlock(player, clickedBlock, location)) {
             return true
         }
@@ -198,7 +202,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                 return false
             }
             val blockPlaceEvent = BlockPlaceEvent(player, placedBlock, replacedBlock, clickedBlock)
-            Server.Companion.getInstance().getPluginManager().callEvent(blockPlaceEvent)
+            Server.instance.pluginManager.callEvent(blockPlaceEvent)
             if (blockPlaceEvent.isCancelled()) {
                 return false
             }
@@ -211,7 +215,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                         player.inventory.itemInHand = resultItem
                     } else {
                         player.inventory.itemInHand =
-                            Item.Companion.create<Item>(ItemType.AIR)
+                            Item.create<Item>(ItemType.AIR)
                     }
                     player.inventory.sendContents(player.inventory.itemInHandSlot, player)
                 }

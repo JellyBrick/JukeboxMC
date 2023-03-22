@@ -1,6 +1,9 @@
 package org.jukeboxmc.network.handler
 
+import com.nukkitx.protocol.bedrock.data.Ability
+import com.nukkitx.protocol.bedrock.packet.RequestAbilityPacket
 import org.jukeboxmc.Server
+import org.jukeboxmc.event.player.PlayerToggleFlyEvent
 import org.jukeboxmc.player.AdventureSettings
 import org.jukeboxmc.player.Player
 
@@ -10,20 +13,17 @@ import org.jukeboxmc.player.Player
  */
 class RequestAbilityHandler : PacketHandler<RequestAbilityPacket> {
     override fun handle(packet: RequestAbilityPacket, server: Server, player: Player) {
-        if (!player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] && packet.getAbility() == Ability.FLYING) {
+        if (!player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] && packet.ability == Ability.FLYING) {
             player.adventureSettings[AdventureSettings.Type.FLYING] = false
             player.adventureSettings.update()
             return
         }
-        if (player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] && packet.getAbility() == Ability.FLYING) {
-            val playerToggleFlyEvent = PlayerToggleFlyEvent(player, packet.isBoolValue())
-            playerToggleFlyEvent.setCancelled(!player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT])
+        if (player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] && packet.ability == Ability.FLYING) {
+            val playerToggleFlyEvent = PlayerToggleFlyEvent(player, packet.isBoolValue)
+            playerToggleFlyEvent.isCancelled = (!player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT])
             server.pluginManager.callEvent(playerToggleFlyEvent)
             val playerAdventureSettings: AdventureSettings = player.adventureSettings
-            playerAdventureSettings.set(
-                AdventureSettings.Type.FLYING,
-                if (playerToggleFlyEvent.isCancelled()) player.adventureSettings[AdventureSettings.Type.FLYING] else packet.isBoolValue()
-            )
+            playerAdventureSettings[AdventureSettings.Type.FLYING] = if (playerToggleFlyEvent.isCancelled) player.adventureSettings[AdventureSettings.Type.FLYING] else packet.isBoolValue()
             playerAdventureSettings.update()
         }
     }

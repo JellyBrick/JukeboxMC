@@ -20,7 +20,7 @@ class BlockFromToEvent
      *
      * @param blockTo which should be modified
      */
-    var blockTo: Block?
+    var blockTo: Block,
 ) : BlockEvent(block), Cancellable {
     /**
      * Retrieves the result bock which was affected with the event
@@ -28,7 +28,7 @@ class BlockFromToEvent
      * @return a fresh [Block]
      */
 
-    val blockFrom: Block?
+    val blockFrom: Block
         /**
          * Retrieves the original block
          *
