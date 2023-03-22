@@ -17,12 +17,12 @@ class ItemConcretePowder : Item {
     private val block: BlockConcretePowder
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockConcretePowder>(BlockType.CONCRETE_POWDER)
+        block = Block.create(BlockType.CONCRETE_POWDER)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockConcretePowder>(BlockType.CONCRETE_POWDER)
+        block = Block.create(BlockType.CONCRETE_POWDER)
         blockRuntimeId = block.runtimeId
     }
 

@@ -33,16 +33,16 @@ class MapLayerRiver
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies rivers using Von Neumann neighborhood
-                val centerVal = values!![j + 1 + (i + 1) * gridSizeX] and 1
+                val centerVal = values[j + 1 + (i + 1) * gridSizeX] and 1
                 val upperVal = values[j + 1 + i * gridSizeX] and 1
                 val lowerVal = values[j + 1 + (i + 2) * gridSizeX] and 1
                 val leftVal = values[j + (i + 1) * gridSizeX] and 1
                 val rightVal = values[j + 2 + (i + 1) * gridSizeX] and 1
-                var `val` = CLEAR_VALUE
+                var value = CLEAR_VALUE
                 if (centerVal != upperVal || centerVal != lowerVal || centerVal != leftVal || centerVal != rightVal) {
-                    `val` = RIVER_VALUE
+                    value = RIVER_VALUE
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues
@@ -53,17 +53,17 @@ class MapLayerRiver
         val mergeValues = mergeLayer!!.generateValues(x, z, sizeX, sizeZ)
         val finalValues = IntArray(sizeX * sizeZ)
         for (i in 0 until sizeX * sizeZ) {
-            var `val` = mergeValues!![i]
+            var value = mergeValues[i]
             if (OCEANS.contains(mergeValues[i])) {
-                `val` = mergeValues[i]
-            } else if (values!![i] == RIVER_VALUE) {
-                `val` = if (SPECIAL_RIVERS.containsKey(mergeValues[i])) {
+                value = mergeValues[i]
+            } else if (values[i] == RIVER_VALUE) {
+                value = if (SPECIAL_RIVERS.containsKey(mergeValues[i])) {
                     SPECIAL_RIVERS[mergeValues[i]]
                 } else {
                     Biome.RIVER.id
                 }
             }
-            finalValues[i] = `val`
+            finalValues[i] = value
         }
         return finalValues
     }

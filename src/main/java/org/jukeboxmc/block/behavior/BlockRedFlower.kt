@@ -24,7 +24,7 @@ class BlockRedFlower : Block {
     }
 
     fun setFlowerType(flowerType: FlowerType): BlockRedFlower {
-        return setState<BlockRedFlower>("flower_type", flowerType.name.lowercase(Locale.getDefault()))
+        return setState("flower_type", flowerType.name.lowercase(Locale.getDefault()))
     }
 
     val flowerType: FlowerType

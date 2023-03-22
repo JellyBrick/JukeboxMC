@@ -23,7 +23,7 @@ class MapLayerZoom
         val tmpValues = IntArray(zoomSizeX * zoomSizeZ)
         for (i in 0 until gridSizeZ - 1) {
             var n = i * 2 * zoomSizeX
-            var upperLeftVal = values!![i * gridSizeX]
+            var upperLeftVal = values[i * gridSizeX]
             var lowerLeftVal = values[(i + 1) * gridSizeX]
             for (j in 0 until gridSizeX - 1) {
                 setCoordsSeed(gridX + j shl 1, gridZ + i shl 1)

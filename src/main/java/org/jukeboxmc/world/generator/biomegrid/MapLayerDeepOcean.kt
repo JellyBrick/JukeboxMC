@@ -13,13 +13,13 @@ class MapLayerDeepOcean(seed: Long, private val belowLayer: MapLayer) : MapLayer
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies deep oceans using Von Neumann neighborhood
-                // it takes a 3x3 grid with a cross shape and analyzes values as follow
+                // it takes a 3x3 grid with a cross shape and analyzes values as follows
                 // OXO
                 // XxX
                 // OXO
                 // the grid center value decides how we are proceeding:
-                // - if it's ocean and it's surrounded by 4 ocean cells we spread deep ocean.
-                val centerVal = values!![j + 1 + (i + 1) * gridSizeX]
+                // - if it's ocean, and it's surrounded by 4 ocean cells we spread deep ocean.
+                val centerVal = values[j + 1 + (i + 1) * gridSizeX]
                 if (centerVal == 0) {
                     val upperVal = values[j + 1 + i * gridSizeX]
                     val lowerVal = values[j + 1 + (i + 2) * gridSizeX]

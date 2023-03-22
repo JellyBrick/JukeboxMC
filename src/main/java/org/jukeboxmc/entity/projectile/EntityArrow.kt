@@ -12,6 +12,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import java.util.concurrent.TimeUnit
+import kotlin.math.sqrt
 
 /**
  * @author LucGamesYT
@@ -51,7 +52,7 @@ class EntityArrow : EntityProjectile() {
         if (Server.instance
                 .currentTick > pickupDelay && canBePickedUp && !isClosed && !player.isDead
         ) {
-            val arrow: Item = Item.create<Item>(ItemType.ARROW)
+            val arrow: Item = Item.create(ItemType.ARROW)
             if (!player.inventory.canAddItem(arrow)) {
                 return
             }
@@ -72,7 +73,7 @@ class EntityArrow : EntityProjectile() {
     override fun applyCustomKnockback(hitEntity: Entity) {
         if (punchModifier > 0) {
             val sqrtMotion =
-                Math.sqrt((velocity.x * velocity.x + velocity.z * velocity.z).toDouble()).toFloat()
+                sqrt((velocity.x * velocity.x + velocity.z * velocity.z).toDouble()).toFloat()
             if (sqrtMotion > 0.0f) {
                 val toAdd = Vector(
                     velocity.x * punchModifier * 0.6f / sqrtMotion,

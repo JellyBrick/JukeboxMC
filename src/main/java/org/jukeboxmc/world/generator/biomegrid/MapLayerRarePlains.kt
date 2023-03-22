@@ -15,7 +15,7 @@ class MapLayerRarePlains(seed: Long, private val belowLayer: MapLayer) : MapLaye
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 setCoordsSeed(x + j, z + i)
-                var centerValue = values!![j + 1 + (i + 1) * gridSizeX]
+                var centerValue = values[j + 1 + (i + 1) * gridSizeX]
                 if (nextInt(57) == 0 && RARE_PLAINS.containsKey(centerValue)) {
                     centerValue = RARE_PLAINS[centerValue]
                 }

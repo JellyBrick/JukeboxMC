@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.item.Item
@@ -34,14 +33,14 @@ class BlockWaxedWeatheredCutCopperSlab : BlockSlab {
                 if (targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        create<Block>(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
+                        create(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWaxedWeatheredCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    create<Block>(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
+                    create(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }
@@ -50,14 +49,14 @@ class BlockWaxedWeatheredCutCopperSlab : BlockSlab {
                 if (!targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        create<Block>(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
+                        create(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockWaxedWeatheredCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    create<Block>(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
+                    create(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }
@@ -65,7 +64,7 @@ class BlockWaxedWeatheredCutCopperSlab : BlockSlab {
             if (block is BlockWaxedWeatheredCutCopperSlab) {
                 world.setBlock(
                     placePosition,
-                    create<Block>(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
+                    create(BlockType.WAXED_WEATHERED_DOUBLE_CUT_COPPER_SLAB),
                 )
                 return true
             }

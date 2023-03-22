@@ -52,8 +52,7 @@ class TreePopulator : Populator {
     }
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
-        var y: Int
-        y = 127
+        var y: Int = 127
         while (y > 0) {
             val blockType = chunk.getBlock(x, y, z, 0).type
             if (blockType == BlockType.DIRT || blockType == BlockType.GRASS) {

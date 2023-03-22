@@ -12,6 +12,7 @@ import org.jukeboxmc.block.data.LogType
 import org.jukeboxmc.block.data.LogType2
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import java.util.Random
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -26,14 +27,14 @@ open class Tree(protected var treeHeight: Int) {
             val yOff = (yy - (y + treeHeight)).toDouble()
             val mid = (1 - yOff / 2).toInt()
             for (xx in x - mid..x + mid) {
-                val xOff = Math.abs(xx - x)
+                val xOff = abs(xx - x)
                 for (zz in z - mid..z + mid) {
-                    val zOff = Math.abs(zz - z)
+                    val zOff = abs(zz - z)
                     if (xOff == mid && zOff == mid && (yOff == 0.0 || random.nextInt(3) == 0)) {
                         continue
                     }
                     val block = manager.getBlock(xx, yy, zz, 0)
-                    if (!block!!.isSolid) {
+                    if (!block.isSolid) {
                         manager.setBlock(xx, yy, zz, 0, treeType.blockLeave)
                     }
                 }

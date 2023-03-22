@@ -6,6 +6,7 @@ import com.nukkitx.protocol.bedrock.data.PlayerPermission
 import com.nukkitx.protocol.bedrock.data.command.CommandPermission
 import com.nukkitx.protocol.bedrock.packet.UpdateAbilitiesPacket
 import com.nukkitx.protocol.bedrock.packet.UpdateAdventureSettingsPacket
+import java.util.EnumMap
 
 /**
  * @author KCodeYT
@@ -14,7 +15,7 @@ import com.nukkitx.protocol.bedrock.packet.UpdateAdventureSettingsPacket
 class AdventureSettings(private val player: Player) {
     var walkSpeed = 0.1f
     var flySpeed = 0.05f
-    private val values: MutableMap<Type, Boolean> = HashMap()
+    private val values: MutableMap<Type, Boolean> = EnumMap(Type::class.java)
 
     operator fun set(type: Type, value: Boolean): AdventureSettings {
         values[type] = value

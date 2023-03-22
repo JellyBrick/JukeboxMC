@@ -32,14 +32,11 @@ class BlockTrapdoor : Block {
         if (clickedPosition.y > 0.5 && blockFace != BlockFace.UP || blockFace == BlockFace.DOWN) {
             isUpsideDown = true
         }
-        if (playerDirection == Direction.NORTH) {
-            direction = Direction.NORTH
-        } else if (playerDirection == Direction.EAST) {
-            direction = Direction.WEST
-        } else if (playerDirection == Direction.SOUTH) {
-            direction = Direction.EAST
-        } else if (playerDirection == Direction.WEST) {
-            direction = Direction.SOUTH
+        direction = when (playerDirection) {
+            Direction.NORTH -> Direction.NORTH
+            Direction.EAST -> Direction.WEST
+            Direction.SOUTH -> Direction.EAST
+            Direction.WEST -> Direction.SOUTH
         }
         isOpen = false
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
@@ -69,8 +66,7 @@ class BlockTrapdoor : Block {
         }
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

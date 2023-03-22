@@ -37,32 +37,22 @@ class BlockLantern : Block {
 
     private val isBlockAboveValid: Boolean
         private get() {
-            val up = this.getSide(BlockFace.UP)
-            return if (up is BlockLeaves) {
-                false
-            } else if (up is BlockFence || up is BlockWall) {
-                true
-            } else if (up is BlockSlab) {
-                !up.isTopSlot
-            } else if (up is BlockStairs) {
-                !up.isUpsideDown
-            } else {
-                up.isSolid
+            return when (val up = this.getSide(BlockFace.UP)) {
+                is BlockLeaves -> false
+                is BlockFence, is BlockWall -> true
+                is BlockSlab -> !up.isTopSlot
+                is BlockStairs -> !up.isUpsideDown
+                else -> up.isSolid
             }
         }
     private val isBlockUnderValid: Boolean
         private get() {
-            val down = this.getSide(BlockFace.DOWN)
-            return if (down is BlockLeaves) {
-                true
-            } else if (down is BlockFence || down is BlockWall) {
-                false
-            } else if (down is BlockSlab) {
-                !down.isTopSlot
-            } else if (down is BlockStairs) {
-                !down.isUpsideDown
-            } else {
-                !down.isSolid
+            return when (val down = this.getSide(BlockFace.DOWN)) {
+                is BlockLeaves -> true
+                is BlockFence, is BlockWall -> false
+                is BlockSlab -> !down.isTopSlot
+                is BlockStairs -> !down.isUpsideDown
+                else -> !down.isSolid
             }
         }
     var isHanging: Boolean

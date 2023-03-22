@@ -24,7 +24,7 @@ class BlockSapling : Block {
     }
 
     fun setSaplingType(saplingType: SaplingType): BlockSapling {
-        return setState<BlockSapling>("sapling_type", saplingType.name.lowercase(Locale.getDefault()))
+        return setState("sapling_type", saplingType.name.lowercase(Locale.getDefault()))
     }
 
     val saplingType: SaplingType

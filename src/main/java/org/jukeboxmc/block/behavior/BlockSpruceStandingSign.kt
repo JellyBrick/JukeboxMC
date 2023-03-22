@@ -41,7 +41,7 @@ class BlockSpruceStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockSpruceWallSign =
-                create<BlockSpruceWallSign>(BlockType.SPRUCE_WALL_SIGN)
+                create(BlockType.SPRUCE_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -50,6 +50,6 @@ class BlockSpruceStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.SPRUCE_SIGN)
+        return Item.create(ItemType.SPRUCE_SIGN)
     }
 }

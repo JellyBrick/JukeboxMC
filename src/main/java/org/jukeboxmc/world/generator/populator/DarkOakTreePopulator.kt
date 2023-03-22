@@ -12,6 +12,7 @@ import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import java.util.Random
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -24,7 +25,7 @@ class DarkOakTreePopulator : Populator() {
         Block.create<BlockLog2>(BlockType.LOG2).setLogType(LogType2.DARK_OAK)
     private val BLOCK_DARK_OAK_LEAVES: Block =
         Block.create<BlockLeaves2>(BlockType.LEAVES2).setLeafType(LeafType2.DARK_OAK)
-    private val BLOCK_DIRT: Block = Block.create<Block>(BlockType.DIRT)
+    private val BLOCK_DIRT: Block = Block.create(BlockType.DIRT)
     override fun populate(
         random: Random,
         world: World?,
@@ -37,7 +38,7 @@ class DarkOakTreePopulator : Populator() {
         for (i in 0 until amount) {
             val x = random.nextInt(chunkX shl 4, (chunkX shl 4) + 15)
             val z = random.nextInt(chunkZ shl 4, (chunkZ shl 4) + 15)
-            val y = getHighestWorkableBlock(chunk!!, x, z)
+            val y = getHighestWorkableBlock(chunk, x, z)
             if (y == -1) {
                 continue
             }
@@ -46,8 +47,7 @@ class DarkOakTreePopulator : Populator() {
     }
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
-        var y: Int
-        y = 127
+        var y: Int = 127
         while (y > 0) {
             val blockType = chunk.getBlock(x, y, z, 0).type
             if (blockType == BlockType.DIRT || blockType == BlockType.GRASS) {
@@ -87,7 +87,7 @@ class DarkOakTreePopulator : Populator() {
                 setDirtAt(manager, blockpos.south())
                 setDirtAt(manager, blockpos.south().east())
                 val blockFace: BlockFace =
-                    BlockFace.horizontal.get(random.nextInt(BlockFace.horizontal.size))
+                    BlockFace.horizontal[random.nextInt(BlockFace.horizontal.size)]
                 val i1 = treeHeight - random.nextInt(4)
                 var j1 = 2 - random.nextInt(3)
                 var x = blockX
@@ -134,9 +134,9 @@ class DarkOakTreePopulator : Populator() {
                 for (k3 in -3..4) {
                     for (i3 in -3..4) {
                         if ((k3 != -3 || i3 != -3) && (k3 != -3 || i3 != 4) && (k3 != 4 || i3 != -3) && (k3 != 4 || i3 != 4) && (
-                                Math.abs(
+                                abs(
                                     k3,
-                                ) < 3 || Math.abs(i3) < 3
+                                ) < 3 || abs(i3) < 3
                                 )
                         ) {
                             manager.setBlock(x + k3, yy, z + i3, BLOCK_DARK_OAK_LEAVES)
@@ -167,7 +167,7 @@ class DarkOakTreePopulator : Populator() {
                             }
                             for (k4 in -2..2) {
                                 for (l4 in -2..2) {
-                                    if (Math.abs(k4) != 2 || Math.abs(l4) != 2) {
+                                    if (abs(k4) != 2 || abs(l4) != 2) {
                                         manager.setBlock(
                                             position.blockX + k3 + k4,
                                             yy - 1,

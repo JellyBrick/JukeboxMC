@@ -18,8 +18,8 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies biome large edges using Von Neumann neighborhood
-                val centerVal = values!![j + 1 + (i + 1) * gridSizeX]
-                var `val` = centerVal
+                val centerVal = values[j + 1 + (i + 1) * gridSizeX]
+                var value = centerVal
                 for ((map, entryValue) in EDGES) {
                     if (map.containsKey(centerVal)) {
                         val upperVal = values[j + 1 + i * gridSizeX]
@@ -32,7 +32,7 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
                                 ) || !map.containsKey(rightVal)
                                 )
                         ) {
-                            `val` = map[centerVal]
+                            value = map[centerVal]
                             break
                         } else if (entryValue != null && (
                                 entryValue.contains(upperVal) || entryValue.contains(lowerVal) || entryValue.contains(
@@ -40,12 +40,12 @@ class MapLayerBiomeEdge(seed: Long, private val belowLayer: MapLayer) : MapLayer
                                 ) || entryValue.contains(rightVal)
                                 )
                         ) {
-                            `val` = map[centerVal]
+                            value = map[centerVal]
                             break
                         }
                     }
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues

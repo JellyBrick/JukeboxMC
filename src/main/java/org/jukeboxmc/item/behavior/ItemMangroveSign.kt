@@ -17,7 +17,7 @@ class ItemMangroveSign : Item, Burnable {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.MANGROVE_STANDING_SIGN)
+        return Block.create(BlockType.MANGROVE_STANDING_SIGN)
     }
 
     override val burnTime: Duration?

@@ -33,7 +33,7 @@ abstract class BlockLiquid : Block {
                 if (layer0.type == BlockType.AIR) {
                     location.world!!.setBlock(
                         location,
-                        create<Block>(BlockType.AIR),
+                        create(BlockType.AIR),
                         1,
                         location.dimension,
                         false,
@@ -42,7 +42,7 @@ abstract class BlockLiquid : Block {
                 } else if (layer0 is Waterlogable && ((layer0 as Waterlogable).waterLoggingLevel <= 0 || (layer0 as Waterlogable).waterLoggingLevel == 1 && liquidDepth > 0)) {
                     location.world?.setBlock(
                         location,
-                        create<Block>(BlockType.AIR),
+                        create(BlockType.AIR),
                         1,
                         location.dimension,
                         true,
@@ -136,9 +136,8 @@ abstract class BlockLiquid : Block {
                 if (newDecay != decay) {
                     decay = newDecay
                     val decayed = decay < 0
-                    val to: Block
-                    to = if (decayed) {
-                        create<Block>(BlockType.AIR)
+                    val to: Block = if (decayed) {
+                        create(BlockType.AIR)
                     } else {
                         getBlock(decay)
                     }
@@ -162,8 +161,7 @@ abstract class BlockLiquid : Block {
                 )
                 flowIntoBlock(bottomBlock, decay or 0x08)
                 if (decay == 0 || !(if (usesWaterLogging()) bottomBlock.canWaterloggingFlowInto() else bottomBlock.canBeFlowedInto())) {
-                    val adjacentDecay: Int
-                    adjacentDecay = if (decay >= 8) {
+                    val adjacentDecay: Int = if (decay >= 8) {
                         1
                     } else {
                         decay + multiplier
@@ -260,7 +258,7 @@ abstract class BlockLiquid : Block {
         } else if (blockDecay >= 8) {
             blockDecay = 0
         }
-        return if (decay >= 0 && blockDecay >= decay) decay else blockDecay
+        return if (decay in 0..blockDecay) decay else blockDecay
     }
 
     protected fun canFlowInto(block: Block): Boolean {
@@ -289,7 +287,7 @@ abstract class BlockLiquid : Block {
             Server.instance.pluginManager.callEvent(event)
             if (!event.isCancelled) {
                 if (block.layer == 0 && block.type != BlockType.AIR) {
-                    // TODO DROP ITEM IF LIQUID IS COLLIDED
+                    // TODO: DROP ITEM IF LIQUID IS COLLIDED
                     // this.location.getWorld().breakBlock( null, block.location, block.getType() == BlockType.WEB ? Item.create( ItemType.WOODEN_SWORD ) : null );
                 }
                 location.world!!.setBlock(block.location, getBlock(newFlowDecay), block.layer)
@@ -311,14 +309,11 @@ abstract class BlockLiquid : Block {
                 var x = location.x.toInt()
                 val y = location.y.toInt()
                 var z = location.z.toInt()
-                if (j == 0) {
-                    --x
-                } else if (j == 1) {
-                    ++x
-                } else if (j == 2) {
-                    --z
-                } else {
-                    ++z
+                when (j) {
+                    0 -> --x
+                    1 -> ++x
+                    2 -> --z
+                    else -> ++z
                 }
                 val block = location.world!!.getBlock(x, y, z, 0, location.dimension)
                 if (!canFlowInto(block)) {
@@ -332,8 +327,8 @@ abstract class BlockLiquid : Block {
                     }
                 ) {
                     flowCostVisited[Utils.blockHash(x, y, z)] = CAN_FLOW_DOWN
-                    maxCost = 0
-                    flowCost[j] = maxCost
+                    flowCost[j] = 0
+                    maxCost = flowCost[j]
                 } else if (maxCost > 0) {
                     flowCostVisited[Utils.blockHash(x, y, z)] = CAN_FLOW
                     flowCost[j] = calculateFlowCost(x, y, z, 1, maxCost, j xor 0x01, j xor 0x01)
@@ -371,14 +366,11 @@ abstract class BlockLiquid : Block {
             }
             var x = blockX
             var z = blockZ
-            if (j == 0) {
-                --x
-            } else if (j == 1) {
-                ++x
-            } else if (j == 2) {
-                --z
-            } else {
-                ++z
+            when (j) {
+                0 -> --x
+                1 -> ++x
+                2 -> --z
+                else -> ++z
             }
             val hash = Utils.blockHash(x, blockY, z)
             if (!flowCostVisited.containsKey(hash)) {
@@ -429,7 +421,7 @@ abstract class BlockLiquid : Block {
         get() = 10
 
     fun setLiquidDepth(value: Int): BlockLiquid {
-        return setState<BlockLiquid>("liquid_depth", value)
+        return setState("liquid_depth", value)
     }
 
     val liquidDepth: Int

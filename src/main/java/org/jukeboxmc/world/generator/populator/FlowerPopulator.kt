@@ -17,7 +17,7 @@ class FlowerPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
     private var flowerTypes: List<FlowerType>? = null
-    private val BLOCK_FLOWER: Block = Block.create<Block>(BlockType.RED_FLOWER)
+    private val BLOCK_FLOWER: Block = Block.create(BlockType.RED_FLOWER)
     override fun populate(
         random: Random,
         world: World?,

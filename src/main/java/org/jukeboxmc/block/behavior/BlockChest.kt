@@ -73,13 +73,13 @@ class BlockChest : Block {
             if (blockEntity.isPaired) {
                 blockEntity.unpair()
             }
-            val chestInventory = blockEntity.getChestInventory() ?: return
+            val chestInventory = blockEntity.getChestInventory()
             for (content in chestInventory.contents) {
                 if (content.type != ItemType.AIR) {
                     location.world?.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
-            chestInventory!!.clear()
+            chestInventory.clear()
             chestInventory.viewer.clear()
         }
         super.onBlockBreak(breakPosition)

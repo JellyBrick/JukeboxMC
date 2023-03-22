@@ -32,7 +32,7 @@ class BlockCoralFanDead : Block {
         get() = if (stateExists("coral_fan_direction")) RotationDirection.values()[getIntState("coral_fan_direction")] else RotationDirection.EAST_WEST
 
     fun setCoralColor(coralColor: CoralColor): BlockCoralFanDead {
-        return setState<BlockCoralFanDead>("coral_color", coralColor.name.lowercase(Locale.getDefault()))
+        return setState("coral_color", coralColor.name.lowercase(Locale.getDefault()))
     }
 
     val coralColor: CoralColor

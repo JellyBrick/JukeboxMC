@@ -13,11 +13,11 @@ import java.util.Random
 class GroundGeneratorPatchGravel : GroundGenerator() {
     override fun generateTerrainColumn(chunk: Chunk, random: Random, chunkX: Int, chunkZ: Int, surfaceNoise: Double) {
         if (surfaceNoise < -1.0 || surfaceNoise > 2.0) {
-            topMaterial = Block.create<Block>(BlockType.GRAVEL)
-            groundMaterial = Block.create<Block>(BlockType.GRAVEL)
+            topMaterial = Block.create(BlockType.GRAVEL)
+            groundMaterial = Block.create(BlockType.GRAVEL)
         } else {
-            topMaterial = Block.create<Block>(BlockType.GRASS)
-            groundMaterial = Block.create<Block>(BlockType.DIRT)
+            topMaterial = Block.create(BlockType.GRASS)
+            groundMaterial = Block.create(BlockType.DIRT)
         }
         super.generateTerrainColumn(chunk, random, chunkX, chunkZ, surfaceNoise)
     }

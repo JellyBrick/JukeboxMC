@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.item.Item
@@ -32,26 +31,26 @@ class BlockWaxedCutCopperSlab : BlockSlab {
         if (blockFace == BlockFace.DOWN) {
             if (targetBlock is BlockWaxedCutCopperSlab) {
                 if (targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, create<Block>(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
+                    world.setBlock(blockPosition, create(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
                     return true
                 }
             } else if (block is BlockWaxedCutCopperSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         } else if (blockFace == BlockFace.UP) {
             if (targetBlock is BlockWaxedCutCopperSlab) {
                 if (!targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, create<Block>(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
+                    world.setBlock(blockPosition, create(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
                     return true
                 }
             } else if (block is BlockWaxedCutCopperSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         } else {
             if (block is BlockWaxedCutCopperSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
+                world.setBlock(placePosition, create(BlockType.WAXED_DOUBLE_CUT_COPPER_SLAB))
                 return true
             }
         }

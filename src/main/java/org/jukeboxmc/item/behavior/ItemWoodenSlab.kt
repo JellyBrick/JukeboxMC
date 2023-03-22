@@ -19,12 +19,12 @@ class ItemWoodenSlab : Item, Burnable {
     private val block: BlockWoodenSlab
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
+        block = Block.create(BlockType.WOODEN_SLAB)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockWoodenSlab>(BlockType.WOODEN_SLAB)
+        block = Block.create(BlockType.WOODEN_SLAB)
         blockRuntimeId = block.runtimeId
     }
 

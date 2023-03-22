@@ -36,17 +36,17 @@ class Network(val server: Server, inetSocketAddress: InetSocketAddress) : Bedroc
         }
     }
 
-    override fun onQuery(inetSocketAddress: InetSocketAddress): BedrockPong? {
+    override fun onQuery(inetSocketAddress: InetSocketAddress): BedrockPong {
         bedrockPong.edition = "MCPE"
         bedrockPong.gameType = server.gameMode.identifier
-        bedrockPong.setMotd(server.motd)
-        bedrockPong.setSubMotd(server.subMotd)
-        bedrockPong.setPlayerCount(server.onlinePlayers.size)
-        bedrockPong.setMaximumPlayerCount(server.maxPlayers)
-        bedrockPong.setIpv4Port(this.inetSocketAddress.getPort())
-        bedrockPong.setNintendoLimited(false)
-        bedrockPong.setProtocolVersion(CODEC.getProtocolVersion())
-        bedrockPong.setVersion(CODEC.getMinecraftVersion())
+        bedrockPong.motd = server.motd
+        bedrockPong.subMotd = server.subMotd
+        bedrockPong.playerCount = server.onlinePlayers.size
+        bedrockPong.maximumPlayerCount = server.maxPlayers
+        bedrockPong.ipv4Port = this.inetSocketAddress.port
+        bedrockPong.isNintendoLimited = false
+        bedrockPong.protocolVersion = CODEC.protocolVersion
+        bedrockPong.version = CODEC.minecraftVersion
         return bedrockPong
     }
 

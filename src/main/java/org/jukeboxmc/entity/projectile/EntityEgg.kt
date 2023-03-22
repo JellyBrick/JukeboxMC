@@ -41,7 +41,7 @@ class EntityEgg : EntityProjectile() {
         get() = Identifier.fromString("minecraft:egg")
 
     private fun spawnEggParticle(location: Location) {
-        val itemEgg: Item = Item.create<Item>(ItemType.EGG)
+        val itemEgg: Item = Item.create(ItemType.EGG)
         for (i in 0..5) {
             this.world?.spawnParticle(
                 Particle.ITEM_BREAK,

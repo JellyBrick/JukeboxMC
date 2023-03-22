@@ -23,7 +23,7 @@ class RequestAbilityHandler : PacketHandler<RequestAbilityPacket> {
             playerToggleFlyEvent.isCancelled = (!player.adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT])
             server.pluginManager.callEvent(playerToggleFlyEvent)
             val playerAdventureSettings: AdventureSettings = player.adventureSettings
-            playerAdventureSettings[AdventureSettings.Type.FLYING] = if (playerToggleFlyEvent.isCancelled) player.adventureSettings[AdventureSettings.Type.FLYING] else packet.isBoolValue()
+            playerAdventureSettings[AdventureSettings.Type.FLYING] = if (playerToggleFlyEvent.isCancelled) player.adventureSettings[AdventureSettings.Type.FLYING] else packet.isBoolValue
             playerAdventureSettings.update()
         }
     }

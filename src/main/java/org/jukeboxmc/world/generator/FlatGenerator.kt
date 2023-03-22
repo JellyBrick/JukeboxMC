@@ -13,13 +13,11 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
  * @version 1.0
  */
 class FlatGenerator(world: World?) : Generator() {
-    private val blockGrass: Block
-    private val blockDirt: Block
+    private val blockGrass: Block = Block.create(BlockType.GRASS)
+    private val blockDirt: Block = Block.create(BlockType.DIRT)
     private val blockBedrock: Block
 
     init {
-        blockGrass = Block.create(BlockType.GRASS)
-        blockDirt = Block.create(BlockType.DIRT)
         blockBedrock = Block.create(BlockType.BEDROCK)
     }
 

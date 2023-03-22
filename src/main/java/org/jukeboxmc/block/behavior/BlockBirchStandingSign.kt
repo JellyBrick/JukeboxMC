@@ -42,7 +42,7 @@ class BlockBirchStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockBirchWallSign =
-                create<BlockBirchWallSign>(BlockType.BIRCH_WALL_SIGN)
+                create(BlockType.BIRCH_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -51,6 +51,6 @@ class BlockBirchStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.BIRCH_SIGN)
+        return Item.create(ItemType.BIRCH_SIGN)
     }
 }

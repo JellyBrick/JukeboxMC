@@ -17,12 +17,12 @@ class ItemStoneSlab : Item {
     private val block: BlockStoneSlab
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockStoneSlab>(BlockType.STONE_BLOCK_SLAB)
+        block = Block.create(BlockType.STONE_BLOCK_SLAB)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockStoneSlab>(BlockType.STONE_BLOCK_SLAB)
+        block = Block.create(BlockType.STONE_BLOCK_SLAB)
         blockRuntimeId = block.runtimeId
     }
 

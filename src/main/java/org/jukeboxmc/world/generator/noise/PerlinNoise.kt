@@ -19,7 +19,7 @@ open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
         // "The permutation table is his answer to the issue of random numbers.
         // First take an array of decent length, usually 256 values. Fill it sequentially with each
         // number in that range: so index 1 gets 1, index 8 gets 8, index 251 gets 251, etc...
-        // Then randomly shuffle the values so you have a table of 256 random values, but only
+        // Then randomly shuffle the values, so you have a table of 256 random values, but only
         // contains the values between 0 and 255."
         // source: https://code.google.com/p/fractalterraingeneration/wiki/Perlin_Noise
         for (i in 0..255) {

@@ -28,16 +28,21 @@ import org.jukeboxmc.world.generator.populator.OrePopulator
 import org.jukeboxmc.world.generator.populator.Populator
 import org.jukeboxmc.world.generator.populator.biome.BiomePopulatorRegistry
 import org.jukeboxmc.world.generator.thing.OreType
+import java.util.EnumMap
 import java.util.Random
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-class NormalGenerator(private val world: World) : Generator() {
+open class NormalGenerator(private val world: World) : Generator() {
     private val biomeGrid: Array<MapLayer?>
-    private val random: Random
+    private val random: Random = Random()
     private val blockStone: Block
     private val blockWater: Block
     private val blockBedrock: Block
@@ -48,12 +53,11 @@ class NormalGenerator(private val world: World) : Generator() {
     private val roughness2Generator: PerlinOctaveGenerator
     private val detailGenerator: PerlinOctaveGenerator
     private val surfaceGenerator: SimplexOctaveGenerator
-    private val populators: MutableSet<Populator> = HashSet<Populator>()
+    private val populators: MutableSet<Populator> = HashSet()
     private val density = Array(5) { Array(5) { DoubleArray(33) } }
     private val groundGenerator = GroundGenerator()
 
     init {
-        random = Random()
         random.setSeed(world.seed)
         biomeGrid = MapLayer.initialize(world.seed, Dimension.OVERWORLD, 1)
         localSeed1 = ThreadLocalRandom.current().nextLong()
@@ -131,12 +135,12 @@ class NormalGenerator(private val world: World) : Generator() {
                 var avgHeightScale = 0.0
                 var avgHeightBase = 0.0
                 var totalWeight = 0.0
-                val biome: Biome = Biome.findById(biomeGrid[xSeg + 2 + (zSeg + 2) * 10])!!
+                val biome: Biome = Biome.findById(biomeGrid[xSeg + 2 + (zSeg + 2) * 10])
                 val biomeHeight = HEIGHT_MAP.getOrDefault(biome, BiomeHeight.DEFAULT)
                 for (xSmooth in 0..4) {
                     for (zSmooth in 0..4) {
                         val nearBiome: Biome =
-                            Biome.findById(biomeGrid[xSeg + xSmooth + (zSeg + zSmooth) * 10])!!
+                            Biome.findById(biomeGrid[xSeg + xSmooth + (zSeg + zSmooth) * 10])
                         val nearBiomeHeight = HEIGHT_MAP.getOrDefault(nearBiome, BiomeHeight.DEFAULT)
                         val heightBase = nearBiomeHeight.height
                         val heightScale = nearBiomeHeight.scale
@@ -155,13 +159,13 @@ class NormalGenerator(private val world: World) : Generator() {
                 avgHeightBase = (avgHeightBase * 4.0 - 1.0) / 8.0
                 var noiseH = heightNoise!![indexHeight++] / 8000.0
                 if (noiseH < 0) {
-                    noiseH = Math.abs(noiseH) * 0.3
+                    noiseH = abs(noiseH) * 0.3
                 }
                 noiseH = noiseH * 3.0 - 2.0
                 noiseH = if (noiseH < 0) {
-                    Math.max(noiseH * 0.5, -1.0) / 1.4 * 0.5
+                    max(noiseH * 0.5, -1.0) / 1.4 * 0.5
                 } else {
-                    Math.min(noiseH, 1.0) / 8.0
+                    min(noiseH, 1.0) / 8.0
                 }
                 noiseH = (noiseH * 0.2 + avgHeightBase) * 8.5 / 8.0 * 4.0 + 8.5
                 for (k in 0..32) {
@@ -236,7 +240,7 @@ class NormalGenerator(private val world: World) : Generator() {
                 GROUND_MAP.getOrDefault(biomes.getBiome(sx, sz), groundGenerator)
                     .generateTerrainColumn(chunk, random, cx + sx, cz + sz, surfaceNoise!![sx or (sz shl 4)])
                 for (y in chunk.minY until chunk.maxY) {
-                    chunk.setBiome(sx, y, sz, biomes.getBiome(sx, sz)!!)
+                    chunk.setBiome(sx, y, sz, biomes.getBiome(sx, sz))
                 }
                 chunk.setBlock(sx, 0, sz, 0, blockBedrock)
             }
@@ -262,8 +266,8 @@ class NormalGenerator(private val world: World) : Generator() {
 
     companion object {
         const val WATER_HEIGHT = 64
-        private val HEIGHT_MAP: MutableMap<Biome?, BiomeHeight> = HashMap()
-        private val GROUND_MAP: MutableMap<Biome, GroundGenerator> = HashMap()
+        private val HEIGHT_MAP: MutableMap<Biome?, BiomeHeight> = EnumMap(org.jukeboxmc.world.Biome::class.java)
+        private val GROUND_MAP: MutableMap<Biome, GroundGenerator> = EnumMap(org.jukeboxmc.world.Biome::class.java)
         private val ELEVATION_WEIGHT = Array(5) { DoubleArray(5) }
 
         init {
@@ -355,7 +359,7 @@ class NormalGenerator(private val world: World) : Generator() {
                     sqX *= sqX
                     var sqZ = z - 2
                     sqZ *= sqZ
-                    ELEVATION_WEIGHT[x][z] = 10.0 / Math.sqrt(sqX + sqZ + 0.2)
+                    ELEVATION_WEIGHT[x][z] = 10.0 / sqrt(sqX + sqZ + 0.2)
                 }
             }
         }

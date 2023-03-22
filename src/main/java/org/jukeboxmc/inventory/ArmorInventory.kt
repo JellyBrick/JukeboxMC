@@ -112,7 +112,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
 
     fun damageEvenly(damage: Float) {
         var damage = damage
-        damage = damage / 4.0f
+        damage /= 4.0f
         if (damage < 1.0f) {
             damage = 1.0f
         }
@@ -121,7 +121,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
             val helmet = helmet
             if (helmet.type != ItemType.AIR) {
                 if (helmet.calculateDurability(damage.toInt())) {
-                    this.helmet = Item.create<Item>(ItemType.AIR)
+                    this.helmet = Item.create(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.helmet = helmet
@@ -130,7 +130,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
             val chestplate = chestplate
             if (chestplate.type != ItemType.AIR) {
                 if (chestplate.calculateDurability(damage.toInt())) {
-                    this.chestplate = Item.create<Item>(ItemType.AIR)
+                    this.chestplate = Item.create(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.chestplate = chestplate
@@ -139,7 +139,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
             val leggings = leggings
             if (leggings.type != ItemType.AIR) {
                 if (leggings.calculateDurability(damage.toInt())) {
-                    this.leggings = Item.create<Item>(ItemType.AIR)
+                    this.leggings = Item.create(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.leggings = leggings
@@ -148,7 +148,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
             val boots = boots
             if (boots.type != ItemType.AIR) {
                 if (boots.calculateDurability(damage.toInt())) {
-                    this.boots = Item.create<Item>(ItemType.AIR)
+                    this.boots = Item.create(ItemType.AIR)
                     player.playSound(Sound.RANDOM_BREAK, 1f, 1f)
                 } else {
                     this.boots = boots

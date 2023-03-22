@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.palette.bitarray
 
 import org.jukeboxmc.util.Utils
-import java.util.Arrays
 
 class Pow2BitArray internal constructor(
     override val version: BitArrayVersion,
@@ -32,6 +31,6 @@ class Pow2BitArray internal constructor(
     }
 
     override fun copy(): BitArray {
-        return Pow2BitArray(version, size, Arrays.copyOf(words, words.size))
+        return Pow2BitArray(version, size, words.copyOf(words.size))
     }
 }

@@ -15,6 +15,6 @@ class ItemHopper : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.HOPPER)
+        return Block.create(BlockType.HOPPER)
     }
 }

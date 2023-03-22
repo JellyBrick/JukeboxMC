@@ -26,7 +26,7 @@ class PlayerMoveEvent
     /**
      * Modifies the to [Location]
      *
-     * @param to which should be modifies
+     * @param to which should be modified
      */
     var to: Location,
 ) : PlayerEvent(player), Cancellable {

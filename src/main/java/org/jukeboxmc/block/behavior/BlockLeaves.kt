@@ -44,7 +44,7 @@ class BlockLeaves : Block {
         }
 
     fun setLeafType(leafType: LeafType): BlockLeaves {
-        return setState<BlockLeaves>("old_leaf_type", leafType.name.lowercase(Locale.getDefault()))
+        return setState("old_leaf_type", leafType.name.lowercase(Locale.getDefault()))
     }
 
     val leafType: LeafType

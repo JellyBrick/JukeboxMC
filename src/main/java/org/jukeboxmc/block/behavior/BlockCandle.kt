@@ -71,14 +71,14 @@ class BlockCandle : Block {
     }
 
     fun setCandles(value: Int): BlockCandle {
-        return setState<BlockCandle>("candles", value)
+        return setState("candles", value)
     }
 
     val candles: Int
         get() = if (stateExists("candles")) getIntState("candles") else 0
 
     fun setLit(value: Boolean): BlockCandle {
-        return setState<BlockCandle>("lit", if (value) 1.toByte() else 0.toByte())
+        return setState("lit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isLit: Boolean

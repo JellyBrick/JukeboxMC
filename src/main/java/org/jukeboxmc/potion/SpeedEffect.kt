@@ -22,6 +22,6 @@ class SpeedEffect : Effect() {
     }
 
     override fun remove(entityLiving: EntityLiving) {
-        entityLiving.getAttribute(AttributeType.MOVEMENT)?.reset()
+        entityLiving.getAttribute(AttributeType.MOVEMENT).reset()
     }
 }

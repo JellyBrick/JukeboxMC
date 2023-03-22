@@ -26,14 +26,14 @@ class BlockCoral : Block {
     }
 
     fun setCoralColor(coralColor: CoralColor): BlockCoral {
-        return setState<BlockCoral>("coral_color", coralColor.name.lowercase(Locale.getDefault()))
+        return setState("coral_color", coralColor.name.lowercase(Locale.getDefault()))
     }
 
     val coralColor: CoralColor
         get() = if (stateExists("coral_color")) CoralColor.valueOf(getStringState("coral_color")) else CoralColor.BLUE
 
     fun setDead(value: Boolean): BlockCoral {
-        return setState<BlockCoral>("dead_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("dead_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isDead: Boolean

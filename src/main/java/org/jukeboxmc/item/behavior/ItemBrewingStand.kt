@@ -15,6 +15,6 @@ class ItemBrewingStand : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.BREWING_STAND)
+        return Block.create(BlockType.BREWING_STAND)
     }
 }

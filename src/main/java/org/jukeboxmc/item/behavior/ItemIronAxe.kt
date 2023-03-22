@@ -19,12 +19,12 @@ class ItemIronAxe : Item, Durability {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(5f)
+        attribute.setCurrentValue(5f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(attribute.minValue)
+        attribute.setCurrentValue(attribute.minValue)
     }
 
     override val maxDurability: Int

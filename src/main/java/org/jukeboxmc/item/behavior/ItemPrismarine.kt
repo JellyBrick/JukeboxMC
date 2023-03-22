@@ -17,12 +17,12 @@ class ItemPrismarine : Item {
     private val block: BlockPrismarine
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockPrismarine>(BlockType.PRISMARINE)
+        block = Block.create(BlockType.PRISMARINE)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockPrismarine>(BlockType.PRISMARINE)
+        block = Block.create(BlockType.PRISMARINE)
         blockRuntimeId = block.runtimeId
     }
 

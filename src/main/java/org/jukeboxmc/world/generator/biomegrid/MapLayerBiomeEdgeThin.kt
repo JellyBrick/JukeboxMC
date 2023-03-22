@@ -20,8 +20,8 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies biome thin edges using Von Neumann neighborhood
-                val centerVal = values!![j + 1 + (i + 1) * gridSizeX]
-                var `val` = centerVal
+                val centerVal = values[j + 1 + (i + 1) * gridSizeX]
+                var value = centerVal
                 for ((map, entryValue) in EDGES) {
                     if (map.containsKey(centerVal)) {
                         val upperVal = values[j + 1 + i * gridSizeX]
@@ -36,7 +36,7 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
                                 ) && !map.containsKey(rightVal)
                                 )
                         ) {
-                            `val` = map[centerVal]
+                            value = map[centerVal]
                             break
                         } else if (entryValue != null && (
                                 !OCEANS.contains(upperVal) && !entryValue.contains(upperVal) || !OCEANS.contains(
@@ -46,12 +46,12 @@ class MapLayerBiomeEdgeThin(seed: Long, private val belowLayer: MapLayer) : MapL
                                 ) || !OCEANS.contains(rightVal) && !entryValue.contains(rightVal)
                                 )
                         ) {
-                            `val` = map[centerVal]
+                            value = map[centerVal]
                             break
                         }
                     }
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues

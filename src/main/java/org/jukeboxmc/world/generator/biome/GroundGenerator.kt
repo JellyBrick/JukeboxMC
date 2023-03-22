@@ -5,6 +5,7 @@ import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.generator.NormalGenerator
 import java.util.Random
+import kotlin.math.max
 
 /**
  * @author LucGamesYT
@@ -13,14 +14,14 @@ import java.util.Random
 open class GroundGenerator {
     protected var topMaterial: Block
     protected var groundMaterial: Block
-    private val BLOCK_AIR: Block = Block.create<Block>(BlockType.AIR)
-    private val BLOCK_STONE: Block = Block.create<Block>(BlockType.STONE)
-    private val BLOCK_GRAVEL: Block = Block.create<Block>(BlockType.GRAVEL)
-    private val BLOCK_SANDSTONE: Block = Block.create<Block>(BlockType.SANDSTONE)
+    private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
+    private val BLOCK_STONE: Block = Block.create(BlockType.STONE)
+    private val BLOCK_GRAVEL: Block = Block.create(BlockType.GRAVEL)
+    private val BLOCK_SANDSTONE: Block = Block.create(BlockType.SANDSTONE)
 
     init {
-        topMaterial = Block.create<Block>(BlockType.GRASS)
-        groundMaterial = Block.create<Block>(BlockType.DIRT)
+        topMaterial = Block.create(BlockType.GRASS)
+        groundMaterial = Block.create(BlockType.DIRT)
     }
 
     open fun generateTerrainColumn(chunk: Chunk, random: Random, chunkX: Int, chunkZ: Int, surfaceNoise: Double) {
@@ -29,7 +30,7 @@ open class GroundGenerator {
         var groundMaterial = groundMaterial
         val x = chunkX and 0xF
         val z = chunkZ and 0xF
-        val surfaceHeight = Math.max((surfaceNoise / 3.0 + 3.0 + random.nextDouble() * 0.25).toInt(), 1)
+        val surfaceHeight = max((surfaceNoise / 3.0 + 3.0 + random.nextDouble() * 0.25).toInt(), 1)
         var deep = -1
         for (y in 255 downTo 0) {
             val blockType = chunk.getBlock(x, y, z, 0).type
@@ -55,7 +56,7 @@ open class GroundGenerator {
                     deep--
                     chunk.setBlock(x, y, z, 0, groundMaterial)
                     if (deep == 0 && groundMaterial.type == BlockType.SAND) {
-                        deep = random.nextInt(4) + Math.max(0, y - seaLevel - 1)
+                        deep = random.nextInt(4) + max(0, y - seaLevel - 1)
                         groundMaterial = BLOCK_SANDSTONE
                     }
                 }

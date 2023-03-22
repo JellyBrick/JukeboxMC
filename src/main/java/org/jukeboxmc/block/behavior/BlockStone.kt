@@ -26,7 +26,7 @@ class BlockStone : Block {
     override fun getDrops(item: Item?): List<Item> {
         return if (item != null && isCorrectToolType(item) && isCorrectTierType(item)) {
             listOf(
-                Item.create<Item>(
+                Item.create(
                     ItemType.COBBLESTONE,
                 ),
             )
@@ -36,7 +36,7 @@ class BlockStone : Block {
     }
 
     fun setStoneType(stoneType: StoneType): BlockStone {
-        return setState<BlockStone>("stone_type", stoneType.name.lowercase(Locale.getDefault()))
+        return setState("stone_type", stoneType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneType: StoneType

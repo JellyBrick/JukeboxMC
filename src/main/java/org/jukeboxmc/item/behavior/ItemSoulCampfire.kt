@@ -15,6 +15,6 @@ class ItemSoulCampfire : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.SOUL_CAMPFIRE)
+        return Block.create(BlockType.SOUL_CAMPFIRE)
     }
 }

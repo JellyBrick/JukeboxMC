@@ -11,50 +11,50 @@ class FormResponse {
     }
 
     fun getToggle(id: String): Boolean? {
-        val `val` = answers[id]
-        if (`val` != null) {
-            if (`val` is Boolean) {
-                return `val`
+        val value = answers[id]
+        if (value != null) {
+            if (value is Boolean) {
+                return value
             }
         }
         return null
     }
 
     fun getStepSlider(id: String): String? {
-        val `val` = answers[id]
-        if (`val` != null) {
-            if (`val` is String) {
-                return `val`
+        val value = answers[id]
+        if (value != null) {
+            if (value is String) {
+                return value
             }
         }
         return null
     }
 
     fun getSlider(id: String): Float? {
-        val `val` = answers[id]
-        if (`val` != null) {
-            if (`val` is Double) {
-                return `val`.toFloat()
+        val value = answers[id]
+        if (value != null) {
+            if (value is Double) {
+                return value.toFloat()
             }
         }
         return null
     }
 
     fun getInput(id: String): String? {
-        val `val` = answers[id]
-        if (`val` != null) {
-            if (`val` is String) {
-                return `val`
+        val value = answers[id]
+        if (value != null) {
+            if (value is String) {
+                return value
             }
         }
         return null
     }
 
     fun getDropbox(id: String): String? {
-        val `val` = answers[id]
-        if (`val` != null) {
-            if (`val` is String) {
-                return `val`
+        val value = answers[id]
+        if (value != null) {
+            if (value is String) {
+                return value
             }
         }
         return null

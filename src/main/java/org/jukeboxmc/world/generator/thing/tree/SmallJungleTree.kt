@@ -21,7 +21,7 @@ class SmallJungleTree {
     private val BLOCK_LOG: Block = Block.create<BlockLog>(BlockType.LOG).setLogType(LogType.JUNGLE)
     private val BLOCK_LEAVES: Block = Block.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE)
     private val BLOCK_VINE: Block = Block.create<BlockVine>(BlockType.VINE)
-    private val BLOCK_DIRT: Block = Block.create<Block>(BlockType.DIRT)
+    private val BLOCK_DIRT: Block = Block.create(BlockType.DIRT)
     fun create(random: Random, manager: PopulationChunkManager, position: Vector) {
         val i = random.nextInt(4 + random.nextInt(7)) + 3
         var flag = true

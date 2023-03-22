@@ -42,7 +42,7 @@ class BlockMangroveStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockMangroveWallSign =
-                create<BlockMangroveWallSign>(BlockType.MANGROVE_WALL_SIGN)
+                create(BlockType.MANGROVE_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -51,6 +51,6 @@ class BlockMangroveStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.MANGROVE_SIGN)
+        return Item.create(ItemType.MANGROVE_SIGN)
     }
 }

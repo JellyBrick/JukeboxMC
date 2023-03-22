@@ -16,7 +16,7 @@ class ItemSkull : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.SKULL)
+        return Block.create(BlockType.SKULL)
     }
 
     var skullType: SkullType

@@ -18,13 +18,9 @@ import org.jukeboxmc.world.Dimension
  * @version 1.0
  */
 open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
-    protected val dimension: Dimension
+    protected val dimension: Dimension = block.location.dimension
     protected var isMovable = true
     var isSpawned = false
-
-    init {
-        dimension = block.location.dimension
-    }
 
     open fun interact(
         player: Player,
@@ -54,7 +50,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     }
 
     fun fromItem(item: Item, builder: NbtMapBuilder) {
-        builder.putString("Name", item.identifier!!.fullName)
+        builder.putString("Name", item.identifier.fullName)
         builder.putShort("Damage", item.meta.toShort())
         builder.putByte("Count", item.amount.toByte())
         if (item.nbt != null) {
@@ -65,7 +61,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
 
     fun toItem(compound: NbtMap?): Item {
         if (compound == null) {
-            return Item.create<Item>(ItemType.AIR)
+            return Item.create(ItemType.AIR)
         }
         val data = compound.getShort("Damage", 0.toShort())
         val amount = compound.getByte("Count", 0.toByte())
@@ -78,7 +74,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
                 ),
             ).setAmount(amount.toInt()).setMeta(data.toInt()).setNbt(tag)
         } else {
-            Item.create<Item>(ItemType.AIR)
+            Item.create(ItemType.AIR)
         }
     }
 

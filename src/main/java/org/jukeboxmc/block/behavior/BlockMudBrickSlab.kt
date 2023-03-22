@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.item.Item
@@ -32,26 +31,26 @@ class BlockMudBrickSlab : BlockSlab {
         if (blockFace == BlockFace.DOWN) {
             if (targetBlock is BlockMudBrickSlab) {
                 if (targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, create<Block>(BlockType.MUD_BRICK_DOUBLE_SLAB))
+                    world.setBlock(blockPosition, create(BlockType.MUD_BRICK_DOUBLE_SLAB))
                     return true
                 }
             } else if (block is BlockMudBrickSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.MUD_BRICK_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.MUD_BRICK_DOUBLE_SLAB))
                 return true
             }
         } else if (blockFace == BlockFace.UP) {
             if (targetBlock is BlockMudBrickSlab) {
                 if (!targetBlock.isTopSlot) {
-                    world.setBlock(blockPosition, create<Block>(BlockType.MUD_BRICK_DOUBLE_SLAB))
+                    world.setBlock(blockPosition, create(BlockType.MUD_BRICK_DOUBLE_SLAB))
                     return true
                 }
             } else if (block is BlockMudBrickSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.MUD_BRICK_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.MUD_BRICK_DOUBLE_SLAB))
                 return true
             }
         } else {
             if (block is BlockMudBrickSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.MUD_BRICK_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.MUD_BRICK_DOUBLE_SLAB))
                 return true
             }
         }

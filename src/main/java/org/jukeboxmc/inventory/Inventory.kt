@@ -62,7 +62,7 @@ abstract class Inventory {
             return
         }
         if (item.amount <= 0 || item.type == ItemType.AIR) {
-            contents[slot] = Item.create<Item>(ItemType.AIR)
+            contents[slot] = Item.create(ItemType.AIR)
         } else {
             contents[slot] = item.clone()
         }
@@ -192,7 +192,7 @@ abstract class Inventory {
     }
 
     fun clear(slot: Int) {
-        this.setItem(slot, Item.create<Item>(ItemType.AIR))
+        this.setItem(slot, Item.create(ItemType.AIR))
     }
 
     open fun clear() {

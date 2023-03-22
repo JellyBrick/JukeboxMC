@@ -24,6 +24,8 @@ import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author LucGamesYT
@@ -173,13 +175,13 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
     val isHungry: Boolean
         // =========== Attribute ===========
         get() {
-            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_HUNGER)!!
+            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_HUNGER)
             return attribute.getCurrentValue() < attribute.maxValue
         }
     var hunger: Int
         get() = this.getAttributeValue(AttributeType.PLAYER_HUNGER).toInt()
         set(value) {
-            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_HUNGER)!!
+            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_HUNGER)
             val old = attribute.getCurrentValue()
             this.setAttributes(
                 AttributeType.PLAYER_HUNGER,
@@ -197,7 +199,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
     var saturation: Float
         get() = this.getAttributeValue(AttributeType.PLAYER_SATURATION)
         set(value) {
-            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_SATURATION)!!
+            val attribute: Attribute = this.getAttribute(AttributeType.PLAYER_SATURATION)
             this.setAttributes(
                 AttributeType.PLAYER_SATURATION,
                 Utils.clamp(value, attribute.minValue, attribute.maxValue),
@@ -233,7 +235,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         exhaustion = added.toFloat()
         this.level = level.toFloat()
         if (playLevelUpSound) {
-            this.location.world?.playSound(this.location, SoundEvent.LEVELUP, Math.min(7, level / 5) shl 28)
+            this.location.world?.playSound(this.location, SoundEvent.LEVELUP, min(7, level / 5) shl 28)
         }
     }
 
@@ -256,7 +258,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
             exhaustion -= 4f
             var saturation = saturation
             if (saturation > 0) {
-                saturation = Math.max(0f, saturation - 1)
+                saturation = max(0f, saturation - 1)
                 this.saturation = saturation
             } else {
                 val hunger = hunger
@@ -269,9 +271,9 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
                             player.updateAttributes()
                             return
                         }
-                        this.hunger = Math.max(0, playerFoodLevelChangeEvent.foodLevel - 1)
+                        this.hunger = max(0, playerFoodLevelChangeEvent.foodLevel - 1)
                     } else {
-                        this.hunger = Math.max(0, hunger - 1)
+                        this.hunger = max(0, hunger - 1)
                     }
                 }
             }

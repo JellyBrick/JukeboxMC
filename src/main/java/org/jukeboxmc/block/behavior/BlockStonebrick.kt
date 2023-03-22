@@ -24,7 +24,7 @@ class BlockStonebrick : Block {
     }
 
     fun setStoneBrickType(stoneBrickType: StoneBrickType): BlockStonebrick {
-        return setState<BlockStonebrick>("stone_brick_type", stoneBrickType.name.lowercase(Locale.getDefault()))
+        return setState("stone_brick_type", stoneBrickType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneBrickType: StoneBrickType

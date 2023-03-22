@@ -16,11 +16,7 @@ class BlockEntityDispenser(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val dispenserInventory: DispenserInventory
-
-    init {
-        dispenserInventory = DispenserInventory(this)
-    }
+    private val dispenserInventory: DispenserInventory = DispenserInventory(this)
 
     override fun interact(
         player: Player,

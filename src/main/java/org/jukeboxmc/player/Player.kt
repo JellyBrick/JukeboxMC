@@ -76,18 +76,21 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Difficulty
 import org.jukeboxmc.world.Sound
 import org.jukeboxmc.world.chunk.ChunkLoader
-import java.util.*
-import java.util.function.Consumer
+import java.util.Locale
+import java.util.Objects
+import java.util.UUID
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-class Player(
+open class Player(
     override val server: Server,
     val playerConnection: PlayerConnection,
 ) : EntityHuman(), ChunkLoader, CommandSender, InventoryHolder {
-    val adventureSettings: AdventureSettings
+    val adventureSettings: AdventureSettings = AdventureSettings(this)
     override var name: String = ""
         set(value) {
             if (!playerConnection.isLoggedIn()) {
@@ -112,7 +115,7 @@ class Player(
     var closingWindowId = Int.MIN_VALUE
     var currentInventory: ContainerInventory? = null
     private var craftingGridInventory: CraftingGridInventory
-    private val creativeItemCacheInventory: CreativeItemCacheInventory
+    private val creativeItemCacheInventory: CreativeItemCacheInventory = CreativeItemCacheInventory(this)
     private val cursorInventory: CursorInventory
     private val craftingTableInventory: CraftingTableInventory
     private val cartographyTableInventory: CartographyTableInventory
@@ -150,8 +153,6 @@ class Player(
     private val npcDialogueForms = ObjectArrayList<NpcDialogueForm?>()
 
     init {
-        adventureSettings = AdventureSettings(this)
-        creativeItemCacheInventory = CreativeItemCacheInventory(this)
         craftingGridInventory = SmallCraftingGridInventory(this)
         cursorInventory = CursorInventory(this)
         craftingTableInventory = CraftingTableInventory(this)
@@ -194,7 +195,7 @@ class Player(
         }
         if (!isDead) {
             val hungerAttribute = getAttribute(AttributeType.PLAYER_HUNGER)
-            val hunger = hungerAttribute!!.getCurrentValue()
+            val hunger = hungerAttribute.getCurrentValue()
             var health = -1f
             val difficulty: Difficulty = this.world!!.difficulty
             if (difficulty == Difficulty.PEACEFUL && foodTicks % 10 == 0) {
@@ -530,7 +531,7 @@ class Player(
                 server.logger.info("Loaded chunk for addEntity is null")
             }
             this.spawn()
-            world.players.forEach(Consumer { player: Player? -> player!!.spawn(this) })
+            world.players.forEach { player -> player.spawn(this) }
         }
         move(location, MovePlayerPacket.Mode.TELEPORT)
         checkTeleportPosition()
@@ -574,7 +575,7 @@ class Player(
         val commandList: MutableSet<CommandData> = HashSet()
         for (command in server.pluginManager.getCommandManager().getCommands()) {
             if (command.commandData.getPermission() != null) {
-                if (!hasPermission(command.commandData.getPermission()!!)) {
+                if (!hasPermission(command.commandData.getPermission())) {
                     continue
                 }
             }
@@ -931,7 +932,7 @@ class Player(
             knockbackLevel += knockback.level.toInt()
             if (damage > 0) {
                 val crit = fallDistance > 0 && !isOnGround && !this.isOnLadder && !this.isInWater
-                if (crit && damage > 0.0f) {
+                if (crit) {
                     damage *= 1.5.toFloat()
                 }
                 if (success == target.damage(
@@ -945,10 +946,10 @@ class Player(
                 ) {
                     if (knockbackLevel > 0) {
                         val targetVelocity = target.velocity
-                        target.velocity = targetVelocity!!.add(
-                            (-Math.sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
+                        target.velocity = targetVelocity.add(
+                            (-sin((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
                             0.1f,
-                            (Math.cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
+                            (cos((this.yaw * Math.PI.toFloat() / 180.0f).toDouble()) * knockbackLevel.toFloat() * 0.3).toFloat(),
                         )
                         val ownVelocity = velocity
                         ownVelocity.x = ownVelocity.x * 0.6f
@@ -1022,11 +1023,18 @@ class Player(
             return drops
         }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj is Player) {
-            obj.entityId == entityId && obj.uuid == uuid
+    override fun equals(other: Any?): Boolean {
+        return if (other is Player) {
+            other.entityId == entityId && other.uuid == uuid
         } else {
             false
         }
+    }
+
+    override fun hashCode(): Int {
+        var result = playerConnection.hashCode()
+        result = 31 * result + uuid.hashCode()
+        result = 31 * result + xuid.hashCode()
+        return result
     }
 }

@@ -42,7 +42,7 @@ class BlockSand : Block {
     }
 
     override fun onUpdate(updateReason: UpdateReason): Long {
-        val blockDown = location.block!!.clone().getSide(BlockFace.DOWN)
+        val blockDown = location.block.clone().getSide(BlockFace.DOWN)
         if (blockDown.type == BlockType.AIR) {
             val entity = Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK)!!
             entity.location = location.add(0.5f, 0f, 0.5f)
@@ -63,7 +63,7 @@ class BlockSand : Block {
     }
 
     fun setSandType(sandType: SandType): BlockSand {
-        return setState<BlockSand>("sand_type", sandType.name.lowercase(Locale.getDefault()))
+        return setState("sand_type", sandType.name.lowercase(Locale.getDefault()))
     }
 
     val sandType: SandType

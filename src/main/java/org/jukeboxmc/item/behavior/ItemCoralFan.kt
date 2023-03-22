@@ -17,12 +17,12 @@ class ItemCoralFan : Item {
     private val block: BlockCoralFan
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockCoralFan>(BlockType.CORAL_FAN)
+        block = Block.create(BlockType.CORAL_FAN)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockCoralFan>(BlockType.CORAL_FAN)
+        block = Block.create(BlockType.CORAL_FAN)
         blockRuntimeId = block.runtimeId
     }
 

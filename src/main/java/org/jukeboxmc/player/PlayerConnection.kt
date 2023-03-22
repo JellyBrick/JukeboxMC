@@ -162,13 +162,13 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         if (server.isOperatorInFile(player.name)) {
             adventureSettings[AdventureSettings.Type.OPERATOR] = true
         }
-        adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = player.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = player.gameMode!!.ordinal > 0
-        adventureSettings[AdventureSettings.Type.NO_CLIP] = player.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.FLYING] = player.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = player.gameMode!!.ordinal < 2
-        adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = player.gameMode!!.ordinal < 2
-        adventureSettings[AdventureSettings.Type.NO_PVM] = player.gameMode!!.ordinal == 3
+        adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = player.gameMode.ordinal == 3
+        adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = player.gameMode.ordinal > 0
+        adventureSettings[AdventureSettings.Type.NO_CLIP] = player.gameMode.ordinal == 3
+        adventureSettings[AdventureSettings.Type.FLYING] = player.gameMode.ordinal == 3
+        adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = player.gameMode.ordinal < 2
+        adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = player.gameMode.ordinal < 2
+        adventureSettings[AdventureSettings.Type.NO_PVM] = player.gameMode.ordinal == 3
         adventureSettings.update()
         player.sendCommandData()
         val updateAttributesPacket = UpdateAttributesPacket()
@@ -220,7 +220,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.serverEngine = "JukeboxMC"
         startGamePacket.uniqueEntityId = player.entityId
         startGamePacket.runtimeEntityId = player.entityId
-        startGamePacket.playerGameType = player.gameMode!!.toGameType()
+        startGamePacket.playerGameType = player.gameMode.toGameType()
         startGamePacket.playerPosition = player.location.toVector3f().add(0f, 2f, 0f) // TODO
         startGamePacket.defaultSpawn = player.location.toVector3i().add(0, 2, 0) // TODO
         startGamePacket.rotation = Vector2f.from(player.pitch, player.yaw)
@@ -245,7 +245,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.platformBroadcastMode = GamePublishSetting.PUBLIC
         startGamePacket.defaultPlayerPermission = PlayerPermission.MEMBER
         startGamePacket.serverChunkTickRange = 4
-        startGamePacket.vanillaVersion = Network.CODEC.getMinecraftVersion()
+        startGamePacket.vanillaVersion = Network.CODEC.minecraftVersion
         startGamePacket.premiumWorldTemplateId = ""
         startGamePacket.multiplayerCorrelationId = ""
         startGamePacket.isInventoriesServerAuthoritative = true
@@ -276,7 +276,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     private fun parseDisconnectMessage(disconnectReason: DisconnectReason?): String {
-        return when (if (disconnectReason != null) disconnectReason else DisconnectReason.DISCONNECTED) {
+        return when (disconnectReason ?: DisconnectReason.DISCONNECTED) {
             DisconnectReason.ALREADY_CONNECTED -> {
                 "Already connected"
             }

@@ -17,12 +17,12 @@ class ItemStainedGlassPane : Item {
     private val block: BlockStainedGlassPane
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
+        block = Block.create(BlockType.STAINED_GLASS_PANE)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
+        block = Block.create(BlockType.STAINED_GLASS_PANE)
         blockRuntimeId = block.runtimeId
     }
 

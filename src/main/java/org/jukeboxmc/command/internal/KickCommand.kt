@@ -21,7 +21,7 @@ import org.jukeboxmc.player.Player
 class KickCommand : Command(
     CommandData.builder()
         .setParameters(
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("target", CommandParamType.TARGET, false),
                 CommandParameter("reason", CommandParamType.TEXT, true),
             ),

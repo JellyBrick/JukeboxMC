@@ -20,6 +20,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater
 import javax.annotation.ParametersAreNonnullByDefault
+import kotlin.math.abs
 
 @ParametersAreNonnullByDefault
 class ChunkManager(private val world: World, val dimension: Dimension) {
@@ -108,7 +109,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
     @Synchronized
     fun isChunkLoaded(hash: Long): Boolean {
         val chunk = chunks[hash]
-        return chunk != null && chunk.getChunk() != null
+        return chunk?.getChunk() != null
     }
 
     @Synchronized
@@ -148,7 +149,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         if (save) {
             saveChunk(chunk)
         }
-        if (safe && !world.getChunkPlayers(chunk.x, chunk.z, chunk.dimension).isEmpty()) {
+        if (safe && world.getChunkPlayers(chunk.x, chunk.z, chunk.dimension).isNotEmpty()) {
             return false
         }
         chunkLastAccessTimes.remove(chunkKey)
@@ -199,8 +200,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
             val loadingChunk = entry.value
             val chunk = loadingChunk.getChunk()
                 ?: continue // Chunk hasn't loaded
-            if (Math.abs(chunk.x - spawnX) <= spawnRadius && Math.abs(chunk.z - spawnZ) <= spawnRadius ||
-                !chunk.getLoaders().isEmpty()
+            if (abs(chunk.x - spawnX) <= spawnRadius && abs(chunk.z - spawnZ) <= spawnRadius ||
+                chunk.getLoaders().isNotEmpty()
             ) {
                 continue // Spawn protection or is loaded
             }
@@ -279,8 +280,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
 
         fun generate() {
             if ((chunk == null || !chunk!!.isGenerated) && GENERATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
-                future = future!!.thenApplyAsync(GenerationTask.INSTANCE, executor)
-                future!!.thenRun { GENERATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
+                future = future.thenApplyAsync(GenerationTask.INSTANCE, executor)
+                future.thenRun { GENERATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
             }
         }
 
@@ -309,8 +310,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                     }
                 }
                 val aroundFuture = CompletableFutures.allAsList(chunksToLoad)
-                future = future!!.thenCombineAsync(aroundFuture, PopulationTask.INSTANCE, executor)
-                future!!.thenRun { POPULATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
+                future = future.thenCombineAsync(aroundFuture, PopulationTask.INSTANCE, executor)
+                future.thenRun { POPULATION_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
             }
         }
 
@@ -338,13 +339,13 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
                     }
                 }
                 val aroundFuture = CompletableFutures.allAsList(chunksToLoad)
-                future = future!!.thenCombineAsync(aroundFuture, FinishingTask.INSTANCE, executor)
-                future!!.thenRun(Runnable { FINISH_RUNNING_UPDATER.compareAndSet(this, 1, 0) })
+                future = future.thenCombineAsync(aroundFuture, FinishingTask.INSTANCE, executor)
+                future.thenRun { FINISH_RUNNING_UPDATER.compareAndSet(this, 1, 0) }
             }
         }
 
         private fun clear() {
-            future = future!!.thenApply { chunk: Chunk? ->
+            future = future.thenApply { chunk: Chunk? ->
                 GENERATION_RUNNING_UPDATER[this] = 0
                 POPULATION_RUNNING_UPDATER[this] = 0
                 FINISH_RUNNING_UPDATER[this] = 0

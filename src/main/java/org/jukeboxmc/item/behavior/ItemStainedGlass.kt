@@ -17,12 +17,12 @@ class ItemStainedGlass : Item {
     private val block: BlockStainedGlass
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockStainedGlass>(BlockType.STAINED_GLASS)
+        block = Block.create(BlockType.STAINED_GLASS)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockStainedGlass>(BlockType.STAINED_GLASS)
+        block = Block.create(BlockType.STAINED_GLASS)
         blockRuntimeId = block.runtimeId
     }
 

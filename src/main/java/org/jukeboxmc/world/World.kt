@@ -63,8 +63,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
     private val STORAGE_VERSION = 9
     private val gameRules: GameRules = GameRules()
-    private val blockUpdateList: BlockUpdateList
-    val worldFolder: File
+    private val blockUpdateList: BlockUpdateList = BlockUpdateList()
+    val worldFolder: File = File("./worlds/$name")
     private val worldFile: File
     private val levelDB: LevelDB
     private val chunkManagers: MutableMap<Dimension, ChunkManager>
@@ -91,7 +91,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             setDifficultyPacket.difficulty = difficulty.ordinal
             sendWorldPacket(setDifficultyPacket)
         }
-    var spawnLocation: Location = Location(this, getGenerator(Dimension.OVERWORLD)!!.spawnLocation)
+    var spawnLocation: Location = Location(this, getGenerator(Dimension.OVERWORLD).spawnLocation)
         set(value) {
             field = spawnLocation
             val setSpawnPositionPacket = SetSpawnPositionPacket()
@@ -107,8 +107,6 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     private val blockUpdateNormals: Queue<BlockUpdateNormal>
 
     init {
-        blockUpdateList = BlockUpdateList()
-        worldFolder = File("./worlds/$name")
         worldFile = File(worldFolder, "level.dat")
         if (!worldFolder.exists()) {
             worldFolder.mkdirs()
@@ -119,7 +117,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             chunkManagers[dimension] = ChunkManager(this, dimension)
         }
         entities = ConcurrentHashMap<Long, Entity>()
-        blockUpdateNormals = ConcurrentLinkedQueue<BlockUpdateNormal>()
+        blockUpdateNormals = ConcurrentLinkedQueue()
         loadLevelFile()
     }
 
@@ -169,12 +167,10 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         nbtTag.putLong("RandomSeed", seed)
         nbtTag.putLong("Time", worldTime.toLong())
         for (gameRule in gameRules.getGameRules()) {
-            if (gameRule.value is Boolean) {
-                nbtTag.putBoolean(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Boolean)
-            } else if (gameRule.value is Int) {
-                nbtTag.putInt(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Int)
-            } else if (gameRule.value is Float) {
-                nbtTag.putFloat(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Float)
+            when (gameRule.value) {
+                is Boolean -> nbtTag.putBoolean(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Boolean)
+                is Int -> nbtTag.putInt(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Int)
+                is Float -> nbtTag.putFloat(gameRule.name.uppercase(Locale.getDefault()), gameRule.value as Float)
             }
         }
         var tagBytes: ByteArray
@@ -213,7 +209,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
             val blockEntities = getBlockEntities(dimension)
             if (blockEntities.isNotEmpty()) {
                 for (blockEntity in blockEntities) {
-                    blockEntity?.update(currentTick)
+                    blockEntity.update(currentTick)
                 }
             }
         }

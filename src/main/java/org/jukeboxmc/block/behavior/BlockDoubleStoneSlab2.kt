@@ -14,7 +14,7 @@ class BlockDoubleStoneSlab2 : BlockSlab {
     constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun setStoneSlabType(stoneSlabType: StoneSlab2Type): BlockDoubleStoneSlab2 {
-        return setState<BlockDoubleStoneSlab2>("stone_slab_type_2", stoneSlabType.name.lowercase(Locale.getDefault()))
+        return setState("stone_slab_type_2", stoneSlabType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneSlabType: StoneSlab2Type

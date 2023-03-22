@@ -24,7 +24,7 @@ class BlockConcretePowder : Block {
     }
 
     fun setColor(color: BlockColor): BlockConcretePowder {
-        return setState<BlockConcretePowder>("color", color.name.lowercase(Locale.getDefault()))
+        return setState("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

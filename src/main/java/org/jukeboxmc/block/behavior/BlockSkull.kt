@@ -11,6 +11,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
+import kotlin.math.floor
 
 /**
  * @author LucGamesYT
@@ -34,7 +35,7 @@ class BlockSkull : Block {
             super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
         if (value) {
             BlockEntity.create<BlockEntitySkull>(BlockEntityType.SKULL, this)
-                .setRotation((Math.floor(player.yaw * 16 / 360 + 0.5).toInt() and 0xF).toByte())
+                .setRotation((floor(player.yaw * 16 / 360 + 0.5).toInt() and 0xF).toByte())
                 .setSkullMeta(itemInHand.meta.toByte())
                 .spawn()
         }
@@ -45,7 +46,7 @@ class BlockSkull : Block {
         get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySkull?
 
     fun setNoDrop(value: Boolean): BlockSkull {
-        return setState<BlockSkull>("no_drop_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("no_drop_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isNoDrop: Boolean

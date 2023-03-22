@@ -33,7 +33,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
     fun writeToNetwork(byteBuf: ByteBuf, serializer: RuntimeDataSerializer<V>) {
         byteBuf.writeByte(getPaletteHeader(bitArray.version, true))
         for (word in bitArray.words) byteBuf.writeIntLE(word)
-        bitArray!!.writeSizeToNetwork(byteBuf, palette.size)
+        bitArray.writeSizeToNetwork(byteBuf, palette.size)
         for (value in palette) VarInts.writeInt(byteBuf, serializer.serialize(value))
     }
 
@@ -49,7 +49,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         }
         byteBuf.writeByte(getPaletteHeader(bitArray.version, true))
         for (word in bitArray.words) byteBuf.writeIntLE(word)
-        bitArray!!.writeSizeToNetwork(byteBuf, palette.size)
+        bitArray.writeSizeToNetwork(byteBuf, palette.size)
         for (value in palette) VarInts.writeInt(byteBuf, serializer.serialize(value))
     }
 
@@ -61,7 +61,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         for (i in 0 until wordCount) words[i] = byteBuf.readIntLE()
         bitArray = version.createArray(SIZE, words)
         palette.clear()
-        val size = bitArray!!.readSizeFromNetwork(byteBuf)
+        val size = bitArray.readSizeFromNetwork(byteBuf)
         for (i in 0 until size) palette.add(deserializer.deserialize(VarInts.readInt(byteBuf)))
     }
 
@@ -134,7 +134,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
 
     private fun onResize(version: BitArrayVersion) {
         val newBitArray = version.createArray(SIZE)
-        for (i in 0 until SIZE) newBitArray[i] = bitArray!![i]
+        for (i in 0 until SIZE) newBitArray[i] = bitArray[i]
         bitArray = newBitArray
     }
 
@@ -144,8 +144,8 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         index = palette.size
         palette.add(value)
         val version = bitArray.version
-        if (index > version!!.maxEntryValue) {
-            val next = version!!.next
+        if (index > version.maxEntryValue) {
+            val next = version.next
             if (next != null) onResize(next)
         }
         return index
@@ -159,7 +159,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         }
 
     fun copyTo(palette: Palette<V>) {
-        palette.bitArray = bitArray!!.copy()
+        palette.bitArray = bitArray.copy()
         palette.palette.clear()
         palette.palette.addAll(this.palette)
     }
@@ -171,7 +171,7 @@ class Palette<V> @JvmOverloads constructor(first: V, version: BitArrayVersion = 
         }
 
         private fun getVersionFromHeader(header: Short): BitArrayVersion? {
-            return BitArrayVersion.get(header.toInt() shr 1, true)
+            return BitArrayVersion[header.toInt() shr 1, true]
         }
 
         private fun hasCopyLastFlag(header: Short): Boolean {

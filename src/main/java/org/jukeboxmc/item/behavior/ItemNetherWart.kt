@@ -16,12 +16,12 @@ class ItemNetherWart : Item {
     private val block: BlockNetherWart
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockNetherWart>(BlockType.NETHER_WART)
+        block = Block.create(BlockType.NETHER_WART)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockNetherWart>(BlockType.NETHER_WART)
+        block = Block.create(BlockType.NETHER_WART)
         blockRuntimeId = block.runtimeId
     }
 

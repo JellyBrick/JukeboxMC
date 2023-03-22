@@ -38,13 +38,13 @@ class BlockBell : Block {
             if (blockFace.toDirection() != null) {
                 direction = blockFace.toDirection()!!
             }
-            if (world.getBlock(placePosition).getSide(blockFace).isSolid && world.getBlock(placePosition)
+            attachment = if (world.getBlock(placePosition).getSide(blockFace).isSolid && world.getBlock(placePosition)
                     .getSide(blockFace.opposite()).isSolid
             ) {
-                attachment = Attachment.MULTIPLE
+                Attachment.MULTIPLE
             } else {
                 if (world.getBlock(blockPosition).isSolid) {
-                    attachment = Attachment.SIDE
+                    Attachment.SIDE
                 } else {
                     return false
                 }
@@ -65,8 +65,7 @@ class BlockBell : Block {
         }
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

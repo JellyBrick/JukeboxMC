@@ -11,14 +11,14 @@ class MapLayerErosion(seed: Long, private val belowLayer: MapLayer) : MapLayer(s
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies erosion using Rotated Von Neumann neighborhood
-                // it takes a 3x3 grid with a cross shape and analyzes values as follow
+                // it takes a 3x3 grid with a cross shape and analyzes values as follows
                 // XOX
                 // OXO
                 // XOX
                 // the grid center value decides how we are proceeding:
-                // - if it's land and it's surrounded by at least 1 ocean cell there are 4/5 chances to proceed to land weathering, and 1/5 chance to spread some land.
-                // - if it's ocean and it's surrounded by at least 1 land cell, there are 2/3 chances to proceed to land weathering, and 1/3 chance to spread some land.
-                val upperLeftVal = values!![j + i * gridSizeX]
+                // - if it's land, and it's surrounded by at least 1 ocean cell there are 4/5 chances to proceed to land weathering, and 1/5 chance to spread some land.
+                // - if it's ocean, and it's surrounded by at least 1 land cell, there are 2/3 chances to proceed to land weathering, and 1/3 chance to spread some land.
+                val upperLeftVal = values[j + i * gridSizeX]
                 val lowerLeftVal = values[j + (i + 2) * gridSizeX]
                 val upperRightVal = values[j + 2 + i * gridSizeX]
                 val lowerRightVal = values[j + 2 + (i + 2) * gridSizeX]

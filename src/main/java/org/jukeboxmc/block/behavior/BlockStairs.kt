@@ -41,8 +41,7 @@ class BlockStairs : Block {
         }
     var crossDirection: CrossDirection
         get() {
-            val value = if (stateExists("weirdo_direction")) getIntState("weirdo_direction") else 0
-            return when (value) {
+            return when (if (stateExists("weirdo_direction")) getIntState("weirdo_direction") else 0) {
                 0 -> CrossDirection.EAST
                 1 -> CrossDirection.WEST
                 2 -> CrossDirection.SOUTH

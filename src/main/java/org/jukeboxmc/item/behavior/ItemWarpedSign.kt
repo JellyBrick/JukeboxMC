@@ -15,6 +15,6 @@ class ItemWarpedSign : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.WARPED_STANDING_SIGN)
+        return Block.create(BlockType.WARPED_STANDING_SIGN)
     }
 }

@@ -1,5 +1,6 @@
 package org.jukeboxmc.util
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.PooledByteBufAllocator
@@ -9,13 +10,16 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.Random
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToLong
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 object Utils {
-    val gson = GsonBuilder().setPrettyPrinting().create()
+    val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     fun blockToChunk(value: Int): Int {
         return value shr 4
     }
@@ -61,19 +65,19 @@ object Utils {
     fun sqrt(value: Float): Float {
         val xhalf = value * 0.5f
         var y = java.lang.Float.intBitsToFloat(0x5f375a86 - (java.lang.Float.floatToIntBits(value) shr 1))
-        y = y * (1.5f - xhalf * y * y)
-        y = y * (1.5f - xhalf * y * y)
+        y *= (1.5f - xhalf * y * y)
+        y *= (1.5f - xhalf * y * y)
         return value * y
     }
 
     @JvmStatic
     fun clamp(v: Float, min: Float, max: Float): Float {
-        return if (v < min) min else Math.min(v, max)
+        return if (v < min) min else min(v, max)
     }
 
     @JvmStatic
     fun clamp(value: Int, min: Int, max: Int): Int {
-        return if (value < min) min else Math.min(value, max)
+        return if (value < min) min else min(value, max)
     }
 
     @JvmStatic
@@ -112,8 +116,8 @@ object Utils {
 
     @JvmStatic
     fun round(value: Double, precision: Int): Double {
-        val pow = Math.pow(10.0, precision.toDouble())
-        return Math.round(value * pow).toDouble() / pow
+        val pow = 10.0.pow(precision.toDouble())
+        return (value * pow).roundToLong().toDouble() / pow
     }
 
     @JvmStatic
@@ -189,7 +193,6 @@ object Utils {
     @JvmStatic
     @Throws(IOException::class)
     fun writeFile(file: File, content: InputStream) {
-        requireNotNull(content) { "Content must not be null!" }
         if (!file.exists()) {
             file.createNewFile()
         }

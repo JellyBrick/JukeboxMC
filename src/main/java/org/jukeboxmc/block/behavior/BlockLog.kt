@@ -31,12 +31,12 @@ class BlockLog : Block {
         itemInHand: Item,
         blockFace: BlockFace,
     ): Boolean {
-        if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-            axis = Axis.Y
+        axis = if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
+            Axis.Y
         } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-            axis = Axis.Z
+            Axis.Z
         } else {
-            axis = Axis.X
+            Axis.X
         }
         world.setBlock(placePosition, this, 0)
         return true
@@ -47,7 +47,7 @@ class BlockLog : Block {
     }
 
     fun setLogType(logType: LogType): BlockLog {
-        return setState<BlockLog>("old_log_type", logType.name.lowercase(Locale.getDefault()))
+        return setState("old_log_type", logType.name.lowercase(Locale.getDefault()))
     }
 
     val logType: LogType

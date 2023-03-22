@@ -12,7 +12,7 @@ import org.jukeboxmc.player.Player
 class TextHandler : PacketHandler<TextPacket> {
     override fun handle(packet: TextPacket, server: Server, player: Player) {
         if (packet.type == TextPacket.Type.CHAT) {
-            val playerChatEvent = PlayerChatEvent(player, "<" + player.name + "> ", packet.getMessage())
+            val playerChatEvent = PlayerChatEvent(player, "<" + player.name + "> ", packet.message)
             server.pluginManager.callEvent(playerChatEvent)
             if (playerChatEvent.isCancelled) {
                 return

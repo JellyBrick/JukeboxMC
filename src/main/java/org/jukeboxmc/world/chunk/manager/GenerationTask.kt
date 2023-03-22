@@ -16,7 +16,7 @@ class GenerationTask : Function<Chunk, Chunk> {
         val writeLock = chunk.writeLock
         writeLock.lock()
         try {
-            chunk.world.getGenerator(chunk.dimension)?.generate(chunk, chunk.x, chunk.z)
+            chunk.world.getGenerator(chunk.dimension).generate(chunk, chunk.x, chunk.z)
             chunk.chunkState = ChunkState.GENERATED
             chunk.isDirty = true
         } finally {

@@ -19,12 +19,12 @@ class ItemNetheriteAxe : Item, Durability {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(7f)
+        attribute.setCurrentValue(7f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(attribute.minValue)
+        attribute.setCurrentValue(attribute.minValue)
     }
 
     override val maxDurability: Int

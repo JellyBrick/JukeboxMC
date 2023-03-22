@@ -19,12 +19,12 @@ class ItemPlanks : Item, Burnable {
     private val block: BlockPlanks
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockPlanks>(BlockType.PLANKS)
+        block = Block.create(BlockType.PLANKS)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockPlanks>(BlockType.PLANKS)
+        block = Block.create(BlockType.PLANKS)
         blockRuntimeId = block.runtimeId
     }
 

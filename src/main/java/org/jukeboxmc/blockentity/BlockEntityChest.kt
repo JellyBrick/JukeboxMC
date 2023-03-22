@@ -22,15 +22,11 @@ class BlockEntityChest(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    val realInventory: ChestInventory
+    val realInventory: ChestInventory = ChestInventory(this)
     private var doubleChestInventory: DoubleChestInventory? = null
     private var pairPosition: Vector? = null
     private var findable = false
     private var setPaired = false
-
-    init {
-        realInventory = ChestInventory(this)
-    }
 
     override fun update(currentTick: Long) {
         if (isPaired && !setPaired && isSpawned) {
@@ -100,10 +96,10 @@ class BlockEntityChest(
         val otherL = Utils.toLong(otherBP.blockX, otherBP.blockZ)
         val thisBP: Vector = block.location
         val thisL = Utils.toLong(thisBP.blockX, thisBP.blockZ)
-        if (otherL > thisL) {
-            doubleChestInventory = DoubleChestInventory(this, other.getChestInventory(), realInventory)
+        doubleChestInventory = if (otherL > thisL) {
+            DoubleChestInventory(this, other.getChestInventory(), realInventory)
         } else {
-            doubleChestInventory = DoubleChestInventory(this, realInventory, other.getChestInventory())
+            DoubleChestInventory(this, realInventory, other.getChestInventory())
         }
         other.doubleChestInventory = doubleChestInventory
         other.setPair(thisBP)

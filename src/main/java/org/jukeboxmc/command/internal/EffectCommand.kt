@@ -33,7 +33,7 @@ import kotlin.arrayOf
 class EffectCommand : Command(
     CommandData.builder()
         .setParameters(
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("target", CommandParamType.TARGET, false),
                 CommandParameter(
                     "effect",
@@ -56,7 +56,7 @@ class EffectCommand : Command(
     override fun execute(commandSender: CommandSender, command: String, args: Array<String>) {
         if (args.size >= 2) {
             val target: Player? = Server.instance.getPlayer(args[0])
-            val type = args[1]!!.lowercase(Locale.getDefault())
+            val type = args[1].lowercase(Locale.getDefault())
             if (target == null) {
                 commandSender.sendMessage("§cThe player " + args[0] + " could not be found")
                 return
@@ -76,14 +76,14 @@ class EffectCommand : Command(
                         return
                     }
                 }
-                val seconds = if (args.size >= 3) args[2]!!.toInt() else 30
+                val seconds = if (args.size >= 3) args[2].toInt() else 30
                 if (args.size == 4) {
                     if (!NumberUtils.isCreatable(args[3])) {
                         commandSender.sendMessage("The amplifier must be a number.")
                         return
                     }
                 }
-                val amplifier = if (args.size >= 4) args[3]!!.toInt() else 0
+                val amplifier = if (args.size >= 4) args[3].toInt() else 0
                 if (args.size >= 5) {
                     if (!args[4].equals("true", ignoreCase = true) && !args[4].equals("false", ignoreCase = true)) {
                         commandSender.sendMessage("The visible must be a boolean.")

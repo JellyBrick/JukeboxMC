@@ -16,11 +16,7 @@ class BlockEntityDropper(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val dropperInventory: DropperInventory
-
-    init {
-        dropperInventory = DropperInventory(this)
-    }
+    private val dropperInventory: DropperInventory = DropperInventory(this)
 
     override fun interact(
         player: Player,

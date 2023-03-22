@@ -46,7 +46,7 @@ class BlockTallGrass : Block {
     }
 
     fun setGrassType(grassType: GrassType): BlockTallGrass {
-        return setState<BlockTallGrass>("tall_grass_type", grassType.name.lowercase(Locale.getDefault()))
+        return setState("tall_grass_type", grassType.name.lowercase(Locale.getDefault()))
     }
 
     val grassType: GrassType

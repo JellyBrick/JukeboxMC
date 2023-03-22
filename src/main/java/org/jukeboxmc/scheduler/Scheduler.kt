@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 /**
  * @author WaterdogPE
@@ -38,7 +39,7 @@ class Scheduler(server: Server) {
     fun onTick(currentTick: Long) {
         var task: TaskHandler
         while (pendingTasks.poll().also { task = it } != null) {
-            val tick = Math.max(currentTick, task.nextRunTick)
+            val tick = max(currentTick, task.nextRunTick)
             assignedTasks.computeIfAbsent(tick) { integer: Long? -> LinkedList() }
                 .add(task)
         }
@@ -54,7 +55,7 @@ class Scheduler(server: Server) {
             return
         }
         if (taskHandler.isAsync) {
-            threadedExecutor.execute(Runnable { taskHandler.onRun(currentTick) })
+            threadedExecutor.execute { taskHandler.onRun(currentTick) }
         } else {
             taskHandler.onRun(currentTick)
         }
@@ -122,7 +123,7 @@ class Scheduler(server: Server) {
         server.logger.debug("Scheduler shutdown initialized!")
         threadedExecutor.shutdown()
         var count = 25
-        while (!threadedExecutor.isTerminated() && count-- > 0) {
+        while (!threadedExecutor.isTerminated && count-- > 0) {
             try {
                 threadedExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)
             } catch (ignore: InterruptedException) {

@@ -23,7 +23,13 @@ class StatusCommand : Command(CommandData.builder().build()) {
             .append(formatUptime(System.currentTimeMillis() - Server.instance.startTime))
             .append("\n")
         val currentTps: Long = Server.instance.currentTps
-        val tpsColor = if (currentTps < 17) "§e" else if (currentTps < 12) "§c" else "§a"
+        val tpsColor = if (currentTps < 12) {
+            "§e"
+        } else if (currentTps < 17) {
+            "§c"
+        } else {
+            "§a"
+        }
         builder.append("§7Current TPS§8: ").append(tpsColor).append(currentTps).append("\n")
         val runtime = Runtime.getRuntime()
         val totalMB = Utils.round(runtime.totalMemory().toDouble() / 1024 / 1024, 2)

@@ -17,7 +17,7 @@ class ItemBanner : Item, Burnable {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.STANDING_BANNER)
+        return Block.create(BlockType.STANDING_BANNER)
     }
 
     override val burnTime: Duration?

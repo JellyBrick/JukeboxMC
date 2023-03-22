@@ -42,7 +42,7 @@ class BlockGravel : Block {
         if (updateReason == UpdateReason.NORMAL) {
             location.world?.scheduleBlockUpdate(location, 1)
         } else if (updateReason == UpdateReason.SCHEDULED) {
-            val blockDown = location.block!!.clone().getSide(BlockFace.DOWN)
+            val blockDown = location.block.clone().getSide(BlockFace.DOWN)
             if (blockDown.type == BlockType.AIR) {
                 val entity =
                     Objects.requireNonNull<EntityFallingBlock>(Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK))
@@ -53,7 +53,7 @@ class BlockGravel : Block {
                 if (fallingBlockEvent.isCancelled) {
                     return -1
                 }
-                location.world?.setBlock(location, create<Block>(BlockType.AIR))
+                location.world?.setBlock(location, create(BlockType.AIR))
                 entity.spawn()
             }
         }

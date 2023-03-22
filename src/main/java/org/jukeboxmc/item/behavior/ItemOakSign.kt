@@ -17,7 +17,7 @@ class ItemOakSign : Item, Burnable {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.OAK_STANDING_SIGN)
+        return Block.create(BlockType.OAK_STANDING_SIGN)
     }
 
     override val burnTime: Duration?

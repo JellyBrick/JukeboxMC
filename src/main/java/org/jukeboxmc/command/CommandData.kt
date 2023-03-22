@@ -17,7 +17,7 @@ class CommandData(
     private val aliases: CommandEnum,
     private val overloads: MutableList<Array<CommandParameter>>,
 ) {
-    fun getPermission(): String? {
+    fun getPermission(): String {
         return permission
     }
 

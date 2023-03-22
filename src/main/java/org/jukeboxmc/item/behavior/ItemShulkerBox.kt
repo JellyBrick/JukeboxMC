@@ -17,12 +17,12 @@ class ItemShulkerBox : Item {
     private val block: BlockShulkerBox
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
+        block = Block.create(BlockType.SHULKER_BOX)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockShulkerBox>(BlockType.SHULKER_BOX)
+        block = Block.create(BlockType.SHULKER_BOX)
         blockRuntimeId = block.runtimeId
     }
 

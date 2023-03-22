@@ -8,20 +8,20 @@ class MapLayerBiome(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
         val finalValues = IntArray(sizeX * sizeZ)
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
-                var `val` = values!![j + i * sizeX]
-                if (`val` != 0) {
+                var value = values[j + i * sizeX]
+                if (value != 0) {
                     setCoordsSeed(x + j, z + i)
-                    when (`val`) {
-                        1 -> `val` = DRY[nextInt(DRY.size)]
-                        2 -> `val` = WARM[nextInt(WARM.size)]
-                        3, 1003 -> `val` = COLD[nextInt(COLD.size)]
-                        4 -> `val` = WET[nextInt(WET.size)]
-                        1001 -> `val` = DRY_LARGE[nextInt(DRY_LARGE.size)]
-                        1004 -> `val` = WET_LARGE[nextInt(WET_LARGE.size)]
+                    when (value) {
+                        1 -> value = DRY[nextInt(DRY.size)]
+                        2 -> value = WARM[nextInt(WARM.size)]
+                        3, 1003 -> value = COLD[nextInt(COLD.size)]
+                        4 -> value = WET[nextInt(WET.size)]
+                        1001 -> value = DRY_LARGE[nextInt(DRY_LARGE.size)]
+                        1004 -> value = WET_LARGE[nextInt(WET_LARGE.size)]
                         else -> {}
                     }
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues

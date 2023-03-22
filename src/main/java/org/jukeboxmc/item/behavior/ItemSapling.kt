@@ -19,12 +19,12 @@ class ItemSapling : Item, Burnable {
     private val block: BlockSapling
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockSapling>(BlockType.SAPLING)
+        block = Block.create(BlockType.SAPLING)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockSapling>(BlockType.SAPLING)
+        block = Block.create(BlockType.SAPLING)
         blockRuntimeId = block.runtimeId
     }
 

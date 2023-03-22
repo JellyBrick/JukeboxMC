@@ -16,6 +16,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.world.Particle
+import kotlin.math.ceil
 
 /**
  * @author LucGamesYT
@@ -128,7 +129,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                     ) {
                         return
                     }
-                    val breakTime = Math.ceil(startBreakBlock.getBreakTime(player.inventory.itemInHand, player) * 20)
+                    val breakTime = ceil(startBreakBlock.getBreakTime(player.inventory.itemInHand, player) * 20)
                     if (breakTime > 0) {
                         val levelEventPacket = LevelEventPacket()
                         levelEventPacket.type = LevelEventType.BLOCK_START_BREAK

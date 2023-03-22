@@ -22,7 +22,7 @@ class BlockCarpet : Block {
     }
 
     fun setColor(color: BlockColor): BlockCarpet {
-        return setState<BlockCarpet>("color", color.name.lowercase(Locale.getDefault()))
+        return setState("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

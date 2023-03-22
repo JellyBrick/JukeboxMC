@@ -28,12 +28,12 @@ class BlockPolishedBasalt : Block {
         itemInHand: Item,
         blockFace: BlockFace,
     ): Boolean {
-        if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-            axis = Axis.Y
+        axis = if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
+            Axis.Y
         } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-            axis = Axis.Z
+            Axis.Z
         } else {
-            axis = Axis.X
+            Axis.X
         }
         world.setBlock(placePosition, this, 0)
         return true

@@ -112,7 +112,7 @@ class Location @JvmOverloads constructor(
         return Location(world, this.x / x, this.y / y, this.z / z, yaw, pitch, dimension)
     }
 
-    val block: Block?
+    val block: Block
         get() = world!!.getBlock(this)
     val biome: Biome?
         get() = world?.getBiome(this, dimension)

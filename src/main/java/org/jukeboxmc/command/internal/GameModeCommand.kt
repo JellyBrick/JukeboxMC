@@ -27,7 +27,7 @@ class GameModeCommand : Command(
                 CommandParameter("gamemode", CommandParamType.INT, false),
                 CommandParameter("target", CommandParamType.TARGET, true),
             ),
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("gamemode", mutableListOf("survival", "creative", "adventure", "spectator"), false),
                 CommandParameter("target", CommandParamType.TARGET, true),
             ),

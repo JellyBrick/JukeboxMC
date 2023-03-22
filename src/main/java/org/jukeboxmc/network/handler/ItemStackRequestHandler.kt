@@ -29,6 +29,7 @@ import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.CreativeItems
 import java.util.LinkedList
+import kotlin.math.min
 
 /**
  * @author LucGamesYT
@@ -155,7 +156,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         action: CraftRecipeOptionalStackRequestActionData,
         request: ItemStackRequest,
     ): Collection<ItemStackResponsePacket.Response> {
-        return emptyList<ItemStackResponsePacket.Response>()
+        return emptyList()
     }
 
     private fun handleCraftResult(
@@ -195,16 +196,16 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         action: ConsumeStackRequestActionData,
         request: ItemStackRequest,
     ): List<ItemStackResponsePacket.ItemEntry> {
-        val amount: Byte = action.getCount()
+        val amount: Byte = action.count
         val source: StackRequestSlotInfoData = action.source
         var sourceItem = getItem(player, source.container, source.slot.toInt())
         if (sourceItem == null) {
-            sourceItem = Item.create<Item>(ItemType.AIR)
+            sourceItem = Item.create(ItemType.AIR)
         } else {
             sourceItem.setAmount(sourceItem.amount - amount)
         }
         if (sourceItem.amount <= 0) {
-            sourceItem = Item.create<Item>(ItemType.AIR)
+            sourceItem = Item.create(ItemType.AIR)
         }
         this.setItem(player, source.container, source.slot.toInt(), sourceItem)
         val containerEntryList: MutableList<ItemStackResponsePacket.ItemEntry> =
@@ -336,13 +337,13 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             if (destinationItem == sourceItem && sourceItem.amount > 0) {
                 sourceItem.setAmount(sourceItem.amount - amount)
                 if (sourceItem.amount <= 0) {
-                    sourceItem = Item.create<Item>(ItemType.AIR)
+                    sourceItem = Item.create(ItemType.AIR)
                 }
                 destinationItem.setAmount(destinationItem.amount + amount)
             } else if (destinationItem.type == ItemType.AIR) {
                 if (sourceItem.amount == amount.toInt()) {
                     destinationItem = sourceItem.clone()
-                    sourceItem = Item.create<Item>(ItemType.AIR)
+                    sourceItem = Item.create(ItemType.AIR)
                 } else {
                     destinationItem = sourceItem.clone()
                     destinationItem.setAmount(amount.toInt())
@@ -431,7 +432,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             Server.instance.pluginManager.callEvent(inventoryClickEvent)
             if (inventoryClickEvent.isCancelled) {
                 sourceInventory.setItem(source.slot.toInt(), sourceItem)
-                return java.util.List.of(
+                return listOf(
                     ItemStackResponsePacket.Response(
                         ItemStackResponsePacket.ResponseStatus.ERROR,
                         itemStackRequest.requestId,
@@ -441,7 +442,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             }
             sourceItem.setStackNetworkId(Item.stackNetworkCount++)
             if (destinationItem.type != ItemType.AIR) {
-                sourceItem.setAmount(Math.min(destinationItem.amount + sourceItem.amount, sourceItem.maxStackSize))
+                sourceItem.setAmount(min(destinationItem.amount + sourceItem.amount, sourceItem.maxStackSize))
             }
             this.setItem(player, destination.container, destination.slot.toInt(), sourceItem)
             entryList.add(
@@ -493,13 +494,13 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             if (destinationItem == sourceItem && sourceItem.amount > 0) {
                 sourceItem.setAmount(sourceItem.amount - amount)
                 if (sourceItem.amount <= 0) {
-                    sourceItem = Item.create<Item>(ItemType.AIR)
+                    sourceItem = Item.create(ItemType.AIR)
                 }
                 destinationItem.setAmount(destinationItem.amount + amount)
             } else if (destinationItem.type == ItemType.AIR) {
                 if (sourceItem.amount == amount.toInt()) {
                     destinationItem = sourceItem.clone()
-                    sourceItem = Item.create<Item>(ItemType.AIR)
+                    sourceItem = Item.create(ItemType.AIR)
                 } else {
                     destinationItem = sourceItem.clone()
                     destinationItem.setAmount(amount.toInt())
@@ -621,7 +622,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         }
         sourceItem.setAmount(sourceItem.amount - amount)
         if (sourceItem.amount <= 0) {
-            sourceItem = Item.create<Item>(ItemType.AIR)
+            sourceItem = Item.create(ItemType.AIR)
             this.setItem(player, source.container, source.slot.toInt(), sourceItem)
         }
         val finalSourceItem = sourceItem
@@ -682,7 +683,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         val dropItem = sourceItem.clone()
         dropItem.setAmount(amount.toInt())
         if (sourceItem.amount <= 0) {
-            sourceItem = Item.create<Item>(ItemType.AIR)
+            sourceItem = Item.create(ItemType.AIR)
         }
         this.setItem(player, source.container, source.slot.toInt(), sourceItem)
         val entityItem = player.world?.dropItem(
@@ -727,7 +728,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
         destinationItem: Item,
     ): ItemStackResponsePacket.Response {
         Server.instance.scheduler.scheduleDelayed(
-            Runnable {
+            {
                 sourceInventory.setItem(sourceSlot, sourceItem)
                 sourceInventory.sendContents(sourceSlot, player)
                 destinationInventory.setItem(destinationSlot, destinationItem)
@@ -754,7 +755,7 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                 ),
                 ContainerEntry(
                     ContainerSlotType.CURSOR,
-                    listOf<ItemStackResponsePacket.ItemEntry>(
+                    listOf(
                         ItemStackResponsePacket.ItemEntry(
                             destinationSlot.toByte(),
                             destinationSlot.toByte(),

@@ -1,11 +1,7 @@
 package org.jukeboxmc.util
 
 class Identifier(val namespace: String, val name: String, val fullName: String) {
-    private val hashCode: Int
-
-    init {
-        hashCode = fullName.hashCode()
-    }
+    private val hashCode: Int = fullName.hashCode()
 
     override fun equals(o: Any?): Boolean {
         return o is Identifier && o.hashCode == hashCode

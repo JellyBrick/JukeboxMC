@@ -24,7 +24,7 @@ class BlockPlanks : Block {
     }
 
     fun setWoodType(woodType: WoodType): Block {
-        return setState<Block>("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType

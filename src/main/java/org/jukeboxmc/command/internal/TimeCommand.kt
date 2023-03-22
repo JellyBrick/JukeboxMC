@@ -25,11 +25,11 @@ class TimeCommand : Command(
             arrayOf(
                 CommandParameter("start", mutableListOf("start", "stop"), false),
             ),
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("set", mutableListOf("set"), false),
                 CommandParameter("time", mutableListOf("sunrise", "day", "noon", "sunset", "night", "midnight"), false),
             ),
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("set", mutableListOf("set"), false),
                 CommandParameter("time", CommandParamType.INT, false),
             ),
@@ -56,7 +56,7 @@ class TimeCommand : Command(
             } else if (args.size == 2) {
                 if (args[0].equals("set", ignoreCase = true)) {
                     if (NumberUtils.isCreatable(args[1])) {
-                        val time = args[1]!!.toInt()
+                        val time = args[1].toInt()
                         commandSender.world?.setWorldTime(time)
                         commandSender.sendMessage("Set the time to $time")
                     } else {

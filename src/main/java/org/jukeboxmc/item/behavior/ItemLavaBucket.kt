@@ -17,7 +17,7 @@ class ItemLavaBucket : Item, Burnable {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.LAVA)
+        return Block.create(BlockType.LAVA)
     }
 
     override val burnTime: Duration?

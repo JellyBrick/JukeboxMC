@@ -67,8 +67,7 @@ class SeagrassPopulator(private val tallSeagrassProbability: Double) : Populator
     }
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
-        var y: Int
-        y = NormalGenerator.WATER_HEIGHT - 1
+        var y: Int = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {

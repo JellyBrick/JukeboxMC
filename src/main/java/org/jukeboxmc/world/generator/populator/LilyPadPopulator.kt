@@ -14,7 +14,7 @@ import java.util.Random
 class LilyPadPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_LILLYPAD: Block = Block.create<Block>(BlockType.WATERLILY)
+    private val BLOCK_LILLYPAD: Block = Block.create(BlockType.WATERLILY)
     override fun populate(
         random: Random,
         world: World?,

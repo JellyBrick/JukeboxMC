@@ -24,7 +24,7 @@ class BlockPrismarine : Block {
     }
 
     fun setPrismarineType(prismarineType: PrismarineType): BlockPrismarine {
-        return setState<BlockPrismarine>("prismarine_block_type", prismarineType.name.lowercase(Locale.getDefault()))
+        return setState("prismarine_block_type", prismarineType.name.lowercase(Locale.getDefault()))
     }
 
     val prismarineType: PrismarineType

@@ -11,7 +11,7 @@ object Bootstrap {
     @JvmStatic
     fun main(args: Array<String>) {
         val logger = Logger()
-        logger.info("Starting JukeboxMC (Bedrock Edition " + Network.CODEC.getMinecraftVersion() + " with Protocol " + Network.CODEC.getProtocolVersion() + ")")
+        logger.info("Starting JukeboxMC (Bedrock Edition " + Network.CODEC.minecraftVersion + " with Protocol " + Network.CODEC.protocolVersion + ")")
         Server(logger)
     }
 }

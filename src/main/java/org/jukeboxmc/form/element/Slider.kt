@@ -16,7 +16,7 @@ class Slider(
 ) : Element(id, text) {
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
-        obj!!["type"] = "slider"
+        obj["type"] = "slider"
         obj["min"] = min
         obj["max"] = max
         if (step > 0) {

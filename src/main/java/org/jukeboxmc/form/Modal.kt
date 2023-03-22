@@ -30,7 +30,7 @@ class Modal(title: String, private val question: String) : Form<Boolean>(title) 
 
         // Create new JSON view of this form
         val jsonObject = super.toJSON()
-        jsonObject!!["content"] = question
+        jsonObject["content"] = question
         jsonObject["button1"] = trueButtonText
         jsonObject["button2"] = falseButtonText
 

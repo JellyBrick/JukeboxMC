@@ -15,7 +15,7 @@ import java.util.Random
  *
  * This could be sped up even further, but it's useful as is.
  */
-class SimplexNoise(rand: Random) : PerlinNoise(rand) {
+open class SimplexNoise(rand: Random) : PerlinNoise(rand) {
     protected val permMod12 = IntArray(512)
 
     /**

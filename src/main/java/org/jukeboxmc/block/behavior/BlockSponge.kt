@@ -15,7 +15,7 @@ class BlockSponge : Block {
     constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun setSpongeType(spongeType: SpongeType): BlockSponge {
-        return setState<BlockSponge>("sponge_type", spongeType.name.lowercase(Locale.getDefault()))
+        return setState("sponge_type", spongeType.name.lowercase(Locale.getDefault()))
     }
 
     val spongeType: SpongeType

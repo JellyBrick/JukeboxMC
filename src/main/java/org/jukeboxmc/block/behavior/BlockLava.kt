@@ -44,23 +44,23 @@ class BlockLava : BlockLiquid {
         }
         if (colliding != null) {
             if (this.liquidDepth == 0) {
-                liquidCollide(create<Block>(BlockType.OBSIDIAN))
+                liquidCollide(create(BlockType.OBSIDIAN))
             } else if (this.liquidDepth <= 4) {
-                liquidCollide(create<Block>(BlockType.COBBLESTONE))
+                liquidCollide(create(BlockType.COBBLESTONE))
             }
         }
     }
 
     override fun flowIntoBlock(block: Block, newFlowDecay: Int) {
         if (block is BlockWater) {
-            (block as BlockLiquid).liquidCollide(create<Block>(BlockType.STONE))
+            (block as BlockLiquid).liquidCollide(create(BlockType.STONE))
         } else {
             super.flowIntoBlock(block, newFlowDecay)
         }
     }
 
     override fun getBlock(liquidDepth: Int): BlockLiquid {
-        val blockLava: BlockLava = create<BlockLava>(BlockType.LAVA)
+        val blockLava: BlockLava = create(BlockType.LAVA)
         blockLava.setLiquidDepth(liquidDepth)
         return blockLava
     }

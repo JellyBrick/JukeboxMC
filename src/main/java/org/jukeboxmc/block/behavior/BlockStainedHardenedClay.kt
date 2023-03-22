@@ -24,7 +24,7 @@ class BlockStainedHardenedClay : Block {
     }
 
     fun setColor(color: BlockColor): BlockStainedHardenedClay {
-        return setState<BlockStainedHardenedClay>("color", color.name.lowercase(Locale.getDefault()))
+        return setState("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

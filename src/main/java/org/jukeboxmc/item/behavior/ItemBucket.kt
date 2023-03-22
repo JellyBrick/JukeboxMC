@@ -35,13 +35,13 @@ open class ItemBucket : Item {
             }
             val item: Item =
                 if (block.type == BlockType.POWDER_SNOW) {
-                    create<Item>(ItemType.POWDER_SNOW_BUCKET)
+                    create(ItemType.POWDER_SNOW_BUCKET)
                 } else if (block is BlockLava) {
-                    create<Item>(
+                    create(
                         ItemType.LAVA_BUCKET,
                     )
                 } else {
-                    create<Item>(ItemType.WATER_BUCKET)
+                    create(ItemType.WATER_BUCKET)
                 }
             val playerBucketFillEvent = PlayerBucketFillEvent(player, this, item, block)
             Server.instance.pluginManager.callEvent(playerBucketFillEvent)
@@ -49,7 +49,7 @@ open class ItemBucket : Item {
                 player.inventory.sendContents(player)
                 return false
             }
-            player.world?.setBlock(block.location, Block.create<Block>(BlockType.AIR), 0)
+            player.world?.setBlock(block.location, Block.create(BlockType.AIR), 0)
             if (block.type == BlockType.POWDER_SNOW) {
                 player.world?.playSound(player.location, SoundEvent.BUCKET_FILL_POWDER_SNOW)
             } else if (block is BlockLava) {
@@ -92,7 +92,7 @@ open class ItemBucket : Item {
             val playerBucketEmptyEvent = PlayerBucketEmptyEvent(
                 player,
                 this,
-                create<Item>(ItemType.BUCKET),
+                create(ItemType.BUCKET),
                 block,
                 placedBlock,
             )
@@ -120,7 +120,7 @@ open class ItemBucket : Item {
                     clone.setAmount(amount - 1)
                     player.inventory.itemInHand = clone
                     if (!player.inventory.addItem(playerBucketEmptyEvent.itemInHand)) {
-                        player.world?.dropItem(create<Item>(ItemType.BUCKET), player.location, null)
+                        player.world?.dropItem(create(ItemType.BUCKET), player.location, null)
                     }
                 }
             }

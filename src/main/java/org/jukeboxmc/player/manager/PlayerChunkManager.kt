@@ -24,22 +24,17 @@ import java.util.function.LongConsumer
  * @version 1.0
  */
 class PlayerChunkManager(private val player: Player) {
-    private val comparator: ChunkComparator
+    private val comparator: ChunkComparator = ChunkComparator(player)
     private val loadedChunks: LongSet = LongOpenHashSet()
     private val sendQueue: Long2ObjectMap<LevelChunkPacket?> = Long2ObjectOpenHashMap()
     private val chunksSentCounter: AtomicLong = AtomicLong()
-    private val removeChunkLoader: LongConsumer
+    private val removeChunkLoader: LongConsumer = LongConsumer { chunkKey: Long ->
+        val chunk = player.world?.getLoadedChunk(chunkKey, player.dimension)
+        chunk?.removeLoader(player)
+    }
 
     @Volatile
     private var radius = 0
-
-    init {
-        comparator = ChunkComparator(player)
-        removeChunkLoader = LongConsumer { chunkKey: Long ->
-            val chunk = player.world?.getLoadedChunk(chunkKey, player.dimension)
-            chunk?.removeLoader(player)
-        }
-    }
 
     @Synchronized
     fun sendQueued() {
@@ -68,7 +63,7 @@ class PlayerChunkManager(private val player: Player) {
             player.playerConnection.sendPacket(packet)
             val chunk = player.world?.getLoadedChunk(key, player.dimension)
             if (chunk != null) {
-                for (entity in chunk!!.getEntities()) {
+                for (entity in chunk.getEntities()) {
                     if (entity !is Player && !entity.isClosed) {
                         entity.spawn(player)
                     }
@@ -93,7 +88,7 @@ class PlayerChunkManager(private val player: Player) {
         val chunksToLoad: LongList = LongArrayList()
         for (x in -radius..radius) {
             for (z in -radius..radius) {
-                // Chunk radius is circular so we need to remove the corners.
+                // Chunk radius is circular, so we need to remove the corners.
                 if (x * x + z * z > radiusSqr) {
                     continue
                 }

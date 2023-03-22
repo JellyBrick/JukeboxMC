@@ -18,6 +18,7 @@ import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
 import java.util.*
+import kotlin.math.max
 import kotlin.math.sqrt
 
 /**
@@ -124,7 +125,7 @@ abstract class EntityLiving : Entity() {
             absorption = this.absorption
             if (absorption > 0) {
                 val oldDamage = damageToBeDealt
-                damageToBeDealt = Math.max(damage - absorption, 0f)
+                damageToBeDealt = max(damage - absorption, 0f)
                 this.absorption = absorption - (oldDamage - damageToBeDealt)
             }
         }

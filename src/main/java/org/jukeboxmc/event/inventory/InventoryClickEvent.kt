@@ -14,7 +14,7 @@ class InventoryClickEvent
  * Creates a new [InventoryClickEvent]
  *
  * @param inventory  which represents the inventory the [Player] clicked at
- * @param player     who clicked on a item in the [Inventory]
+ * @param player     who clicked on an item in the [Inventory]
  * @param sourceItem which stands for the old item
  * @param targetItem which is the new item
  * @param slot       the slot where the item was placed at

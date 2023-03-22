@@ -5,7 +5,6 @@ import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.world.generator.populator.DiskPopulator
 import org.jukeboxmc.world.generator.populator.SeagrassPopulator
 import org.jukeboxmc.world.generator.populator.SugarcanePopulator
-import java.util.Arrays
 
 /**
  * @author LucGamesYT
@@ -15,11 +14,11 @@ class RiverBiome : BiomePopulator() {
     init {
         val populatorDiskSand = DiskPopulator(
             1.0,
-            Block.create<Block>(BlockType.SAND),
+            Block.create(BlockType.SAND),
             2,
             4,
             2,
-            Arrays.asList(
+            listOf(
                 BlockType.GRASS,
                 BlockType.DIRT,
             ),
@@ -28,11 +27,11 @@ class RiverBiome : BiomePopulator() {
         addPopulator(populatorDiskSand)
         val populatorDiskClay = DiskPopulator(
             1.0,
-            Block.create<Block>(BlockType.CLAY),
+            Block.create(BlockType.CLAY),
             1,
             2,
             1,
-            Arrays.asList(
+            listOf(
                 BlockType.DIRT,
                 BlockType.CLAY,
             ),
@@ -41,11 +40,11 @@ class RiverBiome : BiomePopulator() {
         addPopulator(populatorDiskClay)
         val populatorDiskGravel = DiskPopulator(
             1.0,
-            Block.create<Block>(BlockType.GRAVEL),
+            Block.create(BlockType.GRAVEL),
             2,
             3,
             2,
-            Arrays.asList(
+            listOf(
                 BlockType.GRASS,
                 BlockType.DIRT,
             ),

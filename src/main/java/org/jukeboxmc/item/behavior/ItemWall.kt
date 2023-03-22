@@ -17,12 +17,12 @@ class ItemWall : Item {
     private val block: BlockCobblestoneWall
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
+        block = Block.create(BlockType.COBBLESTONE_WALL)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
+        block = Block.create(BlockType.COBBLESTONE_WALL)
         blockRuntimeId = block.runtimeId
     }
 

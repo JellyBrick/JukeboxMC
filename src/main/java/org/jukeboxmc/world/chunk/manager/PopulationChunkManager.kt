@@ -26,7 +26,7 @@ class PopulationChunkManager(chunk: Chunk, chunks: List<Chunk>) {
         val relativeX = chunkX - cornerX
         val relativeZ = chunkZ - cornerZ
         Preconditions.checkArgument(
-            relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3,
+            relativeX in 0..2 && relativeZ >= 0 && relativeZ < 3,
             "Chunk position (%s,%s) out of population bounds",
             chunkX,
             chunkZ,
@@ -38,7 +38,7 @@ class PopulationChunkManager(chunk: Chunk, chunks: List<Chunk>) {
         val relativeX = (blockX shr 4) - cornerX
         val relativeZ = (blockZ shr 4) - cornerZ
         Preconditions.checkArgument(
-            relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3,
+            relativeX in 0..2 && relativeZ >= 0 && relativeZ < 3,
             "Block position (%s,%s) out of population bounds",
             blockX,
             blockZ,

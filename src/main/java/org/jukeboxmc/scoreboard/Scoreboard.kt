@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongList
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.player.Player
+import java.util.EnumMap
 import java.util.Locale
 
 /**
@@ -21,7 +22,7 @@ class Scoreboard {
     private var scoreIdCounter: Long = 0
     private val scoreboardLines: Long2ObjectMap<ScoreboardLine> = Long2ObjectArrayMap()
     private val viewers: MutableSet<Player> = HashSet()
-    private val displays: MutableMap<DisplaySlot, ScoreboardDisplay> = HashMap()
+    private val displays: MutableMap<DisplaySlot, ScoreboardDisplay> = EnumMap(org.jukeboxmc.scoreboard.DisplaySlot::class.java)
 
     fun addDisplay(slot: DisplaySlot, objectiveName: String, displayName: String): ScoreboardDisplay {
         return this.addDisplay(slot, objectiveName, displayName, SortOrder.ASCENDING)
@@ -122,7 +123,7 @@ class Scoreboard {
     private fun constructSetScore(): SetScorePacket {
         val setScorePacket = SetScorePacket()
         setScorePacket.action = SetScorePacket.Action.SET
-        val entries: MutableList<ScoreInfo> = ArrayList<ScoreInfo>()
+        val entries: MutableList<ScoreInfo> = ArrayList()
         val fastEntrySet = scoreboardLines.long2ObjectEntrySet() as Long2ObjectMap.FastEntrySet<ScoreboardLine>
         val fastIterator = fastEntrySet.fastIterator()
         while (fastIterator.hasNext()) {
@@ -160,7 +161,7 @@ class Scoreboard {
     private fun constructRemoveScores(scoreIDs: LongList): SetScorePacket {
         val setScorePacket = SetScorePacket()
         setScorePacket.action = SetScorePacket.Action.REMOVE
-        val entries: MutableList<ScoreInfo> = ArrayList<ScoreInfo>()
+        val entries: MutableList<ScoreInfo> = ArrayList()
         for (scoreID in scoreIDs) {
             entries.add(ScoreInfo(scoreID, "", 0))
         }
@@ -198,11 +199,7 @@ class Scoreboard {
 
     fun getScore(scoreId: Long): Int {
         val line = scoreboardLines.remove(scoreId)
-        return if (line != null) {
-            line.score
-        } else {
-            0
-        }
+        return line?.score ?: 0
     }
 
     private data class ScoreboardLine(

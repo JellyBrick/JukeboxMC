@@ -15,6 +15,6 @@ open class ItemDoor : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.valueOf(this.type!!.name))
+        return Block.create(BlockType.valueOf(this.type.name))
     }
 }

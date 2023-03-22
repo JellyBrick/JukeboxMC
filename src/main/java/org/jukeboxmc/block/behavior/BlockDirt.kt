@@ -22,7 +22,7 @@ class BlockDirt : Block {
     }
 
     fun setDirtType(dirtType: DirtType): BlockDirt {
-        return setState<BlockDirt>("dirt_type", dirtType.name.lowercase(Locale.getDefault()))
+        return setState("dirt_type", dirtType.name.lowercase(Locale.getDefault()))
     }
 
     val dirtType: DirtType

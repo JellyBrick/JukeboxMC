@@ -19,10 +19,9 @@ class BlockEntityBlastFurnace(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : SmeltingComponent(block, blockEntityType), InventoryHolder {
-    val blastFurnaceInventory: BlastFurnaceInventory
+    val blastFurnaceInventory: BlastFurnaceInventory = BlastFurnaceInventory(this)
 
     init {
-        blastFurnaceInventory = BlastFurnaceInventory(this)
         initInventory(blastFurnaceInventory)
     }
 

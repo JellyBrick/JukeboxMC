@@ -20,6 +20,9 @@ import org.jukeboxmc.world.Sound
 import java.time.Duration
 import java.util.Objects
 import java.util.concurrent.TimeUnit
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 
 /**
  * @author LucGamesYT
@@ -44,9 +47,9 @@ class ItemBow : Item, Durability, Burnable {
             return
         }
         val tick: Float = (Server.instance.currentTick - player.actionStart).toFloat() / 20
-        val force = Math.min((tick * tick + tick * 2) / 3, 1f) * 2
+        val force = min((tick * tick + tick * 2) / 3, 1f) * 2
         player.setAction(false)
-        if (!player.inventory.contains(create<Item>(ItemType.ARROW)) && player.gameMode != GameMode.CREATIVE) {
+        if (!player.inventory.contains(create(ItemType.ARROW)) && player.gameMode != GameMode.CREATIVE) {
             return
         }
         var powerModifier = 0
@@ -76,9 +79,9 @@ class ItemBow : Item, Durability, Burnable {
         )
         arrow.setVelocity(
             Vector(
-                (-Math.sin(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)).toFloat(),
-                (-Math.sin(player.pitch / 180 * Math.PI)).toFloat(),
-                (Math.cos(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)).toFloat(),
+                (-sin(player.yaw / 180 * Math.PI) * cos(player.pitch / 180 * Math.PI)).toFloat(),
+                (-sin(player.pitch / 180 * Math.PI)).toFloat(),
+                (cos(player.yaw / 180 * Math.PI) * cos(player.pitch / 180 * Math.PI)).toFloat(),
             ).multiply(force, force, force),
             false,
         )

@@ -80,8 +80,8 @@ class Skin {
                 AnimationData(
                     ImageData.of(
                         animation!!.image.width,
-                        animation!!.image.height,
-                        animation!!.image.data,
+                        animation.image.height,
+                        animation.image.data,
                     ),
                     AnimatedTextureType.values()[animation.type],
                     animation.frames,
@@ -93,10 +93,10 @@ class Skin {
             personaPieceDataList.add(
                 PersonaPieceData(
                     piece!!.pieceId,
-                    piece!!.pieceType,
-                    piece!!.packId,
-                    piece!!.isDefault,
-                    piece!!.productId,
+                    piece.pieceType,
+                    piece.packId,
+                    piece.isDefault,
+                    piece.productId,
                 ),
             )
         }

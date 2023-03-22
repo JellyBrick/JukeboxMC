@@ -38,7 +38,7 @@ class BlockJungleStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockJungleWallSign =
-                create<BlockJungleWallSign>(BlockType.JUNGLE_WALL_SIGN)
+                create(BlockType.JUNGLE_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -47,6 +47,6 @@ class BlockJungleStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.JUNGLE_SIGN)
+        return Item.create(ItemType.JUNGLE_SIGN)
     }
 }

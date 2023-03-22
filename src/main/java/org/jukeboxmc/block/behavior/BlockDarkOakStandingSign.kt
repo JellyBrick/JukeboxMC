@@ -38,7 +38,7 @@ class BlockDarkOakStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockDarkOakWallSign =
-                create<BlockDarkOakWallSign>(BlockType.DARKOAK_WALL_SIGN)
+                create(BlockType.DARKOAK_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -47,6 +47,6 @@ class BlockDarkOakStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.DARK_OAK_SIGN)
+        return Item.create(ItemType.DARK_OAK_SIGN)
     }
 }

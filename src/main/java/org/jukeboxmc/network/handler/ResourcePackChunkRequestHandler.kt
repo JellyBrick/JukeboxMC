@@ -13,7 +13,7 @@ import org.jukeboxmc.resourcepack.ResourcePack
 class ResourcePackChunkRequestHandler : PacketHandler<ResourcePackChunkRequestPacket> {
     override fun handle(packet: ResourcePackChunkRequestPacket, server: Server, player: Player) {
         val resourcePackEntryElements: Array<String> =
-            packet.getPackId().toString().split("_".toRegex()).dropLastWhile { it.isEmpty() }
+            packet.packId.toString().split("_".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()
         val resourcePackEntryUuid = resourcePackEntryElements[0]
         val resourcePack: ResourcePack? = server.getResourcePackManager().retrieveResourcePackById(resourcePackEntryUuid)

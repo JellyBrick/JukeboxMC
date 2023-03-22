@@ -21,7 +21,7 @@ import org.jukeboxmc.player.Player
 class OperatorCommand : Command(
     CommandData.builder()
         .setParameters(
-            arrayOf<CommandParameter>(
+            arrayOf(
                 CommandParameter("player", CommandParamType.TARGET, false),
             ),
         )

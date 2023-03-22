@@ -11,7 +11,7 @@ class PlayerJoinEvent
  * Creates a new [PlayerJoinEvent]
  *
  * @param player      who joined the server
- * @param joinMessage which will be send when the player joins
+ * @param joinMessage which will be sent when the player joins
  */(
     player: Player,
     /**

@@ -15,6 +15,6 @@ class BlockSilverWool : Block {
     constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.SILVER_WOOL)
+        return Item.create(ItemType.SILVER_WOOL)
     }
 }

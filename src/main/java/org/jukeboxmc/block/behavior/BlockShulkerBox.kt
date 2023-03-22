@@ -73,7 +73,7 @@ class BlockShulkerBox : Block {
     }
 
     override fun toItem(): ItemShulkerBox {
-        val itemShulkerBox: ItemShulkerBox = Item.create<ItemShulkerBox>(ItemType.SHULKER_BOX)
+        val itemShulkerBox: ItemShulkerBox = Item.create(ItemType.SHULKER_BOX)
         itemShulkerBox.setColor(color)
         val blockEntity = blockEntity as BlockEntityShulkerBox? ?: return itemShulkerBox
         val shulkerBoxInventory = blockEntity.shulkerBoxInventory
@@ -97,7 +97,7 @@ class BlockShulkerBox : Block {
         get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     fun setColor(color: BlockColor): BlockShulkerBox {
-        return setState<BlockShulkerBox>("color", color.name.lowercase(Locale.getDefault()))
+        return setState("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

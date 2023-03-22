@@ -25,7 +25,7 @@ class BlockEntitySign(block: Block, blockEntityType: BlockEntityType) : BlockEnt
         super.fromCompound(compound)
         val text = compound.getString("Text", "")
         lines.addAll(
-            Arrays.asList(
+            listOf(
                 *text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
                     .toTypedArray(),
             ),

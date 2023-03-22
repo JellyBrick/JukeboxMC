@@ -67,7 +67,7 @@ object BlockPalette {
         if (BLOCK_CACHE.containsKey(blockData)) {
             return BLOCK_CACHE[blockData]!!.clone()
         }
-        val block: Block = Block.create<Block>(identifier, blockStates)
+        val block: Block = Block.create(identifier, blockStates)
         BLOCK_CACHE[blockData] = block
         return block
     }

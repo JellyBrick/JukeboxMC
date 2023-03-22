@@ -51,7 +51,7 @@ class EnchantCommand : Command(
                     commandSender.sendMessage("§cThe player " + args[0] + " could not be found")
                     return
                 }
-                val enchantmentValue = args[1]!!.lowercase(Locale.getDefault())
+                val enchantmentValue = args[1].lowercase(Locale.getDefault())
                 if (!EnumUtils.isValidEnum(
                         EnchantmentType::class.java,
                         enchantmentValue.uppercase(Locale.getDefault()),
@@ -67,7 +67,7 @@ class EnchantCommand : Command(
                         commandSender.sendMessage("§cThe level must be a number.")
                         return
                     }
-                    level = args[2]!!.toInt()
+                    level = args[2].toInt()
                 }
                 val itemInHand: Item = commandSender.inventory.itemInHand
                 if (itemInHand.type == ItemType.AIR) {

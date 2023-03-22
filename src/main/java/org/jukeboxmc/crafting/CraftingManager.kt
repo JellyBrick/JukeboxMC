@@ -45,7 +45,7 @@ class CraftingManager {
                 val height = (recipe["height"] as Double).toInt()
                 val inputId = (recipe["inputId"] as Double).toInt()
                 val inputDamage = (recipe["inputDamage"] as Double).toInt()
-                val inputItems: MutableList<ItemDescriptorWithCount> = ArrayList<ItemDescriptorWithCount>()
+                val inputItems: MutableList<ItemDescriptorWithCount> = ArrayList()
                 if (recipe.containsKey("inputs")) {
                     recipe.getTyped<List<ConfigSection>>("inputs").forEach { input ->
                         if (input.containsKey("descriptor")) {
@@ -197,10 +197,8 @@ class CraftingManager {
     }
 
     fun getSmeltingRecipe(input: Item): SmeltingRecipe? {
-        return smeltingRecipes.stream().filter(
-            { smeltingRecipe: SmeltingRecipe? ->
-                smeltingRecipe?.input?.type == input.type
-            },
-        ).findFirst().orElse(null)
+        return smeltingRecipes.stream().filter { smeltingRecipe: SmeltingRecipe? ->
+            smeltingRecipe?.input?.type == input.type
+        }.findFirst().orElse(null)
     }
 }

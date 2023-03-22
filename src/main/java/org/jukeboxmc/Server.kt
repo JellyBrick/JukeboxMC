@@ -225,7 +225,7 @@ class Server(logger: Logger) {
                 System.gc()
             }
             lastTickTime = diff.toFloat() / TimeUnit.SECONDS.toNanos(1)
-            currentTps = (1 / lastTickTime.toDouble()).roundToInt().toInt().toLong()
+            currentTps = (1 / lastTickTime.toDouble()).roundToInt().toLong()
             if (currentTps != lastTps) {
                 pluginManager.callEvent(TpsChangeEvent(this, lastTps, currentTick))
             }
@@ -247,7 +247,7 @@ class Server(logger: Logger) {
             world.saveChunks(Dimension.THE_END).join()
             logger.info("The world \"" + world.name + "\" was saved!")
         }
-        worlds.values.forEach(Consumer { obj: World -> obj.close() })
+        worlds.values.forEach { obj -> obj.close() }
         terminalConsole.stopConsole()
         scheduler.shutdown()
         network.getBedrockServer().close(true)
@@ -283,8 +283,8 @@ class Server(logger: Logger) {
         viewDistance = serverConfig.getInt("view-distance")
         motd = serverConfig.getString("motd")
         subMotd = serverConfig.getString("sub-motd")
-        gameMode = GameMode.valueOf(serverConfig.getString("gamemode")!!)
-        difficulty = Difficulty.valueOf(serverConfig.getString("default-difficulty")!!)
+        gameMode = GameMode.valueOf(serverConfig.getString("gamemode"))
+        difficulty = Difficulty.valueOf(serverConfig.getString("default-difficulty"))
         defaultWorldName = serverConfig.getString("default-world")
         generatorName = serverConfig.getString("generator")
         isOnlineMode = serverConfig.getBoolean("online-mode")
@@ -302,7 +302,7 @@ class Server(logger: Logger) {
     private fun initOperatorConfig() {
         operatorConfig = Config(File(System.getProperty("user.dir"), "operators.json"), ConfigType.JSON)
         operatorConfig.addDefault("operators", ArrayList<String>())
-        operatorConfig!!.save()
+        operatorConfig.save()
     }
 
     fun isOperatorInFile(playerName: String): Boolean {
@@ -376,7 +376,7 @@ class Server(logger: Logger) {
 
     fun loadWorld(name: String?, generatorMap: Map<Dimension, String>): World? {
         var name = name
-        if (name == null || name.isEmpty()) {
+        if (name.isNullOrEmpty()) {
             return null
         }
         val file = File("./worlds", name)
@@ -476,7 +476,7 @@ class Server(logger: Logger) {
 
     fun addToTabList(uuid: UUID?, entityId: Long, name: String?, deviceInfo: DeviceInfo, xuid: String?, skin: Skin) {
         val playerListPacket = PlayerListPacket()
-        playerListPacket.setAction(PlayerListPacket.Action.ADD)
+        playerListPacket.action = PlayerListPacket.Action.ADD
         val entry: PlayerListPacket.Entry = PlayerListPacket.Entry(uuid)
         entry.entityId = entityId
         entry.name = name

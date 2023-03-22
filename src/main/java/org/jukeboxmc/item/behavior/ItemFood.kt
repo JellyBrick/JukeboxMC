@@ -8,6 +8,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
+import kotlin.math.min
 
 /**
  * @author LucGamesYT
@@ -35,7 +36,7 @@ abstract class ItemFood : Item {
                 return false
             }
             player.addHunger(hunger)
-            val saturation = Math.min(player.saturation + saturation, player.hunger.toFloat())
+            val saturation = min(player.saturation + saturation, player.hunger.toFloat())
             player.saturation = saturation
             setAmount(amount - 1)
             player.inventory.itemInHand = this

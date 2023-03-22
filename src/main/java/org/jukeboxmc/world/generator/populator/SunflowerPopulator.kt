@@ -16,7 +16,7 @@ import java.util.Random
 class SunflowerPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_SUNFLOWER: Block = Block.create<Block>(BlockType.DOUBLE_PLANT)
+    private val BLOCK_SUNFLOWER: Block = Block.create(BlockType.DOUBLE_PLANT)
     override fun populate(
         random: Random,
         world: World?,

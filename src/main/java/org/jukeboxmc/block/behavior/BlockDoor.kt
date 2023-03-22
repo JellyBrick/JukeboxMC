@@ -32,7 +32,7 @@ class BlockDoor : Block {
     ): Boolean {
         val block = world.getBlock(placePosition)
         direction = Direction.fromAngle(player.yaw)
-        val blockAbove: BlockDoor = create<BlockDoor>(this.type)
+        val blockAbove: BlockDoor = create(this.type)
         blockAbove.location = Location(world, placePosition.add(0f, 1f, 0f))
         blockAbove.direction = direction
         blockAbove.setUpperBlock(true)
@@ -74,39 +74,38 @@ class BlockDoor : Block {
         val block = location.world?.getBlock(breakPosition, 1) ?: return
         if (isUpperBlock) {
             location.world?.setBlock(location.subtract(0f, 1f, 0f), block, 0)
-            location.world?.setBlock(location.subtract(0f, 1f, 0f), create<Block>(BlockType.AIR), 1)
+            location.world?.setBlock(location.subtract(0f, 1f, 0f), create(BlockType.AIR), 1)
         } else {
             location.world?.setBlock(location.add(0f, 1f, 0f), block, 0)
-            location.world?.setBlock(location.add(0f, 1f, 0f), create<Block>(BlockType.AIR), 1)
+            location.world?.setBlock(location.add(0f, 1f, 0f), create(BlockType.AIR), 1)
         }
         location.world?.setBlock(location, block, 0)
-        location.world?.setBlock(location, create<Block>(BlockType.AIR), 1)
+        location.world?.setBlock(location, create(BlockType.AIR), 1)
     }
 
     fun setOpen(value: Boolean): BlockDoor {
-        return setState<BlockDoor>("open_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("open_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isOpen: Boolean
         get() = stateExists("open_bit") && getByteState("open_bit").toInt() == 1
 
     fun setUpperBlock(value: Boolean): BlockDoor {
-        return setState<BlockDoor>("upper_block_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("upper_block_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isUpperBlock: Boolean
         get() = stateExists("upper_block_bit") && getByteState("upper_block_bit").toInt() == 1
 
     fun setDoorHinge(value: Boolean): BlockDoor {
-        return setState<BlockDoor>("door_hinge_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("door_hinge_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isDoorHinge: Boolean
         get() = stateExists("door_hinge_bit") && getByteState("door_hinge_bit").toInt() == 1
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

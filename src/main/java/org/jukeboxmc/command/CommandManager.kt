@@ -14,7 +14,6 @@ import org.jukeboxmc.command.internal.StatusCommand
 import org.jukeboxmc.command.internal.StopCommand
 import org.jukeboxmc.command.internal.TeleportCommand
 import org.jukeboxmc.command.internal.TimeCommand
-import java.util.Arrays
 
 /**
  * @author LucGamesYT
@@ -24,7 +23,7 @@ class CommandManager {
     private val commands: MutableList<Command> = ArrayList()
 
     init {
-        val commands = Arrays.asList<Class<out Command>>(
+        val commands = listOf(
             PluginsCommand::class.java,
             GameModeCommand::class.java,
             OperatorCommand::class.java,
@@ -74,7 +73,7 @@ class CommandManager {
             commandSender.sendMessage("The command for $commandIdentifier could not be found")
             return
         }
-        if (targetCommand.commandData.getPermission() != null && !commandSender.hasPermission(targetCommand.commandData.getPermission()!!)) {
+        if (targetCommand.commandData.getPermission() != null && !commandSender.hasPermission(targetCommand.commandData.getPermission())) {
             if (targetCommand.commandData.getPermissionMessage().isNotEmpty()) {
                 commandSender.sendMessage(targetCommand.commandData.getPermissionMessage())
             } else {

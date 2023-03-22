@@ -16,11 +16,7 @@ class BlockEntityEnchantmentTable(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val enchantmentTableInventory: EnchantmentTableInventory
-
-    init {
-        enchantmentTableInventory = EnchantmentTableInventory(this)
-    }
+    private val enchantmentTableInventory: EnchantmentTableInventory = EnchantmentTableInventory(this)
 
     override fun interact(
         player: Player,

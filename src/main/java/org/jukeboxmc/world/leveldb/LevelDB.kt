@@ -28,12 +28,13 @@ import org.jukeboxmc.world.chunk.SubChunk
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-class LevelDB(private val world: World) : AutoCloseable {
+class LevelDB(world: World) : AutoCloseable {
     private var db: DB
 
     init {
@@ -70,9 +71,9 @@ class LevelDB(private val world: World) : AutoCloseable {
                         subChunkIndex.toByte(),
                     ),
                 ]
-                val arrayIndex = subChunkIndex + (Math.abs(chunk.minY) shr 4)
+                val arrayIndex = subChunkIndex + (abs(chunk.minY) shr 4)
                 if (chunkData != null) {
-                    loadSection(chunk.getOrCreateSubChunk(arrayIndex, true)!!, chunkData)
+                    loadSection(chunk.getOrCreateSubChunk(arrayIndex, true), chunkData)
                 }
             }
             val heightAndBiomes = db[Utils.getKey(chunk.x, chunk.z, chunk.dimension, 0x2b.toByte())]

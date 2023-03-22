@@ -40,13 +40,11 @@ abstract class Form<R> @JvmOverloads constructor(
         obj["title"] = title
         obj["content"] = JSONArray()
 
-        // Check if we have a icon
-        if (icon != null) {
-            val jsonIcon = JSONObject()
-            jsonIcon["type"] = if (icon!!.startsWith("http") || icon!!.startsWith("https")) "url" else "path"
-            jsonIcon["data"] = icon
-            obj["icon"] = jsonIcon
-        }
+        // Check if we have an icon
+        val jsonIcon = JSONObject()
+        jsonIcon["type"] = if (icon.startsWith("http") || icon.startsWith("https")) "url" else "path"
+        jsonIcon["data"] = icon
+        obj["icon"] = jsonIcon
         return obj
     }
 

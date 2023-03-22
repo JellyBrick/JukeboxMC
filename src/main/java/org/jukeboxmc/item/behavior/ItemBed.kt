@@ -22,6 +22,6 @@ class ItemBed : Item {
         }
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.BED)
+        return Block.create(BlockType.BED)
     }
 }

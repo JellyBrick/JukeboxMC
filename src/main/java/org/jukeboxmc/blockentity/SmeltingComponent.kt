@@ -13,6 +13,7 @@ import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import java.time.Duration
+import kotlin.math.ceil
 
 /**
  * @author LucGamesYT
@@ -98,7 +99,7 @@ open class SmeltingComponent(
                 if (fuelItem.amount > 0) {
                     inventory!!.setItem(1, fuelItem.decreaseAmount())
                     val diff = if (inventory is FurnaceInventory) 1 else 2
-                    burnDuration = Math.ceil(duration.toMillis().toDouble() / diff.toDouble()).toInt().toShort()
+                    burnDuration = ceil(duration.toMillis().toDouble() / diff.toDouble()).toInt().toShort()
                     burnTime = burnDuration
                     return true
                 }

@@ -66,7 +66,7 @@ class PluginManager(val server: Server) {
         }
         val config = pluginLoader.loadPluginData(pluginFile, yamlLoader) ?: return null
         if (getPluginByName(config.name) != null) {
-            logger!!.warn("Plugin is already loaded: " + config.name)
+            logger.warn("Plugin is already loaded: " + config.name)
             return null
         }
         val plugin = pluginLoader.loadPluginJAR(config, pluginFile) ?: return null
@@ -76,7 +76,7 @@ class PluginManager(val server: Server) {
             try {
                 plugin.enabled = true
             } catch (e: Exception) {
-                logger!!.error("Direct startup failed!" + e.message)
+                logger.error("Direct startup failed!" + e.message)
             }
         }
         return plugin
@@ -100,7 +100,7 @@ class PluginManager(val server: Server) {
                     builder.append(", ")
                 }
             }
-            logger!!.info(builder.toString())
+            logger.info(builder.toString())
         }
     }
 
@@ -110,12 +110,12 @@ class PluginManager(val server: Server) {
         if (plugin.description!!.depends != null) {
             for (depend in plugin.description!!.depends!!) {
                 if (depend == parent) {
-                    logger!!.warn("§cCan not enable plugin $pluginName circular dependency $parent!")
+                    logger.warn("§cCan not enable plugin $pluginName circular dependency $parent!")
                     return false
                 }
                 val dependPlugin = getPluginByName(depend)
                 if (dependPlugin == null) {
-                    logger!!.warn("§cCan not enable plugin $pluginName missing dependency $depend!")
+                    logger.warn("§cCan not enable plugin $pluginName missing dependency $depend!")
                     return false
                 }
                 if (!dependPlugin.isEnabled() && !enablePlugin(dependPlugin, pluginName)) {
@@ -124,13 +124,13 @@ class PluginManager(val server: Server) {
             }
         }
         plugin.enabled = true
-        logger!!.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
+        logger.info("Loaded plugin " + plugin.name + " Version: " + plugin.version + " successfully!")
         return true
     }
 
     fun disableAllPlugins() {
         for (plugin in pluginMap.values) {
-            logger!!.info("Disabling plugin " + plugin.name + "")
+            logger.info("Disabling plugin " + plugin.name + "")
             plugin!!.enabled = false
         }
     }

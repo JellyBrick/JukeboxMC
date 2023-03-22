@@ -4,7 +4,7 @@ import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import java.util.Arrays
 import java.util.Random
 
-class SimplexOctaveGenerator(
+open class SimplexOctaveGenerator(
     rand: Random,
     octaves: Int,
     sizeX: Int = 0,

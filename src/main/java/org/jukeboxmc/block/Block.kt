@@ -34,8 +34,9 @@ import org.jukeboxmc.potion.MiningFatigueEffect
 import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.*
-import java.util.function.Consumer
+import java.util.LinkedList
+import java.util.Locale
+import java.util.Optional
 
 /**
  * @author LucGamesYT
@@ -60,18 +61,17 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         if (!STATES.containsKey(this.identifier)) {
             val toRuntimeId: Object2ObjectMap<NbtMap, Int> = Object2ObjectLinkedOpenHashMap()
             for (blockMap in BlockPalette.searchBlocks { blockMap: NbtMap ->
-                blockMap.getString("name").lowercase(Locale.getDefault()) == (this.identifier?.fullName ?: "")
+                blockMap.getString("name").lowercase(Locale.getDefault()) == this.identifier.fullName
             }) {
                 toRuntimeId[blockMap.getCompound("states")] = BlockPalette.getRuntimeId(blockMap)
             }
             STATES[this.identifier] = toRuntimeId
         }
-        val variableBlockStates: NbtMap
-        if (blockStates == null) {
+        val variableBlockStates: NbtMap = if (blockStates == null) {
             val states: List<NbtMap> = LinkedList(STATES.getValue(this.identifier).keys)
-            variableBlockStates = if (states.isEmpty()) NbtMap.EMPTY else states[0]
+            if (states.isEmpty()) NbtMap.EMPTY else states[0]
         } else {
-            variableBlockStates = blockStates
+            blockStates
         }
         this.blockStates = variableBlockStates
         runtimeId = STATES.getValue(this.identifier).getValue(this.blockStates)
@@ -198,7 +198,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             return
         }
         val breakLocation = location
-        onBlockBreak(breakLocation!!)
+        onBlockBreak(breakLocation)
         if (player.gameMode == GameMode.SURVIVAL) {
             if (item is Durability) {
                 item.updateItem(player, 1)
@@ -211,7 +211,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
                 }
             }
             if (itemDrops.isNotEmpty()) {
-                itemDrops.forEach(Consumer { obj: EntityItem -> obj.spawn() })
+                itemDrops.forEach { obj -> obj.spawn() }
             }
         }
         playBreakSound()
@@ -282,7 +282,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             hardness,
             correctTool,
             canBreakWithHand,
-            blockType!!,
+            blockType,
             itemToolType,
             itemTier,
             efficiencyLoreLevel,

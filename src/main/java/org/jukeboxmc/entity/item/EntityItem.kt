@@ -13,6 +13,7 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -45,7 +46,7 @@ class EntityItem : EntityMoveable() {
             this.checkObstruction(this.location.x, this.location.y, this.location.z)
             this.move(this.velocity)
             var friction: Double = (1 - this.drag).toDouble()
-            if (this.isOnGround && (Math.abs(this.velocity.x) > 0.00001 || Math.abs(this.velocity.z) > 0.00001)) {
+            if (this.isOnGround && (abs(this.velocity.x) > 0.00001 || abs(this.velocity.z) > 0.00001)) {
                 friction *= 0.6
             }
             this.velocity.x = (this.velocity.x * friction).toFloat()

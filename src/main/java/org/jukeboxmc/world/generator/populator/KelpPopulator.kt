@@ -16,8 +16,8 @@ import java.util.Random
 class KelpPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_KELP: Block = Block.create<Block>(BlockType.KELP)
-    private val BLOCK_WATER: Block = Block.create<Block>(BlockType.WATER)
+    private val BLOCK_KELP: Block = Block.create(BlockType.KELP)
+    private val BLOCK_WATER: Block = Block.create(BlockType.WATER)
     override fun populate(
         random: Random,
         world: World?,
@@ -66,8 +66,7 @@ class KelpPopulator : Populator() {
     }
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
-        var y: Int
-        y = NormalGenerator.WATER_HEIGHT - 1
+        var y: Int = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {

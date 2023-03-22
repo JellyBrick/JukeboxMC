@@ -19,11 +19,7 @@ class BlockEntityBarrel(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    val barrelInventory: BarrelInventory
-
-    init {
-        barrelInventory = BarrelInventory(this)
-    }
+    val barrelInventory: BarrelInventory = BarrelInventory(this)
 
     override fun interact(
         player: Player,

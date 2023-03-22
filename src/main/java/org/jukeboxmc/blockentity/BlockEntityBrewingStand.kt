@@ -16,11 +16,7 @@ class BlockEntityBrewingStand(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    val brewingStandInventory: BrewingStandInventory
-
-    init {
-        brewingStandInventory = BrewingStandInventory(this)
-    }
+    val brewingStandInventory: BrewingStandInventory = BrewingStandInventory(this)
 
     override fun interact(
         player: Player,

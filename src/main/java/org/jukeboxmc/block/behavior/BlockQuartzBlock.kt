@@ -31,12 +31,12 @@ class BlockQuartzBlock : Block {
         itemInHand: Item,
         blockFace: BlockFace,
     ): Boolean {
-        if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-            axis = Axis.Y
+        axis = if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
+            Axis.Y
         } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-            axis = Axis.Z
+            Axis.Z
         } else {
-            axis = Axis.X
+            Axis.X
         }
         world.setBlock(placePosition, this)
         return true
@@ -55,7 +55,7 @@ class BlockQuartzBlock : Block {
         }
 
     fun setQuartzType(quartzType: QuartzType): BlockQuartzBlock {
-        return setState<BlockQuartzBlock>("chisel_type", quartzType.name.lowercase(Locale.getDefault()))
+        return setState("chisel_type", quartzType.name.lowercase(Locale.getDefault()))
     }
 
     val quartzType: QuartzType

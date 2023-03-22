@@ -8,11 +8,10 @@ import com.nukkitx.protocol.bedrock.data.AttributeData
  */
 data class Attribute(val key: String, var minValue: Float, var maxValue: Float, private var currentValue: Float) :
     Cloneable {
-    private val defaultValue: Float
+    private val defaultValue: Float = currentValue
     private var dirty: Boolean
 
     init {
-        defaultValue = currentValue
         dirty = true
     }
 

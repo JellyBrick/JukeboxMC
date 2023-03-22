@@ -86,7 +86,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getSection(key: String): ConfigSection {
-        return this.get<ConfigSection>(key, ConfigSection())
+        return this[key, ConfigSection()]
     }
 
     val sections: ConfigSection
@@ -113,7 +113,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getInt(key: String, defaultValue: Int): Int {
-        return get<Int>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isInt(key: String): Boolean {
@@ -125,7 +125,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getLong(key: String, defaultValue: Long): Long {
-        return get<Long>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isLong(key: String): Boolean {
@@ -137,7 +137,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getDouble(key: String, defaultValue: Double): Double {
-        return get<Double>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isDouble(key: String): Boolean {
@@ -161,7 +161,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return get<Boolean>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isBoolean(key: String): Boolean {
@@ -173,7 +173,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getFloat(key: String, defaultValue: Float): Float {
-        return get<Float>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isFloat(key: String): Boolean {
@@ -185,7 +185,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getByte(key: String, defaultValue: Byte): Byte {
-        return get<Byte>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isByte(key: String): Boolean {
@@ -197,7 +197,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getShort(key: String, defaultValue: Short): Short {
-        return get<Short>(key, defaultValue)
+        return get(key, defaultValue)
     }
 
     fun isShort(key: String): Boolean {
@@ -210,7 +210,7 @@ class ConfigSection() : LinkedHashMap<String, Any>() {
     }
 
     fun getList(key: String, defaultList: List<*>): List<*> {
-        return get<List<*>>(key, defaultList)
+        return get(key, defaultList)
     }
 
     fun isList(key: String): Boolean {

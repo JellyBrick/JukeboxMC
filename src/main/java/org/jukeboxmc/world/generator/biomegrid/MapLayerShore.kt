@@ -17,13 +17,13 @@ class MapLayerShore(seed: Long, private val belowLayer: MapLayer) : MapLayer(see
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies shores using Von Neumann neighborhood
-                // it takes a 3x3 grid with a cross shape and analyzes values as follow
+                // it takes a 3x3 grid with a cross shape and analyzes values as follows
                 // OXO
                 // XxX
                 // OXO
                 // the grid center value decides how we are proceeding:
-                // - if it's not ocean and it's surrounded by at least 1 ocean cell it turns the center value into beach.
-                val upperVal = values!![j + 1 + i * gridSizeX]
+                // - if it's not ocean, and it's surrounded by at least 1 ocean cell it turns the center value into beach.
+                val upperVal = values[j + 1 + i * gridSizeX]
                 val lowerVal = values[j + 1 + (i + 2) * gridSizeX]
                 val leftVal = values[j + (i + 1) * gridSizeX]
                 val rightVal = values[j + 2 + (i + 1) * gridSizeX]

@@ -10,6 +10,7 @@ import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import java.util.*
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -51,7 +52,7 @@ class SavannaTree {
                 var blockpos2 = Vector(i3, k1, j1)
                 for (j3 in -3..3) {
                     for (i4 in -3..3) {
-                        if (Math.abs(j3) != 3 || Math.abs(i4) != 3) {
+                        if (abs(j3) != 3 || abs(i4) != 3) {
                             setLeaves(manager, blockpos2.add(j3.toFloat(), 0f, i4.toFloat()))
                         }
                     }
@@ -94,7 +95,7 @@ class SavannaTree {
                         var blockpos3 = Vector(i3, k1, j1)
                         for (i5 in -2..2) {
                             for (k5 in -2..2) {
-                                if (Math.abs(i5) != 2 || Math.abs(k5) != 2) {
+                                if (abs(i5) != 2 || abs(k5) != 2) {
                                     setLeaves(manager, blockpos3.add(i5.toFloat(), 0f, k5.toFloat()))
                                 }
                             }

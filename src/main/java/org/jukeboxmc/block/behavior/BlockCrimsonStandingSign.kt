@@ -42,7 +42,7 @@ class BlockCrimsonStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockCrimsonWallSign =
-                create<BlockCrimsonWallSign>(BlockType.CRIMSON_WALL_SIGN)
+                create(BlockType.CRIMSON_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -51,6 +51,6 @@ class BlockCrimsonStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.CRIMSON_SIGN)
+        return Item.create(ItemType.CRIMSON_SIGN)
     }
 }

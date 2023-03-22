@@ -14,12 +14,10 @@ import org.jukeboxmc.world.Biome
 class SubChunk(val y: Int) {
     var layer = 1
     var subChunkVersion = 9
-    val biomes: Palette<Biome>
-    val blocks: Array<Palette<Block>>
+    val biomes: Palette<Biome> = Palette(Biome.PLAINS)
+    val blocks: Array<Palette<Block>> = Array(Chunk.CHUNK_LAYERS) { Palette(Block.create(BlockType.AIR)) }
 
     init {
-        biomes = Palette(Biome.PLAINS)
-        blocks = Array(Chunk.CHUNK_LAYERS) { Palette(Block.create(BlockType.AIR)) }
         for (layer in 0 until Chunk.CHUNK_LAYERS) {
             blocks[layer] = Palette(BLOCK_AIR)
         }
@@ -30,7 +28,7 @@ class SubChunk(val y: Int) {
     }
 
     fun getBlock(x: Int, y: Int, z: Int, layer: Int): Block {
-        return blocks[layer][this.indexOf(x, y, z)]!!.clone()
+        return blocks[layer][this.indexOf(x, y, z)].clone()
     }
 
     fun setBiome(x: Int, y: Int, z: Int, biome: Biome) {

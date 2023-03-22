@@ -17,12 +17,12 @@ class ItemWhiteWool : Item, Burnable {
     private val block: BlockWhiteWool
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockWhiteWool>(BlockType.WHITE_WOOL)
+        block = Block.create(BlockType.WHITE_WOOL)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockWhiteWool>(BlockType.WHITE_WOOL)
+        block = Block.create(BlockType.WHITE_WOOL)
         blockRuntimeId = block.runtimeId
     }
 

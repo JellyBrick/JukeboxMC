@@ -150,7 +150,7 @@ abstract class OctaveGenerator protected constructor(octaves: Array<NoiseGenerat
         y *= yScale
         z *= zScale
         for (octave in octaves) {
-            result += octave!!.noise(x * freq, y * freq, z * freq) * amp
+            result += octave.noise(x * freq, y * freq, z * freq) * amp
             max += amp
             freq *= frequency
             amp *= amplitude

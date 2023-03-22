@@ -26,7 +26,7 @@ class ItemWoodenShovel : Item, Durability, Burnable {
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {
         if (clickedBlock.type == BlockType.GRASS) {
-            player.world?.setBlock(clickedBlock.location, Block.create<Block>(BlockType.GRASS_PATH))
+            player.world?.setBlock(clickedBlock.location, Block.create(BlockType.GRASS_PATH))
             player.world?.playSound(clickedBlock.location, SoundEvent.ITEM_USE_ON, 12259)
             this.updateItem(player, 1)
             return true
@@ -36,12 +36,12 @@ class ItemWoodenShovel : Item, Durability, Burnable {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(1f)
+        attribute.setCurrentValue(1f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(attribute.minValue)
+        attribute.setCurrentValue(attribute.minValue)
     }
 
     override val burnTime: Duration?

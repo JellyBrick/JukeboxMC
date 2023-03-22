@@ -38,8 +38,7 @@ class BlockEndPortalFrame : Block {
         }
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

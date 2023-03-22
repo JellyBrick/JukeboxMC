@@ -17,12 +17,12 @@ class ItemLog : Item {
     private val block: BlockLog
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockLog>(BlockType.LOG)
+        block = Block.create(BlockType.LOG)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockLog>(BlockType.LOG)
+        block = Block.create(BlockType.LOG)
         blockRuntimeId = block.runtimeId
     }
 

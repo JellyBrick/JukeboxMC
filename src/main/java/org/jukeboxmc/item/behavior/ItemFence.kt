@@ -19,11 +19,11 @@ class ItemFence : Item, Burnable {
     private val block: BlockWoodenFence
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockWoodenFence>(BlockType.FENCE)
+        block = Block.create(BlockType.FENCE)
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockWoodenFence>(BlockType.FENCE)
+        block = Block.create(BlockType.FENCE)
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemFence {

@@ -17,12 +17,12 @@ class ItemAnvil : Item {
     private val block: BlockAnvil
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockAnvil>(BlockType.ANVIL)
+        block = Block.create(BlockType.ANVIL)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockAnvil>(BlockType.ANVIL)
+        block = Block.create(BlockType.ANVIL)
         blockRuntimeId = block.runtimeId
     }
 

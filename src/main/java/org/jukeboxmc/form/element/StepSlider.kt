@@ -28,7 +28,7 @@ class StepSlider(private val form: CustomForm, id: String, text: String) : Eleme
 
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
-        obj!!["type"] = "step_slider"
+        obj["type"] = "step_slider"
         val jsonSteps = JSONArray()
         jsonSteps.addAll(steps)
         obj["steps"] = jsonSteps

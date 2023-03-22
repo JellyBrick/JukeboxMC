@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.behavior
 
 import com.nukkitx.nbt.NbtMap
-import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.item.Item
@@ -34,12 +33,12 @@ class BlockPolishedDeepslateSlab : BlockSlab {
                 if (targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        create<Block>(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB),
+                        create(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockPolishedDeepslateSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
                 return true
             }
         } else if (blockFace == BlockFace.UP) {
@@ -47,17 +46,17 @@ class BlockPolishedDeepslateSlab : BlockSlab {
                 if (!targetBlock.isTopSlot) {
                     world.setBlock(
                         blockPosition,
-                        create<Block>(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB),
+                        create(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB),
                     )
                     return true
                 }
             } else if (block is BlockPolishedDeepslateSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
                 return true
             }
         } else {
             if (block is BlockPolishedDeepslateSlab) {
-                world.setBlock(placePosition, create<Block>(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
+                world.setBlock(placePosition, create(BlockType.POLISHED_DEEPSLATE_DOUBLE_SLAB))
                 return true
             }
         }

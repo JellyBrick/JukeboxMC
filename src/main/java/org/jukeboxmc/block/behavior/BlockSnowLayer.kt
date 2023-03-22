@@ -71,7 +71,7 @@ class BlockSnowLayer : Block {
         }
 
     fun setHeight(value: Int): BlockSnowLayer {
-        return setState<BlockSnowLayer>("height", value)
+        return setState("height", value)
     }
 
     val height: Int

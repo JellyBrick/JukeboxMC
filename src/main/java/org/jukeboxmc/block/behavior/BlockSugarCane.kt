@@ -46,7 +46,7 @@ class BlockSugarCane : Block {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.SUGAR_CANE)
+        return Item.create(ItemType.SUGAR_CANE)
     }
 
     var age: Int

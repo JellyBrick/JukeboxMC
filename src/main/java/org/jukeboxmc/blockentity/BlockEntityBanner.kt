@@ -31,7 +31,7 @@ class BlockEntityBanner(block: Block, blockEntityType: BlockEntityType) : BlockE
         val compound = super.toCompound()
         compound.putInt("Base", baseColor)
         compound.putInt("Type", type)
-        if (patterns.size > 0) {
+        if (patterns.isNotEmpty()) {
             val pattern: MutableList<NbtMap> = ArrayList()
             for ((key, value) in patterns) {
                 val patternBuilder = NbtMap.builder()

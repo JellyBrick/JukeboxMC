@@ -7,6 +7,8 @@ import com.nukkitx.math.vector.Vector3l
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.world.Dimension
 import java.util.*
+import kotlin.math.roundToLong
+import kotlin.math.sqrt
 
 /**
  * @author LucGamesYT
@@ -102,7 +104,7 @@ open class Vector : Cloneable {
         val yDiff = other.y - y
         val zDiff = other.z - z
         val f = (x - this.x) / xDiff
-        return if (f >= 0f && f <= 1f) Vector(this.x + xDiff * f, y + yDiff * f, z + zDiff * f, dimension) else null
+        return if (f in 0f..1f) Vector(this.x + xDiff * f, y + yDiff * f, z + zDiff * f, dimension) else null
     }
 
     fun getVectorWhenYIsOnLine(other: Vector, y: Float): Vector? {
@@ -110,7 +112,7 @@ open class Vector : Cloneable {
         val yDiff = other.y - this.y
         val zDiff = other.z - z
         val f = (y - this.y) / yDiff
-        return if (f >= 0f && f <= 1f) Vector(x + xDiff * f, this.y + yDiff * f, z + zDiff * f, dimension) else null
+        return if (f in 0f..1f) Vector(x + xDiff * f, this.y + yDiff * f, z + zDiff * f, dimension) else null
     }
 
     fun getVectorWhenZIsOnLine(other: Vector, z: Float): Vector? {
@@ -118,7 +120,7 @@ open class Vector : Cloneable {
         val yDiff = other.y - y
         val zDiff = other.z - this.z
         val f = (z - this.z) / zDiff
-        return if (f >= 0f && f <= 1f) Vector(x + xDiff * f, y + yDiff * f, this.z + zDiff * f, dimension) else null
+        return if (f in 0f..1f) Vector(x + xDiff * f, y + yDiff * f, this.z + zDiff * f, dimension) else null
     }
 
     open fun add(x: Float, y: Float, z: Float): Vector {
@@ -143,7 +145,7 @@ open class Vector : Cloneable {
     }
 
     fun distance(vector: Vector): Float {
-        return Math.sqrt(distanceSquared(vector).toDouble()).toFloat()
+        return sqrt(distanceSquared(vector).toDouble()).toFloat()
     }
 
     fun distanceSquared(vector: Vector): Float {
@@ -202,7 +204,7 @@ open class Vector : Cloneable {
     }
 
     fun round(): Vector {
-        return Vector(Math.round(x), Math.round(y), Math.round(z))
+        return Vector(x.roundToLong(), y.roundToLong(), z.roundToLong())
     }
 
     companion object {

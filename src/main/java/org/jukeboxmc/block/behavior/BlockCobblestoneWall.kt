@@ -23,7 +23,7 @@ class BlockCobblestoneWall : BlockWall {
     }
 
     fun setWallBlockType(wallType: WallType): BlockCobblestoneWall {
-        return setState<BlockCobblestoneWall>("wall_block_type", wallType.name.lowercase(Locale.getDefault()))
+        return setState("wall_block_type", wallType.name.lowercase(Locale.getDefault()))
     }
 
     val wallBlockType: WallType

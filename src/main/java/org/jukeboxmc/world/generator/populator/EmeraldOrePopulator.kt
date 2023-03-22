@@ -11,7 +11,7 @@ import java.util.Random
  * @version 1.0
  */
 class EmeraldOrePopulator : Populator() {
-    private val BLOCK_EMERALD_ORE: Block = Block.create<Block>(BlockType.EMERALD_ORE)
+    private val BLOCK_EMERALD_ORE: Block = Block.create(BlockType.EMERALD_ORE)
     override fun populate(
         random: Random,
         world: World?,

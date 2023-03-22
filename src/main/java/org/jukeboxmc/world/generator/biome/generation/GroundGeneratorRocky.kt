@@ -10,7 +10,7 @@ import org.jukeboxmc.world.generator.biome.GroundGenerator
  */
 class GroundGeneratorRocky : GroundGenerator() {
     init {
-        topMaterial = Block.create<Block>(BlockType.STONE)
-        groundMaterial = Block.create<Block>(BlockType.STONE)
+        topMaterial = Block.create(BlockType.STONE)
+        groundMaterial = Block.create(BlockType.STONE)
     }
 }

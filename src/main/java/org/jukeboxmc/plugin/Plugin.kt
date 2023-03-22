@@ -107,7 +107,7 @@ abstract class Plugin {
      */
     fun saveResource(filename: String, outputName: String, replace: Boolean): Boolean {
         Preconditions.checkArgument(
-            filename != null && !filename.trim { it <= ' ' }.isEmpty(),
+            filename != null && filename.trim { it <= ' ' }.isNotEmpty(),
             "Filename can not be null!",
         )
         val file = File(dataFolder, outputName)

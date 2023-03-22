@@ -100,7 +100,7 @@ class PluginLoader(private val logger: Logger?, private val pluginManager: Plugi
                                                 "Lorg/jukeboxmc/plugin/annotation/Depends;" -> {
                                                     return object : AnnotationVisitor(Opcodes.ASM7) {
                                                         override fun visitArray(name: String): AnnotationVisitor {
-                                                            depends.set(ArrayList<String>())
+                                                            depends.set(ArrayList())
                                                             return object : AnnotationVisitor(Opcodes.ASM7) {
                                                                 override fun visit(name: String, value: Any) {
                                                                     depends.get().add(value as String)
@@ -143,7 +143,7 @@ class PluginLoader(private val logger: Logger?, private val pluginManager: Plugi
                     return null
                 }
                 pluginJar.getInputStream(configEntry).use { fileStream ->
-                    val pluginConfig: PluginYAML = yaml.loadAs<PluginYAML>(fileStream, PluginYAML::class.java)
+                    val pluginConfig: PluginYAML = yaml.loadAs(fileStream, PluginYAML::class.java)
                     if (pluginConfig.main != null && pluginConfig.name != null) {
                         // Valid plugin.yml, main and name set
                         return pluginConfig

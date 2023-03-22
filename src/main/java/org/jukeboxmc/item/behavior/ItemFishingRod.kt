@@ -14,6 +14,8 @@ import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import java.time.Duration
 import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author LucGamesYT
@@ -32,14 +34,14 @@ class ItemFishingRod : Item, Durability, Burnable {
             val force = 1.6f
             entityFishingHook.setVelocity(
                 Vector(
-                    (-Math.sin(Math.toRadians(player.yaw.toDouble())) * Math.cos(Math.toRadians(player.pitch.toDouble())) * force * force).toFloat(),
+                    (-sin(Math.toRadians(player.yaw.toDouble())) * cos(Math.toRadians(player.pitch.toDouble())) * force * force).toFloat(),
                     (
-                        -Math.sin(
+                        -sin(
                             Math.toRadians(player.pitch.toDouble()),
                         ) * force * force + 0.4f
                         ).toFloat(),
                     (
-                        Math.cos(Math.toRadians(player.yaw.toDouble())) * Math.cos(
+                        cos(Math.toRadians(player.yaw.toDouble())) * cos(
                             Math.toRadians(player.pitch.toDouble()),
                         ) * force * force
                         ).toFloat(),

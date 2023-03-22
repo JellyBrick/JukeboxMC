@@ -45,12 +45,12 @@ class MapLayerBiomeVariation
         val finalValues = IntArray(sizeX * sizeZ)
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
-                var `val` = values!![j + i * sizeX]
-                if (`val` > 0) {
+                var value = values[j + i * sizeX]
+                if (value > 0) {
                     setCoordsSeed(x + j, z + i)
-                    `val` = nextInt(30) + 2
+                    value = nextInt(30) + 2
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues
@@ -76,22 +76,22 @@ class MapLayerBiomeVariation
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 setCoordsSeed(x + j, z + i)
-                val centerValue = values!![j + 1 + (i + 1) * gridSizeX]
-                val variationValue = variationValues!![j + 1 + (i + 1) * gridSizeX]
+                val centerValue = values[j + 1 + (i + 1) * gridSizeX]
+                val variationValue = variationValues[j + 1 + (i + 1) * gridSizeX]
                 if (centerValue != 0 && variationValue == 3 && centerValue < 128) {
                     finalValues[j + i * sizeX] =
                         if (Biome.findById(centerValue + 128) != null) centerValue + 128 else centerValue
                 } else if (variationValue == 2 || nextInt(3) == 0) {
-                    var `val` = centerValue
+                    var value = centerValue
                     if (VARIATIONS.containsKey(centerValue)) {
-                        `val` = VARIATIONS[centerValue][nextInt(VARIATIONS[centerValue].size)]
+                        value = VARIATIONS[centerValue][nextInt(VARIATIONS[centerValue].size)]
                     } else if (centerValue == Biome.DEEP_OCEAN.id && nextInt(3) == 0) {
-                        `val` = ISLANDS[nextInt(ISLANDS.size)]
+                        value = ISLANDS[nextInt(ISLANDS.size)]
                     }
-                    if (variationValue == 2 && `val` != centerValue) {
-                        `val` = if (Biome.findById(`val` + 128) != null) `val` + 128 else centerValue
+                    if (variationValue == 2 && value != centerValue) {
+                        value = if (Biome.findById(value + 128) != null) value + 128 else centerValue
                     }
-                    if (`val` != centerValue) {
+                    if (value != centerValue) {
                         var count = 0
                         if (values[j + 1 + i * gridSizeX] == centerValue) { // upper value
                             count++
@@ -106,9 +106,9 @@ class MapLayerBiomeVariation
                             count++
                         }
                         // spread mountains if not too close from an edge
-                        finalValues[j + i * sizeX] = if (count < 3) centerValue else `val`
+                        finalValues[j + i * sizeX] = if (count < 3) centerValue else value
                     } else {
-                        finalValues[j + i * sizeX] = `val`
+                        finalValues[j + i * sizeX] = value
                     }
                 } else {
                     finalValues[j + i * sizeX] = centerValue

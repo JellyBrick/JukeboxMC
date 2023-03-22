@@ -11,12 +11,12 @@ class MapLayerSmooth(seed: Long, private val belowLayer: MapLayer) : MapLayer(se
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
                 // This applies smoothing using Von Neumann neighborhood
-                // it takes a 3x3 grid with a cross shape and analyzes values as follow
+                // it takes a 3x3 grid with a cross shape and analyzes values as follows
                 // OXO
                 // XxX
                 // OXO
                 // it is required that we use the same shape that was used for what we want to smooth
-                val upperVal = values!![j + 1 + i * gridSizeX]
+                val upperVal = values[j + 1 + i * gridSizeX]
                 val lowerVal = values[j + 1 + (i + 2) * gridSizeX]
                 val leftVal = values[j + (i + 1) * gridSizeX]
                 val rightVal = values[j + 2 + (i + 1) * gridSizeX]

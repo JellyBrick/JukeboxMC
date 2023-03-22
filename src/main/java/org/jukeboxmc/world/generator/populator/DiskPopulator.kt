@@ -37,7 +37,7 @@ class DiskPopulator(
             }
             val sourceX = (chunk.x shl 4) + random.nextInt(16)
             val sourceZ = (chunk.z shl 4) + random.nextInt(16)
-            val sourceY = getHighestWorkableBlock(chunk!!, sourceX, sourceZ) - 1
+            val sourceY = getHighestWorkableBlock(chunk, sourceX, sourceZ) - 1
             if (sourceY < radiusY) {
                 return
             }
@@ -62,8 +62,7 @@ class DiskPopulator(
     }
 
     override fun getHighestWorkableBlock(chunk: Chunk, x: Int, z: Int): Int {
-        var y: Int
-        y = NormalGenerator.WATER_HEIGHT - 1
+        var y: Int = NormalGenerator.WATER_HEIGHT - 1
         while (y >= 0) {
             val block = chunk.getBlock(x, y, z, 0)
             if (block.type != BlockType.AIR && block.type != BlockType.WATER && block.type != BlockType.FLOWING_WATER && block.type != BlockType.ICE && block.type != BlockType.PACKED_ICE && block.type != BlockType.BLUE_ICE) {

@@ -74,7 +74,7 @@ class PlayerMoveHandler : PacketHandler<MovePlayerPacket> {
             }
             for (onlinePlayer in player.server.onlinePlayers) {
                 if (onlinePlayer !== player) {
-                    if (player.isSpawned && onlinePlayer!!.isSpawned) {
+                    if (player.isSpawned && onlinePlayer.isSpawned) {
                         move(player, onlinePlayer)
                     }
                 }

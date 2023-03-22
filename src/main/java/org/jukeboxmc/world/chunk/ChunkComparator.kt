@@ -17,7 +17,7 @@ data class ChunkComparator(val player: Player) : LongComparator {
         val z2 = Utils.fromHashZ(o2)
         val spawnX = player.blockX shr 4
         val spawnZ = player.blockZ shr 4
-        return Integer.compare(distance(spawnX, spawnZ, x1, z1), distance(spawnX, spawnZ, x2, z2))
+        return distance(spawnX, spawnZ, x1, z1).compareTo(distance(spawnX, spawnZ, x2, z2))
     }
 
     companion object {

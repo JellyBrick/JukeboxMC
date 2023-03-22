@@ -85,7 +85,7 @@ class BlockStoneSlab4 : BlockSlab {
     }
 
     fun setStoneSlabType(stoneSlabType: StoneSlab4Type): BlockStoneSlab4 {
-        return setState<BlockStoneSlab4>("stone_slab_type_4", stoneSlabType.name.lowercase(Locale.getDefault()))
+        return setState("stone_slab_type_4", stoneSlabType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneSlabType: StoneSlab4Type

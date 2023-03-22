@@ -43,7 +43,7 @@ class BlockSeagrass : Block {
         val block = world!!.getBlock(breakPosition, 1)
         if (block is BlockWater) {
             world.setBlock(breakPosition, block, 0)
-            world.setBlock(breakPosition, create<Block>(BlockType.AIR), 1)
+            world.setBlock(breakPosition, create(BlockType.AIR), 1)
             return
         }
         super.onBlockBreak(breakPosition)

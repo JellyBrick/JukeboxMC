@@ -21,12 +21,12 @@ class ItemWoodenAxe : Item, Durability, Burnable {
 
     override fun addToHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(3f)
+        attribute.setCurrentValue(3f)
     }
 
     override fun removeFromHand(player: Player) {
         val attribute = player.getAttribute(AttributeType.ATTACK_DAMAGE)
-        attribute?.setCurrentValue(attribute.minValue)
+        attribute.setCurrentValue(attribute.minValue)
     }
 
     override val burnTime: Duration?

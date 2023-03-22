@@ -17,12 +17,12 @@ class ItemDirt : Item {
     private val block: BlockDirt
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockDirt>(BlockType.DIRT)
+        block = Block.create(BlockType.DIRT)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockDirt>(BlockType.DIRT)
+        block = Block.create(BlockType.DIRT)
         blockRuntimeId = block.runtimeId
     }
 

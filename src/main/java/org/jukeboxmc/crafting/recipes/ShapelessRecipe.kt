@@ -14,11 +14,11 @@ import java.util.UUID
  * @version 1.0
  */
 class ShapelessRecipe : Recipe() {
-    private val ingredients: MutableList<ItemDescriptorWithCount> = ObjectArrayList<ItemDescriptorWithCount>()
+    private val ingredients: MutableList<ItemDescriptorWithCount> = ObjectArrayList()
     override val outputs: MutableList<ItemData?> = ObjectArrayList()
 
     fun addIngredient(vararg items: Item): ShapelessRecipe {
-        val itemDataList: MutableList<ItemDescriptorWithCount> = ArrayList<ItemDescriptorWithCount>()
+        val itemDataList: MutableList<ItemDescriptorWithCount> = ArrayList()
         for (item in items) {
             itemDataList.add(ItemDescriptorWithCount.fromItem(item.toItemData()))
         }

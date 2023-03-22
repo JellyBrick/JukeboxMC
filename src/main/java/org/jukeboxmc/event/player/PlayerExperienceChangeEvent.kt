@@ -14,14 +14,6 @@ class PlayerExperienceChangeEvent(
     var newExperience: Int,
     newLevel: Int,
 ) : PlayerEvent(player), Cancellable {
-    var newLevel: Int
+    var newLevel: Int = newExperience
 
-    /**
-     * Creates a new [PlayerEvent]
-     *
-     * @param player who represents the player which comes with this event
-     */
-    init {
-        this.newLevel = newExperience
-    }
 }

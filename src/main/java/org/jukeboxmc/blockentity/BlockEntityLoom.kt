@@ -16,11 +16,7 @@ class BlockEntityLoom(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val loomInventory: LoomInventory
-
-    init {
-        loomInventory = LoomInventory(this)
-    }
+    private val loomInventory: LoomInventory = LoomInventory(this)
 
     override fun interact(
         player: Player,

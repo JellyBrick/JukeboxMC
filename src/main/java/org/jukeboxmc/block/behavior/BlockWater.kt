@@ -29,7 +29,7 @@ class BlockWater : BlockLiquid {
     }
 
     override fun getBlock(liquidDepth: Int): BlockLiquid {
-        val blockWater: BlockWater = create<BlockWater>(BlockType.WATER)
+        val blockWater: BlockWater = create(BlockType.WATER)
         blockWater.setLiquidDepth(liquidDepth)
         return blockWater
     }

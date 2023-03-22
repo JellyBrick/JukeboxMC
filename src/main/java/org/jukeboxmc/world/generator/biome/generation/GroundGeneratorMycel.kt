@@ -10,6 +10,6 @@ import org.jukeboxmc.world.generator.biome.GroundGenerator
  */
 class GroundGeneratorMycel : GroundGenerator() {
     init {
-        topMaterial = Block.create<Block>(BlockType.MYCELIUM)
+        topMaterial = Block.create(BlockType.MYCELIUM)
     }
 }

@@ -187,15 +187,15 @@ class AxisAlignedBB(
         get() = (maxX - minX + maxY - minY + maxZ - minZ) / 3
 
     fun isVectorInYZ(vector: Vector): Boolean {
-        return vector.y >= minY && vector.y <= maxY && vector.z >= minZ && vector.z <= maxZ
+        return vector.y in minY..maxY && vector.z >= minZ && vector.z <= maxZ
     }
 
     fun isVectorInXZ(vector: Vector): Boolean {
-        return vector.x >= minX && vector.x <= maxX && vector.z >= minZ && vector.z <= maxZ
+        return vector.x in minX..maxX && vector.z >= minZ && vector.z <= maxZ
     }
 
     fun isVectorInXY(vector: Vector): Boolean {
-        return vector.x >= minX && vector.x <= maxX && vector.y >= minY && vector.y <= maxY
+        return vector.x in minX..maxX && vector.y >= minY && vector.y <= maxY
     }
 
     fun calculateIntercept(pos1: Vector, pos2: Vector): Vector? {

@@ -42,7 +42,7 @@ class BlockAcaciaStandingSign : BlockSign {
             world.setBlock(placePosition, this, 0)
         } else {
             val blockWallSign: BlockAcaciaWallSign =
-                create<BlockAcaciaWallSign>(BlockType.ACACIA_WALL_SIGN)
+                create(BlockType.ACACIA_WALL_SIGN)
             blockWallSign.blockFace = blockFace
             world.setBlock(placePosition, blockWallSign, 0)
         }
@@ -51,6 +51,6 @@ class BlockAcaciaStandingSign : BlockSign {
     }
 
     override fun toItem(): Item {
-        return Item.create<Item>(ItemType.ACACIA_SIGN)
+        return Item.create(ItemType.ACACIA_SIGN)
     }
 }

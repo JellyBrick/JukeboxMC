@@ -30,15 +30,15 @@ class BlockGrindstone : Block {
         blockFace: BlockFace,
     ): Boolean {
         direction = player.direction.opposite()
-        if (blockFace == BlockFace.UP) {
-            attachment = Attachment.STANDING
-        } else if (blockFace == BlockFace.DOWN) {
-            attachment = Attachment.HANGING
-        } else {
-            if (blockFace.toDirection() != null) {
-                direction = blockFace.toDirection()!!
+        when (blockFace) {
+            BlockFace.UP -> attachment = Attachment.STANDING
+            BlockFace.DOWN -> attachment = Attachment.HANGING
+            else -> {
+                if (blockFace.toDirection() != null) {
+                    direction = blockFace.toDirection()!!
+                }
+                attachment = Attachment.SIDE
             }
-            attachment = Attachment.SIDE
         }
         return super.placeBlock(player, world, blockPosition, placePosition, clickedPosition, itemInHand, blockFace)
     }
@@ -61,8 +61,7 @@ class BlockGrindstone : Block {
         }
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

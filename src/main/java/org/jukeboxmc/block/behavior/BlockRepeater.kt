@@ -39,10 +39,10 @@ class BlockRepeater : Block {
         itemInHand: Item,
     ): Boolean {
         val delay = repeaterDelay
-        if (delay != 3) {
-            repeaterDelay = delay + 1
+        repeaterDelay = if (delay != 3) {
+            delay + 1
         } else {
-            repeaterDelay = 0
+            0
         }
         return true
     }
@@ -54,8 +54,7 @@ class BlockRepeater : Block {
         }
     var direction: Direction
         get() {
-            val value = if (stateExists("direction")) getIntState("direction") else 0
-            return when (value) {
+            return when (if (stateExists("direction")) getIntState("direction") else 0) {
                 0 -> Direction.SOUTH
                 1 -> Direction.WEST
                 2 -> Direction.NORTH

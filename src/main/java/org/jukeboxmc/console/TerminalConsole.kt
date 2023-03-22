@@ -5,10 +5,8 @@ import net.minecrell.terminalconsole.SimpleTerminalConsole
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jukeboxmc.Server
-import org.jukeboxmc.player.Player
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.function.Consumer
 
 /**
  * @author LucGamesYT
@@ -23,15 +21,15 @@ open class TerminalConsole(private val server: Server) : SimpleTerminalConsole()
         return server.getRunningState().get()
     }
 
-    protected override fun runCommand(command: String) {
+    override fun runCommand(command: String) {
         if (command == "checkexception") {
             val exception = Exception()
             exception.stackTrace = server.getMainThread().stackTrace
             exception.printStackTrace(System.out)
         } else if (command.equals("test", ignoreCase = true)) {
-            server.onlinePlayers.forEach(Consumer { player: Player? -> player!!.sendMessage("Hallo das ist ein Test!") })
+            server.onlinePlayers.forEach { player -> player.sendMessage("Hallo das ist ein Test!") }
         }
-        if (isRunning()) {
+        if (isRunning) {
             server.scheduler.execute { server.dispatchCommand(server.getConsoleSender(), command) }
         }
     }

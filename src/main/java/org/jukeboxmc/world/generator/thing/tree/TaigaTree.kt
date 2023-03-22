@@ -8,6 +8,7 @@ import org.jukeboxmc.block.data.LeafType
 import org.jukeboxmc.block.data.LogType
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 import java.util.Random
+import kotlin.math.abs
 
 /**
  * @author LucGamesYT
@@ -20,7 +21,7 @@ class TaigaTree(treeHeight: Int) : Tree(treeHeight) {
     )
 
     fun create(random: Random, manager: PopulationChunkManager, x: Int, y: Int, z: Int) {
-        treeHeight = treeHeight - random.nextInt(3)
+        treeHeight -= random.nextInt(3)
         for (i in 0 until treeHeight) {
             manager.setBlock(x, y + i, z, BLOCK_SPRUCE_LOG)
         }
@@ -32,9 +33,9 @@ class TaigaTree(treeHeight: Int) : Tree(treeHeight) {
         for (yy in 0..topSize) {
             val yyy = y + treeHeight - yy
             for (xx in x - radius..x + radius) {
-                val xOff = Math.abs(xx - x)
+                val xOff = abs(xx - x)
                 for (zz in z - radius..z + radius) {
-                    val zOff = Math.abs(zz - z)
+                    val zOff = abs(zz - z)
                     if (xOff == radius && zOff == radius && radius > 0) {
                         continue
                     }

@@ -15,6 +15,6 @@ class ItemCrimsonSign : Item {
     constructor(itemType: ItemType) : super(itemType)
 
     override fun toBlock(): Block {
-        return Block.create<Block>(BlockType.CRIMSON_STANDING_SIGN)
+        return Block.create(BlockType.CRIMSON_STANDING_SIGN)
     }
 }

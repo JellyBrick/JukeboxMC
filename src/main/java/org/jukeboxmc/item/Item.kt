@@ -258,16 +258,16 @@ open class Item : Cloneable {
             nbtBuilder.putInt("Damage", durability)
         }
         val displayBuilder = NbtMap.builder()
-        if (!displayname.isEmpty()) {
+        if (displayname.isNotEmpty()) {
             displayBuilder["Name"] = displayname
         }
-        if (!lore.isEmpty()) {
+        if (lore.isNotEmpty()) {
             displayBuilder.putList("Lore", NbtType.STRING, lore)
         }
         if (!displayBuilder.isEmpty()) {
             nbtBuilder.putCompound("display", displayBuilder.build())
         }
-        if (!enchantments.isEmpty()) {
+        if (enchantments.isNotEmpty()) {
             val enchantmentNBT: MutableList<NbtMap> = ArrayList()
             for (enchantment in enchantments.values) {
                 enchantmentNBT.add(
@@ -431,12 +431,19 @@ open class Item : Cloneable {
         return this == item && amount == item.amount
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj is Item) {
-            obj.runtimeId == runtimeId && obj.meta == meta && (obj.blockRuntimeId == blockRuntimeId || obj.blockRuntimeId == 0 || blockRuntimeId == 0)
+    override fun equals(other: Any?): Boolean {
+        return if (other is Item) {
+            other.runtimeId == runtimeId && other.meta == meta && (other.blockRuntimeId == blockRuntimeId || other.blockRuntimeId == 0 || blockRuntimeId == 0)
         } else {
             false
         }
+    }
+
+    override fun hashCode(): Int {
+        var result = runtimeId
+        result = 31 * result + blockRuntimeId
+        result = 31 * result + meta
+        return result
     }
 
     companion object {
@@ -526,7 +533,7 @@ open class Item : Cloneable {
 
         fun toBase64(item: Item): String {
             val itemNbt = NbtMap.builder()
-                .putString("Name", item.identifier!!.fullName)
+                .putString("Name", item.identifier.fullName)
                 .putInt("Count", item.amount)
                 .putInt("Meta", item.meta)
                 .putBoolean("Unbreakable", item.isUnbreakable)

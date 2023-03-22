@@ -93,7 +93,7 @@ class BlockWoodenSlab : BlockSlab {
     }
 
     fun setWoodType(woodType: WoodType): BlockWoodenSlab {
-        return setState<BlockWoodenSlab>("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType

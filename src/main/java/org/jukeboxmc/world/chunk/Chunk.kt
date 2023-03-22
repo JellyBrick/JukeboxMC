@@ -39,8 +39,15 @@ import kotlin.math.abs
  * @version 1.0
  */
 class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) {
-    val minY: Int
-    val maxY: Int
+    val minY: Int = when (dimension) {
+        Dimension.OVERWORLD -> -64
+        Dimension.NETHER, Dimension.THE_END -> 0
+    }
+    val maxY: Int = when (dimension) {
+        Dimension.OVERWORLD -> 319
+        Dimension.NETHER -> 127
+        Dimension.THE_END -> 255
+    }
     val fullHeight: Int
     private val entities: MutableSet<Entity>
     val players: MutableSet<Player>
@@ -54,16 +61,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     var chunkState: ChunkState
 
     init {
-        minY = when (dimension) {
-            Dimension.OVERWORLD -> -64
-            Dimension.NETHER, Dimension.THE_END -> 0
-        }
-        maxY = when (dimension) {
-            Dimension.OVERWORLD -> 319
-            Dimension.NETHER -> 127
-            Dimension.THE_END -> 255
-        }
-        fullHeight = Math.abs(minY) + maxY + 1
+        fullHeight = abs(minY) + maxY + 1
         entities = CopyOnWriteArraySet()
         players = CopyOnWriteArraySet()
         blockEntities = Int2ObjectOpenHashMap()
@@ -137,7 +135,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         writeLock.lock()
         try {
             if (isHeightOutOfBounds(y)) return
-            this.getOrCreateSubChunk(getSubY(y))!!.setBlock(x, y, z, layer, block)
+            this.getOrCreateSubChunk(getSubY(y)).setBlock(x, y, z, layer, block)
             isDirty = true
         } finally {
             writeLock.unlock()
@@ -168,8 +166,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     }
 
     fun getHighestBlockY(x: Int, z: Int): Int {
-        var y: Int
-        y = maxY
+        var y: Int = maxY
         while (y > minY) {
             val blockType = getBlock(x, y, z, 0).type
             if (blockType != BlockType.AIR) {
@@ -224,7 +221,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         return try {
             for (y in 0..subY) {
                 if (subChunks[y] == null) {
-                    subChunks[y] = SubChunk(y + (Math.abs(minY) shr 4))
+                    subChunks[y] = SubChunk(y + (abs(minY) shr 4))
                 }
             }
             subChunks[subY]!!
@@ -327,6 +324,6 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         const val CHUNK_LAYERS = 2
         const val CHUNK_VERSION = 40
         const val SUB_CHUNK_VERSION = 9
-        private val BLOCK_AIR: Block = Block.create<Block>(BlockType.AIR)
+        private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
     }
 }

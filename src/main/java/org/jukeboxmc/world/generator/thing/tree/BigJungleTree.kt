@@ -17,11 +17,11 @@ import kotlin.math.sin
  * @author LucGamesYT
  * @version 1.0
  */
-class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: Int) {
+open class BigJungleTree(private val baseHeight: Int, private val extraRandomHeight: Int) {
     private val BLOCK_LOG: Block = Block.create<BlockLog>(BlockType.LOG).setLogType(LogType.JUNGLE)
     private val BLOCK_LEAVES: Block = Block.create<BlockLeaves>(BlockType.LEAVES).setLeafType(LeafType.JUNGLE)
-    private val BLOCK_VINE: Block = Block.create<Block>(BlockType.VINE)
-    private val BLOCK_DIRT: Block = Block.create<Block>(BlockType.DIRT)
+    private val BLOCK_VINE: Block = Block.create(BlockType.VINE)
+    private val BLOCK_DIRT: Block = Block.create(BlockType.DIRT)
     fun create(random: Random, manager: PopulationChunkManager, position: Vector) {
         val height = getHeight(random)
         if (ensureGrowable(manager, random, position, height)) {

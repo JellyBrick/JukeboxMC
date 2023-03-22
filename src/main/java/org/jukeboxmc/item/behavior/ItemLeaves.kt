@@ -17,12 +17,12 @@ class ItemLeaves : Item {
     private val block: BlockLeaves
 
     constructor(identifier: Identifier) : super(identifier) {
-        block = Block.create<BlockLeaves>(BlockType.LEAVES)
+        block = Block.create(BlockType.LEAVES)
         blockRuntimeId = block.runtimeId
     }
 
     constructor(itemType: ItemType) : super(itemType) {
-        block = Block.create<BlockLeaves>(BlockType.LEAVES)
+        block = Block.create(BlockType.LEAVES)
         blockRuntimeId = block.runtimeId
     }
 

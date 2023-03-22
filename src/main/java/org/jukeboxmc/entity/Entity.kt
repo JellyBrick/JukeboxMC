@@ -414,7 +414,7 @@ abstract class Entity : AutoCloseable {
             return false
         }
         if (event is EntityDamageByEntityEvent) {
-            val damager: Entity = (event as EntityDamageByEntityEvent).damager
+            val damager: Entity = event.damager
             if (damager is Player) {
                 return damager.gameMode != GameMode.SPECTATOR
             }

@@ -16,11 +16,7 @@ class BlockEntityHopper(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val hopperInventory: HopperInventory
-
-    init {
-        hopperInventory = HopperInventory(this)
-    }
+    private val hopperInventory: HopperInventory = HopperInventory(this)
 
     override fun interact(
         player: Player,

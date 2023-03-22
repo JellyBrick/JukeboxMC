@@ -28,7 +28,7 @@ class MapLayerWhittaker
         val finalValues = IntArray(sizeX * sizeZ)
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
-                var centerVal = values!![j + 1 + (i + 1) * gridSizeX]
+                var centerVal = values[j + 1 + (i + 1) * gridSizeX]
                 if (centerVal == climate!!.value) {
                     val upperVal = values[j + 1 + i * gridSizeX]
                     val lowerVal = values[j + 1 + (i + 2) * gridSizeX]
@@ -52,14 +52,14 @@ class MapLayerWhittaker
         val finalValues = IntArray(sizeX * sizeZ)
         for (i in 0 until sizeZ) {
             for (j in 0 until sizeX) {
-                var `val` = values!![j + i * sizeX]
-                if (`val` != 0) {
+                var value = values[j + i * sizeX]
+                if (value != 0) {
                     setCoordsSeed(x + j, z + i)
                     if (nextInt(13) == 0) {
-                        `val` += 1000
+                        value += 1000
                     }
                 }
-                finalValues[j + i * sizeX] = `val`
+                finalValues[j + i * sizeX] = value
             }
         }
         return finalValues

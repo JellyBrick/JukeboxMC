@@ -14,7 +14,7 @@ import java.util.Random
 class DeadBushPopulator : Populator() {
     private var randomAmount = 0
     private var baseAmount = 0
-    private val BLOCK_DEAD_BUSH: Block = Block.create<Block>(BlockType.DEADBUSH)
+    private val BLOCK_DEAD_BUSH: Block = Block.create(BlockType.DEADBUSH)
     override fun populate(
         random: Random,
         world: World?,

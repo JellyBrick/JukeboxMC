@@ -9,7 +9,7 @@ import org.json.simple.JSONObject
 class Toggle(id: String, text: String, private var value: Boolean) : Element(id, text) {
     override fun toJSON(): JSONObject {
         val obj = super.toJSON()
-        obj!!["type"] = "toggle"
+        obj["type"] = "toggle"
         obj["default"] = value
         return obj
     }

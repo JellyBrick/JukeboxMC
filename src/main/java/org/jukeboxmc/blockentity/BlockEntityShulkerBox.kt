@@ -23,11 +23,7 @@ class BlockEntityShulkerBox(
         private set
     var isUndyed = false
         private set
-    val shulkerBoxInventory: ShulkerBoxInventory
-
-    init {
-        shulkerBoxInventory = ShulkerBoxInventory(this)
-    }
+    val shulkerBoxInventory: ShulkerBoxInventory = ShulkerBoxInventory(this)
 
     override fun interact(
         player: Player,

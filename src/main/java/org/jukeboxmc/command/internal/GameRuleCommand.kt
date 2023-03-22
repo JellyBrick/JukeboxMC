@@ -57,7 +57,7 @@ class GameRuleCommand : Command(
                 val gameRule: GameRule? = GameRule.fromIdentifier(gameRuleValue)
                 if (gameRule != null) {
                     if (NumberUtils.isCreatable(args[1])) {
-                        val value = args[1]!!.toInt()
+                        val value = args[1].toInt()
                         if (gameRule == GameRule.MAX_COMMAND_CHAIN_LENGTH || gameRule == GameRule.SPAWN_RADIUS) {
                             commandSender.world?.setGameRule(gameRule, value)
                             commandSender.sendMessage("Gamerule " + gameRule.identifier + " has been updated to " + value)

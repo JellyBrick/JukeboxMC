@@ -47,7 +47,7 @@ class ButtonList(title: String) : Form<String?>(title) {
         for (button in buttons) {
             content.add(button.toJSON())
         }
-        jsonObject!!["content"] = this.content
+        jsonObject["content"] = this.content
         jsonObject["buttons"] = content
 
         // Cache and return

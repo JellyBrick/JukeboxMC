@@ -41,7 +41,7 @@ class BlockStandingBanner : Block {
             ]
             world.setBlock(placePosition, this, 0)
         } else {
-            val blockWallBanner: BlockWallBanner = create<BlockWallBanner>(BlockType.WALL_BANNER)
+            val blockWallBanner: BlockWallBanner = create(BlockType.WALL_BANNER)
             blockWallBanner.blockFace = blockFace
             world.setBlock(placePosition, blockWallBanner, 0)
         }

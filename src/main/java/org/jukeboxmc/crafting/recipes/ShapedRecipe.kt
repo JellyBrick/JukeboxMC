@@ -16,16 +16,16 @@ import java.util.UUID
  * @version 1.0
  */
 class ShapedRecipe : Recipe() {
-    private val ingredients: Char2ObjectMap<ItemDescriptorWithCount> = Char2ObjectOpenHashMap<ItemDescriptorWithCount>()
+    private val ingredients: Char2ObjectMap<ItemDescriptorWithCount> = Char2ObjectOpenHashMap()
     override val outputs: MutableList<ItemData?> = ObjectArrayList()
     private lateinit var pattern: Array<String>
 
     fun shape(vararg pattern: String): ShapedRecipe {
-        if (pattern.size > 3 || pattern.size < 1) {
+        if (pattern.size > 3 || pattern.isEmpty()) {
             throw RuntimeException("Shape height must be between 3 and 1!")
         }
         val first = pattern[0]
-        if (first.length > 3 || first.length < 1) {
+        if (first.length > 3 || first.isEmpty()) {
             throw RuntimeException("Shape width must be between 3 and 1!")
         }
         val last = first.length
@@ -53,7 +53,7 @@ class ShapedRecipe : Recipe() {
     }
 
     override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingData? {
-        val ingredients: MutableList<ItemDescriptorWithCount> = ArrayList<ItemDescriptorWithCount>()
+        val ingredients: MutableList<ItemDescriptorWithCount> = ArrayList()
         for (s in pattern) {
             val chars = s.toCharArray()
             for (c in chars) {

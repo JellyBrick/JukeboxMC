@@ -22,7 +22,7 @@ class PopulationTask : BiFunction<Chunk, MutableList<Chunk>, Chunk> {
             locks.add(lock)
         }
         try {
-            chunk.world.getGenerator(chunk.dimension)?.populate(PopulationChunkManager(chunk, chunks), chunk.x, chunk.z)
+            chunk.world.getGenerator(chunk.dimension).populate(PopulationChunkManager(chunk, chunks), chunk.x, chunk.z)
             chunk.chunkState = ChunkState.FINISHED
             chunk.isDirty = true
         } finally {

@@ -31,12 +31,12 @@ class BlockWood : Block {
         itemInHand: Item,
         blockFace: BlockFace,
     ): Boolean {
-        if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-            axis = Axis.Y
+        axis = if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
+            Axis.Y
         } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-            axis = Axis.Z
+            Axis.Z
         } else {
-            axis = Axis.X
+            Axis.X
         }
         world.setBlock(placePosition, this)
         return true
@@ -49,14 +49,14 @@ class BlockWood : Block {
     }
 
     fun setWoodType(woodType: WoodType): BlockWood {
-        return setState<BlockWood>("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType
         get() = if (stateExists("wood_type")) WoodType.valueOf(getStringState("wood_type")) else WoodType.OAK
 
     fun setStripped(value: Boolean): BlockWood {
-        return setState<BlockWood>("stripped_bit", if (value) 1.toByte() else 0.toByte())
+        return setState("stripped_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isStripped: Boolean

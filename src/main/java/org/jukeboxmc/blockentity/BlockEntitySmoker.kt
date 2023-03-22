@@ -16,11 +16,7 @@ class BlockEntitySmoker(
     block: Block,
     blockEntityType: BlockEntityType,
 ) : BlockEntity(block, blockEntityType), InventoryHolder {
-    private val smokerInventory: SmokerInventory
-
-    init {
-        smokerInventory = SmokerInventory(this)
-    }
+    private val smokerInventory: SmokerInventory = SmokerInventory(this)
 
     override fun interact(
         player: Player,
