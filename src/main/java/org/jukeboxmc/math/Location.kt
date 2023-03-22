@@ -5,6 +5,8 @@ import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author LucGamesYT
@@ -17,7 +19,7 @@ class Location @JvmOverloads constructor(
     z: Float,
     var yaw: Float = 0f,
     var pitch: Float = 0f,
-    dimension: Dimension? = Dimension.OVERWORLD
+    dimension: Dimension = Dimension.OVERWORLD
 ) : Vector(x, y, z), Cloneable {
 
     init {
@@ -56,9 +58,9 @@ class Location @JvmOverloads constructor(
 
     constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension?) : this(
         world,
-        vector.getX(),
-        vector.getY(),
-        vector.getZ(),
+        vector.x,
+        vector.y,
+        vector.z,
         yaw,
         pitch,
         dimension
@@ -66,9 +68,9 @@ class Location @JvmOverloads constructor(
 
     constructor(world: World?, vector: Vector, yaw: Float, pitch: Float) : this(
         world,
-        vector.getX(),
-        vector.getY(),
-        vector.getZ(),
+        vector.x,
+        vector.y,
+        vector.z,
         yaw,
         pitch,
         Dimension.OVERWORLD
@@ -76,9 +78,9 @@ class Location @JvmOverloads constructor(
 
     constructor(world: World?, vector: Vector, dimension: Dimension?) : this(
         world,
-        vector.getX(),
-        vector.getY(),
-        vector.getZ(),
+        vector.x,
+        vector.y,
+        vector.z,
         0f,
         0f,
         dimension
@@ -86,9 +88,9 @@ class Location @JvmOverloads constructor(
 
     constructor(world: World?, vector: Vector) : this(
         world,
-        vector.getX(),
-        vector.getY(),
-        vector.getZ(),
+        vector.x,
+        vector.y,
+        vector.z,
         0f,
         0f,
         Dimension.OVERWORLD
@@ -113,40 +115,40 @@ class Location @JvmOverloads constructor(
     val block: Block?
         get() = world!!.getBlock(this)
     val biome: Biome?
-        get() = world!!.getBiome(this, dimension)
+        get() = world?.getBiome(this, dimension)
 
     fun getBlock(layer: Int): Block? {
-        return world!!.getBlock(this, layer)
+        return world?.getBlock(this, layer)
     }
 
     val chunk: Chunk?
-        get() = world!!.getChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
+        get() = world?.getChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
     val loadedChunk: Chunk?
-        get() = world!!.getLoadedChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
-    val direction: Vector?
+        get() = world?.getLoadedChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
+    val direction: Vector
         get() {
             val pitch = (pitch + 90) * Math.PI / 180
             val yaw = (yaw + 90) * Math.PI / 180
-            val x = Math.sin(pitch) * Math.cos(yaw)
-            val z = Math.sin(pitch) * Math.sin(yaw)
-            val y = Math.cos(pitch)
+            val x = sin(pitch) * cos(yaw)
+            val z = sin(pitch) * sin(yaw)
+            val y = cos(pitch)
             return Vector(x.toFloat(), y.toFloat(), z.toFloat()).normalize()
         }
 
     override fun clone(): Location {
-        val clone: Vector = super.clone()
+        val clone: Vector = super<Vector>.clone()
         return Location(world, clone)
     }
 
     override fun toString(): String {
         return "Location{" +
-                "world=" + world.getName() +
+                "world=" + world.name +
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
                 ", yaw=" + yaw +
                 ", pitch=" + pitch +
-                ", dimension=" + dimension!!.dimensionName +
+                ", dimension=" + dimension.dimensionName +
                 '}'
     }
 }

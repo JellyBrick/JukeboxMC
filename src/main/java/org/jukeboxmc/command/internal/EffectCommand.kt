@@ -1,13 +1,5 @@
 package org.jukeboxmc.command.internal
 
-import java.lang.Boolean
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.Array
-import kotlin.String
-import kotlin.arrayOf
 import org.apache.commons.lang3.EnumUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.jukeboxmc.Server
@@ -20,6 +12,14 @@ import org.jukeboxmc.command.annotation.Permission
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
+import java.lang.Boolean
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
+import java.util.stream.Stream
+import kotlin.Array
+import kotlin.String
+import kotlin.arrayOf
 
 /**
  * @author LucGamesYT
@@ -84,7 +84,7 @@ class EffectCommand : Command(CommandData.Companion.builder()
                 }
                 val visible = args.size != 5 || Boolean.parseBoolean(args[4])
                 target.addEffect(
-                    Effect.Companion.create<Effect>(effectType).setDuration(seconds, TimeUnit.SECONDS)
+                    Effect.create<Effect>(effectType).setDuration(seconds, TimeUnit.SECONDS)
                         .setAmplifier(amplifier).setVisible(visible)
                 )
                 commandSender.sendMessage("Gave " + effectType.name.lowercase(Locale.getDefault()) + " * " + amplifier + " to " + target.name + " for " + seconds + " seconds.")

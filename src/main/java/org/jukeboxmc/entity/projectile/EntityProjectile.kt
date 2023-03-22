@@ -3,6 +3,8 @@ package org.jukeboxmc.entity.projectile
 import com.nukkitx.protocol.bedrock.data.SoundEvent
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
 import org.jukeboxmc.entity.Entity
+import org.jukeboxmc.entity.EntityLiving
+import org.jukeboxmc.entity.EntityMoveable
 import org.jukeboxmc.event.entity.EntityDamageEvent
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
 import org.jukeboxmc.math.Location

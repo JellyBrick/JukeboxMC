@@ -9,12 +9,7 @@ import com.nukkitx.nbt.util.stream.LittleEndianDataOutputStream
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.data.LevelEventType
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
-import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket
-import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket
-import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
-import com.nukkitx.protocol.bedrock.packet.SetTimePacket
-import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
+import com.nukkitx.protocol.bedrock.packet.*
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.Server
@@ -44,14 +39,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.util.Locale
-import java.util.Objects
-import java.util.Queue
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.TimeUnit
+import java.util.*
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 
@@ -623,9 +612,9 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     }
 
     private fun getRelative(blockPosition: Vector, position: Vector): Vector {
-        val x = blockPosition.getX() + position.getZ()
-        val y = blockPosition.getY() + position.getY()
-        val z = blockPosition.getZ() + position.getZ()
+        val x = blockPosition.x + position.x
+        val y = blockPosition.y + position.y
+        val z = blockPosition.z + position.z
         return Vector(x, y, z, blockPosition.dimension)
     }
 

@@ -6,16 +6,16 @@ import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.math.vector.Vector3l
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.world.Dimension
-import java.util.Objects
+import java.util.*
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 open class Vector : Cloneable {
-    protected var x: Float
-    protected var y: Float
-    protected var z: Float
+    var x: Float
+    var y: Float
+    var z: Float
     var dimension: Dimension = Dimension.OVERWORLD
 
     constructor(x: Float, y: Float, z: Float, dimension: Dimension?) {
@@ -86,30 +86,6 @@ open class Vector : Cloneable {
         this.z = z.toFloat()
     }
 
-    fun getX(): Float {
-        return x
-    }
-
-    fun getY(): Float {
-        return y
-    }
-
-    fun getZ(): Float {
-        return z
-    }
-
-    fun setX(x: Float) {
-        this.x = x
-    }
-
-    fun setY(y: Float) {
-        this.y = y
-    }
-
-    fun setZ(z: Float) {
-        this.z = z
-    }
-
     val blockX: Int
         get() = FastMath.floor(x.toDouble()).toInt()
     val blockY: Int
@@ -172,8 +148,8 @@ open class Vector : Cloneable {
 
     fun distanceSquared(vector: Vector): Float {
         return (
-            FastMath.pow((x - vector.getX()).toDouble(), 2) + FastMath.pow((y - vector.getY()).toDouble(), 2) +
-                FastMath.pow((z - vector.getZ()).toDouble(), 2)
+            FastMath.pow((x - vector.x).toDouble(), 2) + FastMath.pow((y - vector.y).toDouble(), 2) +
+                FastMath.pow((z - vector.z).toDouble(), 2)
             ).toFloat()
     }
 

@@ -2,18 +2,26 @@ package org.jukeboxmc.entity.passiv
 
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.data.GameType
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import java.util.Random
-import java.util.UUID
+import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket
 import org.jukeboxmc.Server
+import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.EntityType
 import org.jukeboxmc.entity.attribute.Attribute
 import org.jukeboxmc.entity.attribute.AttributeType
+import org.jukeboxmc.inventory.ArmorInventory
+import org.jukeboxmc.inventory.InventoryHolder
+import org.jukeboxmc.inventory.PlayerInventory
 import org.jukeboxmc.player.Player
+import org.jukeboxmc.player.info.Device
+import org.jukeboxmc.player.info.DeviceInfo
+import org.jukeboxmc.player.info.UIProfile
 import org.jukeboxmc.player.skin.Skin
 import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
+import java.util.*
 
 /**
  * @author LucGamesYT
@@ -47,14 +55,10 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         this.addAttribute(AttributeType.PLAYER_LEVEL)
     }
 
-    val name: String
-        get() = this.getNameTag()
-    val width: Float
-        get() = 0.6f
-    val height: Float
-        get() = 1.8f
-    val type: EntityType
-        get() = EntityType.HUMAN
+    override val name: String = this.nameTag
+    override val width: Float = 0.6f
+    override val height: Float = 1.8f
+    override val type: EntityType = EntityType.HUMAN
     val identifier: Identifier
         get() = Identifier.Companion.fromString("minecraft:player")
     val eyeHeight: Float
@@ -71,7 +75,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         addPlayerPacket.setMotion(this.velocity.toVector3f())
         addPlayerPacket.setRotation(
             Vector3f.from(
-                this.location.getPitch(),
+                this.location.pitch,
                 this.location.getYaw(),
                 this.location.getYaw()
             )

@@ -10,7 +10,7 @@ import org.jukeboxmc.event.Cancellable
  */
 class ProjectileLaunchEvent(entity: Entity, val cause: Cause) : EntityEvent(entity), Cancellable {
 
-    override fun getEntity(): Entity? {
+    override fun getEntity(): Entity {
         return super.getEntity() as EntityProjectile
     }
 

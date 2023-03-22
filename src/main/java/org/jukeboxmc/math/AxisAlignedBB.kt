@@ -1,20 +1,17 @@
 package org.jukeboxmc.math
 
-import lombok.ToString
-
 /**
  * @author LucGamesYT
  * @version 1.0
  */
-@ToString
 class AxisAlignedBB(
     var minX: Float,
     var minY: Float,
     var minZ: Float,
     var maxX: Float,
     var maxY: Float,
-    var maxZ: Float
-) {
+    var maxZ: Float,
+) : Cloneable {
     fun setBounds(minX: Float, minY: Float, minZ: Float, maxX: Float, maxY: Float, maxZ: Float): AxisAlignedBB {
         this.minX = minX
         this.minY = minY
@@ -181,24 +178,24 @@ class AxisAlignedBB(
     }
 
     fun isVectorInside(vector: Vector): Boolean {
-        return !(vector.getX() <= minX || vector.getX() >= maxX) &&
-                !(vector.getY() <= minY || vector.getY() >= maxY) &&
-                (vector.getZ() > minZ || vector.getZ() < maxZ)
+        return !(vector.x <= minX || vector.x >= maxX) &&
+            !(vector.y <= minY || vector.y >= maxY) &&
+            (vector.z > minZ || vector.z < maxZ)
     }
 
     val averageEdgeLength: Float
         get() = (maxX - minX + maxY - minY + maxZ - minZ) / 3
 
     fun isVectorInYZ(vector: Vector): Boolean {
-        return vector.getY() >= minY && vector.getY() <= maxY && vector.getZ() >= minZ && vector.getZ() <= maxZ
+        return vector.y >= minY && vector.y <= maxY && vector.z >= minZ && vector.z <= maxZ
     }
 
     fun isVectorInXZ(vector: Vector): Boolean {
-        return vector.getX() >= minX && vector.getX() <= maxX && vector.getZ() >= minZ && vector.getZ() <= maxZ
+        return vector.x >= minX && vector.x <= maxX && vector.z >= minZ && vector.z <= maxZ
     }
 
     fun isVectorInXY(vector: Vector): Boolean {
-        return vector.getX() >= minX && vector.getX() <= maxX && vector.getY() >= minY && vector.getY() <= maxY
+        return vector.x >= minX && vector.x <= maxX && vector.y >= minY && vector.y <= maxY
     }
 
     fun calculateIntercept(pos1: Vector, pos2: Vector): Vector? {

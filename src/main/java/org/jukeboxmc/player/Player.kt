@@ -6,10 +6,6 @@ import com.nukkitx.protocol.bedrock.data.entity.EntityData
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import java.util.Locale
-import java.util.Objects
-import java.util.UUID
-import java.util.function.Consumer
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.entity.Entity
@@ -22,6 +18,7 @@ import org.jukeboxmc.event.entity.EntityHealEvent
 import org.jukeboxmc.form.Form
 import org.jukeboxmc.form.FormListener
 import org.jukeboxmc.form.NpcDialogueForm
+import org.jukeboxmc.inventory.*
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.item.behavior.ItemArmor
@@ -36,6 +33,8 @@ import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
 import org.jukeboxmc.world.chunk.ChunkLoader
+import java.util.*
+import java.util.function.Consumer
 
 /**
  * @author LucGamesYT
@@ -44,7 +43,7 @@ import org.jukeboxmc.world.chunk.ChunkLoader
 class Player(override val server: Server, val playerConnection: PlayerConnection) : EntityHuman(), ChunkLoader,
     CommandSender, InventoryHolder {
     val adventureSettings: AdventureSettings
-    private override var name: String? = null
+    private override var name: String = null
     var gameMode: GameMode?
         private set
     var closingWindowId = Int.MIN_VALUE

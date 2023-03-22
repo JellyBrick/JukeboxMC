@@ -1,16 +1,20 @@
 package org.jukeboxmc.entity
 
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket
+import com.nukkitx.protocol.bedrock.packet.MobEffectPacket
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.attribute.Attribute
 import org.jukeboxmc.entity.attribute.AttributeType
-import org.jukeboxmc.event.entity.EntityDamageEvent
+import org.jukeboxmc.event.entity.*
 import org.jukeboxmc.event.entity.EntityDamageEvent.DamageSource
-import org.jukeboxmc.event.entity.EntityHealEvent
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.Effect
 import org.jukeboxmc.potion.EffectType
+import java.util.*
+import kotlin.math.sqrt
 
 /**
  * @author LucGamesYT
@@ -24,8 +28,8 @@ abstract class EntityLiving : Entity() {
         protected set
     var lastDamageEntity: Entity? = null
         protected set
-    protected val attributes: MutableMap<AttributeType, Attribute> = HashMap()
-    protected val effects: MutableMap<EffectType?, Effect> = HashMap()
+    protected val attributes: MutableMap<AttributeType, Attribute> = EnumMap(AttributeType::class.java)
+    protected val effects: MutableMap<EffectType, Effect> = EnumMap(EffectType::class.java)
 
     init {
         addAttribute(AttributeType.HEALTH)
@@ -40,8 +44,10 @@ abstract class EntityLiving : Entity() {
         if (!(isDead || health <= 0)) {
             super.update(currentTick)
         }
-        if (lastDamageEntity != null && lastDamageEntity!!.isDead()) {
-            lastDamageEntity = null
+        lastDamageEntity?.let {
+            if (it.isDead) {
+                lastDamageEntity = null
+            }
         }
         if (health < 1) {
             if (deadTimer > 0 && deadTimer-- > 1) {
@@ -52,7 +58,7 @@ abstract class EntityLiving : Entity() {
         } else {
             deadTimer = 0
         }
-        if (isDead() || health <= 0) {
+        if (isDead || health <= 0) {
             return
         }
         if (attackCoolDown > 0) {
@@ -61,15 +67,15 @@ abstract class EntityLiving : Entity() {
         if (this.isOnLadder) {
             fallDistance = 0f
         }
-        if (!effects.isEmpty()) {
-            for (effect in effects.values) {
-                effect.update(currentTick)
-                if (effect.canExecute()) {
-                    effect.apply(this)
+        if (effects.isNotEmpty()) {
+            effects.values.forEach {
+                it.update(currentTick)
+                if (it.canExecute()) {
+                    it.apply(this)
                 }
-                effect.duration = effect.duration - 1
-                if (effect.duration <= 0) {
-                    removeEffect(effect.effectType)
+                it.setDuration(it.duration - 1)
+                if (it.duration <= 0) {
+                    removeEffect(it.effectType)
                 }
             }
         }
@@ -92,7 +98,7 @@ abstract class EntityLiving : Entity() {
         damage = applyResistanceEffectReduction(event, damage)
         var absorption = absorption
         if (absorption > 0) {
-            damage = Math.max(damage - absorption, 0f)
+            damage = (damage - absorption).coerceAtLeast(0f)
         }
         if (attackCoolDown > 0 && damage <= lastDamage) {
             return false
@@ -121,24 +127,24 @@ abstract class EntityLiving : Entity() {
         val health = health - damageToBeDealt
         if (health > 0) {
             val entityEventPacket = EntityEventPacket()
-            entityEventPacket.setRuntimeEntityId(entityId)
-            entityEventPacket.setType(EntityEventType.HURT)
-            Server.Companion.getInstance().broadcastPacket(entityEventPacket)
+            entityEventPacket.runtimeEntityId = entityId
+            entityEventPacket.type = EntityEventType.HURT
+            Server.instance.broadcastPacket(entityEventPacket)
         }
         if (event is EntityDamageByEntityEvent) {
-            val damager: Entity = event.getDamager()
+            val damager = event.damager
             val diffX = this.x - damager.x
             val diffZ = this.z - damager.z
-            var distance = Math.sqrt((diffX * diffX + diffZ * diffZ).toDouble()).toFloat()
+            var distance = sqrt(diffX * diffX + diffZ * diffZ)
             if (distance > 0.0) {
                 val baseModifier = 0.3f
                 distance = 1 / distance
                 var velocity = getVelocity()
-                velocity = velocity!!.divide(2f, 2f, 2f)
+                velocity = velocity.divide(2f, 2f, 2f)
                 velocity = velocity.add(
                     diffX * distance * baseModifier,
                     baseModifier,
-                    diffZ * distance * baseModifier
+                    diffZ * distance * baseModifier,
                 )
                 if (velocity.y > baseModifier) {
                     velocity.y = baseModifier
@@ -149,9 +155,9 @@ abstract class EntityLiving : Entity() {
         lastDamage = damage
         lastDamageSource = event.damageSource
         lastDamageEntity =
-            if (event is EntityDamageByEntityEvent) (event as EntityDamageByEntityEvent).getDamager() else null
+            if (event is EntityDamageByEntityEvent) event.damager else null
         attackCoolDown = 10
-        this.health = if (health <= 0) 0 else health
+        this.health = if (health <= 0) 0F else health
         return true
     }
 
@@ -160,25 +166,26 @@ abstract class EntityLiving : Entity() {
     }
 
     open fun applyFeatherFallingReduction(event: EntityDamageEvent, damage: Float): Float {
-        return 0
+        return 0F
     }
 
     open fun applyProtectionReduction(event: EntityDamageEvent, damage: Float): Float {
-        return 0
+        return 0F
     }
 
     open fun applyProjectileProtectionReduction(event: EntityDamageEvent, damage: Float): Float {
-        return 0
+        return 0F
     }
 
     open fun applyFireProtectionReduction(event: EntityDamageEvent, damage: Float): Float {
-        return 0
+        return 0F
     }
 
     fun applyResistanceEffectReduction(event: EntityDamageEvent, damage: Float): Float {
-        if (event.entity is EntityLiving) {
-            if (entityLiving.hasEffect(EffectType.RESISTANCE)) {
-                val amplifier: Int = entityLiving.getEffect<Effect>(EffectType.RESISTANCE).getAmplifier()
+        val entity = event.getEntity()
+        if (entity is EntityLiving) {
+            if (entity.hasEffect(EffectType.RESISTANCE)) {
+                val amplifier = entity.getEffect<Effect>(EffectType.RESISTANCE)!!.amplifier
                 return -(damage * 0.20f * amplifier + 1)
             }
         }
@@ -188,7 +195,7 @@ abstract class EntityLiving : Entity() {
     public override fun fall() {
         var distanceReduce = 0.0f
         if (hasEffect(EffectType.JUMP_BOOST)) {
-            val jumpAmplifier = getEffect<Effect>(EffectType.JUMP_BOOST).getAmplifier()
+            val jumpAmplifier = getEffect<Effect>(EffectType.JUMP_BOOST)!!.amplifier
             if (jumpAmplifier != -1) {
                 distanceReduce = (jumpAmplifier + 1).toFloat()
             }
@@ -202,72 +209,74 @@ abstract class EntityLiving : Entity() {
     protected open fun killInternal() {
         deadTimer = 20
         val entityEventPacket = EntityEventPacket()
-        entityEventPacket.setRuntimeEntityId(entityId)
-        entityEventPacket.setType(EntityEventType.DEATH)
-        Server.Companion.getInstance().broadcastPacket(entityEventPacket)
+        entityEventPacket.runtimeEntityId = entityId
+        entityEventPacket.type = EntityEventType.DEATH
+        Server.instance.broadcastPacket(entityEventPacket)
         removeAllEffects()
         fireTicks = 0
         this.isBurning = false
     }
 
-    fun addEffect(effect: Effect?) {
+    fun addEffect(effect: Effect) {
         val addEffectEvent = EntityAddEffectEvent(this, effect)
-        Server.Companion.getInstance().getPluginManager().callEvent(addEffectEvent)
-        if (addEffectEvent.isCancelled()) {
+        Server.instance.pluginManager.callEvent(addEffectEvent)
+        if (addEffectEvent.isCancelled) {
             return
         }
-        val oldEffect = getEffect<Effect>(addEffectEvent.getEffect().getEffectType())
-        addEffectEvent.getEffect().apply(this)
+        val oldEffect = getEffect<Effect>(addEffectEvent.effect.effectType)
+        addEffectEvent.effect.apply(this)
         if (this is Player) {
             val mobEffectPacket = MobEffectPacket()
-            mobEffectPacket.setRuntimeEntityId(entityId)
-            mobEffectPacket.setEffectId(addEffectEvent.getEffect().getId())
-            mobEffectPacket.setAmplifier(addEffectEvent.getEffect().getAmplifier())
-            mobEffectPacket.setParticles(addEffectEvent.getEffect().isVisible())
-            mobEffectPacket.setDuration(addEffectEvent.getEffect().getDuration())
+            mobEffectPacket.runtimeEntityId = entityId
+            mobEffectPacket.effectId = addEffectEvent.effect.id
+            mobEffectPacket.amplifier = addEffectEvent.effect.amplifier
+            mobEffectPacket.isParticles = addEffectEvent.effect.isVisible
+            mobEffectPacket.duration = addEffectEvent.effect.duration
             if (oldEffect != null) {
-                mobEffectPacket.setEvent(MobEffectPacket.Event.MODIFY)
+                mobEffectPacket.event = MobEffectPacket.Event.MODIFY
             } else {
-                mobEffectPacket.setEvent(MobEffectPacket.Event.ADD)
+                mobEffectPacket.event = MobEffectPacket.Event.ADD
             }
-            player.getPlayerConnection().sendPacket(mobEffectPacket)
+            playerConnection.sendPacket(mobEffectPacket)
         }
-        effects[addEffectEvent.getEffect().getEffectType()] = addEffectEvent.getEffect()
+        effects[addEffectEvent.effect.effectType] = addEffectEvent.effect
         calculateEffectColor()
     }
 
-    fun removeEffect(effectType: EffectType?) {
+    fun removeEffect(effectType: EffectType) {
         if (effects.containsKey(effectType)) {
-            val effect = effects[effectType]
+            val effect = effects.getValue(effectType)
             val removeEffectEvent = EntityRemoveEffectEvent(this, effect)
-            Server.Companion.getInstance().getPluginManager().callEvent(removeEffectEvent)
-            if (removeEffectEvent.isCancelled()) {
+            Server.instance.pluginManager.callEvent(removeEffectEvent)
+            if (removeEffectEvent.isCancelled) {
                 return
             }
             effects.remove(effectType)
-            effect!!.remove(this)
+            effect.remove(this)
             if (this is Player) {
                 val mobEffectPacket = MobEffectPacket()
-                mobEffectPacket.setRuntimeEntityId(entityId)
-                mobEffectPacket.setEvent(MobEffectPacket.Event.REMOVE)
-                mobEffectPacket.setEffectId(effect.id)
-                player.getPlayerConnection().sendPacket(mobEffectPacket)
+                mobEffectPacket.runtimeEntityId = entityId
+                mobEffectPacket.event = MobEffectPacket.Event.REMOVE
+                mobEffectPacket.effectId = effect.id
+                playerConnection.sendPacket(mobEffectPacket)
             }
             calculateEffectColor()
         }
     }
 
     fun removeAllEffects() {
-        for (effectType in effects.keys) {
-            removeEffect(effectType)
-        }
+        effects.keys.forEach(::removeEffect)
     }
 
-    fun <T : Effect?> getEffect(effectType: EffectType?): T? {
-        return effects[effectType] as T?
+    fun getEffect(effectType: EffectType): Effect? {
+        return effects[effectType]
     }
 
-    fun hasEffect(effectType: EffectType?): Boolean {
+    inline fun <reified T : Effect> getEffect(effectType: EffectType): T? {
+        return getEffect(effectType) as? T
+    }
+
+    fun hasEffect(effectType: EffectType): Boolean {
         return effects.containsKey(effectType)
     }
 
@@ -277,7 +286,7 @@ abstract class EntityLiving : Entity() {
         for (effect in effects.values) {
             if (effect.isVisible) {
                 val c = effect.color
-                color[0] += c!![0] * (effect.amplifier + 1)
+                color[0] += c[0] * (effect.amplifier + 1)
                 color[1] += c[1] * (effect.amplifier + 1)
                 color[2] += c[2] * (effect.amplifier + 1)
                 count += effect.amplifier + 1
@@ -299,17 +308,17 @@ abstract class EntityLiving : Entity() {
         attributes[attributeType] = attributeType.attribute
     }
 
-    fun getAttribute(attributeType: AttributeType): Attribute? {
-        return attributes[attributeType]
+    fun getAttribute(attributeType: AttributeType): Attribute {
+        return attributes.getValue(attributeType)
     }
 
     fun setAttributes(attributes: AttributeType, value: Float) {
         val attribute = this.attributes[attributes] ?: return
-        attribute.currentValue = value
+        attribute.setCurrentValue(value)
     }
 
     fun getAttributeValue(attributeType: AttributeType): Float {
-        return getAttribute(attributeType)!!.currentValue
+        return getAttribute(attributeType).getCurrentValue()
     }
 
     fun getAttributes(): Collection<Attribute> {
@@ -319,28 +328,28 @@ abstract class EntityLiving : Entity() {
     var health: Float
         get() = getAttributeValue(AttributeType.HEALTH)
         set(value) {
-            var value = value
-            if (value < 1) {
-                value = 0f
+            var variableValue = value
+            if (variableValue < 1) {
+                variableValue = 0f
                 killInternal()
             }
             val attribute = getAttribute(AttributeType.HEALTH)
-            attribute!!.currentValue = value
+            attribute.setCurrentValue(variableValue)
         }
     val maxHealth: Float
-        get() = getAttribute(AttributeType.HEALTH).getMaxValue()
+        get() = getAttribute(AttributeType.HEALTH).maxValue
 
     fun setHeal(value: Float) {
-        health = Math.min(20f, Math.max(0f, value))
+        health = 20f.coerceAtMost(0f.coerceAtLeast(value))
     }
 
-    fun setHeal(value: Float, cause: EntityHealEvent.Cause?) {
+    fun setHeal(value: Float, cause: EntityHealEvent.Cause) {
         val entityHealEvent = EntityHealEvent(this, health + value, cause)
-        Server.Companion.getInstance().getPluginManager().callEvent(entityHealEvent)
-        if (entityHealEvent.isCancelled()) {
+        Server.instance.pluginManager.callEvent(entityHealEvent)
+        if (entityHealEvent.isCancelled) {
             return
         }
-        health = Math.min(20f, Math.max(0f, entityHealEvent.getHeal()))
+        health = 20f.coerceAtMost(0f.coerceAtLeast(entityHealEvent.heal))
     }
 
     var absorption: Float
