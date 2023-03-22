@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.populator.biome
 
-import java.util.List
 import org.jukeboxmc.block.data.FlowerType
 import org.jukeboxmc.world.generator.populator.FlowerPopulator
 

@@ -2,10 +2,10 @@ package org.jukeboxmc.world.generator.populator.biome
 
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
-import java.util.Arrays
 import org.jukeboxmc.world.generator.populator.DiskPopulator
 import org.jukeboxmc.world.generator.populator.SeagrassPopulator
 import org.jukeboxmc.world.generator.populator.SugarcanePopulator
+import java.util.Arrays
 
 /**
  * @author LucGamesYT

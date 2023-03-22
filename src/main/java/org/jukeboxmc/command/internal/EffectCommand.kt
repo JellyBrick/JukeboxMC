@@ -6,6 +6,7 @@ import org.apache.commons.lang3.math.NumberUtils
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -21,7 +22,6 @@ import java.util.stream.Stream
 import kotlin.Array
 import kotlin.String
 import kotlin.arrayOf
-import org.jukeboxmc.command.CommandParameter
 
 /**
  * @author LucGamesYT

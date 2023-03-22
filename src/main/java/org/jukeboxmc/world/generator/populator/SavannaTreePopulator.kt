@@ -5,8 +5,8 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
-import java.util.Random
 import org.jukeboxmc.world.generator.`object`.tree.SavannaTree
+import java.util.Random
 
 /**
  * @author LucGamesYT

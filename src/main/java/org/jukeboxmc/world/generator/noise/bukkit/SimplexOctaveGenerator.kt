@@ -38,6 +38,7 @@ class SimplexOctaveGenerator
         wScale = scale
     }
 
+
     /**
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters

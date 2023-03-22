@@ -1,7 +1,6 @@
 package org.jukeboxmc.block.palette.bitarray
 
 import org.jukeboxmc.util.Utils
-import java.util.Objects
 
 enum class BitArrayVersion(bits: Int, entriesPerWord: Int, val next: BitArrayVersion?) {
     V16(16, 2, null), V8(8, 4, V16), V6(6, 5, V8), // 2 bit padding
@@ -30,7 +29,7 @@ enum class BitArrayVersion(bits: Int, entriesPerWord: Int, val next: BitArrayVer
             Utils.ceil(
                 size.toFloat() / entriesPerWord,
             ),
-            ),
+        ),
     ): BitArray {
         return if (words != null && (this == V3 || this == V5 || this == V6)) {
             PaddedBitArray(

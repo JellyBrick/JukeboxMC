@@ -22,7 +22,8 @@ class BlockSignChangeEvent
      *
      * @return a fresh [Player]
      */
-    val player: Player, private var lines: MutableList<String>
+    val player: Player,
+    private var lines: MutableList<String>,
 ) : BlockEvent(block), Cancellable {
     /**
      * Retrieves all lines of the sign

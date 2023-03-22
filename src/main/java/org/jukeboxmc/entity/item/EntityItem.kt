@@ -71,7 +71,7 @@ class EntityItem : EntityMoveable() {
         get() = 0.25f
     override val height: Float
         get() = 0.25f
-    override var gravity: Float  = 0.04f
+    override var gravity: Float = 0.04f
     override val type: EntityType
         get() = EntityType.ITEM
     override val identifier: Identifier

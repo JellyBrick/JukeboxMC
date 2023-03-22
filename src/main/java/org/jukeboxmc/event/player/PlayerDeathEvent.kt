@@ -15,5 +15,4 @@ class PlayerDeathEvent
  */(player: Player, var deathMessage: String, var isDropInventory: Boolean, var drops: List<Item>) :
     PlayerEvent(player) {
     var deathScreenMessage: String? = null
-
 }

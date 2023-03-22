@@ -2,8 +2,8 @@ package org.jukeboxmc.util
 
 import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtUtils
-import java.io.InputStream
 import org.jukeboxmc.Bootstrap
+import java.io.InputStream
 
 /**
  * @author LucGamesYT

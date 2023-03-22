@@ -12,4 +12,4 @@ class PlayerJumpEvent
  *
  * @param player who represents the player which comes with this event
  */
-    (player: Player) : PlayerEvent(player)
+(player: Player) : PlayerEvent(player)

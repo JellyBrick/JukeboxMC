@@ -18,5 +18,5 @@ abstract class PlayerEvent
      *
      * @return a fresh [Player]
      */
-    val player: Player
+    val player: Player,
 ) : Event()

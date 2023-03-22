@@ -82,7 +82,7 @@ class SchedulerFuture<V> : Runnable, Future<V> {
             if (finished) {
                 value?.let { consumer.accept(it, throwable) }
             } else {
-                    consumers!!.add(consumer)
+                consumers!!.add(consumer)
             }
         }
         return this

@@ -28,7 +28,7 @@ class PlayerMoveEvent
      *
      * @param to which should be modifies
      */
-    var to: Location
+    var to: Location,
 ) : PlayerEvent(player), Cancellable {
     /**
      * Retrieves the from [Location]
@@ -40,5 +40,4 @@ class PlayerMoveEvent
      *
      * @return a fresh [Location]
      */
-
 }

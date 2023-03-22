@@ -2,9 +2,9 @@ package org.jukeboxmc.world.generator.populator
 
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import org.jukeboxmc.world.generator.`object`.Ore
 import org.jukeboxmc.world.generator.`object`.OreType
 import java.util.Random
-import org.jukeboxmc.world.generator.`object`.Ore
 
 /**
  * @author LucGamesYT

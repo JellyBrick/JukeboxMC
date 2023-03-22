@@ -213,7 +213,6 @@ import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.util.Identifier
 import java.io.InputStreamReader
-import java.util.Objects
 
 /**
  * @author LucGamesYT
@@ -2213,16 +2212,16 @@ object BlockRegistry {
         Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json")!!.use { inputStream ->
             val inputStreamReader = InputStreamReader(inputStream)
             val itemEntries =
-                    gson.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
+                gson.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
             itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
                 BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
-                        map["hardness"] as Double,
-                        map["solid"] as Boolean,
-                        map["transparent"] as Boolean,
-                        ToolType.valueOf((map["tool_type"] as String?)!!),
-                        TierType.valueOf((map["tier_type"] as String?)!!),
-                        map["can_break_with_hand"] as Boolean,
-                        map["can_pass_through"] as Boolean,
+                    map["hardness"] as Double,
+                    map["solid"] as Boolean,
+                    map["transparent"] as Boolean,
+                    ToolType.valueOf((map["tool_type"] as String?)!!),
+                    TierType.valueOf((map["tier_type"] as String?)!!),
+                    map["can_break_with_hand"] as Boolean,
+                    map["can_pass_through"] as Boolean,
                 )
             }
         }

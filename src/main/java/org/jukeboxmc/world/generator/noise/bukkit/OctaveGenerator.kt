@@ -118,6 +118,7 @@ abstract class OctaveGenerator protected constructor(octaves: Array<NoiseGenerat
         return this.noise(x, y, 0.0, frequency, amplitude, normalized)
     }
 
+
     /**
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters

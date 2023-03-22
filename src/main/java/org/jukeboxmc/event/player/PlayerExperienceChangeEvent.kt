@@ -1,7 +1,6 @@
 package org.jukeboxmc.event.player
 
 import org.jukeboxmc.event.Cancellable
-import org.jukeboxmc.event.player.PlayerEvent
 import org.jukeboxmc.player.Player
 
 /**
@@ -13,7 +12,7 @@ class PlayerExperienceChangeEvent(
     val oldExperience: Int,
     val oldLevel: Int,
     var newExperience: Int,
-    newLevel: Int
+    newLevel: Int,
 ) : PlayerEvent(player), Cancellable {
     var newLevel: Int
 

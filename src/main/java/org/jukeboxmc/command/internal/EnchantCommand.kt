@@ -6,6 +6,7 @@ import org.apache.commons.lang3.math.NumberUtils
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.Command
 import org.jukeboxmc.command.CommandData
+import org.jukeboxmc.command.CommandParameter
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.command.annotation.Description
 import org.jukeboxmc.command.annotation.Name
@@ -17,7 +18,6 @@ import org.jukeboxmc.player.Player
 import java.util.Locale
 import java.util.stream.Collectors
 import java.util.stream.Stream
-import org.jukeboxmc.command.CommandParameter
 
 /**
  * @author LucGamesYT

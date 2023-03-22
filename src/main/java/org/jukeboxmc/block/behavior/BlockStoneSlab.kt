@@ -9,7 +9,6 @@ import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
-import java.util.*
 
 /**
  * @author LucGamesYT
@@ -85,7 +84,7 @@ class BlockStoneSlab : BlockSlab {
     }
 
     fun setStoneSlabType(stoneSlabType: StoneSlabType): BlockStoneSlab {
-        return setState<BlockStoneSlab>("stone_slab_type", stoneSlabType.name.lowercase(Locale.getDefault()))
+        return setState<BlockStoneSlab>("stone_slab_type", stoneSlabType.name.lowercase())
     }
 
     val stoneSlabType: StoneSlabType

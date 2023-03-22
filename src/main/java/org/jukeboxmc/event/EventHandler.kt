@@ -6,6 +6,6 @@ package org.jukeboxmc.event
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(
-    AnnotationRetention.RUNTIME
+    AnnotationRetention.RUNTIME,
 )
 annotation class EventHandler(val priority: EventPriority = EventPriority.NORMAL)

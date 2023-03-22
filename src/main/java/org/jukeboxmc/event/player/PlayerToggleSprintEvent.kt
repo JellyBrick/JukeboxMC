@@ -20,5 +20,5 @@ class PlayerToggleSprintEvent
      *
      * @return whether the player is sprinting
      */
-    val isSprinting: Boolean
+    val isSprinting: Boolean,
 ) : PlayerEvent(player), Cancellable

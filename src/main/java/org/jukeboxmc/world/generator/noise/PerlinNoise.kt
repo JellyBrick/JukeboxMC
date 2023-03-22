@@ -1,6 +1,5 @@
 package org.jukeboxmc.world.generator.noise
 
-import org.jukeboxmc.world.generator.noise.bukkit.NoiseGenerator
 import org.jukeboxmc.world.generator.noise.bukkit.PerlinNoiseGenerator
 import java.util.Random
 

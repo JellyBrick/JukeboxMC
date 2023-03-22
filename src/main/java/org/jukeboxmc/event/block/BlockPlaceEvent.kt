@@ -40,12 +40,11 @@ class BlockPlaceEvent
      *
      * @return [Block]
      */
-    val clickedBlock: Block
+    val clickedBlock: Block,
 ) : BlockEvent(placedBlock), Cancellable {
     /**
      * Retrieves the block which should be placed
      *
      * @return a fresh [Block]
      */
-
 }

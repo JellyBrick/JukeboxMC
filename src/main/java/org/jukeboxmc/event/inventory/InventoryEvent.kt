@@ -18,5 +18,5 @@ abstract class InventoryEvent
      *
      * @return a fresh [Inventory]
      */
-    val inventory: Inventory
+    val inventory: Inventory,
 ) : Event()

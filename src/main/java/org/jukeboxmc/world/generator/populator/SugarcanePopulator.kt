@@ -1,12 +1,12 @@
 package org.jukeboxmc.world.generator.populator
 
-import java.util.Random
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -21,7 +21,7 @@ class SugarcanePopulator : Populator() {
         world: World?,
         chunkManager: PopulationChunkManager,
         chunkX: Int,
-        chunkZ: Int
+        chunkZ: Int,
     ) {
         val amount = random.nextInt(randomAmount + 1) + baseAmount
         val chunk = chunkManager.getChunk(chunkX, chunkZ)

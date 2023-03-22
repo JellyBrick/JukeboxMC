@@ -1,6 +1,6 @@
 package org.jukeboxmc
 
-import java.net.InetSocketAddress
+import org.jukeboxmc.console.ConsoleSender
 import org.jukeboxmc.logger.Logger
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.plugin.PluginManager
@@ -8,9 +8,9 @@ import org.jukeboxmc.scheduler.Scheduler
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
 import org.jukeboxmc.world.generator.Generator
+import java.net.InetSocketAddress
 import java.util.UUID
 import java.util.function.Consumer
-import org.jukeboxmc.console.ConsoleSender
 
 /**
  * @author LucGamesYT

@@ -20,5 +20,5 @@ class PlayerToggleGlideEvent
      *
      * @return whether the player is gliding
      */
-    val isGliding: Boolean
+    val isGliding: Boolean,
 ) : PlayerEvent(player), Cancellable

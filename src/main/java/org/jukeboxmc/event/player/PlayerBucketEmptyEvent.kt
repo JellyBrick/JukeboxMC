@@ -18,18 +18,20 @@ class PlayerBucketEmptyEvent
  * @param clickedBlock which is the block the player clicked at
  * @param placedBlock  which is the block which will be placed
  */(
-    player: Player, bucket: Item, itemInHand: Item, clickedBlock: Block?,
+    player: Player,
+    bucket: Item,
+    itemInHand: Item,
+    clickedBlock: Block?,
     /**
      * Modifies the block which will be placed
      *
      * @param placedBlock which will be placed
      */
-    var placedBlock: Block?
+    var placedBlock: Block?,
 ) : PlayerBucketEvent(player, bucket, itemInHand, clickedBlock) {
     /**
      * Retrieves the block which will be placed
      *
      * @return a fresh [Block]
      */
-
 }

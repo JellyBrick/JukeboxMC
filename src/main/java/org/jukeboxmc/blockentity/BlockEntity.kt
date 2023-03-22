@@ -105,8 +105,8 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
     companion object {
         fun createBlockEntity(blockEntityType: BlockEntityType, block: Block): BlockEntity {
             val constructor = BlockEntityRegistry.getBlockEntityClass(blockEntityType).getConstructor(
-                    Block::class.java,
-                    BlockEntityType::class.java,
+                Block::class.java,
+                BlockEntityType::class.java,
             )
             constructor.isAccessible = true
             return constructor.newInstance(block, blockEntityType)

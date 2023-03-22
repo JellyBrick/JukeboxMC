@@ -21,5 +21,5 @@ class InventoryOpenEvent
      *
      * @return a fresh [Player]
      */
-    val player: Player
+    val player: Player,
 ) : InventoryEvent(inventory), Cancellable
