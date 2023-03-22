@@ -237,7 +237,7 @@ class AxisAlignedBB(
         return resultVector
     }
 
-    override fun clone(): AxisAlignedBB {
+    public override fun clone(): AxisAlignedBB {
         return try {
             val clone = super.clone() as AxisAlignedBB
             clone.setBounds(this)

@@ -23,14 +23,14 @@ class ItemPlanks : Item, Burnable {
         blockRuntimeId = block.runtimeId
     }
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockPlanks>(BlockType.PLANKS)
         blockRuntimeId = block.runtimeId
     }
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemPlanks {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

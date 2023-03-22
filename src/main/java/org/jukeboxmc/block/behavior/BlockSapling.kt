@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockSapling : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemSapling>(ItemType.SAPLING).setSaplingType(
@@ -24,7 +24,7 @@ class BlockSapling : Block {
     }
 
     fun setSaplingType(saplingType: SaplingType): BlockSapling {
-        return setState("sapling_type", saplingType.name.lowercase(Locale.getDefault()))
+        return setState<BlockSapling>("sapling_type", saplingType.name.lowercase(Locale.getDefault()))
     }
 
     val saplingType: SaplingType

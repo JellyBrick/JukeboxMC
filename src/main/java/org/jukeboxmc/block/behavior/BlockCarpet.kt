@@ -14,15 +14,15 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockCarpet : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemCarpet>(ItemType.CARPET).setColor(color)
     }
 
     fun setColor(color: BlockColor): BlockCarpet {
-        return setState("color", color.name.lowercase(Locale.getDefault()))
+        return setState<BlockCarpet>("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

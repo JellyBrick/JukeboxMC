@@ -47,7 +47,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     var identifier: Identifier
         protected set
     var blockStates: NbtMap
-    var type: BlockType?
+    var type: BlockType
         protected set
     var location: Location = Location(null, Vector(0, 0, 0))
     var layer = 0

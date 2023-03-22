@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemLog : Item {
     private val block: BlockLog
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockLog>(BlockType.LOG)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemLog : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemLog {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

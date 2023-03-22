@@ -18,7 +18,7 @@ import java.time.Duration
 class ItemSapling : Item, Burnable {
     private val block: BlockSapling
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockSapling>(BlockType.SAPLING)
         blockRuntimeId = block.runtimeId
     }
@@ -30,7 +30,7 @@ class ItemSapling : Item, Burnable {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemSapling {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

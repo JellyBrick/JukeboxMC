@@ -19,8 +19,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockBarrel : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -32,14 +32,14 @@ class BlockBarrel : Block {
         blockFace: BlockFace,
     ): Boolean {
         if (FastMath.abs(
-                player.x - getLocation()
+                player.x - location
                     .x,
-            ) < 2 && FastMath.abs(player.z - getLocation().z) < 2
+            ) < 2 && FastMath.abs(player.z - location.z) < 2
         ) {
             val y = (player.y + player.eyeHeight).toDouble()
-            if (y - getLocation().y > 2) {
+            if (y - location.y > 2) {
                 this.blockFace = BlockFace.UP
-            } else if (getLocation().y - y > 0) {
+            } else if (location.y - y > 0) {
                 this.blockFace = BlockFace.DOWN
             } else {
                 this.blockFace = player.direction.toBlockFace().opposite()

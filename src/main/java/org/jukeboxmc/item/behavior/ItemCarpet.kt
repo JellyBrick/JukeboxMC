@@ -18,7 +18,7 @@ import java.time.Duration
 class ItemCarpet : Item, Burnable {
     private val block: BlockCarpet
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockCarpet>(BlockType.CARPET)
         blockRuntimeId = block.runtimeId
     }
@@ -30,7 +30,7 @@ class ItemCarpet : Item, Burnable {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemCarpet {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

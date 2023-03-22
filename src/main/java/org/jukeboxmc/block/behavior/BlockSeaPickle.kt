@@ -9,8 +9,8 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class BlockSeaPickle : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun clusterCount(value: Int) { // 0-3
         setState<Block>("cluster_count", value)

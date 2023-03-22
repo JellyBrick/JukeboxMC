@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockPlanks : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemPlanks>(ItemType.PLANKS).setWoodType(
@@ -24,7 +24,7 @@ class BlockPlanks : Block {
     }
 
     fun setWoodType(woodType: WoodType): Block {
-        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState<Block>("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType

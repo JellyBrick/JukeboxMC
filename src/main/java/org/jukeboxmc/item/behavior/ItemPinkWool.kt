@@ -16,7 +16,7 @@ import java.time.Duration
 class ItemPinkWool : Item, Burnable {
     private val block: BlockPinkWool
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockPinkWool>(BlockType.PINK_WOOL)
         blockRuntimeId = block.runtimeId
     }

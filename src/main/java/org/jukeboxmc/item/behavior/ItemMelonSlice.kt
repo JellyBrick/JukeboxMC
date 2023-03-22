@@ -8,7 +8,7 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class ItemMelonSlice : ItemFood {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override val saturation: Float

@@ -14,7 +14,7 @@ import org.jukeboxmc.world.Sound
  */
 class ItemChainBoots : ItemArmor, Durability {
     constructor(itemType: ItemType) : super(itemType)
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val oldItem = player.getArmorInventory().boots

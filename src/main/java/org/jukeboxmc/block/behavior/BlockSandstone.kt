@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockSandstone : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemSandstone>(ItemType.SANDSTONE).setSandStoneType(

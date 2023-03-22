@@ -159,8 +159,8 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
                 subChunks[subY] = SubChunk(subY)
             }
             val block = subChunks[subY]!!.getBlock(x, y, z, layer)
-            block.setLocation(Location(world, x, y, z, dimension))
-            block.setLayer(layer)
+            block.location = Location(world, x, y, z, dimension)
+            block.layer = layer
             block
         } finally {
             readLock.unlock()

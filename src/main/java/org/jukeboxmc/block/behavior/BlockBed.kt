@@ -20,8 +20,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockBed : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -38,7 +38,7 @@ class BlockBed : Block {
         if (blockDirection.canBeReplaced(this) && blockDirection.isTransparent) {
             direction = player.direction
             val blockBed: BlockBed = create<BlockBed>(BlockType.BED)
-            blockBed.setLocation(directionLocation)
+            blockBed.location = directionLocation
             blockBed.direction = direction
             blockBed.isHeadPiece = true
             world.setBlock(directionLocation, blockBed, 0)

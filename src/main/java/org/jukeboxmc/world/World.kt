@@ -325,8 +325,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         chunk.setBlock(vector.blockX, vector.blockY, vector.blockZ, layer, block)
         chunk.isDirty = true
         val location = Location(this, vector, dimension)
-        block.setLocation(location)
-        block.setLayer(layer)
+        block.location = location
+        block.layer = layer
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.blockPosition = vector.toVector3i()
         updateBlockPacket.runtimeId = block.runtimeId
@@ -727,10 +727,10 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
                 (ThreadLocalRandom.current().nextDouble() * 0.2f - 0.1f).toFloat(),
             )
         }
-        val entityItem = Objects.requireNonNull(Entity.create<EntityItem>(EntityType.ITEM)!!)
+        val entityItem = Entity.create<EntityItem>(EntityType.ITEM)!!
         entityItem.setItem(item)
         entityItem.setVelocity(velocity, false)
-        entityItem.setLocation(Location(this, location))
+        entityItem.location = Location(this, location)
         entityItem.setPickupDelay(1, TimeUnit.SECONDS)
         return entityItem
     }

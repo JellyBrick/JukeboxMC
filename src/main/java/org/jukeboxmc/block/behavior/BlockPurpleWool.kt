@@ -11,8 +11,8 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class BlockPurpleWool : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<Item>(ItemType.PURPLE_WOOL)

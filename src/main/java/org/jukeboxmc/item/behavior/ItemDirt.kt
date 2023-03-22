@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemDirt : Item {
     private val block: BlockDirt
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockDirt>(BlockType.DIRT)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemDirt : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemDirt {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

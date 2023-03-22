@@ -18,8 +18,8 @@ import java.util.*
  * @version 1.0
  */
 class BlockWoodenSlab : BlockSlab {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -93,7 +93,7 @@ class BlockWoodenSlab : BlockSlab {
     }
 
     fun setWoodType(woodType: WoodType): BlockWoodenSlab {
-        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState<BlockWoodenSlab>("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType

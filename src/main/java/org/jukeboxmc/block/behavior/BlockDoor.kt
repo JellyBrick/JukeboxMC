@@ -18,8 +18,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockDoor : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -33,7 +33,7 @@ class BlockDoor : Block {
         val block = world.getBlock(placePosition)
         direction = Direction.fromAngle(player.yaw)
         val blockAbove: BlockDoor = create<BlockDoor>(this.type)
-        blockAbove.setLocation(Location(world, placePosition.add(0f, 1f, 0f)))
+        blockAbove.location = Location(world, placePosition.add(0f, 1f, 0f))
         blockAbove.direction = direction
         blockAbove.setUpperBlock(true)
         blockAbove.setOpen(false)
@@ -84,21 +84,21 @@ class BlockDoor : Block {
     }
 
     fun setOpen(value: Boolean): BlockDoor {
-        return setState("open_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockDoor>("open_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isOpen: Boolean
         get() = stateExists("open_bit") && getByteState("open_bit").toInt() == 1
 
     fun setUpperBlock(value: Boolean): BlockDoor {
-        return setState("upper_block_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockDoor>("upper_block_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isUpperBlock: Boolean
         get() = stateExists("upper_block_bit") && getByteState("upper_block_bit").toInt() == 1
 
     fun setDoorHinge(value: Boolean): BlockDoor {
-        return setState("door_hinge_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockDoor>("door_hinge_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isDoorHinge: Boolean

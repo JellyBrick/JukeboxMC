@@ -56,7 +56,7 @@ class EntityFishingHook : EntityProjectile() {
         get() = Identifier.fromString("minecraft:fishing_hook")
     val isInsideLiquid: Boolean
         get() {
-            val eyeLocation = getLocation().add(0f, this.eyeHeight, 0f)
+            val eyeLocation = location.add(0f, this.eyeHeight, 0f)
             val block = eyeLocation.block!!
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {
                 val yLiquid = (block.location.y + 1 + ((block as BlockLiquid).liquidDepth - 0.12)).toFloat()

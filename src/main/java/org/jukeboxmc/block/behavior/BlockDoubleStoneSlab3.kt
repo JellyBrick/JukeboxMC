@@ -10,11 +10,11 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockDoubleStoneSlab3 : BlockSlab {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun setStoneSlabType(stoneSlabType: StoneSlab3Type): BlockDoubleStoneSlab3 {
-        return setState("stone_slab_type_3", stoneSlabType.name.lowercase(Locale.getDefault()))
+        return setState<BlockDoubleStoneSlab3>("stone_slab_type_3", stoneSlabType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneSlabType: StoneSlab3Type

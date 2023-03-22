@@ -18,13 +18,13 @@ import java.util.*
  * @version 1.0
  */
 class ItemEgg : Item {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val entityEgg = Objects.requireNonNull<EntityEgg>(Entity.create<EntityEgg>(EntityType.EGG))
         entityEgg.setShooter(player)
-        entityEgg.setLocation(player.location.add(0f, player.eyeHeight, 0f))
+        entityEgg.location = player.location.add(0f, player.eyeHeight, 0f)
         entityEgg.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entityEgg.yaw = player.yaw
         entityEgg.pitch = player.pitch

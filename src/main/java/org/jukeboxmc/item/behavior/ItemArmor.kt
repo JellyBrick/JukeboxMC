@@ -13,7 +13,7 @@ import org.jukeboxmc.util.Identifier
  */
 abstract class ItemArmor : Item {
     constructor(itemType: ItemType) : super(itemType)
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         playEquipSound(player)

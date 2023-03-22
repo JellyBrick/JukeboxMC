@@ -19,7 +19,7 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class ItemNetheriteShovel : Item, Durability {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {

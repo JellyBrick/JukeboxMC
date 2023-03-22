@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockRedFlower : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemRedFlower>(ItemType.RED_FLOWER).setFlowerType(
@@ -24,7 +24,7 @@ class BlockRedFlower : Block {
     }
 
     fun setFlowerType(flowerType: FlowerType): BlockRedFlower {
-        return setState("flower_type", flowerType.name.lowercase(Locale.getDefault()))
+        return setState<BlockRedFlower>("flower_type", flowerType.name.lowercase(Locale.getDefault()))
     }
 
     val flowerType: FlowerType

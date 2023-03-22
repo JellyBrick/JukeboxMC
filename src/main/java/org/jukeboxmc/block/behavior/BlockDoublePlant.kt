@@ -20,8 +20,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockDoublePlant : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -38,7 +38,7 @@ class BlockDoublePlant : Block {
             if (!isUpperBlock) {
                 val blockDoublePlant: BlockDoublePlant =
                     create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
-                blockDoublePlant.setLocation(Location(world, placePosition.add(0f, 1f, 0f)))
+                blockDoublePlant.location = Location(world, placePosition.add(0f, 1f, 0f))
                 blockDoublePlant.setPlantType(plantType)
                 blockDoublePlant.setUpperBlock(true)
                 world.setBlock(placePosition.add(0f, 1f, 0f), blockDoublePlant)
@@ -46,7 +46,7 @@ class BlockDoublePlant : Block {
             } else {
                 val blockDoublePlant: BlockDoublePlant =
                     create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
-                blockDoublePlant.setLocation(Location(world, placePosition))
+                blockDoublePlant.location = Location(world, placePosition)
                 blockDoublePlant.setPlantType(plantType)
                 blockDoublePlant.setUpperBlock(false)
                 world.setBlock(placePosition, blockDoublePlant)
@@ -73,14 +73,14 @@ class BlockDoublePlant : Block {
     }
 
     fun setPlantType(plantType: PlantType): BlockDoublePlant {
-        return setState("double_plant_type", plantType.name.lowercase(Locale.getDefault()))
+        return setState<BlockDoublePlant>("double_plant_type", plantType.name.lowercase(Locale.getDefault()))
     }
 
     val plantType: PlantType
         get() = if (stateExists("double_plant_type")) PlantType.valueOf(getStringState("double_plant_type")) else PlantType.SUNFLOWER
 
     fun setUpperBlock(value: Boolean): BlockDoublePlant {
-        return setState("upper_block_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockDoublePlant>("upper_block_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isUpperBlock: Boolean

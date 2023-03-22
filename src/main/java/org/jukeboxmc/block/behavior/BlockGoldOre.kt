@@ -13,8 +13,8 @@ import java.util.concurrent.ThreadLocalRandom
  * @version 1.0
  */
 class BlockGoldOre : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun getDrops(item: Item?): List<Item> {
         if (item != null && isCorrectToolType(item) && isCorrectTierType(item)) {

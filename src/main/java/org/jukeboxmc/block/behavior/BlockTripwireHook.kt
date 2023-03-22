@@ -10,8 +10,8 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class BlockTripwireHook : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     var isPowered: Boolean
         get() = stateExists("powered_bit") && getByteState("powered_bit").toInt() == 1

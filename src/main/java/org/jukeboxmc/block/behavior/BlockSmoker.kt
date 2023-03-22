@@ -17,8 +17,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockSmoker : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -51,7 +51,7 @@ class BlockSmoker : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(getLocation(), location.dimension) as BlockEntitySmoker?
+        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySmoker?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

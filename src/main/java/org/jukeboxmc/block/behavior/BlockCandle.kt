@@ -17,8 +17,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockCandle : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -71,14 +71,14 @@ class BlockCandle : Block {
     }
 
     fun setCandles(value: Int): BlockCandle {
-        return setState("candles", value)
+        return setState<BlockCandle>("candles", value)
     }
 
     val candles: Int
         get() = if (stateExists("candles")) getIntState("candles") else 0
 
     fun setLit(value: Boolean): BlockCandle {
-        return setState("lit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockCandle>("lit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isLit: Boolean

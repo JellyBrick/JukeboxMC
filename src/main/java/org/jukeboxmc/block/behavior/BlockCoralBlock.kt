@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockCoralBlock : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemCoralBlock>(ItemType.CORAL_BLOCK).setCoralColor(
@@ -24,14 +24,14 @@ class BlockCoralBlock : Block {
     }
 
     fun setCoralColor(coralColor: CoralColor): BlockCoralBlock {
-        return setState("coral_color", coralColor.name.lowercase(Locale.getDefault()))
+        return setState<BlockCoralBlock>("coral_color", coralColor.name.lowercase(Locale.getDefault()))
     }
 
     val coralColor: CoralColor
         get() = if (stateExists("coral_color")) CoralColor.valueOf(getStringState("coral_color")) else CoralColor.BLUE
 
     fun setDead(value: Boolean): BlockCoralBlock {
-        return setState("dead_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockCoralBlock>("dead_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isDead: Boolean

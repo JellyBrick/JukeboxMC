@@ -14,7 +14,7 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockLeaves : Block {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
 
     override fun toItem(): Item {
         return Item.create<ItemLeaves>(ItemType.LEAVES).setLeafType(
@@ -30,7 +30,7 @@ class BlockLeaves : Block {
         }
     }
 
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     var isPersistent: Boolean
         get() = stateExists("persistent_bit") && getByteState("persistent_bit").toInt() == 1
@@ -44,7 +44,7 @@ class BlockLeaves : Block {
         }
 
     fun setLeafType(leafType: LeafType): BlockLeaves {
-        return setState("old_leaf_type", leafType.name.lowercase(Locale.getDefault()))
+        return setState<BlockLeaves>("old_leaf_type", leafType.name.lowercase(Locale.getDefault()))
     }
 
     val leafType: LeafType

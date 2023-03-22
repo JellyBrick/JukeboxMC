@@ -9,6 +9,6 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class ItemCandle : Item {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 }

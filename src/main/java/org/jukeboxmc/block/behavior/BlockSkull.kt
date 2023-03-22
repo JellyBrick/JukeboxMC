@@ -17,8 +17,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockSkull : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -45,7 +45,7 @@ class BlockSkull : Block {
         get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySkull?
 
     fun setNoDrop(value: Boolean): BlockSkull {
-        return setState("no_drop_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockSkull>("no_drop_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isNoDrop: Boolean

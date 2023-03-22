@@ -36,11 +36,11 @@ class EntityItem : EntityMoveable() {
                 this.location.blockZ,
                 0,
                 this.location.dimension,
-            ).type!!
+            ).type
             if (blockTypeLayer0 == BlockType.FLOWING_WATER || blockTypeLayer0 == BlockType.WATER) {
-                this.velocity.setY(this.velocity.y - gravity * -0.015f)
+                this.velocity.y = this.velocity.y - gravity * -0.015f
             } else {
-                this.velocity.setY(this.velocity.y - gravity)
+                this.velocity.y = this.velocity.y - gravity
             }
             this.checkObstruction(this.location.x, this.location.y, this.location.z)
             this.move(this.velocity)

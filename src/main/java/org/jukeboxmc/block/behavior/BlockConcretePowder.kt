@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockConcretePowder : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemConcretePowder>(ItemType.CONCRETE_POWDER).setColor(
@@ -24,7 +24,7 @@ class BlockConcretePowder : Block {
     }
 
     fun setColor(color: BlockColor): BlockConcretePowder {
-        return setState("color", color.name.lowercase(Locale.getDefault()))
+        return setState<BlockConcretePowder>("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

@@ -19,8 +19,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockQuartzBlock : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -55,7 +55,7 @@ class BlockQuartzBlock : Block {
         }
 
     fun setQuartzType(quartzType: QuartzType): BlockQuartzBlock {
-        return setState("chisel_type", quartzType.name.lowercase(Locale.getDefault()))
+        return setState<BlockQuartzBlock>("chisel_type", quartzType.name.lowercase(Locale.getDefault()))
     }
 
     val quartzType: QuartzType

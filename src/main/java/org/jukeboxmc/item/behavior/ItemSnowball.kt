@@ -18,14 +18,14 @@ import java.util.*
  * @version 1.0
  */
 class ItemSnowball : Item {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
         val entitySnowball =
             Objects.requireNonNull<EntitySnowball>(Entity.create<EntitySnowball>(EntityType.SNOWBALL))
         entitySnowball.setShooter(player)
-        entitySnowball.setLocation(player.location.add(0f, player.eyeHeight, 0f))
+        entitySnowball.location = player.location.add(0f, player.eyeHeight, 0f)
         entitySnowball.setVelocity(clickVector.multiply(1.5f, 1.5f, 1.5f), false)
         entitySnowball.yaw = player.yaw
         entitySnowball.pitch = player.pitch

@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockLeaves2 : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemLeaves2>(ItemType.LEAVES2).setLeafType(
@@ -43,7 +43,7 @@ class BlockLeaves2 : Block {
         }
 
     fun setLeafType(leafType: LeafType2): BlockLeaves2 {
-        return setState("new_leaf_type", leafType.name.lowercase(Locale.getDefault()))
+        return setState<BlockLeaves2>("new_leaf_type", leafType.name.lowercase(Locale.getDefault()))
     }
 
     val leafType: LeafType2

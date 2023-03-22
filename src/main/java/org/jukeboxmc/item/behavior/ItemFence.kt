@@ -18,7 +18,7 @@ import java.time.Duration
 class ItemFence : Item, Burnable {
     private val block: BlockWoodenFence
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockWoodenFence>(BlockType.FENCE)
     }
 
@@ -28,7 +28,7 @@ class ItemFence : Item, Burnable {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemFence {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

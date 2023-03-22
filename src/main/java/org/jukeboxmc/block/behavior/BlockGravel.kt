@@ -22,8 +22,8 @@ import java.util.Objects
  * @version 1.0
  */
 class BlockGravel : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -46,7 +46,7 @@ class BlockGravel : Block {
             if (blockDown.type == BlockType.AIR) {
                 val entity =
                     Objects.requireNonNull<EntityFallingBlock>(Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK))
-                entity.setLocation(location.add(0.5f, 0f, 0.5f))
+                entity.location = location.add(0.5f, 0f, 0.5f)
                 entity.setBlock(this)
                 val fallingBlockEvent = FallingBlockEvent(this, entity)
                 Server.instance.pluginManager.callEvent(fallingBlockEvent)

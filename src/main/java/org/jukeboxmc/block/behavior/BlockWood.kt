@@ -19,8 +19,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockWood : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -49,14 +49,14 @@ class BlockWood : Block {
     }
 
     fun setWoodType(woodType: WoodType): BlockWood {
-        return setState("wood_type", woodType.name.lowercase(Locale.getDefault()))
+        return setState<BlockWood>("wood_type", woodType.name.lowercase(Locale.getDefault()))
     }
 
     val woodType: WoodType
         get() = if (stateExists("wood_type")) WoodType.valueOf(getStringState("wood_type")) else WoodType.OAK
 
     fun setStripped(value: Boolean): BlockWood {
-        return setState("stripped_bit", if (value) 1.toByte() else 0.toByte())
+        return setState<BlockWood>("stripped_bit", if (value) 1.toByte() else 0.toByte())
     }
 
     val isStripped: Boolean

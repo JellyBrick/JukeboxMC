@@ -13,8 +13,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockCobblestoneWall : BlockWall {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemWall>(ItemType.COBBLESTONE_WALL).setWallType(
@@ -23,7 +23,7 @@ class BlockCobblestoneWall : BlockWall {
     }
 
     fun setWallBlockType(wallType: WallType): BlockCobblestoneWall {
-        return setState("wall_block_type", wallType.name.lowercase(Locale.getDefault()))
+        return setState<BlockCobblestoneWall>("wall_block_type", wallType.name.lowercase(Locale.getDefault()))
     }
 
     val wallBlockType: WallType

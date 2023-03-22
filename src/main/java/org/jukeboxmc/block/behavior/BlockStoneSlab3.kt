@@ -16,8 +16,8 @@ import java.util.*
  * @version 1.0
  */
 class BlockStoneSlab3 : BlockSlab {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -85,7 +85,7 @@ class BlockStoneSlab3 : BlockSlab {
     }
 
     fun setStoneSlabType(stoneSlabType: StoneSlab3Type): BlockStoneSlab3 {
-        return setState("stone_slab_type_3", stoneSlabType.name.lowercase(Locale.getDefault()))
+        return setState<BlockStoneSlab3>("stone_slab_type_3", stoneSlabType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneSlabType: StoneSlab3Type

@@ -20,7 +20,7 @@ import java.util.*
  * @version 1.0
  */
 class ItemFishingRod : Item, Durability, Burnable {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
@@ -28,7 +28,7 @@ class ItemFishingRod : Item, Durability, Burnable {
             val entityFishingHook =
                 Objects.requireNonNull<EntityFishingHook>(Entity.create<EntityFishingHook>(EntityType.FISHING_HOOK))
             entityFishingHook.setShooter(player)
-            entityFishingHook.setLocation(player.location.add(0f, player.eyeHeight, 0f))
+            entityFishingHook.location = player.location.add(0f, player.eyeHeight, 0f)
             val force = 1.6f
             entityFishingHook.setVelocity(
                 Vector(

@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockInfestedStone : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemInfestedStone>(ItemType.INFESTED_STONE).setMonsterEggStoneType(
@@ -24,7 +24,7 @@ class BlockInfestedStone : Block {
     }
 
     fun setMonsterEggStoneType(monsterEggStoneType: MonsterEggStoneType): BlockInfestedStone {
-        return setState("monster_egg_stone_type", monsterEggStoneType.name.lowercase(Locale.getDefault()))
+        return setState<BlockInfestedStone>("monster_egg_stone_type", monsterEggStoneType.name.lowercase(Locale.getDefault()))
     }
 
     val monsterEggStoneType: MonsterEggStoneType

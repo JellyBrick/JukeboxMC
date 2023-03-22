@@ -11,11 +11,11 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockSponge : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun setSpongeType(spongeType: SpongeType): BlockSponge {
-        return setState("sponge_type", spongeType.name.lowercase(Locale.getDefault()))
+        return setState<BlockSponge>("sponge_type", spongeType.name.lowercase(Locale.getDefault()))
     }
 
     val spongeType: SpongeType

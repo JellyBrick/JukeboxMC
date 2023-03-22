@@ -10,7 +10,7 @@ import java.time.Duration
  * @version 1.0
  */
 class ItemWoodenDoor : ItemDoor, Burnable {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override val burnTime: Duration?

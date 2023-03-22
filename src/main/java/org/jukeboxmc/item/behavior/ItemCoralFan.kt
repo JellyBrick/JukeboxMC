@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemCoralFan : Item {
     private val block: BlockCoralFan
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockCoralFan>(BlockType.CORAL_FAN)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemCoralFan : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemCoralFan {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

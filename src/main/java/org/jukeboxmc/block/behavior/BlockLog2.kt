@@ -19,8 +19,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockLog2 : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -53,7 +53,7 @@ class BlockLog2 : Block {
         }
 
     fun setLogType(logType: LogType2): BlockLog2 {
-        return setState("new_log_type", logType.name.lowercase(Locale.getDefault()))
+        return setState<BlockLog2>("new_log_type", logType.name.lowercase(Locale.getDefault()))
     }
 
     val logType: LogType2

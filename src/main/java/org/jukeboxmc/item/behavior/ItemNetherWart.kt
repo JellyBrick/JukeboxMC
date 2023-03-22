@@ -15,7 +15,7 @@ import org.jukeboxmc.util.Identifier
 class ItemNetherWart : Item {
     private val block: BlockNetherWart
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockNetherWart>(BlockType.NETHER_WART)
         blockRuntimeId = block.runtimeId
     }
@@ -27,7 +27,7 @@ class ItemNetherWart : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemNetherWart {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 }

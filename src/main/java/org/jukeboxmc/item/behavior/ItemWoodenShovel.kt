@@ -21,7 +21,7 @@ import java.time.Duration
  * @version 1.0
  */
 class ItemWoodenShovel : Item, Durability, Burnable {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun interact(player: Player, blockFace: BlockFace?, clickedVector: Vector?, clickedBlock: Block): Boolean {

@@ -21,7 +21,7 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 open class ItemBucket : Item {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun useOnBlock(player: Player, block: Block, placeLocation: Location): Boolean {
@@ -80,12 +80,12 @@ open class ItemBucket : Item {
                 else -> {
                     placedBlock = toBlock()
                     if (block is Waterlogable && this.type == ItemType.WATER_BUCKET) {
-                        placedBlock.setLocation(block.location)
-                        placedBlock.setLayer(1)
+                        placedBlock.location = block.location
+                        placedBlock.layer = 1
                     } else if (block is BlockLiquid) {
                         return false
                     } else {
-                        placedBlock.setLocation(placeLocation)
+                        placedBlock.location = placeLocation
                     }
                 }
             }

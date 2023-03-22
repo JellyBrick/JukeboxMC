@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemDoublePlant : Item {
     private val block: BlockDoublePlant
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockDoublePlant>(BlockType.DOUBLE_PLANT)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemDoublePlant : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemDoublePlant {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

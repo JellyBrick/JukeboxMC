@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemStainedGlassPane : Item {
     private val block: BlockStainedGlassPane
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockStainedGlassPane>(BlockType.STAINED_GLASS_PANE)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemStainedGlassPane : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemStainedGlassPane {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

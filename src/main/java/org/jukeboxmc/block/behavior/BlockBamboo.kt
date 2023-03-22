@@ -12,8 +12,8 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class BlockBamboo : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     var bambooLeafSize: BambooLeafSize
         get() = if (stateExists("bamboo_leaf_size")) BambooLeafSize.valueOf(getStringState("bamboo_leaf_size")) else BambooLeafSize.NO_LEAVES

@@ -17,8 +17,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockAnvil : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -45,7 +45,7 @@ class BlockAnvil : Block {
     }
 
     fun setDamage(damage: AnvilDamage): BlockAnvil {
-        return setState("damage", damage.name.lowercase(Locale.getDefault()))
+        return setState<BlockAnvil>("damage", damage.name.lowercase(Locale.getDefault()))
     }
 
     val damage: AnvilDamage

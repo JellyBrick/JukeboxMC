@@ -19,8 +19,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockPurpurBlock : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -55,7 +55,7 @@ class BlockPurpurBlock : Block {
         }
 
     fun setPurpurType(purpurType: PurpurType): BlockPurpurBlock {
-        return setState("chisel_type", purpurType.name.lowercase(Locale.getDefault()))
+        return setState<BlockPurpurBlock>("chisel_type", purpurType.name.lowercase(Locale.getDefault()))
     }
 
     val purpurType: PurpurType

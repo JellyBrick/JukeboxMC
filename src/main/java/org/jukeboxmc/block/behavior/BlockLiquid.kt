@@ -23,8 +23,8 @@ abstract class BlockLiquid : Block {
     private val BLOCKED: Byte = -1
     private val flowCostVisited: MutableMap<Long, Byte> = HashMap()
 
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.NORMAL) {
@@ -429,7 +429,7 @@ abstract class BlockLiquid : Block {
         get() = 10
 
     fun setLiquidDepth(value: Int): BlockLiquid {
-        return setState("liquid_depth", value)
+        return setState<BlockLiquid>("liquid_depth", value)
     }
 
     val liquidDepth: Int

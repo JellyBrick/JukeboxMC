@@ -14,8 +14,8 @@ import org.jukeboxmc.world.World
  * @version 1.0
  */
 class BlockSnowLayer : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -71,7 +71,7 @@ class BlockSnowLayer : Block {
         }
 
     fun setHeight(value: Int): BlockSnowLayer {
-        return setState("height", value)
+        return setState<BlockSnowLayer>("height", value)
     }
 
     val height: Int

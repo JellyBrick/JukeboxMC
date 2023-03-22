@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemWall : Item {
     private val block: BlockCobblestoneWall
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockCobblestoneWall>(BlockType.COBBLESTONE_WALL)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemWall : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemWall {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

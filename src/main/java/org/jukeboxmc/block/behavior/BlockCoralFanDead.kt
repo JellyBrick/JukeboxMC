@@ -15,8 +15,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockCoralFanDead : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemCoralFanDead>(ItemType.CORAL_FAN_DEAD).setCoralColor(
@@ -32,7 +32,7 @@ class BlockCoralFanDead : Block {
         get() = if (stateExists("coral_fan_direction")) RotationDirection.values()[getIntState("coral_fan_direction")] else RotationDirection.EAST_WEST
 
     fun setCoralColor(coralColor: CoralColor): BlockCoralFanDead {
-        return setState("coral_color", coralColor.name.lowercase(Locale.getDefault()))
+        return setState<BlockCoralFanDead>("coral_color", coralColor.name.lowercase(Locale.getDefault()))
     }
 
     val coralColor: CoralColor

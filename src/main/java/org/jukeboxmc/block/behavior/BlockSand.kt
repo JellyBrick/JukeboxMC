@@ -25,8 +25,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockSand : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -45,7 +45,7 @@ class BlockSand : Block {
         val blockDown = location.block!!.clone().getSide(BlockFace.DOWN)
         if (blockDown.type == BlockType.AIR) {
             val entity = Entity.create<EntityFallingBlock>(EntityType.FALLING_BLOCK)!!
-            entity.setLocation(location.add(0.5f, 0f, 0.5f))
+            entity.location = location.add(0.5f, 0f, 0.5f)
             entity.setBlock(this)
             val fallingBlockEvent = FallingBlockEvent(this, entity)
             Server.instance.pluginManager.callEvent(fallingBlockEvent)
@@ -63,7 +63,7 @@ class BlockSand : Block {
     }
 
     fun setSandType(sandType: SandType): BlockSand {
-        return setState("sand_type", sandType.name.lowercase(Locale.getDefault()))
+        return setState<BlockSand>("sand_type", sandType.name.lowercase(Locale.getDefault()))
     }
 
     val sandType: SandType

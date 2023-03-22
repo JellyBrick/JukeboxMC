@@ -14,15 +14,15 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockDirt : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemDirt>(ItemType.DIRT).setDirtType(dirtType)
     }
 
     fun setDirtType(dirtType: DirtType): BlockDirt {
-        return setState("dirt_type", dirtType.name.lowercase(Locale.getDefault()))
+        return setState<BlockDirt>("dirt_type", dirtType.name.lowercase(Locale.getDefault()))
     }
 
     val dirtType: DirtType

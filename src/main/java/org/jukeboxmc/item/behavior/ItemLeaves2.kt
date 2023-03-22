@@ -16,7 +16,7 @@ import org.jukeboxmc.util.Identifier
 class ItemLeaves2 : Item {
     private val block: BlockLeaves2
 
-    constructor(identifier: Identifier?) : super(identifier) {
+    constructor(identifier: Identifier) : super(identifier) {
         block = Block.create<BlockLeaves2>(BlockType.LEAVES2)
         blockRuntimeId = block.runtimeId
     }
@@ -28,7 +28,7 @@ class ItemLeaves2 : Item {
 
     override fun setBlockRuntimeId(blockRuntimeId: Int): ItemLeaves2 {
         this.blockRuntimeId = blockRuntimeId
-        block.setBlockStates(BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states"))
+        block.blockStates = BlockPalette.getBlockNbt(blockRuntimeId).getCompound("states")
         return this
     }
 

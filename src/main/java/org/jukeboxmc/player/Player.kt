@@ -526,7 +526,7 @@ class Player(
                 server.logger.info("Loaded chunk for removeEntity is null")
             }
             currentWorld?.removeEntity(this)
-            setLocation(location)
+            this.location = location
             world!!.addEntity(this)
             if (loadedChunk != null) {
                 loadedChunk.addEntity(this)
@@ -974,8 +974,8 @@ class Player(
                             ),
                         )
                         val ownVelocity = getVelocity()
-                        ownVelocity.setX(ownVelocity.x * 0.6f)
-                        ownVelocity.setZ(ownVelocity.z * 0.6f)
+                        ownVelocity.x = ownVelocity.x * 0.6f
+                        ownVelocity.z = ownVelocity.z * 0.6f
                         this.setVelocity(ownVelocity)
                         this.isSprinting = false
                     }

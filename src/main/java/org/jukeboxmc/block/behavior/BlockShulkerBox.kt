@@ -22,8 +22,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockShulkerBox : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -97,7 +97,7 @@ class BlockShulkerBox : Block {
         get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     fun setColor(color: BlockColor): BlockShulkerBox {
-        return setState("color", color.name.lowercase(Locale.getDefault()))
+        return setState<BlockShulkerBox>("color", color.name.lowercase(Locale.getDefault()))
     }
 
     val color: BlockColor

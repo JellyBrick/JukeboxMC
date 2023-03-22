@@ -19,8 +19,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockTallGrass : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun placeBlock(
         player: Player,
@@ -46,7 +46,7 @@ class BlockTallGrass : Block {
     }
 
     fun setGrassType(grassType: GrassType): BlockTallGrass {
-        return setState("tall_grass_type", grassType.name.lowercase(Locale.getDefault()))
+        return setState<BlockTallGrass>("tall_grass_type", grassType.name.lowercase(Locale.getDefault()))
     }
 
     val grassType: GrassType

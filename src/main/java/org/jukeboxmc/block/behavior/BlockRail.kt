@@ -10,8 +10,8 @@ import org.jukeboxmc.util.Identifier
  * @version 1.0
  */
 class BlockRail : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     fun setRailDirection(railDirection: RailDirection): BlockRail {
         setState<Block>("rail_direction", railDirection.ordinal)

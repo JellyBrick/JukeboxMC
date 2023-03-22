@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
  * @version 1.0
  */
 class ItemBow : Item, Durability, Burnable {
-    constructor(identifier: Identifier?) : super(identifier)
+    constructor(identifier: Identifier) : super(identifier)
     constructor(itemType: ItemType) : super(itemType)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
@@ -66,15 +66,13 @@ class ItemBow : Item, Durability, Burnable {
         }
         val arrow = Objects.requireNonNull<EntityArrow>(Entity.create<EntityArrow>(EntityType.ARROW))
         arrow.setShooter(player)
-        arrow.setLocation(
-            Location(
-                player.world,
-                player.x,
-                player.y + player.eyeHeight,
-                player.z,
-                (if (player.yaw > 180) 360 else 0) - player.yaw,
-                -player.pitch,
-            ),
+        arrow.location = Location(
+            player.world,
+            player.x,
+            player.y + player.eyeHeight,
+            player.z,
+            (if (player.yaw > 180) 360 else 0) - player.yaw,
+            -player.pitch,
         )
         arrow.setVelocity(
             Vector(

@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockWoodenFence : BlockFence {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemFence>(ItemType.FENCE).setWoodType(

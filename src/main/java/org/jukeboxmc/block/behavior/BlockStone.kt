@@ -14,8 +14,8 @@ import java.util.Locale
  * @version 1.0
  */
 class BlockStone : Block {
-    constructor(identifier: Identifier?) : super(identifier)
-    constructor(identifier: Identifier?, blockStates: NbtMap?) : super(identifier, blockStates)
+    constructor(identifier: Identifier) : super(identifier)
+    constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override fun toItem(): Item {
         return Item.create<ItemStone>(ItemType.STONE).setStoneType(
@@ -36,7 +36,7 @@ class BlockStone : Block {
     }
 
     fun setStoneType(stoneType: StoneType): BlockStone {
-        return setState("stone_type", stoneType.name.lowercase(Locale.getDefault()))
+        return setState<BlockStone>("stone_type", stoneType.name.lowercase(Locale.getDefault()))
     }
 
     val stoneType: StoneType
