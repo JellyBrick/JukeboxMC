@@ -94,7 +94,7 @@ open class Player(
     override var name: String = ""
         set(value) {
             if (!playerConnection.isLoggedIn()) {
-                field = name
+                field = value
             }
         }
     var gameMode: GameMode = playerConnection.server.gameMode
