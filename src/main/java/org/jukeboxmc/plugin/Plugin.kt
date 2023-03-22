@@ -20,16 +20,16 @@ abstract class Plugin {
             if (value == field) {
                 return
             }
-            field = enabled
+            field = value
             try {
-                if (enabled) {
+                if (value) {
                     onEnable()
                 } else {
                     onDisable()
                 }
             } catch (e: Exception) {
                 throw RuntimeException(
-                    "Can not ${if (enabled) "enable" else "disable"} plugin ${description?.name}!",
+                    "Can not ${if (value) "enable" else "disable"} plugin ${description?.name}!",
                     e,
                 )
             }

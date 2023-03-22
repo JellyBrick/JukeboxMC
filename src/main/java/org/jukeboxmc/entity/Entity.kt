@@ -46,7 +46,7 @@ abstract class Entity : AutoCloseable {
         }
     var lastLocation: Location = Server.instance.defaultWorld!!.spawnLocation
     var velocity: Vector = Vector(0, 0, 0, location.dimension)
-        set(value) = this.setVelocity(velocity, true)
+        set(value) = this.setVelocity(value, true)
     var lastVector: Vector = Vector(0, 0, 0, location.dimension)
     val boundingBox: AxisAlignedBB
     var isOnGround = false

@@ -102,7 +102,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         }
     var spawnLocation: Location = Location(this, getGenerator(Dimension.OVERWORLD).spawnLocation)
         set(value) {
-            field = spawnLocation
+            field = value
             val setSpawnPositionPacket = SetSpawnPositionPacket()
             setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.WORLD_SPAWN
             setSpawnPositionPacket.blockPosition = spawnLocation.toVector3i()

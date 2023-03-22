@@ -134,7 +134,7 @@ open class Player(
         private set
     var spawnLocation: Location = location.world!!.spawnLocation
         set(value) {
-            field = spawnLocation
+            field = value
             val setSpawnPositionPacket = SetSpawnPositionPacket()
             setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
             setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
