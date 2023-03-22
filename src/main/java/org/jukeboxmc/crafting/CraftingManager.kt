@@ -28,11 +28,11 @@ import java.util.function.Predicate
  * @version 1.0
  */
 class CraftingManager {
-    private val craftingData: MutableList<CraftingData> = ObjectArrayList<CraftingData>()
-    private val potionMixData: MutableList<PotionMixData> = ObjectArrayList<PotionMixData>()
-    private val containerMixData: MutableList<ContainerMixData> = ObjectArrayList<ContainerMixData>()
-    private val smeltingRecipes: MutableSet<SmeltingRecipe?> = HashSet<SmeltingRecipe?>()
-    private val recipes: Set<Recipe> = HashSet<Recipe>()
+    val craftingData: MutableList<CraftingData> = ObjectArrayList()
+     val potionMixData: MutableList<PotionMixData> = ObjectArrayList()
+     val containerMixData: MutableList<ContainerMixData> = ObjectArrayList()
+     val smeltingRecipes: MutableSet<SmeltingRecipe?> = HashSet()
+    private val recipes: Set<Recipe> = HashSet()
 
     init {
         val recipesStream = Server::class.java.classLoader.getResourceAsStream("recipes.json")
@@ -171,7 +171,10 @@ class CraftingManager {
 
     fun registerRecipe(recipeId: String, recipe: Recipe) {
         try {
-            craftingData.add(recipe.doRegister(this, recipeId))
+            val registered = recipe.doRegister(this, recipeId)
+            if (registered != null) {
+                craftingData.add(registered)
+            }
         } catch (e: RuntimeException) {
             Server.instance.logger.error("Could not register recipe $recipeId!", e)
         }
