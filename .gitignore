@@ -70,6 +70,8 @@ crashlytics-build.properties
 ### Lib folder #############################
 libs/
 
+/build/
+
 
 ### Eclipse #############################
 .metadata
