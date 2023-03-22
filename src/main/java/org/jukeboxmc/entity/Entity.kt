@@ -74,8 +74,8 @@ abstract class Entity : AutoCloseable {
         metadata.setFlag(EntityFlag.HAS_COLLISION, true)
         metadata.setFlag(EntityFlag.CAN_CLIMB, true)
         metadata.setFlag(EntityFlag.BREATHING, true)
-        location = Objects.requireNonNull<World?>(Server.instance.defaultWorld).getSpawnLocation()
-        lastLocation = Objects.requireNonNull<World?>(Server.instance.defaultWorld).getSpawnLocation()
+        location = Objects.requireNonNull<World?>(Server.instance.defaultWorld).spawnLocation
+        lastLocation = Objects.requireNonNull<World?>(Server.instance.defaultWorld).spawnLocation
         velocity = Vector(0, 0, 0, location.dimension)
         lastVector = Vector(0, 0, 0, location.dimension)
         boundingBox = AxisAlignedBB(0f, 0f, 0f, 0f, 0f, 0f)

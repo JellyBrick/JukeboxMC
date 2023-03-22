@@ -32,24 +32,21 @@ import java.util.*
 @Suppress("LeakingThis")
 open class EntityHuman : EntityLiving(), InventoryHolder {
     var uuid: UUID = UUID.randomUUID()
-    open var skin: Skin? = null
-    protected var deviceInfo: DeviceInfo
-    protected val playerInventory: PlayerInventory
-    protected val armorInventory: ArmorInventory
+    open var skin: Skin = Skin()
+    var deviceInfo = DeviceInfo(
+        "Unknown",
+        UUID.randomUUID().toString(),
+        Random().nextLong(),
+        Device.DEDICATED,
+        UIProfile.CLASSIC,
+    )
+    val playerInventory = PlayerInventory(this)
+    val armorInventory = ArmorInventory(this)
     protected var foodTicks = 0
     var actionStart: Long = -1
         private set
 
     init {
-        deviceInfo = DeviceInfo(
-            "Unknown",
-            UUID.randomUUID().toString(),
-            Random().nextLong(),
-            Device.DEDICATED,
-            UIProfile.CLASSIC,
-        )
-        playerInventory = PlayerInventory(this)
-        armorInventory = ArmorInventory(this)
         this.addAttribute(AttributeType.PLAYER_HUNGER)
         this.addAttribute(AttributeType.PLAYER_SATURATION)
         this.addAttribute(AttributeType.PLAYER_EXHAUSTION)
@@ -118,20 +115,8 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         return this
     }
 
-    fun getDeviceInfo(): DeviceInfo {
-        return deviceInfo
-    }
-
-    fun setDeviceInfo(deviceInfo: DeviceInfo) {
-        this.deviceInfo = deviceInfo
-    }
-
     val inventory: PlayerInventory
         get() = playerInventory
-
-    fun getArmorInventory(): ArmorInventory {
-        return armorInventory
-    }
 
     var isSneaking: Boolean
         // =========== Metadata ===========

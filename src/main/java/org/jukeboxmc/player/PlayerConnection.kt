@@ -52,13 +52,13 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     private val spawned: AtomicBoolean
     var loginData: LoginData? = null
         set(loginData) {
-            if (this.loginData == null) {
+            if (this.loginData == null && loginData !== null) {
                 field = loginData
-                player.name = loginData!!.displayName!!
-                player.nameTag = loginData.displayName!!
-                player.uuid = loginData.uuid!!
+                player.name = loginData.displayName
+                player.nameTag = loginData.displayName
+                player.uuid = loginData.uuid
                 player.skin = loginData.skin
-                player.setDeviceInfo(loginData.getDeviceInfo())
+                player.deviceInfo = loginData.deviceInfo
             }
         }
     val player: Player
@@ -119,8 +119,8 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         player.world?.removeEntity(player)
         player.chunk?.removeEntity(player)
         player.inventory.removeViewer(player)
-        player.getArmorInventory().removeViewer(player)
-        player.getCurrentInventory()?.removeViewer(player)
+        player.armorInventory.removeViewer(player)
+        player.currentInventory?.removeViewer(player)
         player.getCreativeItemCacheInventory().removeViewer(player)
         player.getCraftingGridInventory().removeViewer(player)
         player.getCraftingTableInventory().removeViewer(player)
@@ -193,8 +193,8 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         player.inventory.sendContents(player)
         player.getCursorInventory().addViewer(player)
         player.getCursorInventory().sendContents(player)
-        player.getArmorInventory().addViewer(player)
-        player.getArmorInventory().sendContents(player)
+        player.armorInventory.addViewer(player)
+        player.armorInventory.sendContents(player)
         val playStatusPacket = PlayStatusPacket()
         playStatusPacket.status = PlayStatusPacket.Status.PLAYER_SPAWN
         sendPacket(playStatusPacket)

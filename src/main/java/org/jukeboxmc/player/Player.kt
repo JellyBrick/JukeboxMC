@@ -89,10 +89,23 @@ class Player(
 ) : EntityHuman(), ChunkLoader, CommandSender, InventoryHolder {
     val adventureSettings: AdventureSettings
     override var name: String = ""
-    var gameMode: GameMode?
-        private set
+    var gameMode: GameMode = playerConnection.server.gameMode
+        set(gameMode) {
+            field = gameMode
+            adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = field.ordinal == 3
+            adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = field.ordinal > 0
+            adventureSettings[AdventureSettings.Type.NO_CLIP] = field.ordinal == 3
+            adventureSettings[AdventureSettings.Type.FLYING] = field.ordinal == 3
+            adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = field.ordinal < 2
+            adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = field.ordinal < 2
+            adventureSettings[AdventureSettings.Type.NO_PVM] = field.ordinal == 3
+            adventureSettings.update()
+            val setPlayerGameTypePacket = SetPlayerGameTypePacket()
+            setPlayerGameTypePacket.gamemode = gameMode.id
+            playerConnection.sendPacket(setPlayerGameTypePacket)
+        }
     var closingWindowId = Int.MIN_VALUE
-    private var currentInventory: ContainerInventory? = null
+    var currentInventory: ContainerInventory? = null
     private var craftingGridInventory: CraftingGridInventory
     private val creativeItemCacheInventory: CreativeItemCacheInventory
     private val cursorInventory: CursorInventory
@@ -123,7 +136,6 @@ class Player(
     private val npcDialogueForms = ObjectArrayList<NpcDialogueForm?>()
 
     init {
-        gameMode = playerConnection.server.gameMode
         adventureSettings = AdventureSettings(this)
         creativeItemCacheInventory = CreativeItemCacheInventory(this)
         craftingGridInventory = SmallCraftingGridInventory(this)
@@ -137,7 +149,7 @@ class Player(
         grindstoneInventory = GrindstoneInventory(this)
         offHandInventory = OffHandInventory(this)
         lasBreakPosition = Vector(0, 0, 0)
-        spawnLocation = location.world!!.getSpawnLocation()
+        spawnLocation = location.world!!.spawnLocation
     }
 
     override fun update(currentTick: Long) {
@@ -177,8 +189,8 @@ class Player(
                     addHunger(1)
                 }
                 if (foodTicks % 20 == 0) {
-                    health = health
-                    if (health < getAttribute(AttributeType.HEALTH)!!.maxValue) {
+                    health = this.health
+                    if (health < getAttribute(AttributeType.HEALTH).maxValue) {
                         this.setHeal(1f, EntityHealEvent.Cause.SATURATION)
                     }
                 }
@@ -186,7 +198,7 @@ class Player(
             if (foodTicks == 0) {
                 if (hunger >= 18) {
                     if (health == -1f) {
-                        health = health
+                        health = this.health
                     }
                     if (health < 20) {
                         this.setHeal(1f, EntityHealEvent.Cause.SATURATION)
@@ -196,7 +208,7 @@ class Player(
                     }
                 } else if (hunger <= 0) {
                     if (health == -1f) {
-                        health = health
+                        health = this.health
                     }
                     if (difficulty == Difficulty.NORMAL && health > 2 || difficulty == Difficulty.HARD && health > 1) {
                         damage(EntityDamageEvent(this, 1f, DamageSource.STARVE))
@@ -249,21 +261,6 @@ class Player(
 
     val xuid: String
         get() = playerConnection.loginData?.xuid ?: ""
-
-    fun setGameMode(gameMode: GameMode) {
-        this.gameMode = gameMode
-        adventureSettings[AdventureSettings.Type.WORLD_IMMUTABLE] = this.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ALLOW_FLIGHT] = this.gameMode!!.ordinal > 0
-        adventureSettings[AdventureSettings.Type.NO_CLIP] = this.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.FLYING] = this.gameMode!!.ordinal == 3
-        adventureSettings[AdventureSettings.Type.ATTACK_MOBS] = this.gameMode!!.ordinal < 2
-        adventureSettings[AdventureSettings.Type.ATTACK_PLAYERS] = this.gameMode!!.ordinal < 2
-        adventureSettings[AdventureSettings.Type.NO_PVM] = this.gameMode!!.ordinal == 3
-        adventureSettings.update()
-        val setPlayerGameTypePacket = SetPlayerGameTypePacket()
-        setPlayerGameTypePacket.gamemode = gameMode.id
-        playerConnection.sendPacket(setPlayerGameTypePacket)
-    }
 
     override fun sendMessage(message: String) {
         val textPacket = TextPacket()
@@ -366,14 +363,6 @@ class Player(
 
     fun getCreativeItemCacheInventory(): CreativeItemCacheInventory {
         return creativeItemCacheInventory
-    }
-
-    fun getCurrentInventory(): ContainerInventory? {
-        return currentInventory
-    }
-
-    fun setCurrentInventory(currentInventory: ContainerInventory?) {
-        this.currentInventory = currentInventory
     }
 
     fun getCursorInventory(): CursorInventory {
@@ -637,7 +626,7 @@ class Player(
         setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
         setSpawnPositionPacket.dimensionId = this.spawnLocation.dimension.ordinal
         setSpawnPositionPacket.spawnPosition = spawnLocation.toVector3i()
-        setSpawnPositionPacket.blockPosition = location.world!!.getSpawnLocation().toVector3i()
+        setSpawnPositionPacket.blockPosition = location.world!!.spawnLocation.toVector3i()
         playerConnection.sendPacket(setSpawnPositionPacket)
     }
 
@@ -653,12 +642,9 @@ class Player(
             adventureSettings.walkSpeed = value
             adventureSettings.update()
         }
-    override var skin: Skin? = null
+    override var skin: Skin = Skin()
         get() = super.skin
         set(skin) {
-            if (skin == null) {
-                throw IllegalArgumentException("Skin cannot be null")
-            }
             field = skin
             val playerChangeSkinEvent = PlayerChangeSkinEvent(this, skin)
             if (playerChangeSkinEvent.isCancelled) return
@@ -685,8 +671,8 @@ class Player(
         formListeners.put(formId, formListener)
         val json = form.toJSON().toJSONString()
         val packetModalRequest = ModalFormRequestPacket()
-        packetModalRequest.setFormId(formId)
-        packetModalRequest.setFormData(json)
+        packetModalRequest.formId = formId
+        packetModalRequest.formData = json
         playerConnection.sendPacket(packetModalRequest)
         hasOpenForm = true
 
@@ -918,7 +904,7 @@ class Player(
             if (playerDeathEvent.deathMessage.isNotEmpty()) {
                 server.broadcastMessage(playerDeathEvent.deathMessage)
             }
-            respawnLocation = this.world!!.getSpawnLocation().add(0f, this.eyeHeight, 0f)
+            respawnLocation = this.world!!.spawnLocation.add(0f, this.eyeHeight, 0f)
             val respawnPositionPacket = RespawnPacket()
             respawnPositionPacket.runtimeEntityId = entityId
             respawnPositionPacket.state = RespawnPacket.State.SERVER_SEARCHING

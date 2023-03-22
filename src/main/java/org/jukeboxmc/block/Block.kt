@@ -273,7 +273,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             .orElse(0)
         hasteEffectLevel += conduitPowerLevel
         val insideOfWaterWithoutAquaAffinity = player.isInWater && conduitPowerLevel <= 0 &&
-            Optional.ofNullable(player.getArmorInventory().helmet.getEnchantment(EnchantmentType.AQUA_AFFINITY))
+            Optional.ofNullable(player.armorInventory.helmet.getEnchantment(EnchantmentType.AQUA_AFFINITY))
                 .map { obj: Enchantment -> obj.level }
                 .map { l: Short -> l >= 1 }.orElse(false)
         val outOfWaterButNotOnGround = !player.isInWater && !player.isOnGround

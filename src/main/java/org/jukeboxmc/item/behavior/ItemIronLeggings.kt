@@ -17,8 +17,8 @@ class ItemIronLeggings : ItemArmor, Durability {
     constructor(identifier: Identifier) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
-        val oldItem = player.getArmorInventory().leggings
-        player.getArmorInventory().leggings = this
+        val oldItem = player.armorInventory.leggings
+        player.armorInventory.leggings = this
         player.inventory.itemInHand = oldItem
         return super.useInAir(player, clickVector)
     }

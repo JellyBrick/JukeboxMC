@@ -775,14 +775,14 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             ContainerSlotType.CREATIVE_OUTPUT -> player.getCreativeItemCacheInventory()
             ContainerSlotType.CURSOR -> player.getCursorInventory()
             ContainerSlotType.INVENTORY, ContainerSlotType.HOTBAR, ContainerSlotType.HOTBAR_AND_INVENTORY -> player.inventory
-            ContainerSlotType.ARMOR -> player.getArmorInventory()
+            ContainerSlotType.ARMOR -> player.armorInventory
             ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory
-            ContainerSlotType.CRAFTING_INPUT -> player.craftingGridInventory
-            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.cartographyTableInventory
-            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.smithingTableInventory
-            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.anvilInventory
-            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.stoneCutterInventory
-            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.grindstoneInventory
+            ContainerSlotType.CRAFTING_INPUT -> player.getCraftingGridInventory()
+            ContainerSlotType.CARTOGRAPHY_ADDITIONAL, ContainerSlotType.CARTOGRAPHY_INPUT, ContainerSlotType.CARTOGRAPHY_RESULT -> player.getCartographyTableInventory()
+            ContainerSlotType.SMITHING_TABLE_INPUT, ContainerSlotType.SMITHING_TABLE_MATERIAL, ContainerSlotType.SMITHING_TABLE_RESULT -> player.getSmithingTableInventory()
+            ContainerSlotType.ANVIL_INPUT, ContainerSlotType.ANVIL_MATERIAL, ContainerSlotType.ANVIL_RESULT -> player.getAnvilInventory()
+            ContainerSlotType.STONECUTTER_INPUT, ContainerSlotType.STONECUTTER_RESULT -> player.getStoneCutterInventory()
+            ContainerSlotType.GRINDSTONE_ADDITIONAL, ContainerSlotType.GRINDSTONE_INPUT, ContainerSlotType.GRINDSTONE_RESULT -> player.getCraftingGridInventory()
             else -> null
         }
     }
@@ -846,8 +846,8 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
                 sendContent,
             )
 
-            ContainerSlotType.ARMOR -> player.getArmorInventory().setItem(slot, item, sendContent)
-            ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory.setItem(
+            ContainerSlotType.ARMOR -> player.armorInventory.setItem(slot, item, sendContent)
+            ContainerSlotType.CONTAINER, ContainerSlotType.BARREL, ContainerSlotType.BREWING_RESULT, ContainerSlotType.BREWING_FUEL, ContainerSlotType.BREWING_INPUT, ContainerSlotType.FURNACE_FUEL, ContainerSlotType.FURNACE_INGREDIENT, ContainerSlotType.FURNACE_OUTPUT, ContainerSlotType.BLAST_FURNACE_INGREDIENT, ContainerSlotType.ENCHANTING_INPUT, ContainerSlotType.ENCHANTING_LAPIS -> player.currentInventory?.setItem(
                 slot,
                 item,
                 sendContent,

@@ -12,14 +12,14 @@ import org.jukeboxmc.player.info.Device
 import org.jukeboxmc.player.info.DeviceInfo
 import org.jukeboxmc.player.info.UIProfile
 import org.jukeboxmc.player.skin.Image
+import org.jukeboxmc.player.skin.PersonaPiece
+import org.jukeboxmc.player.skin.PersonaPieceTint
 import org.jukeboxmc.player.skin.Skin
+import org.jukeboxmc.player.skin.SkinAnimation
 import java.nio.charset.StandardCharsets
 import java.security.PublicKey
 import java.util.Base64
 import java.util.UUID
-import org.jukeboxmc.player.skin.PersonaPiece
-import org.jukeboxmc.player.skin.PersonaPieceTint
-import org.jukeboxmc.player.skin.SkinAnimation
 
 /**
  * @author LucGamesYT
@@ -28,27 +28,24 @@ import org.jukeboxmc.player.skin.SkinAnimation
 class LoginData(loginPacket: LoginPacket) {
     var isXboxAuthenticated = false
         private set
-    var displayName: String? = null
+    lateinit var displayName: String
         private set
-    var xuid: String? = null
+    lateinit var xuid: String
         private set
-    var uuid: UUID? = null
+    lateinit var uuid: UUID
         private set
-    private var deviceInfo: DeviceInfo? = null
-    var languageCode: String? = null
+    lateinit var deviceInfo: DeviceInfo
         private set
-    var gameVersion: String? = null
+    lateinit var languageCode: String
         private set
-    var skin: Skin? = null
+    lateinit var gameVersion: String
+        private set
+    lateinit var skin: Skin
         private set
 
     init {
         decodeChainData(loginPacket.chainData.toString())
         decodeSkinData(loginPacket.skinData.toString())
-    }
-
-    fun getDeviceInfo(): DeviceInfo {
-        return deviceInfo
     }
 
     private fun decodeChainData(chainData: String) {
@@ -62,8 +59,8 @@ class LoginData(loginPacket: LoginPacket) {
         } catch (e: Exception) {
             isXboxAuthenticated = false
         }
-        for (chain in chains) {
-            val chainMap = decodeToken(chain) ?: continue
+        chains.forEach { chain ->
+            val chainMap = decodeToken(chain) ?: return@forEach
             if (chainMap.has("extraData")) {
                 val extraData = chainMap["extraData"].asJsonObject
                 displayName = extraData["displayName"].asString

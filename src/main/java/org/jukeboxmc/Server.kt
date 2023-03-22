@@ -415,7 +415,7 @@ class Server(logger: Logger) {
                 if (world === defaultWorld || defaultWorld == null) {
                     player.playerConnection.disconnect("World was unloaded")
                 } else {
-                    player.teleport(defaultWorld.getSpawnLocation())
+                    player.teleport(defaultWorld.spawnLocation)
                 }
             }
         },
@@ -476,9 +476,9 @@ class Server(logger: Logger) {
             player.uuid,
             player.entityId,
             player.name,
-            player.getDeviceInfo(),
+            player.deviceInfo,
             player.xuid,
-            player.skin!!,
+            player.skin,
         )
     }
 

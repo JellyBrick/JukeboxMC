@@ -9,7 +9,12 @@ import com.nukkitx.nbt.util.stream.LittleEndianDataOutputStream
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.data.LevelEventType
 import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.packet.*
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket
+import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket
+import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
+import com.nukkitx.protocol.bedrock.packet.SetTimePacket
+import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.Server
@@ -39,9 +44,16 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 
 /**
  * @author LucGamesYT
@@ -50,16 +62,44 @@ import java.util.stream.Collectors
 class World(var name: String, val server: Server, generatorMap: Map<Dimension, String>) : AutoCloseable {
     private val BLOCK_AIR: Block = Block.create(BlockType.AIR)
     private val STORAGE_VERSION = 9
-    private val gameRules: GameRules
+    private val gameRules: GameRules = GameRules()
     private val blockUpdateList: BlockUpdateList
     val worldFolder: File
     private val worldFile: File
     private val levelDB: LevelDB
-    private val chunkManagers: MutableMap<Dimension?, ChunkManager>
-    private val generators: MutableMap<Dimension?, ThreadLocal<Generator>>
-    var difficulty: Difficulty
-        private set
-    private var spawnLocation: Location
+    private val chunkManagers: MutableMap<Dimension, ChunkManager>
+    private val generators: MutableMap<Dimension, ThreadLocal<Generator>> =
+        Object2ObjectOpenHashMap<Dimension, ThreadLocal<Generator>>().also {
+            val sendWarning = AtomicBoolean(false)
+            Dimension.values().forEach { dimension ->
+                val generatorName = generatorMap.getValue(dimension)
+                it[dimension] = ThreadLocal.withInitial {
+                    val generator = server.createGenerator(generatorName, this, dimension)
+                    if (generator != null && generator.javaClass == NormalGenerator::class.java && !sendWarning.get()) {
+                        Server.instance.logger
+                            .warn("§cYou are currently using the Normal Generator, it may cause strong performance problems!")
+                        sendWarning.set(true)
+                    }
+                    generator
+                }
+            }
+        }
+    var difficulty: Difficulty = server.difficulty
+        set(difficulty) {
+            field = difficulty
+            val setDifficultyPacket = SetDifficultyPacket()
+            setDifficultyPacket.difficulty = difficulty.ordinal
+            sendWorldPacket(setDifficultyPacket)
+        }
+    var spawnLocation: Location = Location(this, getGenerator(Dimension.OVERWORLD)!!.spawnLocation)
+        set(value) {
+            field = spawnLocation
+            val setSpawnPositionPacket = SetSpawnPositionPacket()
+            setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.WORLD_SPAWN
+            setSpawnPositionPacket.blockPosition = spawnLocation.toVector3i()
+            setSpawnPositionPacket.dimensionId = spawnLocation.dimension.ordinal
+            server.broadcastPacket(setSpawnPositionPacket)
+        }
     var seed: Long = 0
     private var worldTime = 0
     private var nextTimeSendTick: Long = 0
@@ -67,7 +107,6 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     private val blockUpdateNormals: Queue<BlockUpdateNormal>
 
     init {
-        gameRules = GameRules()
         blockUpdateList = BlockUpdateList()
         worldFolder = File("./worlds/$name")
         worldFile = File(worldFolder, "level.dat")
@@ -79,23 +118,6 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         for (dimension in Dimension.values()) {
             chunkManagers[dimension] = ChunkManager(this, dimension)
         }
-        val sendWarning = AtomicBoolean(false)
-        generators = Object2ObjectOpenHashMap()
-        for (dimension in Dimension.values()) {
-            val generatorName = generatorMap[dimension]
-            generators[dimension] = ThreadLocal.withInitial {
-                val generator = server.createGenerator(generatorName!!, this, dimension)
-                if (generator != null && generator.javaClass == NormalGenerator::class.java && !sendWarning.get()) {
-                    Server.instance.logger
-                        .warn("§cYou are currently using the Normal Generator, it may cause strong peformance problems!")
-                    sendWarning.set(true)
-                }
-                generator
-            }
-        }
-        val generator = getGenerator(Dimension.OVERWORLD)!!
-        difficulty = server.difficulty
-        spawnLocation = Location(this, generator.spawnLocation)
         entities = ConcurrentHashMap<Long, Entity>()
         blockUpdateNormals = ConcurrentLinkedQueue<BlockUpdateNormal>()
         loadLevelFile()
@@ -225,28 +247,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     }
 
     @Synchronized
-    fun getGenerator(dimension: Dimension?): Generator? {
-        return generators[dimension]!!.get()
-    }
-
-    fun setDifficulty(difficulty: Difficulty) {
-        this.difficulty = difficulty
-        val setDifficultyPacket = SetDifficultyPacket()
-        setDifficultyPacket.setDifficulty(difficulty.ordinal)
-        sendWorldPacket(setDifficultyPacket)
-    }
-
-    fun getSpawnLocation(): Location {
-        return spawnLocation
-    }
-
-    fun setSpawnLocation(spawnLocation: Location) {
-        this.spawnLocation = spawnLocation
-        val setSpawnPositionPacket = SetSpawnPositionPacket()
-        setSpawnPositionPacket.setSpawnType(SetSpawnPositionPacket.Type.WORLD_SPAWN)
-        setSpawnPositionPacket.setBlockPosition(spawnLocation.toVector3i())
-        setSpawnPositionPacket.setDimensionId(spawnLocation.dimension.ordinal)
-        server.broadcastPacket(setSpawnPositionPacket)
+    fun getGenerator(dimension: Dimension): Generator {
+        return generators.getValue(dimension).get()
     }
 
     fun getWorldTime(): Int {
@@ -256,7 +258,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
     fun setWorldTime(worldTime: Int) {
         this.worldTime = worldTime
         val setTimePacket = SetTimePacket()
-        setTimePacket.setTime(worldTime)
+        setTimePacket.time = worldTime
         Server.instance.broadcastPacket(setTimePacket)
     }
 
@@ -457,8 +459,8 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         return chunkManagers[dimension]!!.loadedChunks
     }
 
-    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension): CompletableFuture<Chunk>? {
-        return chunkManagers[dimension]!!.getChunkFuture(chunkX, chunkZ)
+    fun getChunkFuture(chunkX: Int, chunkZ: Int, dimension: Dimension): CompletableFuture<Chunk> {
+        return chunkManagers.getValue(dimension).getChunkFuture(chunkX, chunkZ)
     }
 
     fun getChunks(dimension: Dimension): Set<Chunk> {

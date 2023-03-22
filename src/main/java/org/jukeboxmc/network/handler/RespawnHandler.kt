@@ -14,7 +14,7 @@ class RespawnHandler : PacketHandler<RespawnPacket> {
             val respawnPositionPacket = RespawnPacket()
             respawnPositionPacket.runtimeEntityId = player.entityId
             respawnPositionPacket.state = RespawnPacket.State.SERVER_READY
-            respawnPositionPacket.position = player.getSpawnLocation().toVector3f()
+            respawnPositionPacket.position = player.spawnLocation.toVector3f()
             player.playerConnection.sendPacket(respawnPositionPacket)
         }
     }

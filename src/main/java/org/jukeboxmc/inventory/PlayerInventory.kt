@@ -25,7 +25,7 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
 
     override fun sendContents(player: Player) {
         val inventoryContentPacket = InventoryContentPacket()
-        if (player.getCurrentInventory() === this) {
+        if (player.currentInventory === this) {
             inventoryContentPacket.containerId = WindowId.OPEN_CONTAINER.id
             inventoryContentPacket.contents = this.itemDataContents
             player.playerConnection.sendPacket(inventoryContentPacket)
@@ -37,7 +37,7 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
     }
 
     override fun sendContents(slot: Int, player: Player) {
-        if (player.getCurrentInventory() != null && player.getCurrentInventory() === this) {
+        if (player.currentInventory != null && player.currentInventory === this) {
             val inventorySlotPacket = InventorySlotPacket()
             inventorySlotPacket.slot = slot
             inventorySlotPacket.item = contents[slot].toItemData()

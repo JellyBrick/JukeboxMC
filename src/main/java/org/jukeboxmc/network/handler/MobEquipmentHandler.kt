@@ -30,8 +30,8 @@ class MobEquipmentHandler : PacketHandler<MobEquipmentPacket> {
         return when (windowId ?: WindowId.INVENTORY) {
             WindowId.PLAYER -> player.inventory
             WindowId.CURSOR_DEPRECATED, WindowId.CURSOR -> player.getCursorInventory()
-            WindowId.ARMOR_DEPRECATED, WindowId.ARMOR -> player.getArmorInventory()
-            else -> player.getCurrentInventory()!!
+            WindowId.ARMOR_DEPRECATED, WindowId.ARMOR -> player.armorInventory
+            else -> player.currentInventory!!
         }
     }
 }

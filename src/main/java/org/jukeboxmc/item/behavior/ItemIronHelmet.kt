@@ -17,8 +17,8 @@ class ItemIronHelmet : ItemArmor, Durability {
     constructor(identifier: Identifier) : super(identifier)
 
     override fun useInAir(player: Player, clickVector: Vector): Boolean {
-        val oldItem = player.getArmorInventory().helmet
-        player.getArmorInventory().helmet = this
+        val oldItem = player.armorInventory.helmet
+        player.armorInventory.helmet = this
         player.inventory.itemInHand = oldItem
         return super.useInAir(player, clickVector)
     }

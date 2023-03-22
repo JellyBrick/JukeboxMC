@@ -47,7 +47,7 @@ class ArmorInventory(holder: InventoryHolder) : ContainerInventory(holder, 4) {
         super.setItem(slot, item, sendContent)
         if (holder is Player) {
             val player = holder as Player
-            val armorInventory: ArmorInventory = player.getArmorInventory()
+            val armorInventory: ArmorInventory = player.armorInventory
             val mobArmorEquipmentPacket = MobArmorEquipmentPacket()
             mobArmorEquipmentPacket.runtimeEntityId = holderId
             mobArmorEquipmentPacket.helmet = armorInventory.helmet.toItemData()

@@ -187,8 +187,8 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
         val time = System.currentTimeMillis()
 
         // Spawn chunk
-        val spawnX = world.getSpawnLocation().chunkX
-        val spawnZ = world.getSpawnLocation().chunkZ
+        val spawnX = world.spawnLocation.chunkX
+        val spawnZ = world.spawnLocation.chunkZ
         val spawnRadius: Int = Server.instance.viewDistance
 
         // Do chunk garbage collection

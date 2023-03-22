@@ -14,7 +14,6 @@ import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 import java.io.IOException
-import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.LinkedList
@@ -32,7 +31,7 @@ class PluginManager(val server: Server) {
     private val cachedClasses: Object2ObjectMap<String, Class<*>?> = Object2ObjectArrayMap<String, Class<*>>()
     val pluginClassLoaders: Object2ObjectMap<String?, PluginClassLoader?> =
         Object2ObjectArrayMap<String, PluginClassLoader>()
-    val listeners: MutableMap<Class<out Event?>, MutableMap<EventPriority, MutableList<RegisteredListener>>> =
+    val listeners: MutableMap<Class<out Event>, MutableMap<EventPriority, MutableList<RegisteredListener>>> =
         HashMap()
 
     init {
@@ -170,30 +169,27 @@ class PluginManager(val server: Server) {
 
     fun registerListener(listener: Listener) {
         val listenerClass: Class<out Listener> = listener.javaClass
-        for (method in listenerClass.declaredMethods) {
+        listenerClass.declaredMethods.forEach { method ->
             val eventHandler = method.getAnnotation(
                 EventHandler::class.java,
-            ) ?: continue
+            ) ?: return@forEach
             val eventPriority = eventHandler.priority
             if (method.parameterTypes.size != 1 || !Event::class.java.isAssignableFrom(method.parameterTypes[0])) {
-                continue
+                return@forEach
             }
-            val eventClass = method.parameterTypes[0] as Class<out Event?>
+            val eventClass = method.parameterTypes[0] as Class<out Event>
             listeners.putIfAbsent(eventClass, LinkedHashMap())
-            listeners[eventClass]!!.putIfAbsent(eventPriority, ArrayList())
-            listeners[eventClass]!![eventPriority]!!.add(RegisteredListener(method, listener))
+            listeners.getValue(eventClass).putIfAbsent(eventPriority, mutableListOf())
+            listeners.getValue(eventClass).getValue(eventPriority).add(RegisteredListener(method, listener))
         }
     }
 
     fun callEvent(event: Event) {
-        val eventPriorityListMap: Map<EventPriority, MutableList<RegisteredListener>>? = listeners[event.javaClass]
+        val eventPriorityListMap = listeners[event.javaClass]
         if (eventPriorityListMap != null) {
-            for (eventPriority in EventPriority.values()) {
-                val methods: List<RegisteredListener>? = eventPriorityListMap[eventPriority]
-                if (methods != null) {
-                    for (registeredListener in methods) {
-                        registeredListener.method.invoke(registeredListener.listener, event)
-                    }
+            EventPriority.values().forEach { eventPriority ->
+                eventPriorityListMap[eventPriority]?.forEach { registeredListener ->
+                    registeredListener.method(registeredListener.listener, event)
                 }
             }
         }
