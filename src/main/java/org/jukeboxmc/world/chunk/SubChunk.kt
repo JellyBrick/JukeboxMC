@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.palette.Palette
+import org.jukeboxmc.block.palette.RuntimeDataSerializer
 import org.jukeboxmc.world.Biome
-import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataSerializer
 
 /**
  * @author LucGamesYT
@@ -49,8 +49,15 @@ class SubChunk(val y: Int) {
         byteBuf.writeByte(subChunkVersion)
         byteBuf.writeByte(blocks.size)
         byteBuf.writeByte(y)
-        for (blockPalette in blocks) {
-            blockPalette.writeToNetwork(byteBuf, SimpleRuntimeDataSerializer { obj -> obj.runtimeId })
+        blocks.forEach { blockPalette ->
+            blockPalette.writeToNetwork(
+                byteBuf,
+                object : RuntimeDataSerializer<Block> {
+                    override fun serialize(value: Block): Int {
+                        return value.runtimeId
+                    }
+                },
+            )
         }
     }
 

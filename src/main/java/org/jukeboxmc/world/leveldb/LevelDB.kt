@@ -10,7 +10,11 @@ import org.iq80.leveldb.CompressionType
 import org.iq80.leveldb.DB
 import org.iq80.leveldb.Options
 import org.jukeboxmc.Server
+import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.palette.Palette
+import org.jukeboxmc.block.palette.PersistentDataDeserializer
+import org.jukeboxmc.block.palette.RuntimeDataDeserializer
+import org.jukeboxmc.block.palette.RuntimeDataSerializer
 import org.jukeboxmc.blockentity.BlockEntity
 import org.jukeboxmc.blockentity.BlockEntityRegistry
 import org.jukeboxmc.util.BlockPalette
@@ -21,9 +25,6 @@ import org.jukeboxmc.world.World
 import org.jukeboxmc.world.chunk.Chunk
 import org.jukeboxmc.world.chunk.ChunkState
 import org.jukeboxmc.world.chunk.SubChunk
-import org.jukeboxmc.world.chunk.util.SimplePersistentDataDeserializer
-import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataDeserializer
-import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataSerializer
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
@@ -109,20 +110,24 @@ class LevelDB(private val world: World) {
                             buffer.markReaderIndex()
                             chunk.blocks[layer].readFromStoragePersistent(
                                 buffer,
-                                SimplePersistentDataDeserializer { compound: NbtMap ->
-                                    val identifier = compound.getString("name")
-                                    val states = compound.getCompound("states")
-                                    BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                object : PersistentDataDeserializer<Block> {
+                                    override fun deserialize(nbtMap: NbtMap): Block {
+                                        val identifier = nbtMap.getString("name")
+                                        val states = nbtMap.getCompound("states")
+                                        return BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                    }
                                 },
                             )
                         } catch (e: IllegalArgumentException) {
                             buffer.resetReaderIndex()
                             chunk.blocks[layer].readFromStorageRuntime(
                                 buffer,
-                                SimpleRuntimeDataDeserializer { runtimeId: Int ->
-                                    BlockPalette.getBlockByNBT(
-                                        BlockPalette.getBlockNbt(runtimeId),
-                                    )
+                                object : RuntimeDataDeserializer<Block> {
+                                    override fun deserialize(id: Int): Block {
+                                        return BlockPalette.getBlockByNBT(
+                                            BlockPalette.getBlockNbt(id),
+                                        )
+                                    }
                                 },
                                 null,
                             )
@@ -138,20 +143,24 @@ class LevelDB(private val world: World) {
                             buffer.markReaderIndex()
                             chunk.blocks[layer].readFromStoragePersistent(
                                 buffer,
-                                SimplePersistentDataDeserializer { compound: NbtMap ->
-                                    val identifier = compound.getString("name")
-                                    val states = compound.getCompound("states")
-                                    BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                object : PersistentDataDeserializer<Block> {
+                                    override fun deserialize(nbtMap: NbtMap): Block {
+                                        val identifier = nbtMap.getString("name")
+                                        val states = nbtMap.getCompound("states")
+                                        return BlockPalette.getBlock(Identifier.fromString(identifier), states)
+                                    }
                                 },
                             )
                         } catch (e: IllegalArgumentException) {
                             buffer.resetReaderIndex()
                             chunk.blocks[layer].readFromStorageRuntime(
                                 buffer,
-                                SimpleRuntimeDataDeserializer { runtimeId: Int ->
-                                    BlockPalette.getBlockByNBT(
-                                        BlockPalette.getBlockNbt(runtimeId),
-                                    )
+                                object : RuntimeDataDeserializer<Block> {
+                                    override fun deserialize(id: Int): Block {
+                                        return BlockPalette.getBlockByNBT(
+                                            BlockPalette.getBlockNbt(id),
+                                        )
+                                    }
                                 },
                                 null,
                             )
@@ -180,7 +189,11 @@ class LevelDB(private val world: World) {
                     biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
                     biomePalette.readFromStorageRuntime(
                         buffer,
-                        SimpleRuntimeDataDeserializer { id: Int -> Biome.findById(id)!! },
+                        object : RuntimeDataDeserializer<Biome> {
+                            override fun deserialize(id: Int): Biome {
+                                return Biome.findById(id)
+                            }
+                        },
                         last,
                     )
                     last = biomePalette
@@ -278,7 +291,11 @@ class LevelDB(private val world: World) {
                         biomePalette = chunk.getOrCreateSubChunk(chunk.getSubY(y shl 4)).biomes
                         biomePalette.writeToStorageRuntime(
                             heightAndBiomesBuffer,
-                            SimpleRuntimeDataSerializer { obj -> obj.id },
+                            object : RuntimeDataSerializer<Biome> {
+                                override fun serialize(value: Biome): Int {
+                                    return value.id
+                                }
+                            },
                             last,
                         )
                         last = biomePalette

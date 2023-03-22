@@ -238,13 +238,13 @@ enum class Biome(val id: Int, val identifier: String, val biomeName: String) {
     companion object {
         private val BIOME_FROM_ID: Int2ObjectMap<Biome> = Int2ObjectOpenHashMap()
         fun init() {
-            for (biome in values()) {
-                BIOME_FROM_ID.put(biome.id, biome)
+            values().forEach {
+                BIOME_FROM_ID.put(it.id, it)
             }
         }
 
-        fun findById(id: Int): Biome? {
-            return BIOME_FROM_ID[id]
+        fun findById(id: Int): Biome {
+            return BIOME_FROM_ID.getValue(id)
         }
     }
 }

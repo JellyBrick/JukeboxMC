@@ -1,6 +1,7 @@
 package org.jukeboxmc.world.chunk
 
 import com.google.common.collect.ImmutableSet
+import com.nukkitx.nbt.NbtMap
 import com.nukkitx.nbt.NbtUtils
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
 import io.netty.buffer.ByteBuf
@@ -12,6 +13,8 @@ import org.iq80.leveldb.WriteBatch
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.palette.Palette
+import org.jukeboxmc.block.palette.PersistentDataSerializer
+import org.jukeboxmc.block.palette.RuntimeDataSerializer
 import org.jukeboxmc.blockentity.BlockEntity
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.math.Location
@@ -23,8 +26,6 @@ import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Biome
 import org.jukeboxmc.world.Dimension
 import org.jukeboxmc.world.World
-import org.jukeboxmc.world.chunk.util.SimplePersistentDataSerializer
-import org.jukeboxmc.world.chunk.util.SimpleRuntimeDataSerializer
 import java.io.IOException
 import java.util.Collections
 import java.util.IdentityHashMap
@@ -248,10 +249,25 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         }
         for (subChunk in subChunks) {
             if (subChunk == null) {
-                lastBiomes.writeToNetwork(byteBuf, SimpleRuntimeDataSerializer { obj -> obj.id }, lastBiomes)
+                lastBiomes.writeToNetwork(
+                    byteBuf,
+                    object : RuntimeDataSerializer<Biome> {
+                        override fun serialize(value: Biome): Int {
+                            return value.id
+                        }
+                    },
+                    lastBiomes,
+                )
                 continue
             }
-            subChunk.biomes.writeToNetwork(byteBuf, SimpleRuntimeDataSerializer { obj -> obj.id })
+            subChunk.biomes.writeToNetwork(
+                byteBuf,
+                object : RuntimeDataSerializer<Biome> {
+                    override fun serialize(value: Biome): Int {
+                        return value.id
+                    }
+                },
+            )
             lastBiomes = subChunk.biomes
         }
         byteBuf.writeByte(0) // edu - border blocks
@@ -294,10 +310,14 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         buffer.writeByte(SUB_CHUNK_VERSION.toByte().toInt())
         buffer.writeByte(blockPalettes.size.toByte().toInt())
         buffer.writeByte(subY.toByte().toInt())
-        for (blockPalette in blockPalettes) {
-            blockPalette!!.writeToStoragePersistent(
+        blockPalettes.forEach { blockPalette ->
+            blockPalette.writeToStoragePersistent(
                 buffer,
-                SimplePersistentDataSerializer { value: Block -> BlockPalette.getBlockNbt(value.runtimeId) },
+                object : PersistentDataSerializer<Block> {
+                    override fun serialize(value: Block): NbtMap {
+                        return BlockPalette.getBlockNbt(value.runtimeId)
+                    }
+                },
             )
         }
         val subChunkKey = Utils.getSubChunkKey(x, z, dimension, 0x2f.toByte(), subY.toByte())
