@@ -1,6 +1,6 @@
 package org.jukeboxmc.block
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.behavior.BlockAcaciaStandingSign
 import org.jukeboxmc.block.behavior.BlockAcaciaWallSign
@@ -212,7 +212,7 @@ import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.util.Identifier
-import java.io.InputStreamReader
+import org.jukeboxmc.util.Utils
 
 /**
  * @author LucGamesYT
@@ -2208,18 +2208,20 @@ object BlockRegistry {
     }
 
     fun initBlockProperties() {
-        val gson = Gson()
         Bootstrap::class.java.classLoader.getResourceAsStream("block_properties.json")!!.use { inputStream ->
-            val inputStreamReader = InputStreamReader(inputStream)
             val itemEntries =
-                gson.fromJson<Map<String, Map<String, Any>>>(inputStreamReader, MutableMap::class.java)
+                Utils.jackson.readValue<Map<String, Map<String, Any>>>(inputStream)
             itemEntries.forEach { (identifier: String, map: Map<String, Any>) ->
                 BLOCK_PROPERTIES[Identifier.fromString(identifier)] = BlockProperties(
-                    map["hardness"] as Double,
+                    if (map["hardness"] is Int) {
+                        (map["hardness"] as Int).toDouble()
+                    } else {
+                        map["hardness"] as Double
+                    },
                     map["solid"] as Boolean,
                     map["transparent"] as Boolean,
-                    ToolType.valueOf((map["tool_type"] as String?)!!),
-                    TierType.valueOf((map["tier_type"] as String?)!!),
+                    ToolType.valueOf(map["tool_type"] as String),
+                    TierType.valueOf(map["tier_type"] as String),
                     map["can_break_with_hand"] as Boolean,
                     map["can_pass_through"] as Boolean,
                 )

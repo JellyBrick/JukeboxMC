@@ -1,11 +1,11 @@
 package org.jukeboxmc.player.data
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.proc.JWSVerifierFactory
+import com.nimbusds.jose.shaded.json.parser.ParseException
 import com.nukkitx.protocol.bedrock.packet.LoginPacket
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils
 import org.jukeboxmc.player.info.Device
@@ -16,6 +16,7 @@ import org.jukeboxmc.player.skin.PersonaPiece
 import org.jukeboxmc.player.skin.PersonaPieceTint
 import org.jukeboxmc.player.skin.Skin
 import org.jukeboxmc.player.skin.SkinAnimation
+import org.jukeboxmc.util.Utils
 import java.nio.charset.StandardCharsets
 import java.security.PublicKey
 import java.util.Base64
@@ -49,123 +50,125 @@ class LoginData(loginPacket: LoginPacket) {
     }
 
     private fun decodeChainData(chainData: String) {
-        val map = GSON.fromJson<Map<String, List<String>>>(chainData, MutableMap::class.java)
-        if (map.isEmpty() || !map.containsKey("chain") || map["chain"]!!.isEmpty()) {
+        val map = Utils.jackson.readValue<Map<String, List<String>>>(chainData)
+        if (map.isEmpty() || !map.containsKey("chain") || map.getValue("chain").isEmpty()) {
             return
         }
-        val chains = map["chain"]!!
+        val chains = map.getValue("chain")
         isXboxAuthenticated = try {
             verifyChains(chains)
-        } catch (e: Exception) {
+        } catch (e: JOSEException) {
+            false
+        } catch (e: ParseException) {
             false
         }
-        chains.forEach { chain ->
-            val chainMap = decodeToken(chain)
-            if (chainMap.has("extraData")) {
-                val extraData = chainMap["extraData"].asJsonObject
-                displayName = extraData["displayName"].asString
-                uuid = UUID.fromString(extraData["identity"].asString)
-                xuid = extraData["XUID"].asString
+        chains.forEach {
+            val chainMap = decodeToken(it)
+            if (chainMap.containsKey("extraData")) {
+                val extraData = chainMap["extraData"] as Map<*, *>
+                displayName = extraData["displayName"] as String
+                uuid = UUID.fromString(extraData["identity"] as String)
+                xuid = extraData["XUID"] as String
             }
         }
     }
 
     private fun decodeSkinData(skinData: String) {
         val skinMap = decodeToken(skinData)
-        if (skinMap.has("DeviceModel") && skinMap.has("DeviceId") &&
-            skinMap.has("ClientRandomId") && skinMap.has("DeviceOS") && skinMap.has("GuiScale")
+        if (skinMap.containsKey("DeviceModel") && skinMap.containsKey("DeviceId") &&
+            skinMap.containsKey("ClientRandomId") && skinMap.containsKey("DeviceOS") && skinMap.containsKey("GuiScale")
         ) {
-            val deviceModel = skinMap["DeviceModel"].asString
-            val deviceId = skinMap["DeviceId"].asString
-            val clientId = skinMap["ClientRandomId"].asLong
-            val deviceOS = skinMap["DeviceOS"].asInt
-            val uiProfile = skinMap["UIProfile"].asInt
+            val deviceModel = skinMap["DeviceModel"] as String
+            val deviceId = skinMap["DeviceId"] as String
+            val clientId = skinMap["ClientRandomId"] as Long
+            val deviceOS = skinMap["DeviceOS"] as Int
+            val uiProfile = skinMap["UIProfile"] as Int
             deviceInfo = DeviceInfo(
                 deviceModel,
                 deviceId,
                 clientId,
-                Device.getDevice(deviceOS)!!,
-                UIProfile.getById(uiProfile)!!,
+                Device.getDevice(deviceOS),
+                UIProfile.getById(uiProfile),
             )
         }
-        if (skinMap.has("LanguageCode")) {
-            languageCode = skinMap["LanguageCode"].asString
+        if (skinMap.containsKey("LanguageCode")) {
+            languageCode = skinMap["LanguageCode"] as String
         }
-        if (skinMap.has("GameVersion")) {
-            gameVersion = skinMap["GameVersion"].asString
+        if (skinMap.containsKey("GameVersion")) {
+            gameVersion = skinMap["GameVersion"] as String
         }
         skin = Skin()
-        if (skinMap.has("SkinId")) {
-            skin.skinId = (skinMap["SkinId"].asString)
+        if (skinMap.containsKey("SkinId")) {
+            skin.skinId = skinMap["SkinId"] as String
         }
-        if (skinMap.has("SkinResourcePatch")) {
+        if (skinMap.containsKey("SkinResourcePatch")) {
             skin.setResourcePatch(
                 String(
-                    Base64.getDecoder().decode(skinMap["SkinResourcePatch"].asString),
+                    Base64.getDecoder().decode(skinMap["SkinResourcePatch"] as String),
                     StandardCharsets.UTF_8,
                 ),
             )
         }
-        if (skinMap.has("SkinGeometryData")) {
+        if (skinMap.containsKey("SkinGeometryData")) {
             skin.setGeometryData(
                 String(
-                    Base64.getDecoder().decode(skinMap["SkinGeometryData"].asString),
+                    Base64.getDecoder().decode(skinMap["SkinGeometryData"] as String),
                     StandardCharsets.UTF_8,
                 ),
             )
         }
-        if (skinMap.has("AnimationData")) {
+        if (skinMap.containsKey("AnimationData")) {
             skin.setAnimationData(
                 String(
-                    Base64.getDecoder().decode(skinMap["AnimationData"].asString),
+                    Base64.getDecoder().decode(skinMap["AnimationData"] as String),
                     StandardCharsets.UTF_8,
                 ),
             )
         }
-        if (skinMap.has("CapeId")) {
-            skin.setCapeId(skinMap["CapeId"].asString)
+        if (skinMap.containsKey("CapeId")) {
+            skin.setCapeId(skinMap["CapeId"] as String)
         }
-        if (skinMap.has("SkinColor")) {
-            skin.skinColor = (skinMap["SkinColor"].asString)
+        if (skinMap.containsKey("SkinColor")) {
+            skin.skinColor = skinMap["SkinColor"] as String
         }
-        if (skinMap.has("ArmSize")) {
-            skin.armSize = (skinMap["ArmSize"].asString)
+        if (skinMap.containsKey("ArmSize")) {
+            skin.armSize = skinMap["ArmSize"] as String
         }
-        if (skinMap.has("PlayFabID")) {
-            skin.playFabId = (skinMap["PlayFabID"].asString)
+        if (skinMap.containsKey("PlayFabID")) {
+            skin.playFabId = skinMap["PlayFabID"] as String
         }
-        skin.skinData = (getImage(skinMap, "Skin"))
+        skin.skinData = getImage(skinMap, "Skin")
         skin.setCapeData(getImage(skinMap, "Cape"))
-        if (skinMap.has("PremiumSkin")) {
-            skin.isPremium = (skinMap["PremiumSkin"].asBoolean)
+        if (skinMap.containsKey("PremiumSkin")) {
+            skin.isPremium = skinMap["PremiumSkin"] as Boolean
         }
-        if (skinMap.has("PersonaSkin")) {
-            skin.isPersona = (skinMap["PersonaSkin"].asBoolean)
+        if (skinMap.containsKey("PersonaSkin")) {
+            skin.isPersona = skinMap["PersonaSkin"] as Boolean
         }
-        if (skinMap.has("CapeOnClassicSkin")) {
-            skin.isCapeOnClassic = (skinMap["CapeOnClassicSkin"].asBoolean)
+        if (skinMap.containsKey("CapeOnClassicSkin")) {
+            skin.isCapeOnClassic = skinMap["CapeOnClassicSkin"] as Boolean
         }
-        if (skinMap.has("AnimatedImageData")) {
-            val array = skinMap["AnimatedImageData"].asJsonArray
+        if (skinMap.containsKey("AnimatedImageData")) {
+            val array = skinMap["AnimatedImageData"] as List<*>
             for (jsonElement in array) {
-                skin.skinAnimations.add(getSkinAnimationData(jsonElement.asJsonObject))
+                skin.skinAnimations.add(getSkinAnimationData(jsonElement as Map<*, *>))
             }
         }
-        if (skinMap.has("PersonaPieces")) {
-            val array = skinMap["PersonaPieces"].asJsonArray
+        if (skinMap.containsKey("PersonaPieces")) {
+            val array = skinMap["PersonaPieces"] as List<*>
             for (jsonElement in array) {
-                skin.personaPieces.add(getPersonaPiece(jsonElement.asJsonObject))
+                skin.personaPieces.add(getPersonaPiece(jsonElement as Map<*, *>))
             }
         }
-        if (skinMap.has("PieceTintColors")) {
-            val array = skinMap["PieceTintColors"].asJsonArray
+        if (skinMap.containsKey("PieceTintColors")) {
+            val array = skinMap["PieceTintColors"] as List<*>
             for (jsonElement in array) {
-                skin.personaPieceTints.add(getPersonaPieceTint(jsonElement.asJsonObject))
+                skin.personaPieceTints.add(getPersonaPieceTint(jsonElement as Map<*, *>))
             }
         }
     }
 
-    @Throws(Exception::class)
+    @Throws(JOSEException::class, ParseException::class)
     private fun verifyChains(chains: List<String>): Boolean {
         var lastKey: PublicKey? = null
         var mojangKeyVerified = false
@@ -184,26 +187,25 @@ class LoginData(loginPacket: LoginPacket) {
         return mojangKeyVerified
     }
 
-    private fun decodeToken(token: String): JsonObject {
-        val tokenSplit = token.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    private fun decodeToken(token: String): Map<String, *> {
+        val tokenSplit = token.split('.').dropLastWhile { it.isEmpty() }.toTypedArray()
         require(tokenSplit.size >= 2) { "Invalid token length" }
-        return GSON.fromJson(
+        return Utils.jackson.readValue(
             String(
                 Base64.getDecoder().decode(
                     tokenSplit[1],
                 ),
                 StandardCharsets.UTF_8,
             ),
-            JsonObject::class.java,
         )
     }
 
-    private fun getImage(skinMap: JsonObject, name: String): Image? {
-        if (skinMap.has(name + "Data")) {
-            val skinImage = Base64.getDecoder().decode(skinMap[name + "Data"].asString)
-            return if (skinMap.has(name + "ImageHeight") && skinMap.has(name + "ImageWidth")) {
-                val width = skinMap[name + "ImageWidth"].asInt
-                val height = skinMap[name + "ImageHeight"].asInt
+    private fun getImage(skinMap: Map<String, *>, name: String): Image? {
+        if (skinMap.containsKey(name + "Data")) {
+            val skinImage = Base64.getDecoder().decode(skinMap[name + "Data"] as String)
+            return if (skinMap.containsKey(name + "ImageHeight") && skinMap.containsKey(name + "ImageWidth")) {
+                val width = skinMap[name + "ImageWidth"] as Int
+                val height = skinMap[name + "ImageHeight"] as Int
                 Image(width, height, skinImage)
             } else {
                 Image.getImage(skinImage)
@@ -212,36 +214,31 @@ class LoginData(loginPacket: LoginPacket) {
         return Image(0, 0, ByteArray(0))
     }
 
-    private fun getSkinAnimationData(animationData: JsonObject): SkinAnimation {
-        val data = Base64.getDecoder().decode(animationData["Image"].asString)
-        val width = animationData["ImageWidth"].asInt
-        val height = animationData["ImageHeight"].asInt
-        val frames = animationData["Frames"].asFloat
-        val type = animationData["Type"].asInt
-        val expression = animationData["AnimationExpression"].asInt
+    private fun getSkinAnimationData(animationData: Map<*, *>): SkinAnimation {
+        val data = Base64.getDecoder().decode(animationData["Image"] as String)
+        val width = animationData["ImageWidth"] as Int
+        val height = animationData["ImageHeight"] as Int
+        val frames = animationData["Frames"] as Float
+        val type = animationData["Type"] as Int
+        val expression = animationData["AnimationExpression"] as Int
         return SkinAnimation(Image(width, height, data), type, frames, expression)
     }
 
-    private fun getPersonaPiece(personaPiece: JsonObject): PersonaPiece {
-        val pieceId = personaPiece["PieceId"].asString
-        val pieceType = personaPiece["PieceType"].asString
-        val packId = personaPiece["PackId"].asString
-        val productId = personaPiece["ProductId"].asString
-        val isDefault = personaPiece["IsDefault"].asBoolean
+    private fun getPersonaPiece(personaPiece: Map<*, *>): PersonaPiece {
+        val pieceId = personaPiece["PieceId"] as String
+        val pieceType = personaPiece["PieceType"] as String
+        val packId = personaPiece["PackId"] as String
+        val productId = personaPiece["ProductId"] as String
+        val isDefault = personaPiece["IsDefault"] as Boolean
         return PersonaPiece(pieceId, pieceType, packId, productId, isDefault)
     }
 
-    private fun getPersonaPieceTint(personaPiceTint: JsonObject): PersonaPieceTint {
-        val pieceType = personaPiceTint["PieceType"].asString
-        val colors: MutableList<String> = ArrayList()
-        for (element in personaPiceTint["Colors"].asJsonArray) {
-            colors.add(element.asString)
-        }
-        return PersonaPieceTint(pieceType, colors)
+    private fun getPersonaPieceTint(personaPiceTint: Map<*, *>): PersonaPieceTint {
+        val pieceType = personaPiceTint["PieceType"] as String
+        return PersonaPieceTint(pieceType, personaPiceTint["Colors"] as List<String>)
     }
 
     companion object {
-        private val GSON = Gson()
         private val JWS_VERIFIER_FACTORY: JWSVerifierFactory = DefaultJWSVerifierFactory()
 
         @Throws(JOSEException::class)

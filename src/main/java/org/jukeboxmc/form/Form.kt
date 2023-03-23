@@ -1,52 +1,21 @@
 package org.jukeboxmc.form
 
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
-
+import com.fasterxml.jackson.annotation.JsonProperty
 /**
  * @author GoMint
  * @version 1.0
  */
-abstract class Form<R> @JvmOverloads constructor(
+abstract class Form<R>(
     val title: String,
-    icon: String = "",
 ) {
-    var icon = icon
-        set(value) {
-            field = value
-            dirty = true
-        }
-
-    // Caching
-    protected var cache: JSONObject? = null
-    protected var dirty = false
 
     /**
      * Get the type of form we have right here
      *
      * @return type of form
      */
+    @get:JsonProperty("type")
     abstract val formType: String
-
-    /**
-     * Get the JSON representation of this form
-     *
-     * @return ready to be sent JSON
-     */
-    open fun toJSON(): JSONObject {
-        // Basic data
-        val obj = JSONObject()
-        obj["type"] = formType
-        obj["title"] = title
-        obj["content"] = JSONArray()
-
-        // Check if we have an icon
-        val jsonIcon = JSONObject()
-        jsonIcon["type"] = if (icon.startsWith("http") || icon.startsWith("https")) "url" else "path"
-        jsonIcon["data"] = icon
-        obj["icon"] = jsonIcon
-        return obj
-    }
 
     /**
      * Parse the given response into the correct listener format
@@ -55,7 +24,4 @@ abstract class Form<R> @JvmOverloads constructor(
      * @return correct formatted object for the listener
      */
     abstract fun parseResponse(json: String): R
-    fun setDirty() {
-        dirty = true
-    }
 }

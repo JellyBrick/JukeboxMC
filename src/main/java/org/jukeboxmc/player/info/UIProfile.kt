@@ -5,14 +5,14 @@ package org.jukeboxmc.player.info
  * @version 1.0
  */
 enum class UIProfile {
-    CLASSIC, POCKET;
+    CLASSIC, POCKET, UNKNOWN;
 
     companion object {
-        fun getById(id: Int): UIProfile? {
+        fun getById(id: Int): UIProfile {
             return when (id) {
                 0 -> CLASSIC
                 1 -> POCKET
-                else -> null
+                else -> UNKNOWN
             }
         }
     }

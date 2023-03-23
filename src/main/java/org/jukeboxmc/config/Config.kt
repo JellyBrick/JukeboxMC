@@ -3,18 +3,19 @@ package org.jukeboxmc.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper
+import com.fasterxml.jackson.dataformat.toml.TomlMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.yaml.snakeyaml.DumperOptions
-import org.yaml.snakeyaml.Yaml
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.util.Properties
 
 /**
  * @author LucGamesYT
@@ -24,13 +25,7 @@ class Config {
     private val configType: ConfigType
     var configSection: ConfigSection
         private set
-    private val jackson = jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
-    private val yaml: Yaml = Yaml(
-        DumperOptions().apply {
-            defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-        },
-    )
-    private var properties: Properties = Properties()
+    private val jackson: ObjectMapper
     private val file: File?
     private val inputStream: InputStream?
 
@@ -42,6 +37,12 @@ class Config {
         if (!this.file.exists()) {
             this.file.createNewFile()
         }
+        jackson = when (configType) {
+            ConfigType.JSON -> JsonMapper()
+            ConfigType.YAML -> YAMLMapper()
+            ConfigType.PROPERTIES -> JavaPropsMapper()
+            ConfigType.TOML -> TomlMapper()
+        }.registerKotlinModule().enable(SerializationFeature.INDENT_OUTPUT)
         load()
     }
 
@@ -50,6 +51,12 @@ class Config {
         this.inputStream = inputStream
         this.configType = configType
         configSection = ConfigSection()
+        jackson = when (configType) {
+            ConfigType.JSON -> JsonMapper()
+            ConfigType.YAML -> YAMLMapper()
+            ConfigType.PROPERTIES -> JavaPropsMapper()
+            ConfigType.TOML -> TomlMapper()
+        }.registerKotlinModule().enable(SerializationFeature.INDENT_OUTPUT)
         load()
     }
 
@@ -58,63 +65,32 @@ class Config {
             if (file == null) {
                 inputStream
             } else {
-                FileInputStream(
-                    file,
-                )
+                FileInputStream(file)
             }
             )?.let {
-            InputStreamReader(
-                it,
-            ).use { reader ->
-                when (configType) {
-                    ConfigType.JSON -> {
-                        configSection = ConfigSection(
-                            try {
-                                this.jackson.readValue<LinkedHashMap<String, Any>>(reader)
-                            } catch (ignored: MismatchedInputException) {
-                                emptyMap()
-                            },
-                        )
-                    }
-
-                    ConfigType.YAML -> {
-                        configSection = ConfigSection(yaml.loadAs(reader, LinkedHashMap::class.java))
-                    }
-
-                    ConfigType.PROPERTIES -> {
-                        properties.load(reader)
-                    }
-                }
+            BufferedInputStream(it).use { reader ->
+                configSection = ConfigSection(
+                    try {
+                        this.jackson.readValue<LinkedHashMap<String, Any>>(reader)
+                    } catch (ignored: MismatchedInputException) {
+                        emptyMap()
+                    },
+                )
             }
         }
     }
 
     fun exists(key: String): Boolean {
-        return when (configType) {
-            ConfigType.JSON, ConfigType.YAML -> configSection.exists(key)
-            ConfigType.PROPERTIES -> properties.getProperty(key) != null
-        }
+        return configSection.exists(key)
     }
 
     operator fun set(key: String, value: Any) {
-        when (configType) {
-            ConfigType.JSON, ConfigType.YAML -> configSection[key] = value
-            ConfigType.PROPERTIES -> properties.setProperty(key, value.toString())
-        }
+        configSection[key] = value
     }
 
-    fun remove(key: String?) {
-        when (configType) {
-            ConfigType.JSON, ConfigType.YAML -> {
-                configSection.remove(key)
-                save()
-            }
-
-            ConfigType.PROPERTIES -> {
-                properties.remove(key)
-                save()
-            }
-        }
+    fun remove(key: String) {
+        configSection.remove(key)
+        save()
     }
 
     fun addDefault(key: String, value: Any) {
@@ -124,11 +100,8 @@ class Config {
         }
     }
 
-    operator fun get(key: String?): Any {
-        return when (configType) {
-            ConfigType.JSON, ConfigType.YAML -> configSection[key]
-            ConfigType.PROPERTIES -> properties.getProperty(key)
-        }!!
+    operator fun get(key: String): Any? {
+        return configSection[key]
     }
 
     fun getStringList(key: String): MutableList<String> {
@@ -140,59 +113,101 @@ class Config {
     }
 
     fun getIntegerList(key: String): List<Int> {
-        return configSection.getIntegerList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toInt() }
+            else -> configSection.getIntegerList(key)
+        }
     }
 
     fun getInt(key: String): Int {
-        return configSection.getInt(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toInt()
+            else -> configSection.getInt(key)
+        }
     }
 
     fun getLongList(key: String): List<Long> {
-        return configSection.getLongList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toLong() }
+            else -> configSection.getLongList(key)
+        }
     }
 
     fun getLong(key: String): Long {
-        return configSection.getLong(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toLong()
+            else -> configSection.getLong(key)
+        }
     }
 
     fun getDoubleList(key: String): List<Double> {
-        return configSection.getDoubleList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toDouble() }
+            else -> configSection.getDoubleList(key)
+        }
     }
 
     fun getDouble(key: String): Double {
-        return configSection.getDouble(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toDouble()
+            else -> configSection.getDouble(key)
+        }
     }
 
     fun getFloatList(key: String): List<Float> {
-        return configSection.getFloatList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toFloat() }
+            else -> configSection.getFloatList(key)
+        }
     }
 
     fun getFloat(key: String): Float {
-        return configSection.getFloat(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toFloat()
+            else -> configSection.getFloat(key)
+        }
     }
 
     fun getByteList(key: String): List<Byte> {
-        return configSection.getByteList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toByte() }
+            else -> configSection.getByteList(key)
+        }
     }
 
     fun getByte(key: String): Byte {
-        return configSection.getByte(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toByte()
+            else -> configSection.getByte(key)
+        }
     }
 
     fun getShortList(key: String): List<Short> {
-        return configSection.getShortList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toShort() }
+            else -> configSection.getShortList(key)
+        }
     }
 
     fun getShort(key: String): Short {
-        return configSection.getShort(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toShort()
+            else -> configSection.getShort(key)
+        }
     }
 
     fun getBooleanList(key: String): List<Boolean> {
-        return configSection.getBooleanList(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getStringList(key).map { it.toBoolean() }
+            else -> configSection.getBooleanList(key)
+        }
     }
 
     fun getBoolean(key: String): Boolean {
-        return configSection.getBoolean(key)
+        return when (configType) {
+            ConfigType.PROPERTIES -> configSection.getString(key).toBoolean()
+            else -> configSection.getBoolean(key)
+        }
     }
 
     val map: ConfigSection
@@ -214,12 +229,8 @@ class Config {
         if (!file.parentFile.exists()) {
             file.parentFile.mkdirs()
         }
-        OutputStreamWriter(FileOutputStream(file)).use { writer ->
-            when (configType) {
-                ConfigType.JSON -> jackson.writeValueAsString(configSection)
-                ConfigType.YAML -> yaml.dump(configSection, writer)
-                ConfigType.PROPERTIES -> properties.store(writer, "")
-            }
+        BufferedOutputStream(FileOutputStream(file)).use { writer ->
+            jackson.writeValue(writer, configSection)
         }
     }
 }

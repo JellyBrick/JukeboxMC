@@ -5,6 +5,7 @@ package org.jukeboxmc.player.info
  * @version 1.0
  */
 enum class Device(val id: Int) {
+    UNKNOWN(-1),
     ANDROID(1),
     IOS(2),
     OSX(3),
@@ -24,7 +25,7 @@ enum class Device(val id: Int) {
     ;
 
     companion object {
-        fun getDevice(id: Int): Device? {
+        fun getDevice(id: Int): Device {
             return when (id) {
                 1 -> ANDROID
                 2 -> IOS
@@ -40,7 +41,7 @@ enum class Device(val id: Int) {
                 12 -> NINTENDO
                 13 -> XBOX
                 14 -> WINDOWS_PHONE
-                else -> null
+                else -> UNKNOWN
             }
         }
     }

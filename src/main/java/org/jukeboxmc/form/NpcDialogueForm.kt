@@ -1,6 +1,6 @@
 package org.jukeboxmc.form
 
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.nukkitx.protocol.bedrock.data.entity.EntityData
 import com.nukkitx.protocol.bedrock.packet.NpcDialoguePacket
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
@@ -26,28 +26,19 @@ class NpcDialogueForm(
 
     val dialogueButtons = ObjectArrayList<NpcDialogueButton>()
 
-    fun buttons(vararg buttons: NpcDialogueButton): NpcDialogueForm {
+    fun buttons(buttons: List<NpcDialogueButton>): NpcDialogueForm {
         val urlTag = npc.metadata.getString(EntityData.URL_TAG)
-        val urlTags: MutableList<JsonObject> =
-            if (Utils.gson.fromJson<List<*>>(urlTag, MutableList::class.java) == null) {
-                mutableListOf()
-            } else {
-                Utils.gson
-                    .fromJson<MutableList<JsonObject>>(urlTag, MutableList::class.java)
-            }
-        for (button in buttons) {
-            var found = false
-            for (tag in urlTags) {
-                if (tag["button_name"].asString.equals(button.text, ignoreCase = true)) {
-                    found = true
-                }
-            }
-            if (!found) {
-                urlTags.add(button.toJsonObject())
+        val urlTags = when {
+            urlTag.isEmpty() -> mutableListOf()
+            else -> Utils.jackson.readValue<MutableList<NpcDialogueButton>>(urlTag)
+        }
+        buttons.forEach { button ->
+            if (!urlTags.any { it.text == button.text }) {
+                urlTags.add(button)
             }
         }
-        actionJson = Utils.gson.toJson(urlTags)
-        dialogueButtons.addAll(listOf(*buttons))
+        actionJson = Utils.jackson.writeValueAsString(urlTags)
+        dialogueButtons.addAll(buttons)
         return this
     }
 

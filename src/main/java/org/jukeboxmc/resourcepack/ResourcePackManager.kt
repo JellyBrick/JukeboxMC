@@ -1,16 +1,15 @@
 package org.jukeboxmc.resourcepack
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.io.Files
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import org.apache.commons.math3.util.FastMath
 import org.jukeboxmc.logger.Logger
+import org.jukeboxmc.util.Utils
 import java.io.File
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.Locale
-import java.util.Objects
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
@@ -28,7 +27,7 @@ class ResourcePackManager(private val logger: Logger) {
         if (!resourcePacksPath.isDirectory) {
             return
         }
-        for (file in Objects.requireNonNull(resourcePacksPath.listFiles())) {
+        resourcePacksPath.listFiles()!!.forEach { file ->
             if (!file.isDirectory) {
                 val fileEnding = Files.getFileExtension(file.name)
                 if (fileEnding.equals("zip", ignoreCase = true) || fileEnding.equals("mcpack", ignoreCase = true)) {
@@ -52,18 +51,15 @@ class ResourcePackManager(private val logger: Logger) {
                                 .findFirst()
                                 .orElseThrow { IllegalArgumentException("The $manifestFileName file could not be found") }
                         }
-                        val manifest = JsonParser()
-                            .parse(
-                                InputStreamReader(
-                                    zipFile.getInputStream(manifestEntry),
-                                    StandardCharsets.UTF_8,
-                                ),
-                            ).asJsonObject
+                        val manifest: Map<String, *> = InputStreamReader(
+                            zipFile.getInputStream(manifestEntry),
+                            StandardCharsets.UTF_8,
+                        ).use(Utils.jackson::readValue)
                         require(isManifestValid(manifest)) { "The $manifestFileName file is invalid" }
-                        val manifestHeader = manifest.getAsJsonObject("header")
-                        val resourcePackName = manifestHeader["name"].asString
-                        val resourcePackUuid = manifestHeader["uuid"].asString
-                        val resourcePackVersionArray = manifestHeader["version"].asJsonArray
+                        val manifestHeader = manifest["header"] as Map<*, *>
+                        val resourcePackName = manifestHeader["name"] as String
+                        val resourcePackUuid = manifestHeader["uuid"] as String
+                        val resourcePackVersionArray = manifestHeader["version"] as List<*>
                         val resourcePackVersion = resourcePackVersionArray.toString()
                             .replace("[", "").replace("]", "")
                             .replace(',', '.')
@@ -95,16 +91,16 @@ class ResourcePackManager(private val logger: Logger) {
         return resourcePacks.values
     }
 
-    private fun isManifestValid(manifest: JsonObject): Boolean {
-        if (manifest.has("format_version") && manifest.has("header") &&
-            manifest.has("modules")
+    private fun isManifestValid(manifest: Map<String, *>): Boolean {
+        if (manifest.containsKey("format_version") && manifest.containsKey("header") &&
+            manifest.containsKey("modules")
         ) {
-            val manifestHeader = manifest["header"].asJsonObject
-            if (manifestHeader.has("description") && manifestHeader.has("name") &&
-                manifestHeader.has("uuid") && manifestHeader.has("version")
+            val manifestHeader = manifest["header"] as Map<*, *>
+            if (manifestHeader.containsKey("description") && manifestHeader.containsKey("name") &&
+                manifestHeader.containsKey("uuid") && manifestHeader.containsKey("version")
             ) {
-                val headerVersion = manifestHeader.getAsJsonArray("version")
-                return headerVersion.size() == 3
+                val headerVersion = manifestHeader["version"] as List<*>
+                return headerVersion.size == 3
             }
         }
         return false

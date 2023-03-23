@@ -172,6 +172,7 @@ class Server(logger: Logger) {
         this.logger.info("JukeboxMC started in " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime) + " seconds!")
         Runtime.getRuntime().addShutdownHook(
             thread(start = false) {
+                runningState.set(false)
                 shutdown()
             },
         )
@@ -268,7 +269,7 @@ class Server(logger: Logger) {
     }
 
     private fun initServerConfig() {
-        val serverConfig = Config(File(System.getProperty("user.dir"), "properties.json"), ConfigType.JSON)
+        val serverConfig = Config(File(System.getProperty("user.dir"), "server.properties"), ConfigType.PROPERTIES)
         serverConfig.addDefault("address", "0.0.0.0")
         serverConfig.addDefault("port", 19132)
         serverConfig.addDefault("max-players", 20)

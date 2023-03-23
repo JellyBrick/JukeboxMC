@@ -649,7 +649,7 @@ open class Player(
             val form = forms[serverSettingsForm]
             val response = ServerSettingsResponsePacket()
             response.formId = serverSettingsForm
-            response.formData = form.toJSON().toJSONString()
+            response.formData = Utils.jackson.writeValueAsString(form)
             player.playerConnection.sendPacket(response)
         }
     }
@@ -662,10 +662,9 @@ open class Player(
         forms.put(formId, form)
         val formListener = FormListener<R>()
         formListeners.put(formId, formListener)
-        val json = form.toJSON().toJSONString()
         val packetModalRequest = ModalFormRequestPacket()
         packetModalRequest.formId = formId
-        packetModalRequest.formData = json
+        packetModalRequest.formData = Utils.jackson.writeValueAsString(form)
         playerConnection.sendPacket(packetModalRequest)
         hasOpenForm = true
 
@@ -700,20 +699,20 @@ open class Player(
         val form = forms[formId]
         if (form != null) {
             // Get listener
-            val formListener = formListeners[formId] as FormListener<Any>
+            val formListener = formListeners.getValue(formId) as FormListener<Any>
             if (serverSettingsForm != formId) {
                 forms.remove(formId)
                 formListeners.remove(formId)
             }
             hasOpenForm = false
             if (json == null || json == "null") {
-                formListener.closeConsumer.accept(null)
+                formListener.close()
             } else {
                 val resp = form.parseResponse(json)
                 if (resp == null) {
-                    formListener.closeConsumer.accept(null)
+                    formListener.close()
                 } else {
-                    formListener.responseConsumer.accept(resp)
+                    formListener.response(resp)
                 }
             }
         }

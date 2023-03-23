@@ -1,5 +1,7 @@
 package org.jukeboxmc.plugin
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import org.jukeboxmc.Server
@@ -10,9 +12,6 @@ import org.jukeboxmc.event.EventPriority
 import org.jukeboxmc.event.Listener
 import org.jukeboxmc.event.RegisteredListener
 import org.jukeboxmc.logger.Logger
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -26,7 +25,7 @@ class PluginManager(val server: Server) {
     private val logger: Logger = server.logger
     private val pluginLoader: PluginLoader = PluginLoader(logger, this)
     private val commandManager: CommandManager = CommandManager()
-    private val yamlLoader: Yaml = Yaml(CustomClassLoaderConstructor(this.javaClass.classLoader, LoaderOptions()))
+    private val yamlLoader = YAMLMapper().registerKotlinModule()
     private val pluginMap: Object2ObjectMap<String, Plugin> = Object2ObjectArrayMap()
     private val cachedClasses: Object2ObjectMap<String, Class<*>?> = Object2ObjectArrayMap<String, Class<*>>()
     val pluginClassLoaders: Object2ObjectMap<String?, PluginClassLoader?> =

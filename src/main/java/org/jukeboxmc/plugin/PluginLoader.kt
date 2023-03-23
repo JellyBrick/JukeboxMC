@@ -1,11 +1,12 @@
 package org.jukeboxmc.plugin
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.jukeboxmc.logger.Logger
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
-import org.yaml.snakeyaml.Yaml
 import java.io.DataInputStream
 import java.io.File
 import java.io.IOException
@@ -47,10 +48,10 @@ class PluginLoader(private val logger: Logger?, private val pluginManager: Plugi
         return null
     }
 
-    fun loadPluginData(file: File, yaml: Yaml): PluginYAML? {
+    fun loadPluginData(file: File, yaml: ObjectMapper): PluginYAML? {
         try {
             JarFile(file).use { pluginJar ->
-                val configEntry: JarEntry = pluginJar.getJarEntry("plugin.yml")
+                val configEntry: JarEntry? = pluginJar.getJarEntry("plugin.yml")
                 if (configEntry == null) {
                     val entries: Enumeration<JarEntry> = pluginJar.entries()
                     val pluginYAML = PluginYAML()
@@ -143,7 +144,7 @@ class PluginLoader(private val logger: Logger?, private val pluginManager: Plugi
                     return null
                 }
                 pluginJar.getInputStream(configEntry).use { fileStream ->
-                    val pluginConfig: PluginYAML = yaml.loadAs(fileStream, PluginYAML::class.java)
+                    val pluginConfig = yaml.readValue<PluginYAML>(fileStream)
                     if (pluginConfig.main != null && pluginConfig.name != null) {
                         // Valid plugin.yml, main and name set
                         return pluginConfig
