@@ -4,6 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.nbt.NbtUtils
+import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.item.Item
@@ -27,7 +29,7 @@ object CreativeItems {
             var netIdCounter = 0
             itemEntries.getValue("items").forEach { itemEntry ->
                 val item: ItemData.Builder
-                val identifier: Identifier = Identifier.fromString((itemEntry["id"] as String?)!!)
+                val identifier: Identifier = Identifier.fromString(itemEntry["id"] as String)
                 item = if (itemEntry.containsKey("blockRuntimeId")) {
                     toItemData(identifier, itemEntry["blockRuntimeId"] as Int)
                 } else {
@@ -55,11 +57,10 @@ object CreativeItems {
         return IDENTIFIER_BY_NETWORK_ID[networkId]
     }
 
-    private fun toItemData(identifier: Identifier, blockRuntimeId: Int): ItemData.Builder {
-        val item = Item.createItem(identifier)
+    private fun toItemData(itemDefinition: ItemDefinition, blockDefinition: BlockDefinition): ItemData.Builder {
         return ItemData.builder()
-            .definition(item.definition) // TODO: component based
-            .blockDefinition(item.toBlock().definition)
+            .definition(itemDefinition) // TODO: component based
+            .blockDefinition(blockDefinition)
             .count(1)
             .canPlace(*arrayOf())
             .canBreak(*arrayOf())

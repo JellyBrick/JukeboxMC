@@ -20,7 +20,7 @@ object ItemPalette {
         Bootstrap::class.java.classLoader.getResourceAsStream("runtime_item_states.json")!!.use { inputStream ->
             val parseItem =
                 jacksonObjectMapper().readValue<List<Map<String, *>>>(InputStreamReader(inputStream))
-            for (entry in parseItem) {
+            parseItem.forEach { entry ->
                 val name: Identifier = Identifier.fromString(entry["name"] as String)
                 val runtimeId = (entry["id"] as Int).toShort()
                 IDENTIFIER_TO_RUNTIME[name] = runtimeId
@@ -164,9 +164,8 @@ object ItemPalette {
     }
 
     @JvmStatic
-    val entries: MutableList<ItemDefinition> = IDENTIFIER_TO_RUNTIME.entries.stream()
+    val entries: List<ItemDefinition> = IDENTIFIER_TO_RUNTIME.entries
         .map { entry: Map.Entry<Identifier, Short> -> toEntry(entry) }
-        .collect(Collectors.toList())
 
     private fun toEntry(entry: Map.Entry<Identifier, Short>): ItemDefinition {
         return SimpleItemDefinition(entry.key.fullName, entry.value.toInt(), false)

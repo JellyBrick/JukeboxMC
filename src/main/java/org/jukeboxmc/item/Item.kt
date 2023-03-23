@@ -69,7 +69,7 @@ open class Item : Cloneable {
     var itemLockType: ItemLockType
         protected set
 
-    lateinit var definition: ItemDefinition
+    var definition: ItemDefinition
 
     @JvmOverloads
     constructor(identifier: Identifier, withNetworkId: Boolean = true) {
@@ -120,6 +120,7 @@ open class Item : Cloneable {
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
+        definition = SimpleItemDefinition(identifier.fullName, runtimeId, false) // TODO: component based
     }
 
     @JvmOverloads
@@ -143,6 +144,7 @@ open class Item : Cloneable {
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
+        definition = SimpleItemDefinition(identifier.fullName, runtimeId, false) // TODO: component based
         if (nbt != null) {
             fromNbt(nbt!!)
         }
