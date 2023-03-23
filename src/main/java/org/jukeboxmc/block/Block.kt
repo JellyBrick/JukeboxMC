@@ -56,7 +56,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     var layer = 0
     protected var blockProperties: BlockProperties
 
-    lateinit var definition: BlockDefinition
+    var definition: BlockDefinition
         internal set
 
     init {
@@ -80,7 +80,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         }
         this.blockStates = variableBlockStates
         runtimeId = STATES.getValue(this.identifier).getValue(this.blockStates)
-        SimpleBlockDefinition(
+        definition = SimpleBlockDefinition(
             this.identifier.fullName,
             this.runtimeId,
             this.blockStates,
