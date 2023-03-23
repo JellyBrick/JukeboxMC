@@ -43,7 +43,6 @@ dependencies {
     implementation(group = "io.netty", name = "netty-codec", version = "4.1.90.Final")
     implementation(group = "io.netty", name = "netty-transport", version = "4.1.90.Final")
     implementation(group = "com.google.code.gson", name = "gson", version = "2.10.1")
-    implementation(group = "com.googlecode.json-simple", name = "json-simple", version = "1.1.1")
     implementation(group = "it.unimi.dsi", name = "fastutil", version = "8.5.12")
     implementation(group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0.0.10-SNAPSHOT")
     implementation(group = "com.google.guava", name = "guava", version = "31.1-jre")
