@@ -1,7 +1,6 @@
 package org.jukeboxmc.util
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.PooledByteBufAllocator
 import org.jukeboxmc.world.Dimension
@@ -12,14 +11,13 @@ import java.io.InputStream
 import java.util.Random
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.roundToLong
 
 /**
  * @author LucGamesYT
  * @version 1.0
  */
 object Utils {
-    val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+    val jackson = jacksonObjectMapper()
     fun blockToChunk(value: Int): Int {
         return value shr 4
     }
@@ -116,8 +114,8 @@ object Utils {
 
     @JvmStatic
     fun round(value: Double, precision: Int): Double {
-        val pow = 10.0.pow(precision.toDouble())
-        return (value * pow).roundToLong().toDouble() / pow
+        val pow = 10.0.pow(precision)
+        return (value * pow) / pow
     }
 
     @JvmStatic

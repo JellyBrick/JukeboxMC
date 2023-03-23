@@ -29,34 +29,42 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("org.ow2.asm:asm:9.4")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-    implementation("org.cloudburstmc.protocol:bedrock-connection:3.0.0.Beta1-SNAPSHOT") {
-        exclude(group = "it.unimi", module = "fastutil")
+    implementation(group = "org.ow2.asm", name = "asm", version = "9.4")
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.14.2")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.14.2")
+    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.14.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.14.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-properties", version = "2.14.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-toml", version = "2.14.2")
+    implementation(group = "org.cloudburstmc.protocol", name = "bedrock-connection", version = "3.0.0.Beta1-SNAPSHOT") {
+        exclude(group = "com.nukkitx.fastutil")
+        exclude(group = "io.netty")
     }
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    implementation("it.unimi.dsi:fastutil:8.5.12")
-    implementation("net.daporkchop:leveldb-mcpe-jni:0.0.10-SNAPSHOT")
-    implementation("com.google.guava:guava:31.1-jre")
-    implementation("com.spotify:completable-futures:0.3.5")
-    implementation("org.apache.commons:commons-math3:3.6.1")
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("org.yaml:snakeyaml:2.0")
-    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-    implementation("org.jline:jline-terminal:3.23.0")
-    implementation("org.jline:jline-terminal-jna:3.23.0")
-    implementation("org.jline:jline-reader:3.23.0")
-    implementation("net.minecrell:terminalconsoleappender:1.3.0") {
+    implementation(group = "io.netty", name = "netty-common", version = "4.1.90.Final")
+    implementation(group = "io.netty", name = "netty-buffer", version = "4.1.90.Final")
+    implementation(group = "io.netty", name = "netty-codec", version = "4.1.90.Final")
+    implementation(group = "io.netty", name = "netty-transport", version = "4.1.90.Final")
+    implementation(group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.90.Final")
+    implementation(group = "io.netty", name = "netty-transport-native-kqueue", version = "4.1.90.Final")
+    implementation(group = "it.unimi.dsi", name = "fastutil", version = "8.5.12")
+    implementation(group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0.0.10-SNAPSHOT")
+    implementation(group = "com.google.guava", name = "guava", version = "31.1-jre")
+    implementation(group = "com.spotify", name = "completable-futures", version = "0.3.5")
+    implementation(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
+    implementation(group = "commons-io", name = "commons-io", version = "2.11.0")
+    implementation(group = "org.yaml", name = "snakeyaml", version = "2.0")
+    implementation(group = "org.apache.logging.log4j", name = "log4j-api", version = "2.20.0")
+    implementation(group = "org.apache.logging.log4j", name = "log4j-core", version = "2.20.0")
+    implementation(group = "org.jline", name = "jline-terminal", version = "3.23.0")
+    implementation(group = "org.jline", name = "jline-terminal-jna", version = "3.23.0")
+    implementation(group = "org.jline", name = "jline-reader", version = "3.23.0")
+    implementation(group = "net.minecrell", name = "terminalconsoleappender", version = "1.3.0") {
         exclude(group = "org.apache.logging.log4j", module = "log4j-core")
         exclude(group = "org.apache.logging.log4j", module = "log4j-api")
     }
 
-    compileOnly("org.jetbrains:annotations:24.0.1")
+    compileOnly(group = "org.jetbrains", name = "annotations", version = "24.0.1")
 }
 
 group = "org.jukeboxmc"

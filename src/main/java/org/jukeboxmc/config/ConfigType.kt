@@ -5,5 +5,5 @@ package org.jukeboxmc.config
  * @version 1.0
  */
 enum class ConfigType {
-    JSON, YAML, PROPERTIES
+    JSON, YAML, PROPERTIES, TOML
 }
