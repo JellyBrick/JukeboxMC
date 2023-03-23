@@ -1,9 +1,9 @@
 package org.jukeboxmc.inventory
 
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.protocol.bedrock.data.inventory.ContainerType
-import com.nukkitx.protocol.bedrock.packet.BlockEntityDataPacket
-import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerType
+import org.cloudburstmc.protocol.bedrock.packet.BlockEntityDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.math.Vector
@@ -36,8 +36,8 @@ open class FakeChestInventory : FakeInventory {
 
     protected fun placeFakeChest(player: Player, position: Vector) {
         val updateBlockPacket = UpdateBlockPacket()
-        updateBlockPacket.runtimeId =
-            Block.create<Block>(BlockType.CHEST).runtimeId
+        updateBlockPacket.definition =
+            Block.create<Block>(BlockType.CHEST).definition
         updateBlockPacket.blockPosition = position.toVector3i()
         updateBlockPacket.dataLayer = 0
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)

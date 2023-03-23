@@ -1,6 +1,7 @@
 package org.jukeboxmc.command
 
-import com.nukkitx.protocol.bedrock.data.command.CommandEnumData
+import org.cloudburstmc.protocol.bedrock.data.command.CommandEnumConstraint
+import org.cloudburstmc.protocol.bedrock.data.command.CommandEnumData
 
 /**
  * @author Cloudburst
@@ -13,12 +14,17 @@ class CommandEnum(val name: String, val values: MutableList<String>) {
     }
 
     fun toNetwork(): CommandEnumData {
-        val aliases: Array<String> = if (values.size > 0) {
+        // TODO: validate this
+        val hashMap = LinkedHashMap<String, Set<CommandEnumConstraint>>()
+        val aliases: LinkedHashMap<String, Set<CommandEnumConstraint>> = if (values.size > 0) {
             val aliasList: MutableList<String> = ArrayList(values)
             aliasList.add(name)
-            aliasList.toTypedArray()
+            for (alias in aliasList) {
+                hashMap[alias] = emptySet()
+            }
+            hashMap
         } else {
-            arrayOf(name)
+            hashMap
         }
         return CommandEnumData(name + "Aliases", aliases, false)
     }

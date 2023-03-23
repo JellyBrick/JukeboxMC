@@ -1,10 +1,10 @@
 package org.jukeboxmc.form
 
 import com.google.gson.JsonObject
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.packet.NpcDialoguePacket
-import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
+import org.cloudburstmc.protocol.bedrock.packet.NpcDialoguePacket
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityDataPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.passiv.EntityNPC
 import org.jukeboxmc.form.element.NpcDialogueButton
@@ -27,7 +27,7 @@ class NpcDialogueForm(
     val dialogueButtons = ObjectArrayList<NpcDialogueButton>()
 
     fun buttons(vararg buttons: NpcDialogueButton): NpcDialogueForm {
-        val urlTag = npc.metadata.getString(EntityData.URL_TAG)
+        val urlTag = npc.metadata.getString(EntityDataTypes.NPC_DATA) // FIXME: This is not valid tag, but I didn't find valid one so use this right now
         val urlTags: MutableList<JsonObject> =
             if (Utils.gson.fromJson<List<*>>(urlTag, MutableList::class.java) == null) {
                 mutableListOf()
@@ -56,8 +56,8 @@ class NpcDialogueForm(
         setEntityDataPacket.runtimeEntityId = npc.entityId
         setEntityDataPacket.metadata.putAll(
             npc.metadata
-                .setString(EntityData.NAMETAG, title)
-                .setString(EntityData.INTERACTIVE_TAG, dialogue)
+                .setString(EntityDataTypes.NAME, title)
+                .setString(EntityDataTypes.INTERACT_TEXT, dialogue)
                 .getEntityDataMap(),
         )
         Server.instance.broadcastPacket(setEntityDataPacket)

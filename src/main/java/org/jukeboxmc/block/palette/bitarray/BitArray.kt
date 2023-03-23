@@ -1,7 +1,7 @@
 package org.jukeboxmc.block.palette.bitarray
 
-import com.nukkitx.network.VarInts
 import io.netty.buffer.ByteBuf
+import org.cloudburstmc.protocol.common.util.VarInts
 
 interface BitArray {
     operator fun set(index: Int, value: Int)

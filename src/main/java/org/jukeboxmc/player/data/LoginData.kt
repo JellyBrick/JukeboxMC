@@ -6,8 +6,8 @@ import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.proc.JWSVerifierFactory
-import com.nukkitx.protocol.bedrock.packet.LoginPacket
-import com.nukkitx.protocol.bedrock.util.EncryptionUtils
+import org.cloudburstmc.protocol.bedrock.packet.LoginPacket
+import org.cloudburstmc.protocol.bedrock.util.EncryptionUtils
 import org.jukeboxmc.player.info.Device
 import org.jukeboxmc.player.info.DeviceInfo
 import org.jukeboxmc.player.info.UIProfile
@@ -44,8 +44,8 @@ class LoginData(loginPacket: LoginPacket) {
         private set
 
     init {
-        decodeChainData(loginPacket.chainData.toString())
-        decodeSkinData(loginPacket.skinData.toString())
+        decodeChainData(loginPacket.chain.toString())
+        decodeSkinData(loginPacket.extra.toString())
     }
 
     private fun decodeChainData(chainData: String) {

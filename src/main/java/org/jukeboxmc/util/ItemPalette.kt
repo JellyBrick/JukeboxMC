@@ -2,7 +2,8 @@ package org.jukeboxmc.util
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.nukkitx.protocol.bedrock.packet.StartGamePacket
+import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
 import org.jukeboxmc.Bootstrap
 import java.io.InputStreamReader
 import java.util.stream.Collectors
@@ -163,11 +164,11 @@ object ItemPalette {
     }
 
     @JvmStatic
-    val entries: MutableList<StartGamePacket.ItemEntry> = IDENTIFIER_TO_RUNTIME.entries.stream()
+    val entries: MutableList<ItemDefinition> = IDENTIFIER_TO_RUNTIME.entries.stream()
         .map { entry: Map.Entry<Identifier, Short> -> toEntry(entry) }
         .collect(Collectors.toList())
 
-    private fun toEntry(entry: Map.Entry<Identifier, Short>): StartGamePacket.ItemEntry {
-        return StartGamePacket.ItemEntry(entry.key.fullName, entry.value, false)
+    private fun toEntry(entry: Map.Entry<Identifier, Short>): ItemDefinition {
+        return SimpleItemDefinition(entry.key.fullName, entry.value.toInt(), false)
     }
 }

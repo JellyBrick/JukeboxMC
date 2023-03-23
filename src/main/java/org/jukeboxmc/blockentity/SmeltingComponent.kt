@@ -1,6 +1,6 @@
 package org.jukeboxmc.blockentity
 
-import com.nukkitx.protocol.bedrock.packet.ContainerSetDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.ContainerSetDataPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace

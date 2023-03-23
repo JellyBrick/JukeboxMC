@@ -1,12 +1,12 @@
 package org.jukeboxmc.util
 
-import com.nukkitx.nbt.NBTInputStream
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtType
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.cloudburstmc.nbt.NBTInputStream
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtType
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.Block
 import java.io.DataInputStream

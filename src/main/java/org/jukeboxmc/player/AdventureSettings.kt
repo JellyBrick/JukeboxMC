@@ -1,11 +1,11 @@
 package org.jukeboxmc.player
 
-import com.nukkitx.protocol.bedrock.data.Ability
-import com.nukkitx.protocol.bedrock.data.AbilityLayer
-import com.nukkitx.protocol.bedrock.data.PlayerPermission
-import com.nukkitx.protocol.bedrock.data.command.CommandPermission
-import com.nukkitx.protocol.bedrock.packet.UpdateAbilitiesPacket
-import com.nukkitx.protocol.bedrock.packet.UpdateAdventureSettingsPacket
+import org.cloudburstmc.protocol.bedrock.data.Ability
+import org.cloudburstmc.protocol.bedrock.data.AbilityLayer
+import org.cloudburstmc.protocol.bedrock.data.PlayerPermission
+import org.cloudburstmc.protocol.bedrock.data.command.CommandPermission
+import org.cloudburstmc.protocol.bedrock.packet.UpdateAbilitiesPacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateAdventureSettingsPacket
 import java.util.EnumMap
 
 /**
@@ -31,7 +31,7 @@ class AdventureSettings(private val player: Player) {
         val updateAbilitiesPacket = UpdateAbilitiesPacket()
         updateAbilitiesPacket.uniqueEntityId = player.entityId
         updateAbilitiesPacket.commandPermission =
-            if (player.isOp) CommandPermission.OPERATOR else CommandPermission.NORMAL
+            if (player.isOp) CommandPermission.HOST else CommandPermission.ANY // FIXME: is this correct?
         updateAbilitiesPacket.playerPermission =
             if (player.isOp && player.gameMode != GameMode.SPECTATOR) PlayerPermission.OPERATOR else PlayerPermission.MEMBER
         val abilityLayer = AbilityLayer()

@@ -34,7 +34,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-    implementation("com.github.Kaooot.Protocol:bedrock-v575:215edc744c") {
+    implementation("org.cloudburstmc.protocol:bedrock-connection:3.0.0.Beta1-SNAPSHOT") {
         exclude(group = "it.unimi", module = "fastutil")
     }
     implementation("com.google.code.gson:gson:2.10.1")

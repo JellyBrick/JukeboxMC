@@ -1,12 +1,13 @@
 package org.jukeboxmc.crafting.recipes
 
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
-import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.CraftingDataType
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.CraftingRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.ShapedRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
 import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.item.Item
 import java.util.UUID
@@ -52,7 +53,7 @@ class ShapedRecipe : Recipe() {
         return this
     }
 
-    override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingData? {
+    override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingRecipeData? {
         val ingredients: MutableList<ItemDescriptorWithCount> = ArrayList()
         for (s in pattern) {
             val chars = s.toCharArray()
@@ -62,19 +63,14 @@ class ShapedRecipe : Recipe() {
                     ingredients.add(ItemDescriptorWithCount.EMPTY)
                     continue
                 }
-                if (ingredient == null) {
-                    return null
-                }
                 ingredients.add(ingredient)
             }
         }
-        return CraftingData(
+        return ShapedRecipeData.of(
             CraftingDataType.SHAPED,
             recipeId,
             pattern[0].length,
             pattern.size,
-            -1,
-            -1,
             ingredients,
             outputs,
             UUID.randomUUID(),

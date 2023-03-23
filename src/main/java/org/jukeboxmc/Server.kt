@@ -1,10 +1,10 @@
 package org.jukeboxmc
 
-import com.nukkitx.protocol.bedrock.BedrockPacket
-import com.nukkitx.protocol.bedrock.data.PacketCompressionAlgorithm
-import com.nukkitx.protocol.bedrock.packet.PlayerListPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlayerListPacket
 import org.jukeboxmc.block.BlockRegistry
 import org.jukeboxmc.blockentity.BlockEntityRegistry
 import org.jukeboxmc.command.CommandSender
@@ -256,7 +256,7 @@ class Server(logger: Logger) {
         worlds.values.forEach { obj -> obj.close() }
         terminalConsole.stopConsole()
         scheduler.shutdown()
-        network.getBedrockServer().close(true)
+        network.shutdown()
         logger.info("Stopping other threads")
         for (thread in Thread.getAllStackTraces().keys) {
             if (thread.isAlive) {

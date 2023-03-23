@@ -1,7 +1,7 @@
 package org.jukeboxmc.command
 
-import com.nukkitx.protocol.bedrock.data.command.CommandParamData
-import com.nukkitx.protocol.bedrock.data.command.CommandParamType
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParamType
 import java.util.Locale
 
 /**
@@ -63,7 +63,7 @@ class CommandData(
         )
     }
 
-    fun toNetwork(): com.nukkitx.protocol.bedrock.data.command.CommandData {
+    fun toNetwork(): org.cloudburstmc.protocol.bedrock.data.command.CommandData {
         val description = description
         val overloadData: Array<Array<CommandParamData?>?> = arrayOfNulls(
             overloads.size,
@@ -76,11 +76,11 @@ class CommandData(
             }
             overloadData[i] = params
         }
-        return com.nukkitx.protocol.bedrock.data.command.CommandData(
+        return org.cloudburstmc.protocol.bedrock.data.command.CommandData(
             name,
             description,
-            emptyList(),
-            0.toByte().toInt(),
+            emptySet(),
+            0.toByte(),
             aliases.toNetwork(),
             overloadData,
         )

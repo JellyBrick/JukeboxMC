@@ -1,11 +1,13 @@
 package org.jukeboxmc.block
 
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.protocol.bedrock.data.LevelEventType
-import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent
+import org.cloudburstmc.protocol.bedrock.data.SoundEvent
+import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleBlockDefinition
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.behavior.Waterlogable
 import org.jukeboxmc.block.data.BlockProperties
@@ -54,6 +56,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     var layer = 0
     protected var blockProperties: BlockProperties
 
+    lateinit var definition: BlockDefinition
+        internal set
+
     init {
         this.identifier = identifier
         type = BlockRegistry.getBlockType(identifier)
@@ -75,6 +80,11 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         }
         this.blockStates = variableBlockStates
         runtimeId = STATES.getValue(this.identifier).getValue(this.blockStates)
+        SimpleBlockDefinition(
+            this.identifier.fullName,
+            this.runtimeId,
+            this.blockStates,
+        )
     }
 
     val world: World?
@@ -167,7 +177,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     }
 
     open fun toItem(): Item {
-        return Item.create(identifier)
+        return Item.create<Item>(identifier)
     }
 
     open val boundingBox: AxisAlignedBB
@@ -215,7 +225,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             }
         }
         playBreakSound()
-        breakLocation.world!!.sendLevelEvent(breakLocation, LevelEventType.PARTICLE_DESTROY_BLOCK, runtimeId)
+        breakLocation.world!!.sendLevelEvent(breakLocation, LevelEvent.PARTICLE_DESTROY_BLOCK, runtimeId)
     }
 
     private fun playBreakSound() {
@@ -228,7 +238,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
 
     fun sendUpdate() {
         val updateBlockPacket = UpdateBlockPacket()
-        updateBlockPacket.runtimeId = runtimeId
+        updateBlockPacket.definition = definition
         updateBlockPacket.blockPosition = location.toVector3i()
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         updateBlockPacket.dataLayer = layer
@@ -237,7 +247,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
 
     fun sendUpdate(player: Player) {
         val updateBlockPacket = UpdateBlockPacket()
-        updateBlockPacket.runtimeId = runtimeId
+        updateBlockPacket.definition = definition
         updateBlockPacket.blockPosition = location.toVector3i()
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         updateBlockPacket.dataLayer = layer

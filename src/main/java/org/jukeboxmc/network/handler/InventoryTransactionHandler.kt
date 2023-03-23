@@ -1,9 +1,9 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.data.inventory.InventorySource
-import com.nukkitx.protocol.bedrock.data.inventory.TransactionType
-import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket
+import org.cloudburstmc.protocol.bedrock.data.SoundEvent
+import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventorySource
+import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType
+import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockSlab
@@ -28,7 +28,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
     private var spamCheckTime: Long = 0
     override fun handle(packet: InventoryTransactionPacket, server: Server, player: Player) {
         when (packet.transactionType) {
-            TransactionType.ITEM_USE -> {
+            InventoryTransactionType.ITEM_USE -> {
                 val blockPosition: Vector = Vector(packet.blockPosition)
                 blockPosition.dimension = player.dimension
                 val clickPosition: Vector = Vector(packet.clickPosition)
@@ -86,7 +86,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                     }
                 }
             }
-            TransactionType.NORMAL -> {
+            InventoryTransactionType.NORMAL -> {
                 for (action in packet.actions) {
                     if (action.source.type == InventorySource.Type.WORLD_INTERACTION) {
                         if (action.source.flag == InventorySource.Flag.DROP_ITEM) {
@@ -121,7 +121,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                     }
                 }
             }
-            TransactionType.ITEM_USE_ON_ENTITY -> {
+            InventoryTransactionType.ITEM_USE_ON_ENTITY -> {
                 val world = player.world ?: return
                 when (packet.actionType) {
                     0 -> {
@@ -144,7 +144,7 @@ class InventoryTransactionHandler : PacketHandler<InventoryTransactionPacket> {
                     else -> {}
                 }
             }
-            TransactionType.ITEM_RELEASE -> {
+            InventoryTransactionType.ITEM_RELEASE -> {
                 if (packet.actionType == 0) {
                     if (player.inventory.itemInHand is ItemBow) {
                         (player.inventory.itemInHand as ItemBow).shoot(player)

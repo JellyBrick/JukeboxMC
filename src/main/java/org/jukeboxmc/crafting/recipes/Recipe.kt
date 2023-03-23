@@ -1,7 +1,7 @@
 package org.jukeboxmc.crafting.recipes
 
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.CraftingRecipeData
 import org.jukeboxmc.crafting.CraftingManager
 
 /**
@@ -10,5 +10,5 @@ import org.jukeboxmc.crafting.CraftingManager
  */
 abstract class Recipe {
     abstract val outputs: List<ItemData?>
-    abstract fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingData?
+    abstract fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingRecipeData?
 }

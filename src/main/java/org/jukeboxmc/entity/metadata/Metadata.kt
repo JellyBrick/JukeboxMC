@@ -1,8 +1,8 @@
 package org.jukeboxmc.entity.metadata
 
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap
-import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataMap
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataType
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag
 
 /**
  * @author LucGamesYT
@@ -10,88 +10,88 @@ import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
  */
 class Metadata {
     private val entityDataMap: EntityDataMap = EntityDataMap()
-    fun setByte(entityData: EntityData?, value: Byte): Metadata {
+    fun setByte(entityData: EntityDataType<Byte>?, value: Byte): Metadata {
         val oldValue = getByte(entityData)
         if (oldValue != value) {
-            entityDataMap.putByte(entityData, value.toInt())
+            entityDataMap[entityData] = value
         }
         return this
     }
 
-    fun getByte(entityData: EntityData?): Byte {
-        return entityDataMap.getByte(entityData)
+    fun getByte(entityData: EntityDataType<Byte>?): Byte {
+        return entityDataMap[entityData] as Byte
     }
 
-    fun setLong(entityData: EntityData?, value: Long): Metadata {
+    fun setLong(entityData: EntityDataType<Long>?, value: Long): Metadata {
         val oldValue = getLong(entityData)
         if (oldValue != value) {
-            entityDataMap.putLong(entityData, value)
+            entityDataMap[entityData] = value
         }
         return this
     }
 
-    fun getLong(entityData: EntityData?): Long {
-        return entityDataMap.getLong(entityData)
+    fun getLong(entityData: EntityDataType<Long>?): Long {
+        return entityDataMap[entityData] as Long
     }
 
-    fun setShort(entityData: EntityData?, value: Short): Metadata {
+    fun setShort(entityData: EntityDataType<Short>?, value: Short): Metadata {
         val oldValue = getShort(entityData)
         if (oldValue != value) {
-            entityDataMap.putShort(entityData, value.toInt())
+            entityDataMap[entityData] = value.toInt()
         }
         return this
     }
 
-    fun getShort(entityData: EntityData?): Short {
-        return entityDataMap.getShort(entityData)
+    fun getShort(entityData: EntityDataType<Short>?): Short {
+        return entityDataMap[entityData] as Short
     }
 
-    fun setString(entityData: EntityData?, value: String?): Metadata {
+    fun setString(entityData: EntityDataType<String>?, value: String?): Metadata {
         val oldValue = getString(entityData)
         if (oldValue != value) {
-            entityDataMap.putString(entityData, value)
+            entityDataMap[entityData] = value
         }
         return this
     }
 
-    fun getString(entityData: EntityData?): String {
-        return entityDataMap.getString(entityData)
+    fun getString(entityData: EntityDataType<String>?): String {
+        return entityDataMap[entityData] as String
     }
 
-    fun setFloat(entityData: EntityData?, value: Float): Metadata {
+    fun setFloat(entityData: EntityDataType<Float>?, value: Float): Metadata {
         val oldValue = getFloat(entityData)
         if (oldValue != value) {
-            entityDataMap.putFloat(entityData, value)
+            entityDataMap[entityData] = value
         }
         return this
     }
 
-    fun getFloat(entityData: EntityData?): Float {
-        return entityDataMap.getFloat(entityData)
+    fun getFloat(entityData: EntityDataType<Float>?): Float {
+        return entityDataMap[entityData] as Float
     }
 
     fun setFlag(entityFlag: EntityFlag, value: Boolean): Metadata {
         val oldValue = getFlag(entityFlag)
         if (oldValue != value) {
-            entityDataMap.orCreateFlags.setFlag(entityFlag, value)
+            entityDataMap.setFlag(entityFlag, value)
         }
         return this
     }
 
-    fun getInt(entityData: EntityData?): Int {
-        return entityDataMap.getInt(entityData)
+    fun getInt(entityData: EntityDataType<Int>?): Int {
+        return entityDataMap[entityData] as Int
     }
 
-    fun setInt(entityData: EntityData?, value: Int): Metadata {
+    fun setInt(entityData: EntityDataType<Int>?, value: Int): Metadata {
         val oldValue = getInt(entityData)
         if (oldValue != value) {
-            entityDataMap.putInt(entityData, value)
+            entityDataMap[entityData] = value
         }
         return this
     }
 
     fun getFlag(entityFlag: EntityFlag): Boolean {
-        return entityDataMap.orCreateFlags.getFlag(entityFlag)
+        return entityDataMap.flags.contains(entityFlag)
     }
 
     fun getEntityDataMap(): EntityDataMap {

@@ -1,6 +1,6 @@
 package org.jukeboxmc.entity.attribute
 
-import com.nukkitx.protocol.bedrock.data.AttributeData
+import org.cloudburstmc.protocol.bedrock.data.AttributeData
 
 /**
  * @author LucGamesYT

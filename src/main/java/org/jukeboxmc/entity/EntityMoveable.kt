@@ -1,13 +1,13 @@
 package org.jukeboxmc.entity
 
-import com.nukkitx.math.vector.Vector3f
-import com.nukkitx.protocol.bedrock.packet.MoveEntityAbsolutePacket
 import org.apache.commons.math3.util.FastMath
+import org.cloudburstmc.math.vector.Vector3f
+import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
-import java.util.*
+import java.util.Random
 
 /**
  * @author LucGamesYT

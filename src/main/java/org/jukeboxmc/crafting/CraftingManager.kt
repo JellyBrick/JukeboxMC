@@ -1,14 +1,16 @@
 package org.jukeboxmc.crafting
 
-import com.nukkitx.protocol.bedrock.data.inventory.ContainerMixData
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
-import com.nukkitx.protocol.bedrock.data.inventory.PotionMixData
-import com.nukkitx.protocol.bedrock.data.inventory.descriptor.InvalidDescriptor
-import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
-import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemTagDescriptor
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.ContainerMixData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.CraftingDataType
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.PotionMixData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.CraftingRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.ShapedRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.ShapelessRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.InvalidDescriptor
+import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
+import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemTagDescriptor
 import org.jukeboxmc.Server
 import org.jukeboxmc.config.Config
 import org.jukeboxmc.config.ConfigType
@@ -25,7 +27,7 @@ import java.util.UUID
  * @version 1.0
  */
 class CraftingManager {
-    val craftingData: MutableList<CraftingData> = ObjectArrayList()
+    val craftingData: MutableList<CraftingRecipeData> = ObjectArrayList()
     val potionMixData: MutableList<PotionMixData> = ObjectArrayList()
     val containerMixData: MutableList<ContainerMixData> = ObjectArrayList()
     val smeltingRecipes: MutableSet<SmeltingRecipe?> = HashSet()
@@ -62,17 +64,18 @@ class CraftingManager {
                                     val blockRuntimeId = map["blockRuntimeId"] as Int
                                     val usingNetId = map["usingNetId"] as Boolean
                                     val netId = map["netId"] as Int
+                                    val item = Item.createItem(ItemPalette.getIdentifier(id.toShort()))
                                     inputItems.add(
                                         ItemDescriptorWithCount.fromItem(
                                             ItemData.builder()
-                                                .id(id)
+                                                .definition(item.definition)
                                                 .damage(damage)
                                                 .count(count)
                                                 .blockingTicks(blockingTicks.toLong())
-                                                .blockRuntimeId(blockRuntimeId)
+                                                .blockDefinition(item.toBlock().definition)
                                                 .usingNetId(usingNetId)
-                                                .canBreak(canBreak.toTypedArray())
-                                                .canPlace(canPlace.toTypedArray())
+                                                .canBreak(*canBreak.toTypedArray())
+                                                .canPlace(*canPlace.toTypedArray())
                                                 .netId(netId)
                                                 .build(),
                                         ),
@@ -101,16 +104,17 @@ class CraftingManager {
                         val blockRuntimeId = output["blockRuntimeId"] as Int
                         val usingNetId = output["usingNetId"] as Boolean
                         val netId = output["netId"] as Int
+                        val item = Item.createItem(ItemPalette.getIdentifier(id.toShort()))
                         outputItems.add(
                             ItemData.builder()
-                                .id(id)
+                                .definition(item.definition)
                                 .damage(damage)
                                 .count(count)
                                 .blockingTicks(blockingTicks.toLong())
-                                .blockRuntimeId(blockRuntimeId)
+                                .blockDefinition(item.toBlock().definition)
                                 .usingNetId(usingNetId)
-                                .canPlace(canPlace.toTypedArray())
-                                .canBreak(canBreak.toTypedArray())
+                                .canPlace(*canPlace.toTypedArray())
+                                .canBreak(*canBreak.toTypedArray())
                                 .netId(netId)
                                 .build(),
                         )
@@ -131,22 +135,36 @@ class CraftingManager {
                 val craftingTag = recipe["craftingTag"] as String?
                 val priority = recipe["priority"] as Int
                 val networkId = recipe["networkId"] as Int
-                craftingData.add(
-                    CraftingData(
+                val recipe = when (craftingDataType) {
+                    CraftingDataType.SHAPED -> ShapedRecipeData.of(
                         craftingDataType,
                         recipeId,
                         width,
                         height,
-                        inputId,
-                        inputDamage,
                         inputItems,
                         outputItems,
                         uuid,
                         craftingTag,
                         priority,
                         networkId,
-                    ),
-                )
+                    )
+
+                    CraftingDataType.SHAPELESS -> ShapelessRecipeData.of(
+                        craftingDataType,
+                        recipeId,
+                        inputItems,
+                        outputItems,
+                        uuid,
+                        craftingTag,
+                        priority,
+                        networkId,
+                    )
+//                    CraftingDataType.FURNACE, CraftingDataType.FURNACE_DATA -> null
+                    else -> null
+                }
+                if (recipe != null) {
+                    craftingData.add(recipe)
+                }
             }
             val containerMixes = config.map["containerMixes"] as List<*>
             containerMixes.forEach {
@@ -183,20 +201,20 @@ class CraftingManager {
 
     val highestNetworkId: Int
         get() {
-            val optional: Optional<CraftingData> = craftingData.stream().max(
-                Comparator.comparing { obj: CraftingData -> obj.networkId },
+            val optional: Optional<CraftingRecipeData> = craftingData.stream().max(
+                Comparator.comparing { obj: CraftingRecipeData -> obj.netId },
             )
-            return optional.map { obj: CraftingData -> obj.networkId }.orElse(-1)
+            return optional.map { obj: CraftingRecipeData -> obj.netId }.orElse(-1)
         }
 
     fun getResultItem(recipeNetworkId: Int): List<Item> {
-        val optional: Optional<CraftingData> = craftingData.stream()
-            .filter { craftingData: CraftingData -> craftingData.networkId == recipeNetworkId }
+        val optional: Optional<CraftingRecipeData> = craftingData.stream()
+            .filter { craftingData: CraftingRecipeData -> craftingData.netId == recipeNetworkId }
             .findFirst()
         if (optional.isPresent) {
-            val craftingData: CraftingData = optional.get()
+            val craftingData: CraftingRecipeData = optional.get()
             val items: MutableList<Item> = LinkedList()
-            for (output in craftingData.outputs) {
+            for (output in craftingData.results) {
                 items.add(Item(output, false))
             }
             return items

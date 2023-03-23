@@ -1,6 +1,6 @@
 package org.jukeboxmc.entity.passiv
 
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.entity.EntityMoveable
 import org.jukeboxmc.entity.EntityType
@@ -56,7 +56,7 @@ class EntityFallingBlock : EntityMoveable() {
 
     fun setBlock(block: Block?) {
         this.block = block
-        this.metadata.setInt(EntityData.VARIANT, this.block!!.runtimeId)
+        this.metadata.setInt(EntityDataTypes.VARIANT, this.block!!.runtimeId)
     }
 
     fun getBlock(): Block? {

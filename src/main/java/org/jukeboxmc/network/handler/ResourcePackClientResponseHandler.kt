@@ -1,9 +1,9 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.data.ResourcePackType
-import com.nukkitx.protocol.bedrock.packet.ResourcePackClientResponsePacket
-import com.nukkitx.protocol.bedrock.packet.ResourcePackDataInfoPacket
-import com.nukkitx.protocol.bedrock.packet.ResourcePackStackPacket
+import org.cloudburstmc.protocol.bedrock.data.ResourcePackType
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackClientResponsePacket
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackDataInfoPacket
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackStackPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.resourcepack.ResourcePack
@@ -32,7 +32,7 @@ class ResourcePackClientResponseHandler : PacketHandler<ResourcePackClientRespon
                         resourcePackDataInfoPacket.chunkCount = (resourcePack.size / maxChunkSize).toInt().toLong()
                         resourcePackDataInfoPacket.compressedPackSize = resourcePack.size
                         resourcePackDataInfoPacket.hash = resourcePack.sha256
-                        resourcePackDataInfoPacket.type = ResourcePackType.RESOURCE
+                        resourcePackDataInfoPacket.type = ResourcePackType.RESOURCES
                         player.playerConnection.sendPacket(resourcePackDataInfoPacket)
                     }
                 }

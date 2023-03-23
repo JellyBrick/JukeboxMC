@@ -1,6 +1,6 @@
 package org.jukeboxmc.entity.projectile
 
-import com.nukkitx.protocol.bedrock.data.LevelEventType
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityLiving
@@ -62,7 +62,7 @@ class EntityArrow : EntityProjectile() {
                 return
             }
             close()
-            player.world?.sendLevelEvent(player.location, LevelEventType.SOUND_INFINITY_ARROW_PICKUP)
+            player.world?.sendLevelEvent(player.location, LevelEvent.SOUND_INFINITY_ARROW_PICKUP)
             if (!wasInfinityArrow) {
                 player.inventory.addItem(arrow)
             }

@@ -1,13 +1,13 @@
 package org.jukeboxmc.entity
 
-import com.nukkitx.math.vector.Vector3f
-import com.nukkitx.protocol.bedrock.BedrockPacket
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
-import com.nukkitx.protocol.bedrock.packet.AddEntityPacket
-import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket
-import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
-import com.nukkitx.protocol.bedrock.packet.SetEntityMotionPacket
+import org.cloudburstmc.math.vector.Vector2f
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag
+import org.cloudburstmc.protocol.bedrock.packet.AddEntityPacket
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket
+import org.cloudburstmc.protocol.bedrock.packet.RemoveEntityPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityMotionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.behavior.BlockWater
@@ -65,12 +65,12 @@ abstract class Entity : AutoCloseable {
     init {
         entityId = entityCount++
         metadata = Metadata()
-        metadata.setLong(EntityData.PLAYER_INDEX, 0)
-        metadata.setShort(EntityData.AIR_SUPPLY, 400.toShort())
-        metadata.setShort(EntityData.MAX_AIR_SUPPLY, 400.toShort())
-        metadata.setFloat(EntityData.SCALE, 1f)
-        metadata.setFloat(EntityData.BOUNDING_BOX_WIDTH, width)
-        metadata.setFloat(EntityData.BOUNDING_BOX_HEIGHT, height)
+        metadata.setInt(EntityDataTypes.PLAYER_INDEX, 0)
+        metadata.setShort(EntityDataTypes.AIR_SUPPLY, 400.toShort())
+        metadata.setShort(EntityDataTypes.AIR_SUPPLY_MAX, 400.toShort())
+        metadata.setFloat(EntityDataTypes.SCALE, 1f)
+        metadata.setFloat(EntityDataTypes.WIDTH, width)
+        metadata.setFloat(EntityDataTypes.HEIGHT, height)
         metadata.setFlag(EntityFlag.HAS_GRAVITY, true)
         metadata.setFlag(EntityFlag.HAS_COLLISION, true)
         metadata.setFlag(EntityFlag.CAN_CLIMB, true)
@@ -107,7 +107,7 @@ abstract class Entity : AutoCloseable {
         addEntityPacket.identifier = identifier.fullName
         addEntityPacket.position = location.add(0f, eyeHeight, 0f).toVector3f()
         addEntityPacket.motion = velocity.toVector3f()
-        addEntityPacket.rotation = Vector3f.from(location.pitch, location.yaw, location.yaw)
+        addEntityPacket.rotation = Vector2f.from(location.pitch, location.yaw) // TODO: confirm this
         addEntityPacket.metadata.putAll(metadata.getEntityDataMap())
         return addEntityPacket
     }
@@ -241,8 +241,8 @@ abstract class Entity : AutoCloseable {
             location.y + height,
             location.z + radius,
         )
-        metadata.setFloat(EntityData.BOUNDING_BOX_HEIGHT, this.height)
-        metadata.setFloat(EntityData.BOUNDING_BOX_WIDTH, width)
+        metadata.setFloat(EntityDataTypes.HEIGHT, this.height)
+        metadata.setFloat(EntityDataTypes.WIDTH, width)
     }
 
     val direction: Direction
@@ -263,17 +263,17 @@ abstract class Entity : AutoCloseable {
         }
     var maxAirSupply: Short
         // ============ Metadata =============
-        get() = metadata.getShort(EntityData.AIR_SUPPLY)
+        get() = metadata.getShort(EntityDataTypes.AIR_SUPPLY)
         set(value) {
             if (value != maxAirSupply) {
-                this.updateMetadata(metadata.setShort(EntityData.AIR_SUPPLY, value))
+                this.updateMetadata(metadata.setShort(EntityDataTypes.AIR_SUPPLY, value))
             }
         }
     var scale: Float
-        get() = metadata.getFloat(EntityData.SCALE)
+        get() = metadata.getFloat(EntityDataTypes.SCALE)
         set(value) {
             if (value != scale) {
-                this.updateMetadata(metadata.setFloat(EntityData.SCALE, value))
+                this.updateMetadata(metadata.setFloat(EntityDataTypes.SCALE, value))
             }
         }
 
@@ -298,9 +298,9 @@ abstract class Entity : AutoCloseable {
     }
 
     var nameTag: String
-        get() = metadata.getString(EntityData.NAMETAG)
+        get() = metadata.getString(EntityDataTypes.NAME)
         set(value) {
-            this.updateMetadata(metadata.setString(EntityData.NAMETAG, value))
+            this.updateMetadata(metadata.setString(EntityDataTypes.NAME, value))
         }
     var isNameTagVisible: Boolean
         get() = metadata.getFlag(EntityFlag.CAN_SHOW_NAME)

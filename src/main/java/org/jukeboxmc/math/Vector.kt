@@ -1,10 +1,10 @@
 package org.jukeboxmc.math
 
-import com.nukkitx.math.vector.Vector3d
-import com.nukkitx.math.vector.Vector3f
-import com.nukkitx.math.vector.Vector3i
-import com.nukkitx.math.vector.Vector3l
 import org.apache.commons.math3.util.FastMath
+import org.cloudburstmc.math.vector.Vector3d
+import org.cloudburstmc.math.vector.Vector3f
+import org.cloudburstmc.math.vector.Vector3i
+import org.cloudburstmc.math.vector.Vector3l
 import org.jukeboxmc.world.Dimension
 import java.util.*
 import kotlin.math.roundToInt

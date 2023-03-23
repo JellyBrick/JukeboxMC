@@ -1,12 +1,14 @@
 package org.jukeboxmc.item
 
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtType
-import com.nukkitx.nbt.NbtUtils
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtType
+import org.cloudburstmc.nbt.NbtUtils
+import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.block.direction.BlockFace
@@ -22,7 +24,10 @@ import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.ItemPalette
 import org.jukeboxmc.util.Utils
 import org.jukeboxmc.world.Sound
-import java.util.*
+import java.util.Base64
+import java.util.EnumMap
+import java.util.LinkedList
+import java.util.Random
 
 /**
  * @author LucGamesYT
@@ -64,6 +69,8 @@ open class Item : Cloneable {
     var itemLockType: ItemLockType
         protected set
 
+    lateinit var definition: ItemDefinition
+
     @JvmOverloads
     constructor(identifier: Identifier, withNetworkId: Boolean = true) {
         type = ItemRegistry.getItemType(identifier)
@@ -85,6 +92,7 @@ open class Item : Cloneable {
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
+        definition = SimpleItemDefinition(identifier.fullName, runtimeId, false) // TODO: component based
     }
 
     @JvmOverloads
@@ -116,11 +124,11 @@ open class Item : Cloneable {
 
     @JvmOverloads
     constructor(itemData: ItemData, withNetworkId: Boolean = true) {
-        type = ItemRegistry.getItemType(ItemPalette.getIdentifier(itemData.id.toShort()))
+        type = ItemRegistry.getItemType(ItemPalette.getIdentifier(itemData.netId.toShort()))
         val itemRegistryData = ItemRegistry.getItemRegistryData(type)
         identifier = itemRegistryData.identifier
         runtimeId = ItemPalette.getRuntimeId(identifier)
-        blockRuntimeId = itemData.blockRuntimeId
+        blockRuntimeId = itemData.blockDefinition!!.runtimeId
         if (withNetworkId) {
             stackNetworkId = stackNetworkCount++
         }
@@ -320,13 +328,13 @@ open class Item : Cloneable {
         return ItemData.builder()
             .netId(stackNetworkId)
             .usingNetId(stackNetworkId > 0)
-            .id(runtimeId)
-            .blockRuntimeId(blockRuntimeId)
+            .definition(definition)
+            .blockDefinition(toBlock().definition)
             .damage(meta)
             .count(amount)
             .tag(toNbt())
-            .canPlace(canPlace.toTypedArray())
-            .canBreak(canBreak.toTypedArray())
+            .canPlace(*canPlace.toTypedArray())
+            .canBreak(*canBreak.toTypedArray())
             .build()
     }
 
@@ -449,11 +457,11 @@ open class Item : Cloneable {
     companion object {
         var stackNetworkCount = 0
         fun createItem(itemData: ItemData): Item {
-            if (itemData.id == 0) {
+            if (itemData.netId == 0) {
                 return create(ItemType.AIR)
             }
-            val item = create<Item>(ItemPalette.getIdentifier(itemData.id.toShort()))
-            item.setBlockRuntimeId(itemData.blockRuntimeId)
+            val item = create<Item>(ItemPalette.getIdentifier(itemData.netId.toShort()))
+            item.setBlockRuntimeId(itemData.blockDefinition!!.runtimeId)
             item.setMeta(itemData.damage)
             item.setAmount(itemData.count)
             item.setNbt(itemData.tag)

@@ -1,7 +1,7 @@
 package org.jukeboxmc.inventory
 
-import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket
-import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
+import org.cloudburstmc.protocol.bedrock.packet.ContainerOpenPacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.math.Vector
 import org.jukeboxmc.player.Player
@@ -44,7 +44,7 @@ abstract class FakeInventory(holder: InventoryHolder?, holderId: Int, size: Int)
                     val updateBlockPacket = UpdateBlockPacket()
                     updateBlockPacket.blockPosition = position.toVector3i()
                     updateBlockPacket.dataLayer = 0
-                    updateBlockPacket.runtimeId = player.world!!.getBlock(position).runtimeId
+                    updateBlockPacket.definition = player.world!!.getBlock(position).definition
                     updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
                     player.playerConnection.sendPacket(updateBlockPacket)
                 }

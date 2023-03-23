@@ -1,9 +1,9 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.data.PacketCompressionAlgorithm
-import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
-import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
-import com.nukkitx.protocol.bedrock.packet.RequestNetworkSettingsPacket
+import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm
+import org.cloudburstmc.protocol.bedrock.packet.NetworkSettingsPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket
+import org.cloudburstmc.protocol.bedrock.packet.RequestNetworkSettingsPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.network.Network
 import org.jukeboxmc.player.Player

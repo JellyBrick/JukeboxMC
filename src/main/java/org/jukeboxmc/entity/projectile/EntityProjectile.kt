@@ -1,7 +1,7 @@
 package org.jukeboxmc.entity.projectile
 
-import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
+import org.cloudburstmc.protocol.bedrock.data.SoundEvent
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
 import org.jukeboxmc.entity.Entity
 import org.jukeboxmc.entity.EntityLiving
 import org.jukeboxmc.entity.EntityMoveable
@@ -26,7 +26,7 @@ abstract class EntityProjectile : EntityMoveable() {
         get() = if (field == null || field!!.isDead) null else field
         set(value) {
             field = value!!
-            this.metadata.setLong(EntityData.OWNER_EID, field!!.entityId)
+            this.metadata.setLong(EntityDataTypes.OWNER_EID, field!!.entityId)
         }
     protected var hitEntity: Entity? = null
     var hadCollision = false
@@ -87,7 +87,7 @@ abstract class EntityProjectile : EntityMoveable() {
                                     player.playSound(Sound.RANDOM_BOWHIT)
                                 }
                             }
-                            this.updateMetadata(this.metadata.setLong(EntityData.TARGET_EID, hitEntity.entityId))
+                            this.updateMetadata(this.metadata.setLong(EntityDataTypes.TARGET_EID, hitEntity.entityId))
                         }
                         onCollidedWithEntity(hitEntity)
                         this.hitEntity = hitEntity

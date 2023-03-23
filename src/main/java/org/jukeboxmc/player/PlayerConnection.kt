@@ -1,35 +1,31 @@
 package org.jukeboxmc.player
 
-import com.nukkitx.math.vector.Vector2f
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.network.util.DisconnectReason
-import com.nukkitx.protocol.bedrock.BedrockPacket
-import com.nukkitx.protocol.bedrock.BedrockServerSession
-import com.nukkitx.protocol.bedrock.BedrockSession
-import com.nukkitx.protocol.bedrock.data.AuthoritativeMovementMode
-import com.nukkitx.protocol.bedrock.data.ChatRestrictionLevel
-import com.nukkitx.protocol.bedrock.data.GamePublishSetting
-import com.nukkitx.protocol.bedrock.data.PlayerPermission
-import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
-import com.nukkitx.protocol.bedrock.handler.BatchHandler
-import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
-import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
-import com.nukkitx.protocol.bedrock.packet.CraftingDataPacket
-import com.nukkitx.protocol.bedrock.packet.CreativeContentPacket
-import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
-import com.nukkitx.protocol.bedrock.packet.PlayerListPacket
-import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
-import com.nukkitx.protocol.bedrock.packet.SetTimePacket
-import com.nukkitx.protocol.bedrock.packet.StartGamePacket
-import com.nukkitx.protocol.bedrock.packet.UpdateAttributesPacket
-import io.netty.buffer.ByteBuf
+import org.cloudburstmc.math.vector.Vector2f
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.netty.channel.raknet.RakDisconnectReason
+import org.cloudburstmc.protocol.bedrock.BedrockServerSession
+import org.cloudburstmc.protocol.bedrock.data.AuthoritativeMovementMode
+import org.cloudburstmc.protocol.bedrock.data.ChatRestrictionLevel
+import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting
+import org.cloudburstmc.protocol.bedrock.data.PlayerPermission
+import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler
+import org.cloudburstmc.protocol.bedrock.packet.BiomeDefinitionListPacket
+import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlayerListPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket
+import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket
+import org.cloudburstmc.protocol.common.PacketSignal
 import org.jukeboxmc.Server
 import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.event.network.PacketReceiveEvent
 import org.jukeboxmc.event.network.PacketSendEvent
 import org.jukeboxmc.event.player.PlayerQuitEvent
-import org.jukeboxmc.item.Item
-import org.jukeboxmc.item.ItemType
 import org.jukeboxmc.network.Network
 import org.jukeboxmc.network.handler.HandlerRegistry
 import org.jukeboxmc.network.handler.PacketHandler
@@ -67,22 +63,23 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 
     init {
         this.session = session
-        this.session.hardcodedBlockingId.set(Item.create<Item>(ItemType.SHIELD).runtimeId)
-        this.session.addDisconnectHandler { disconnectReason: DisconnectReason? ->
-            server.scheduler.execute {
-                onDisconnect(
-                    disconnectReason,
-                )
-            }
-        }
+        // FIXME
+//        this.session.hardcodedBlockingId.set(Item.create<Item>(ItemType.SHIELD).runtimeId)
+//        this.session.addDisconnectHandler { disconnectReason: DisconnectReason? ->
+//            server.scheduler.execute {
+//                onDisconnect(
+//                    disconnectReason,
+//                )
+//            }
+//        }
         loggedIn = AtomicBoolean(false)
         spawned = AtomicBoolean(false)
         player = Player(server, this)
         playerChunkManager = PlayerChunkManager(player)
-        session.packetCodec = Network.CODEC
-        session.batchHandler =
-            BatchHandler { bedrockSession: BedrockSession?, byteBuf: ByteBuf?, packets: Collection<BedrockPacket> ->
-                packets.forEach { packet ->
+        session.codec = Network.CODEC
+        session.packetHandler =
+            object : BedrockPacketHandler {
+                override fun handlePacket(packet: BedrockPacket): PacketSignal {
                     server.scheduler.execute {
                         val packetReceiveEvent = PacketReceiveEvent(player, packet)
                         server.pluginManager.callEvent(packetReceiveEvent)
@@ -97,6 +94,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
                             server.logger.info("Handler missing for packet: " + packet::class.java.simpleName)
                         }
                     }
+                    return PacketSignal.HANDLED
                 }
             }
     }
@@ -114,7 +112,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         }
     }
 
-    private fun onDisconnect(disconnectReason: DisconnectReason?) {
+    private fun onDisconnect(disconnectReason: RakDisconnectReason?) {
         server.removePlayer(player)
         player.world?.removeEntity(player)
         player.chunk?.removeEntity(player)
@@ -240,7 +238,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.levelId = ""
         startGamePacket.levelName = player.world!!.name
         startGamePacket.generatorId = 1
-        startGamePacket.itemEntries = ItemPalette.entries
+        startGamePacket.itemDefinitions = ItemPalette.entries
         startGamePacket.xblBroadcastMode = GamePublishSetting.PUBLIC
         startGamePacket.platformBroadcastMode = GamePublishSetting.PUBLIC
         startGamePacket.defaultPlayerPermission = PlayerPermission.MEMBER
@@ -249,7 +247,9 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.premiumWorldTemplateId = ""
         startGamePacket.multiplayerCorrelationId = ""
         startGamePacket.isInventoriesServerAuthoritative = true
-        startGamePacket.playerMovementSettings = SYNCED_PLAYER_MOVEMENT_SETTINGS
+        startGamePacket.authoritativeMovementMode = AuthoritativeMovementMode.CLIENT
+        startGamePacket.rewindHistorySize = 0
+        startGamePacket.isServerAuthoritativeBlockBreaking = false
         startGamePacket.blockRegistryChecksum = 0L
         startGamePacket.playerPropertyData = NbtMap.EMPTY
         startGamePacket.worldTemplateId = UUID(0, 0)
@@ -275,13 +275,13 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         sendPacket(craftingDataPacket)
     }
 
-    private fun parseDisconnectMessage(disconnectReason: DisconnectReason?): String {
-        return when (disconnectReason ?: DisconnectReason.DISCONNECTED) {
-            DisconnectReason.ALREADY_CONNECTED -> {
+    private fun parseDisconnectMessage(disconnectReason: RakDisconnectReason?): String {
+        return when (disconnectReason ?: RakDisconnectReason.DISCONNECTED) {
+            RakDisconnectReason.ALREADY_CONNECTED -> {
                 "Already connected"
             }
 
-            DisconnectReason.SHUTTING_DOWN -> {
+            RakDisconnectReason.SHUTTING_DOWN -> {
                 "Shutdown"
             }
 
@@ -292,7 +292,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     fun disconnect() {
-        onDisconnect(DisconnectReason.DISCONNECTED)
+        onDisconnect(RakDisconnectReason.DISCONNECTED)
         session.disconnect()
     }
 
@@ -313,7 +313,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     fun sendPacket(packet: BedrockPacket) {
-        if (!isClosed && session.packetCodec != null) {
+        if (!isClosed && session.codec != null) {
             val packetSendEvent = PacketSendEvent(player, packet)
             Server.instance.pluginManager.callEvent(packetSendEvent)
             if (packetSendEvent.isCancelled) {
@@ -330,7 +330,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     val isClosed: Boolean
-        get() = session.isClosed
+        get() = !session.isConnected
 
     fun getSession(): BedrockServerSession {
         return session
@@ -349,12 +349,5 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     companion object {
-        private val SYNCED_PLAYER_MOVEMENT_SETTINGS: SyncedPlayerMovementSettings = SyncedPlayerMovementSettings()
-
-        init {
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.movementMode = AuthoritativeMovementMode.CLIENT
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.rewindHistorySize = 0
-            SYNCED_PLAYER_MOVEMENT_SETTINGS.isServerAuthoritativeBlockBreaking = false
-        }
     }
 }

@@ -1,7 +1,8 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.packet.ResourcePackChunkDataPacket
-import com.nukkitx.protocol.bedrock.packet.ResourcePackChunkRequestPacket
+import io.netty.buffer.Unpooled
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackChunkDataPacket
+import org.cloudburstmc.protocol.bedrock.packet.ResourcePackChunkRequestPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.resourcepack.ResourcePack
@@ -18,11 +19,13 @@ class ResourcePackChunkRequestHandler : PacketHandler<ResourcePackChunkRequestPa
         val resourcePackEntryUuid = resourcePackEntryElements[0]
         val resourcePack: ResourcePack? = server.getResourcePackManager().retrieveResourcePackById(resourcePackEntryUuid)
         if (resourcePack != null) {
+            val packDataBuf = Unpooled.buffer()
+            packDataBuf.readBytes(resourcePack.getChunk(1048576 * packet.chunkIndex, 1048576))
             val resourcePackChunkDataPacket = ResourcePackChunkDataPacket()
             resourcePackChunkDataPacket.packId = packet.packId
             resourcePackChunkDataPacket.packVersion = packet.packVersion
             resourcePackChunkDataPacket.chunkIndex = packet.chunkIndex
-            resourcePackChunkDataPacket.data = resourcePack.getChunk(1048576 * packet.chunkIndex, 1048576)
+            resourcePackChunkDataPacket.data = packDataBuf
             resourcePackChunkDataPacket.progress = 1048576L * packet.chunkIndex
             player.playerConnection.sendPacketImmediately(resourcePackChunkDataPacket)
         }

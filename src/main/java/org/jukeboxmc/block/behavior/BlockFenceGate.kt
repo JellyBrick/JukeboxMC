@@ -1,7 +1,7 @@
 package org.jukeboxmc.block.behavior
 
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.protocol.bedrock.data.LevelEventType
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.direction.BlockFace
 import org.jukeboxmc.block.direction.Direction
@@ -60,7 +60,7 @@ class BlockFenceGate : Block {
             }
         }
         isOpen = !isOpen
-        location.world?.sendLevelEvent(location, LevelEventType.SOUND_DOOR_OPEN, 0)
+        location.world?.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
         return true
     }
 

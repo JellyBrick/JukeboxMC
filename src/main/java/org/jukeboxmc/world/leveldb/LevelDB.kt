@@ -1,11 +1,11 @@
 package org.jukeboxmc.world.leveldb
 
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtUtils
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
 import net.daporkchop.ldbjni.LevelDB
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtUtils
 import org.iq80.leveldb.CompressionType
 import org.iq80.leveldb.DB
 import org.iq80.leveldb.Options

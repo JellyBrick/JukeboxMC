@@ -1,10 +1,10 @@
 package org.jukeboxmc.entity
 
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.data.entity.EntityEventType
-import com.nukkitx.protocol.bedrock.packet.EntityEventPacket
-import com.nukkitx.protocol.bedrock.packet.MobEffectPacket
 import org.apache.commons.math3.util.FastMath
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityEventType
+import org.cloudburstmc.protocol.bedrock.packet.EntityEventPacket
+import org.cloudburstmc.protocol.bedrock.packet.MobEffectPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.entity.attribute.Attribute
 import org.jukeboxmc.entity.attribute.AttributeType
@@ -301,11 +301,11 @@ abstract class EntityLiving : Entity() {
             val r = color[0] / count and 0xff
             val g = color[1] / count and 0xff
             val b = color[2] / count and 0xff
-            this.updateMetadata(metadata.setInt(EntityData.EFFECT_COLOR, (r shl 16) + (g shl 8) + b))
-            this.updateMetadata(metadata.setByte(EntityData.EFFECT_AMBIENT, 0.toByte()))
+            this.updateMetadata(metadata.setInt(EntityDataTypes.EFFECT_COLOR, (r shl 16) + (g shl 8) + b))
+            this.updateMetadata(metadata.setByte(EntityDataTypes.EFFECT_AMBIENCE, 0.toByte()))
         } else {
-            this.updateMetadata(metadata.setInt(EntityData.EFFECT_COLOR, 0))
-            this.updateMetadata(metadata.setByte(EntityData.EFFECT_AMBIENT, 0.toByte()))
+            this.updateMetadata(metadata.setInt(EntityDataTypes.EFFECT_COLOR, 0))
+            this.updateMetadata(metadata.setByte(EntityDataTypes.EFFECT_AMBIENCE, 0.toByte()))
         }
     }
 

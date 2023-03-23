@@ -1,9 +1,9 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.data.LevelEventType
-import com.nukkitx.protocol.bedrock.data.PlayerActionType
-import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
-import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent
+import org.cloudburstmc.protocol.bedrock.data.PlayerActionType
+import org.cloudburstmc.protocol.bedrock.packet.LevelEventPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlayerActionPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.BlockType
 import org.jukeboxmc.event.player.PlayerInteractEvent
@@ -132,7 +132,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                     val breakTime = ceil(startBreakBlock.getBreakTime(player.inventory.itemInHand, player) * 20)
                     if (breakTime > 0) {
                         val levelEventPacket = LevelEventPacket()
-                        levelEventPacket.type = LevelEventType.BLOCK_START_BREAK
+                        levelEventPacket.type = LevelEvent.BLOCK_START_BREAK
                         levelEventPacket.position = packet.blockPosition.toFloat()
                         levelEventPacket.data = (65535 / breakTime).toInt()
                         player.world?.sendChunkPacket(
@@ -149,7 +149,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.STOP_BREAK, PlayerActionType.ABORT_BREAK -> {
                 val levelEventPacket = LevelEventPacket()
-                levelEventPacket.type = LevelEventType.BLOCK_STOP_BREAK
+                levelEventPacket.type = LevelEvent.BLOCK_STOP_BREAK
                 levelEventPacket.position = packet.blockPosition.toFloat()
                 levelEventPacket.data = 0
                 player.world?.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)

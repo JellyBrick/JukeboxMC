@@ -2,10 +2,11 @@ package org.jukeboxmc.util
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtUtils
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtUtils
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
 import org.jukeboxmc.Bootstrap
+import org.jukeboxmc.item.Item
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.util.Base64
@@ -55,11 +56,12 @@ object CreativeItems {
     }
 
     private fun toItemData(identifier: Identifier, blockRuntimeId: Int): ItemData.Builder {
+        val item = Item.createItem(identifier)
         return ItemData.builder()
-            .id(ItemPalette.getRuntimeId(identifier))
-            .blockRuntimeId(blockRuntimeId)
+            .definition(item.definition) // TODO: component based
+            .blockDefinition(item.toBlock().definition)
             .count(1)
-            .canPlace(arrayOf())
-            .canBreak(arrayOf())
+            .canPlace(*arrayOf())
+            .canBreak(*arrayOf())
     }
 }

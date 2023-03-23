@@ -1,22 +1,22 @@
 package org.jukeboxmc.world
 
 import com.google.common.collect.ImmutableSet
-import com.nukkitx.nbt.NBTInputStream
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtUtils
-import com.nukkitx.nbt.util.stream.LittleEndianDataInputStream
-import com.nukkitx.nbt.util.stream.LittleEndianDataOutputStream
-import com.nukkitx.protocol.bedrock.BedrockPacket
-import com.nukkitx.protocol.bedrock.data.LevelEventType
-import com.nukkitx.protocol.bedrock.data.SoundEvent
-import com.nukkitx.protocol.bedrock.packet.LevelEventPacket
-import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket
-import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket
-import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
-import com.nukkitx.protocol.bedrock.packet.SetTimePacket
-import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.apache.commons.math3.util.FastMath
+import org.cloudburstmc.nbt.NBTInputStream
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtUtils
+import org.cloudburstmc.nbt.util.stream.LittleEndianDataInputStream
+import org.cloudburstmc.nbt.util.stream.LittleEndianDataOutputStream
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent
+import org.cloudburstmc.protocol.bedrock.data.SoundEvent
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket
+import org.cloudburstmc.protocol.bedrock.packet.LevelEventPacket
+import org.cloudburstmc.protocol.bedrock.packet.LevelSoundEventPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetSpawnPositionPacket
+import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
@@ -51,9 +51,6 @@ import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashSet
 
 /**
  * @author LucGamesYT
@@ -72,11 +69,12 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         File(worldFolder, "level.dat")
     }
     private val levelDB = LevelDB(this)
-    private val chunkManagers: MutableMap<Dimension, ChunkManager> = Object2ObjectOpenHashMap<Dimension, ChunkManager>().also {
-        Dimension.values().forEach { dimension ->
-            it[dimension] = ChunkManager(this, dimension)
+    private val chunkManagers: MutableMap<Dimension, ChunkManager> =
+        Object2ObjectOpenHashMap<Dimension, ChunkManager>().also {
+            Dimension.values().forEach { dimension ->
+                it[dimension] = ChunkManager(this, dimension)
+            }
         }
-    }
     private val generators: MutableMap<Dimension, ThreadLocal<Generator>> =
         Object2ObjectOpenHashMap<Dimension, ThreadLocal<Generator>>().also {
             val sendWarning = AtomicBoolean(false)
@@ -308,7 +306,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         block.layer = layer
         val updateBlockPacket = UpdateBlockPacket()
         updateBlockPacket.blockPosition = vector.toVector3i()
-        updateBlockPacket.runtimeId = block.runtimeId
+        updateBlockPacket.definition = block.definition
         updateBlockPacket.dataLayer = layer
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         sendChunkPacket(vector.chunkX, vector.chunkZ, updateBlockPacket)
@@ -556,7 +554,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
 
     fun spawnParticle(player: Player?, particle: Particle, position: Vector, data: Int) {
         val levelEventPacket = LevelEventPacket()
-        levelEventPacket.type = particle.toLevelEvent()
+        levelEventPacket.type = particle.type
         levelEventPacket.data = data
         levelEventPacket.position = position.toVector3f()
         if (player != null) {
@@ -566,19 +564,19 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         }
     }
 
-    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType) {
+    fun sendLevelEvent(position: Vector, levelEventType: LevelEvent) {
         this.sendLevelEvent(null, position, levelEventType, 0)
     }
 
-    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType) {
+    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEvent) {
         this.sendLevelEvent(player, position, levelEventType, 0)
     }
 
-    fun sendLevelEvent(position: Vector, levelEventType: LevelEventType, data: Int) {
+    fun sendLevelEvent(position: Vector, levelEventType: LevelEvent, data: Int) {
         this.sendLevelEvent(null, position, levelEventType, data)
     }
 
-    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEventType, data: Int) {
+    fun sendLevelEvent(player: Player?, position: Vector, levelEventType: LevelEvent, data: Int) {
         val levelEventPacket = LevelEventPacket()
         levelEventPacket.position = position.toVector3f()
         levelEventPacket.type = levelEventType

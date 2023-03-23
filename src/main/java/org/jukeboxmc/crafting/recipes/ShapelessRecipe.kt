@@ -1,10 +1,11 @@
 package org.jukeboxmc.crafting.recipes
 
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingData
-import com.nukkitx.protocol.bedrock.data.inventory.CraftingDataType
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData
-import com.nukkitx.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.CraftingDataType
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.CraftingRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.ShapelessRecipeData
+import org.cloudburstmc.protocol.bedrock.data.inventory.descriptor.ItemDescriptorWithCount
 import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.item.Item
 import java.util.UUID
@@ -35,14 +36,10 @@ class ShapelessRecipe : Recipe() {
         return this
     }
 
-    override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingData {
-        return CraftingData(
+    override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingRecipeData {
+        return ShapelessRecipeData.of(
             CraftingDataType.SHAPELESS,
             recipeId,
-            -1,
-            -1,
-            -1,
-            -1,
             ingredients,
             outputs,
             UUID.randomUUID(),

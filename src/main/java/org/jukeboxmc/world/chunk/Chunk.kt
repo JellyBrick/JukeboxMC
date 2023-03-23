@@ -1,14 +1,14 @@
 package org.jukeboxmc.world.chunk
 
 import com.google.common.collect.ImmutableSet
-import com.nukkitx.nbt.NbtMap
-import com.nukkitx.nbt.NbtUtils
-import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.nbt.NbtUtils
+import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket
 import org.iq80.leveldb.WriteBatch
 import org.jukeboxmc.block.Block
 import org.jukeboxmc.block.BlockType
@@ -290,7 +290,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
             writeTo(byteBuf)
             val data = ByteArray(byteBuf.readableBytes())
             byteBuf.readBytes(data)
-            levelChunkPacket.data = data
+            levelChunkPacket.data = byteBuf // FIXME
             levelChunkPacket
         } finally {
             byteBuf.release()

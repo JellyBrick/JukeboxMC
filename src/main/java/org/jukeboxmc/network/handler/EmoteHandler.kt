@@ -1,7 +1,7 @@
 package org.jukeboxmc.network.handler
 
-import com.nukkitx.protocol.bedrock.data.EmoteFlag
-import com.nukkitx.protocol.bedrock.packet.EmotePacket
+import org.cloudburstmc.protocol.bedrock.data.EmoteFlag
+import org.cloudburstmc.protocol.bedrock.packet.EmotePacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.player.Player
 

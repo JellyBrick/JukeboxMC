@@ -1,11 +1,11 @@
 package org.jukeboxmc.world.gamerule
 
-import com.nukkitx.protocol.bedrock.data.GameRuleData
-import com.nukkitx.protocol.bedrock.packet.GameRulesChangedPacket
+import org.cloudburstmc.protocol.bedrock.data.GameRuleData
+import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket
 import java.util.EnumMap
 
 class GameRules {
-    private val gameRules: MutableMap<GameRule, Any> = EnumMap(org.jukeboxmc.world.gamerule.GameRule::class.java)
+    private val gameRules: MutableMap<GameRule, Any> = EnumMap(GameRule::class.java)
     private var changedPacket: GameRulesChangedPacket? = null
 
     init {

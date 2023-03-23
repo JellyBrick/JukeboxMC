@@ -1,11 +1,11 @@
 package org.jukeboxmc.player.skin
 
-import com.nukkitx.protocol.bedrock.data.skin.AnimatedTextureType
-import com.nukkitx.protocol.bedrock.data.skin.AnimationData
-import com.nukkitx.protocol.bedrock.data.skin.ImageData
-import com.nukkitx.protocol.bedrock.data.skin.PersonaPieceData
-import com.nukkitx.protocol.bedrock.data.skin.PersonaPieceTintData
-import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin
+import org.cloudburstmc.protocol.bedrock.data.skin.AnimatedTextureType
+import org.cloudburstmc.protocol.bedrock.data.skin.AnimationData
+import org.cloudburstmc.protocol.bedrock.data.skin.ImageData
+import org.cloudburstmc.protocol.bedrock.data.skin.PersonaPieceData
+import org.cloudburstmc.protocol.bedrock.data.skin.PersonaPieceTintData
+import org.cloudburstmc.protocol.bedrock.data.skin.SerializedSkin
 import java.util.UUID
 
 /**

@@ -1,11 +1,10 @@
 package org.jukeboxmc.command
 
 import com.google.common.collect.ImmutableMap
-import com.nukkitx.protocol.bedrock.data.command.CommandEnumData
-import com.nukkitx.protocol.bedrock.data.command.CommandParam
-import com.nukkitx.protocol.bedrock.data.command.CommandParamData
-import com.nukkitx.protocol.bedrock.data.command.CommandParamOption
-import com.nukkitx.protocol.bedrock.data.command.CommandParamType
+import org.cloudburstmc.protocol.bedrock.data.command.CommandEnumData
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParam
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParamType
 
 /**
  * @author Cloudburst
@@ -42,14 +41,23 @@ class CommandParameter {
     }
 
     fun toNetwork(): CommandParamData {
-        return CommandParamData(
-            name,
-            optional,
-            if (enumData != null) CommandEnumData(name, enumData!!.values.toTypedArray(), false) else null,
-            PARAM_MAPPINGS[type],
-            postFix,
-            emptyList<CommandParamOption>(),
-        )
+        return CommandParamData().apply {
+            this.name = name
+            this.isOptional = optional
+            this.enumData =
+                if (enumData != null) {
+                    CommandEnumData(
+                        name,
+                        enumData.values,
+                        false,
+                    )
+                } else {
+                    null
+                }
+            this.type = PARAM_MAPPINGS[type.paramType]
+            this.postfix = postFix
+//            this.options = emptySet<CommandParamOption>()
+        }
     }
 
     companion object {

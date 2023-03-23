@@ -1,28 +1,28 @@
 package org.jukeboxmc.player
 
-import com.nukkitx.math.vector.Vector3f
-import com.nukkitx.protocol.bedrock.data.command.CommandData
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.data.entity.EntityEventType
-import com.nukkitx.protocol.bedrock.data.entity.EntityFlag
-import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket
-import com.nukkitx.protocol.bedrock.packet.ChangeDimensionPacket
-import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket
-import com.nukkitx.protocol.bedrock.packet.DeathInfoPacket
-import com.nukkitx.protocol.bedrock.packet.EntityEventPacket
-import com.nukkitx.protocol.bedrock.packet.ModalFormRequestPacket
-import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
-import com.nukkitx.protocol.bedrock.packet.PlaySoundPacket
-import com.nukkitx.protocol.bedrock.packet.RespawnPacket
-import com.nukkitx.protocol.bedrock.packet.ServerSettingsResponsePacket
-import com.nukkitx.protocol.bedrock.packet.SetPlayerGameTypePacket
-import com.nukkitx.protocol.bedrock.packet.SetSpawnPositionPacket
-import com.nukkitx.protocol.bedrock.packet.TextPacket
-import com.nukkitx.protocol.bedrock.packet.ToastRequestPacket
-import com.nukkitx.protocol.bedrock.packet.UpdateAttributesPacket
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import org.cloudburstmc.math.vector.Vector3f
+import org.cloudburstmc.protocol.bedrock.data.command.CommandData
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityEventType
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityFlag
+import org.cloudburstmc.protocol.bedrock.packet.AvailableCommandsPacket
+import org.cloudburstmc.protocol.bedrock.packet.ChangeDimensionPacket
+import org.cloudburstmc.protocol.bedrock.packet.ContainerClosePacket
+import org.cloudburstmc.protocol.bedrock.packet.DeathInfoPacket
+import org.cloudburstmc.protocol.bedrock.packet.EntityEventPacket
+import org.cloudburstmc.protocol.bedrock.packet.ModalFormRequestPacket
+import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket
+import org.cloudburstmc.protocol.bedrock.packet.PlaySoundPacket
+import org.cloudburstmc.protocol.bedrock.packet.RespawnPacket
+import org.cloudburstmc.protocol.bedrock.packet.ServerSettingsResponsePacket
+import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket
+import org.cloudburstmc.protocol.bedrock.packet.SetSpawnPositionPacket
+import org.cloudburstmc.protocol.bedrock.packet.TextPacket
+import org.cloudburstmc.protocol.bedrock.packet.ToastRequestPacket
+import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.command.CommandSender
 import org.jukeboxmc.entity.Entity
@@ -241,8 +241,8 @@ open class Player(
         if (metadata.getFlag(EntityFlag.BREATHING) != breathing && gameMode == GameMode.SURVIVAL) {
             this.updateMetadata(metadata.setFlag(EntityFlag.BREATHING, breathing))
         }
-        var air = metadata.getShort(EntityData.AIR_SUPPLY)
-        val maxAir = metadata.getShort(EntityData.MAX_AIR_SUPPLY)
+        var air = metadata.getShort(EntityDataTypes.AIR_SUPPLY)
+        val maxAir = metadata.getShort(EntityDataTypes.AIR_SUPPLY_MAX)
         if (gameMode == GameMode.SURVIVAL) {
             if (!breathing) {
                 if (--air < 0) {
@@ -250,11 +250,11 @@ open class Player(
                         damage(EntityDamageEvent(this, 2f, DamageSource.DROWNING))
                     }
                 } else {
-                    this.updateMetadata(metadata.setShort(EntityData.AIR_SUPPLY, air))
+                    this.updateMetadata(metadata.setShort(EntityDataTypes.AIR_SUPPLY, air))
                 }
             } else {
                 if (air != maxAir) {
-                    this.updateMetadata(metadata.setShort(EntityData.AIR_SUPPLY, maxAir))
+                    this.updateMetadata(metadata.setShort(EntityDataTypes.AIR_SUPPLY, maxAir))
                 }
             }
         }
@@ -437,7 +437,7 @@ open class Player(
         if (currentInventory != null) {
             val containerClosePacket = ContainerClosePacket()
             containerClosePacket.id = windowId
-            containerClosePacket.isUnknownBool0 = closingWindowId != windowId.toInt()
+            containerClosePacket.isServerInitiated = closingWindowId != windowId.toInt()
             playerConnection.sendPacket(containerClosePacket)
             currentInventory!!.removeViewer(this)
             Server.instance.pluginManager.callEvent(
@@ -454,7 +454,7 @@ open class Player(
         if (currentInventory != null) {
             val containerClosePacket = ContainerClosePacket()
             containerClosePacket.id = windowId
-            containerClosePacket.isUnknownBool0 = isServerSide
+            containerClosePacket.isServerInitiated = isServerSide
             playerConnection.sendPacket(containerClosePacket)
             currentInventory!!.removeViewer(this)
             Server.instance.pluginManager.callEvent(
@@ -467,7 +467,7 @@ open class Player(
         } else {
             val containerClosePacket = ContainerClosePacket()
             containerClosePacket.id = windowId
-            containerClosePacket.isUnknownBool0 = isServerSide
+            containerClosePacket.isServerInitiated = isServerSide
             playerConnection.sendPacket(containerClosePacket)
         }
     }
@@ -574,10 +574,8 @@ open class Player(
         val availableCommandsPacket = AvailableCommandsPacket()
         val commandList: MutableSet<CommandData> = HashSet()
         for (command in server.pluginManager.getCommandManager().getCommands()) {
-            if (command.commandData.getPermission() != null) {
-                if (!hasPermission(command.commandData.getPermission())) {
-                    continue
-                }
+            if (!hasPermission(command.commandData.getPermission())) {
+                continue
             }
             commandList.add(command.commandData.toNetwork())
         }
