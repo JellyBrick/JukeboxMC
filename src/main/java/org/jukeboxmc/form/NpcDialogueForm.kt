@@ -1,9 +1,6 @@
 package org.jukeboxmc.form
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.nukkitx.protocol.bedrock.data.entity.EntityData
-import com.nukkitx.protocol.bedrock.packet.NpcDialoguePacket
-import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
 import org.cloudburstmc.protocol.bedrock.packet.NpcDialoguePacket
