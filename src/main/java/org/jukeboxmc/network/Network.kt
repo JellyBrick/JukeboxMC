@@ -28,10 +28,8 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
     init {
         updater = Consumer<PlayerConnection> { obj: PlayerConnection -> obj.update() }
         try {
-            // TODO: Add pipeline to handle requests
-            // TODO: ip ban from pipeline
             val bootstrap: ServerBootstrap = ServerBootstrap()
-                .channelFactory(RakChannelFactory.server(NioDatagramChannel::class.java))
+                .channelFactory(RakChannelFactory.server(NioDatagramChannel::class.java)) // TODO: epoll, kqueue
                 .childHandler(object : BedrockServerInitializer() {
                     override fun initSession(bedrockServerSession: BedrockServerSession) {
                         val playerConnection = addPlayer(PlayerConnection(server, bedrockServerSession))
@@ -93,6 +91,7 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
             val playerConnection = playerConnectionIterator.next()
             playerConnection.disconnect("Server closed") // TODO: configurable
         }
+        channels.forEach(Channel::close)
     }
 
     companion object {
