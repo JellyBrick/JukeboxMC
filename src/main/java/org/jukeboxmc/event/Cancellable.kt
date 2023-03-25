@@ -6,14 +6,10 @@ package org.jukeboxmc.event
  */
 interface Cancellable {
     /**
-     * Retrieves whether the [Cancellable] implementation is cancelled or not
+     * Retrieves whether the [Cancellable] implementation is cancelled or not,
+     * and updates the cancelled state to the given value
      *
-     * @return whether the event implementation is cancelled
-     */
-    /**
-     * Updates the cancelled state to the given value
-     *
-     * @param cancelled which should be set
+     * [isCancelled] which should be set
      */
     var isCancelled: Boolean
 }

@@ -18,16 +18,13 @@ class BlockFromToEvent
     /**
      * Modifies the result block
      *
-     * @param blockTo which should be modified
+     * [blockTo] which should be modified
      */
     var blockTo: Block,
 ) : BlockEvent(block), Cancellable {
     /**
      * Retrieves the result bock which was affected with the event
-     *
-     * @return a fresh [Block]
      */
-
     val blockFrom: Block
         /**
          * Retrieves the original block

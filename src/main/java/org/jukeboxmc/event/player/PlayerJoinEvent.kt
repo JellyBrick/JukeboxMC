@@ -14,16 +14,5 @@ class PlayerJoinEvent
  * @param joinMessage which will be sent when the player joins
  */(
     player: Player,
-    /**
-     * Modifies the player join message
-     *
-     * @param joinMessage which should be modified
-     */
     var joinMessage: String,
-) : PlayerEvent(player) {
-    /**
-     * Retrieves the player join message
-     *
-     * @return a fresh [String]
-     */
-}
+) : PlayerEvent(player)

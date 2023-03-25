@@ -10,18 +10,12 @@ class MapLayerBiomeVariation
  *
  * @param seed       the PRNG seed
  * @param belowLayer the layer below this one
+ * @param variationLayer the variation layer, or null to use no variation layer
  */ @JvmOverloads constructor(
     seed: Long,
     private val belowLayer: MapLayer,
     private val variationLayer: MapLayer? = null,
 ) : MapLayer(seed) {
-    /**
-     * Creates an instance with the given variation layer.
-     *
-     * @param seed           the PRNG seed
-     * @param belowLayer     the layer below this one
-     * @param variationLayer the variation layer, or null to use no variation layer
-     */
     override fun generateValues(x: Int, z: Int, sizeX: Int, sizeZ: Int): IntArray {
         return if (variationLayer == null) {
             generateRandomValues(x, z, sizeX, sizeZ)

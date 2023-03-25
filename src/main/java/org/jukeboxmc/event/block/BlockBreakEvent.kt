@@ -20,26 +20,19 @@ class BlockBreakEvent
     /**
      * Retrieves the player who comes with this event
      *
-     * @return a fresh [Player]
+     * [player] a fresh [Player]
      */
     val player: Player,
     /**
      * Modifies the block which was broken
      *
-     * @param block which was broken
+     * [block] which was broken
      */
     override var block: Block,
     /**
      * Modifies the drops of the block which was broken
      *
-     * @param drops which should be updated
+     * [drops] which should be updated
      */
     var drops: List<Item>,
-) : BlockEvent(block), Cancellable {
-
-    /**
-     * Retrieves the drops of the block
-     *
-     * @return a fresh [<]
-     */
-}
+) : BlockEvent(block), Cancellable

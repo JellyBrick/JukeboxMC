@@ -17,27 +17,6 @@ class PlayerMoveEvent
  * @param to     which represents the players currently position
  */(
     player: Player,
-    /**
-     * Modifies the from [Location]
-     *
-     * @param from which should be modified
-     */
     var from: Location,
-    /**
-     * Modifies the to [Location]
-     *
-     * @param to which should be modified
-     */
     var to: Location,
-) : PlayerEvent(player), Cancellable {
-    /**
-     * Retrieves the from [Location]
-     *
-     * @return a fresh [Location]
-     */
-    /**
-     * Retrieves the to [Location]
-     *
-     * @return a fresh [Location]
-     */
-}
+) : PlayerEvent(player), Cancellable

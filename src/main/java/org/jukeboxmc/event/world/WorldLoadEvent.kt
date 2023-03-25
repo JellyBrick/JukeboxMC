@@ -13,11 +13,6 @@ class WorldLoadEvent
  *
  * @param world which should be loaded
  */(
-    /**
-     * Modifies the [World]
-     *
-     * @param world which should be modified
-     */
     override var world: World,
     val loadType: LoadType,
 ) : WorldEvent(world), Cancellable {

@@ -22,16 +22,5 @@ class PlayerBucketEmptyEvent
     bucket: Item,
     itemInHand: Item,
     clickedBlock: Block?,
-    /**
-     * Modifies the block which will be placed
-     *
-     * @param placedBlock which will be placed
-     */
     var placedBlock: Block?,
-) : PlayerBucketEvent(player, bucket, itemInHand, clickedBlock) {
-    /**
-     * Retrieves the block which will be placed
-     *
-     * @return a fresh [Block]
-     */
-}
+) : PlayerBucketEvent(player, bucket, itemInHand, clickedBlock)

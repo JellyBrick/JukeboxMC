@@ -14,15 +14,11 @@ import java.util.Random
  *
  *
  * This could be sped up even further, but it's useful as is.
+ *
+ * @param rand the PRNG to use
  */
 open class SimplexNoise(rand: Random) : PerlinNoise(rand) {
     protected val permMod12 = IntArray(512)
-
-    /**
-     * Creates a simplex noise generator.
-     *
-     * @param rand the PRNG to use
-     */
     init {
         for (i in 0..511) {
             permMod12[i] = perm[i] % 12

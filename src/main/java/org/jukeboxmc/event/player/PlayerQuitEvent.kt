@@ -14,16 +14,5 @@ class PlayerQuitEvent
  * @param quitMessage which will be sent when the player leaves the server
  */(
     player: Player,
-    /**
-     * Modifies the leave message
-     *
-     * @param quitMessage which should be modified
-     */
     var quitMessage: String,
-) : PlayerEvent(player) {
-    /**
-     * Retrieves the leave message
-     *
-     * @return a fresh [String]
-     */
-}
+) : PlayerEvent(player)

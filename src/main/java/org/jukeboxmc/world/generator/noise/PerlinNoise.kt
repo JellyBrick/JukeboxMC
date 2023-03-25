@@ -3,12 +3,12 @@ package org.jukeboxmc.world.generator.noise
 import org.jukeboxmc.world.generator.noise.bukkit.PerlinNoiseGenerator
 import java.util.Random
 
+/**
+ * Creates an instance using the given PRNG.
+ *
+ * @param rand the PRNG used to generate the seed permutation
+ */
 open class PerlinNoise(rand: Random) : PerlinNoiseGenerator() {
-    /**
-     * Creates an instance using the given PRNG.
-     *
-     * @param rand the PRNG used to generate the seed permutation
-     */
     init {
         offsetX = rand.nextDouble() * 256
         offsetY = rand.nextDouble() * 256

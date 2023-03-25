@@ -3,25 +3,17 @@ package org.jukeboxmc.world.generator.noise.bukkit
 import java.util.Random
 
 /**
- * Creates simplex noise through unbiased octaves
- */
-class SimplexOctaveGenerator
-/**
  * Creates a simplex octave generator for the given [Random]
  *
  * @param rand    Random object to construct this generator for
  * @param octaves Amount of octaves to create
  */
-(rand: Random, octaves: Int) : OctaveGenerator(createOctaves(rand, octaves)) {
+class SimplexOctaveGenerator(rand: Random, octaves: Int) : OctaveGenerator(createOctaves(rand, octaves)) {
     /**
-     * Gets the scale used for each W-coordinates passed
+     * Gets & Sets the scale used for each W-coordinates passed
      *
+     * [wScale] New W scale
      * @return W scale
-     */
-    /**
-     * Sets the scale used for each W-coordinates passed
-     *
-     * @param scale New W scale
      */
     var wScale = 1.0
 

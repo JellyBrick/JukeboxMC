@@ -35,14 +35,7 @@ abstract class PlayerBucketEvent
     /**
      * Modifies the block the player clicked at
      *
-     * @param clickedBlock which will be changed
+     * [clickedBlock] which will be changed
      */
     var clickedBlock: Block?,
-) : PlayerEvent(player), Cancellable {
-
-    /**
-     * Retrieves the block the player clicked at
-     *
-     * @return a fresh [Block]
-     */
-}
+) : PlayerEvent(player), Cancellable

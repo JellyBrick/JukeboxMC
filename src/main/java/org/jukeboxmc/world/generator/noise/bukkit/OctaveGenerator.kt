@@ -5,45 +5,33 @@ package org.jukeboxmc.world.generator.noise.bukkit
  */
 abstract class OctaveGenerator protected constructor(octaves: Array<NoiseGenerator>) {
     private val originalOctaves = octaves
+
+    /**
+     * Gets a clone of the individual octaves used within this generator
+     *
+     * @return Clone of the individual octaves
+     */
     val octaves
-        /**
-         * Gets a clone of the individual octaves used within this generator
-         *
-         * @return Clone of the individual octaves
-         */
         get() = originalOctaves.clone()
 
     /**
-     * Gets the scale used for each X-coordinates passed
+     * Gets & Sets the scale used for each X-coordinates passed
      *
-     * @return X scale
-     */
-    /**
-     * Sets the scale used for each X-coordinates passed
-     *
-     * @param scale New X scale
+     * [xScale] X scale
      */
     var xScale = 1.0
+
     /**
-     * Gets the scale used for each Y-coordinates passed
+     * Gets & Sets the scale used for each Y-coordinates passed
      *
-     * @return Y scale
-     */
-    /**
-     * Sets the scale used for each Y-coordinates passed
-     *
-     * @param scale New Y scale
+     * [yScale] Y scale
      */
     var yScale = 1.0
+
     /**
-     * Gets the scale used for each Z-coordinates passed
+     * Gets & Sets the scale used for each Z-coordinates passed
      *
      * @return Z scale
-     */
-    /**
-     * Sets the scale used for each Z-coordinates passed
-     *
-     * @param scale New Z scale
      */
     var zScale = 1.0
 

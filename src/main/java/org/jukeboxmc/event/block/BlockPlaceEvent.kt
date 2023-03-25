@@ -26,25 +26,19 @@ class BlockPlaceEvent
     /**
      * Modifies the block which should be placed
      *
-     * @param placedBlock which should be placed
+     * [placedBlock] which should be placed
      */
     var placedBlock: Block,
     /**
      * Retrieves the block which was replaced
      *
-     * @return a fresh [Block]
+     * [replacedBlock] a fresh [Block]
      */
     val replacedBlock: Block,
     /**
      * Retrieves the block the player clicked at
      *
-     * @return [Block]
+     * [clickedBlock] [Block]
      */
     val clickedBlock: Block,
-) : BlockEvent(placedBlock), Cancellable {
-    /**
-     * Retrieves the block which should be placed
-     *
-     * @return a fresh [Block]
-     */
-}
+) : BlockEvent(placedBlock), Cancellable

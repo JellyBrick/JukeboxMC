@@ -17,15 +17,12 @@ class PlayerInteractEvent : PlayerEvent, Cancellable {
      * @return a fresh [Action]
      */
     val action: Action
+
     /**
-     * Retrieves the interaction [Item]
-     *
-     * @return a fresh [Item]
-     */
-    /**
-     * Modifies the interaction [Item]
+     * Retrieves & Modifies the interaction [Item]
      *
      * @param item which should be modified
+     * @return a fresh [Item]
      */
     var item: Item
 

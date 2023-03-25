@@ -13,10 +13,5 @@ class WorldUnloadEvent
  *
  * @param world which should be unloaded
  */(
-    /**
-     * Modifies the [World]
-     *
-     * @param world which should be modified
-     */
     override var world: World,
 ) : WorldEvent(world), Cancellable

@@ -5,6 +5,15 @@ import org.jukeboxmc.world.generator.noise.bukkit.OctaveGenerator
 import java.util.Arrays
 import java.util.Random
 
+/**
+ * Creates a generator for multiple layers of Perlin noise.
+ *
+ * @param octaves the noise generators
+ * @param rand    the PRNG
+ * @param sizeX   the size on the X axis
+ * @param sizeY   the size on the Y axis
+ * @param sizeZ   the size on the Z axis
+ */
 open class PerlinOctaveGenerator(
     octaves: Array<NoiseGenerator>,
     rand: Random?,
@@ -23,15 +32,6 @@ open class PerlinOctaveGenerator(
         sizeZ,
     )
 
-    /**
-     * Creates a generator for multiple layers of Perlin noise.
-     *
-     * @param octaves the noise generators
-     * @param rand    the PRNG
-     * @param sizeX   the size on the X axis
-     * @param sizeY   the size on the Y axis
-     * @param sizeZ   the size on the Z axis
-     */
     init {
         noise = DoubleArray(sizeX * sizeY * sizeZ)
     }
