@@ -15,11 +15,7 @@ import org.jukeboxmc.world.chunk.manager.PopulationChunkManager
 class FlatGenerator(world: World?) : Generator() {
     private val blockGrass: Block = Block.create(BlockType.GRASS)
     private val blockDirt: Block = Block.create(BlockType.DIRT)
-    private val blockBedrock: Block
-
-    init {
-        blockBedrock = Block.create(BlockType.BEDROCK)
-    }
+    private val blockBedrock: Block = Block.create(BlockType.BEDROCK)
 
     override fun generate(chunk: Chunk, chunkX: Int, chunkZ: Int) {
         for (blockX in 0..15) {

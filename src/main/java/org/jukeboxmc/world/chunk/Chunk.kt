@@ -48,7 +48,7 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
         Dimension.NETHER -> 127
         Dimension.THE_END -> 255
     }
-    val fullHeight: Int
+    val fullHeight: Int = abs(minY) + maxY + 1
     private val entities: MutableSet<Entity>
     val players: MutableSet<Player>
     val blockEntities: Int2ObjectMap<BlockEntity>
@@ -61,7 +61,6 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
     var chunkState: ChunkState
 
     init {
-        fullHeight = abs(minY) + maxY + 1
         entities = CopyOnWriteArraySet()
         players = CopyOnWriteArraySet()
         blockEntities = Int2ObjectOpenHashMap()

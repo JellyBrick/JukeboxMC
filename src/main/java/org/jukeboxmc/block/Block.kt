@@ -178,7 +178,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     }
 
     open fun toItem(): Item {
-        return Item.create<Item>(identifier)
+        return Item.create(identifier)
     }
 
     open val boundingBox: AxisAlignedBB
@@ -215,18 +215,18 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
                 item.updateItem(player, 1)
             }
             player.exhaust(0.025f)
-            val itemDrops: MutableList<EntityItem> = ArrayList()
+            val itemDrops = mutableListOf<EntityItem>()
             for (droppedItem in blockBreakEvent.drops) {
                 if (droppedItem.type != ItemType.AIR) {
                     itemDrops.add(player.world!!.dropItem(droppedItem, breakLocation.clone(), null))
                 }
             }
             if (itemDrops.isNotEmpty()) {
-                itemDrops.forEach { obj -> obj.spawn() }
+                itemDrops.forEach { it.spawn() }
             }
         }
         playBreakSound()
-        breakLocation.world!!.sendLevelEvent(breakLocation, LevelEvent.PARTICLE_DESTROY_BLOCK, runtimeId)
+        breakLocation.world?.sendLevelEvent(breakLocation, LevelEvent.PARTICLE_DESTROY_BLOCK, runtimeId)
     }
 
     private fun playBreakSound() {

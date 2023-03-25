@@ -355,6 +355,5 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         return playerChunkManager
     }
 
-    companion object {
-    }
+    companion object
 }

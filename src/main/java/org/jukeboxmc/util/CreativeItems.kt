@@ -87,7 +87,7 @@ object CreativeItems {
 
     private fun toItemData(
         itemDefinition: ItemDefinition,
-        blockDefinition: BlockDefinition?,
+        blockDefinition: BlockDefinition,
         meta: Int,
     ): ItemData.Builder {
         return ItemData.builder()

@@ -8,7 +8,7 @@ import java.util.EnumMap
  * @version 1.0
  */
 object BiomePopulatorRegistry {
-    private val POPULATOR_MAP: MutableMap<Biome, BiomePopulator> = EnumMap(org.jukeboxmc.world.Biome::class.java)
+    private val POPULATOR_MAP: MutableMap<Biome, BiomePopulator> = EnumMap(Biome::class.java)
     fun init() {
         register(Biome.RIVER, RiverBiome())
         register(Biome.OCEAN, OceanBiome())
