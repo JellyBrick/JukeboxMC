@@ -90,18 +90,17 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     val world: World?
         get() = location.world
 
-    fun checkValidity(): Boolean {
-        return location.world != null && location.world!!
-            .getBlock(location.blockX, location.blockY, location.blockZ, layer, location.dimension)
+    fun checkValidity(): Boolean = location.world?.let {
+        it.getBlock(location.blockX, location.blockY, location.blockZ, layer, location.dimension)
             .runtimeId == runtimeId
-    }
+    } ?: false
 
     fun setStateBlock(state: String, value: Any): Block {
         if (!blockStates.containsKey(state)) {
             throw AssertionError("State $state was not found in block $identifier")
         }
-        if (blockStates.getValue(state).javaClass != value.javaClass) {
-            if (!(value.javaClass == java.lang.Byte::class.java && blockStates.getValue(state).javaClass == java.lang.Integer::class.java)) { // :(
+        if (blockStates.getValue(state)::class.java != value::class.java) {
+            if (!(value::class.java == java.lang.Byte::class.java && blockStates.getValue(state)::class.java == java.lang.Integer::class.java)) { // :(
                 throw AssertionError("State $state type is not the same for value $value")
             }
         }
