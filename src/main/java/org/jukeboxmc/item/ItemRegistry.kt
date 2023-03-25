@@ -2,6 +2,7 @@ package org.jukeboxmc.item
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.item.behavior.ItemAcaciaSign
 import org.jukeboxmc.item.behavior.ItemAir
@@ -201,6 +202,7 @@ import org.jukeboxmc.item.behavior.ItemWoodenSlab
 import org.jukeboxmc.item.behavior.ItemWoodenSword
 import org.jukeboxmc.item.behavior.ItemWoodenTrapdoor
 import org.jukeboxmc.item.behavior.ItemYellowWool
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.util.Identifier
 import java.io.InputStreamReader
 import java.util.stream.Collectors
@@ -214,6 +216,9 @@ object ItemRegistry {
     private val ITEM_PROPERTIES: MutableMap<Identifier, ItemProperties> = LinkedHashMap()
     private val ITEMCLASS_FROM_ITEMTYPE: MutableMap<ItemType, Class<out Item>> = LinkedHashMap()
     private val ITEMTYPE_FROM_IDENTIFIER: MutableMap<Identifier, ItemType> = LinkedHashMap()
+    private val itemDefinitionRegistry =
+        SimpleDefinitionRegistry.getRegistry<ItemDefinition, SimpleDefinitionRegistry<ItemDefinition>>()
+
     fun init() {
         register(ItemType.ACACIA_BOAT, ItemRegistryData(Identifier.fromString("minecraft:acacia_boat")))
         register(
@@ -3364,6 +3369,8 @@ object ItemRegistry {
         registryData.itemClass?.let {
             ITEMCLASS_FROM_ITEMTYPE[itemType] = it
         }
+        val item: Item = Item.create(itemType)
+        itemDefinitionRegistry.register(item.runtimeId, item.definition)
     }
 
     fun getItemClass(itemType: ItemType): Class<out Item> {

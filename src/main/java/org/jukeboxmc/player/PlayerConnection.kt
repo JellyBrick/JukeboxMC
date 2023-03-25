@@ -74,6 +74,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 //                )
 //            }
 //        }
+        session.codec.createHelper().itemDefinitions
         loggedIn = AtomicBoolean(false)
         spawned = AtomicBoolean(false)
         player = Player(server, this)

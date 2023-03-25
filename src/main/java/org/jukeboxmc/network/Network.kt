@@ -10,8 +10,12 @@ import org.cloudburstmc.protocol.bedrock.BedrockPong
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec
 import org.cloudburstmc.protocol.bedrock.codec.v575.Bedrock_v575
+import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitializer
+import org.cloudburstmc.protocol.common.DefinitionRegistry
 import org.jukeboxmc.Server
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.player.PlayerConnection
 import java.net.InetSocketAddress
 import java.util.function.Consumer
@@ -44,7 +48,7 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
             val bootstrap: ServerBootstrap = ServerBootstrap()
                 .channelFactory(RakChannelFactory.server(NioDatagramChannel::class.java)) // TODO: epoll, kqueue
                 .group(NioEventLoopGroup())
-                .option(RakChannelOption.RAK_ADVERTISEMENT, bedrockPong.toByteBuf())
+                .option(RakChannelOption.RAK_HANDLE_PING, true) // TODO: dynamic
                 .childHandler(object : BedrockServerInitializer() {
                     override fun initSession(bedrockServerSession: BedrockServerSession) {
                         val playerConnection = addPlayer(PlayerConnection(server, bedrockServerSession))
@@ -109,6 +113,14 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
     }
 
     companion object {
-        val CODEC: BedrockCodec = Bedrock_v575.CODEC
+        val CODEC: BedrockCodec = Bedrock_v575.CODEC.toBuilder()
+            .apply {
+                val codecHelper = Bedrock_v575.CODEC.createHelper()
+                codecHelper.itemDefinitions =
+                    SimpleDefinitionRegistry.getRegistry<ItemDefinition, DefinitionRegistry<ItemDefinition>>()
+                codecHelper.blockDefinitions =
+                    SimpleDefinitionRegistry.getRegistry<BlockDefinition, DefinitionRegistry<BlockDefinition>>()
+                helper { codecHelper }
+            }.build()
     }
 }

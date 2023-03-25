@@ -1,6 +1,12 @@
 package org.jukeboxmc.block
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import java.util.LinkedList
+import java.util.Locale
+import org.cloudburstmc.nbt.NbtMap
+import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.behavior.BlockAcaciaStandingSign
 import org.jukeboxmc.block.behavior.BlockAcaciaWallSign
@@ -212,6 +218,8 @@ import org.jukeboxmc.block.behavior.BlockYellowWool
 import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
+import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
 
@@ -224,6 +232,10 @@ object BlockRegistry {
     private val BLOCKTYPE_FROM_IDENTIFIER: MutableMap<Identifier?, BlockType> = linkedMapOf()
     private val BLOCK_PROPERTIES: MutableMap<Identifier?, BlockProperties> = linkedMapOf()
     private val BLOCKCLASS_FROM_BLOCKTYPE: MutableMap<BlockType?, Class<out Block>> = linkedMapOf()
+
+    private val blockDefinitionRegistry =
+        SimpleDefinitionRegistry.getRegistry<BlockDefinition, SimpleDefinitionRegistry<BlockDefinition>>()
+
     fun init() {
         register(
             BlockType.ACACIA_BUTTON,
@@ -1281,7 +1293,11 @@ object BlockRegistry {
         register(BlockType.MELON_BLOCK, Identifier.fromString("minecraft:melon_block"))
         register(BlockType.MELON_STEM, Identifier.fromString("minecraft:melon_stem"))
         register(BlockType.MOB_SPAWNER, Identifier.fromString("minecraft:mob_spawner"))
-        register(BlockType.INFESTED_STONE, Identifier.fromString("minecraft:monster_egg"), BlockInfestedStone::class.java)
+        register(
+            BlockType.INFESTED_STONE,
+            Identifier.fromString("minecraft:monster_egg"),
+            BlockInfestedStone::class.java,
+        )
         register(BlockType.MOSSY_COBBLESTONE, Identifier.fromString("minecraft:mossy_cobblestone"))
         register(
             BlockType.MOSSY_COBBLESTONE_STAIRS,
@@ -2236,6 +2252,8 @@ object BlockRegistry {
         if (blockClass != null) {
             BLOCKCLASS_FROM_BLOCKTYPE[blockType] = blockClass
         }
+        val block: Block = Block.create(identifier)
+        blockDefinitionRegistry.register(block.runtimeId, block.definition)
     }
 
     fun getIdentifier(blockType: BlockType): Identifier {
