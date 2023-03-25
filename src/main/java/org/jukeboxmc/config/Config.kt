@@ -121,7 +121,12 @@ class Config {
 
     fun getInt(key: String): Int {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toInt()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Int -> keySection
+                    else -> (keySection as String).toInt()
+                }
+            }
             else -> configSection.getInt(key)
         }
     }
@@ -135,7 +140,12 @@ class Config {
 
     fun getLong(key: String): Long {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toLong()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Long -> keySection
+                    else -> (keySection as String).toLong()
+                }
+            }
             else -> configSection.getLong(key)
         }
     }
@@ -149,7 +159,12 @@ class Config {
 
     fun getDouble(key: String): Double {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toDouble()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Double -> keySection
+                    else -> (keySection as String).toDouble()
+                }
+            }
             else -> configSection.getDouble(key)
         }
     }
@@ -163,7 +178,12 @@ class Config {
 
     fun getFloat(key: String): Float {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toFloat()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Float -> keySection
+                    else -> (keySection as String).toFloat()
+                }
+            }
             else -> configSection.getFloat(key)
         }
     }
@@ -177,7 +197,12 @@ class Config {
 
     fun getByte(key: String): Byte {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toByte()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Byte -> keySection
+                    else -> (keySection as String).toByte()
+                }
+            }
             else -> configSection.getByte(key)
         }
     }
@@ -191,7 +216,12 @@ class Config {
 
     fun getShort(key: String): Short {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toShort()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Short -> keySection
+                    else -> (keySection as String).toShort()
+                }
+            }
             else -> configSection.getShort(key)
         }
     }
@@ -205,7 +235,12 @@ class Config {
 
     fun getBoolean(key: String): Boolean {
         return when (configType) {
-            ConfigType.PROPERTIES -> configSection.getString(key).toBoolean()
+            ConfigType.PROPERTIES -> {
+                when (val keySection = configSection[key]) {
+                    is Boolean -> keySection
+                    else -> (keySection as String).toBoolean()
+                }
+            }
             else -> configSection.getBoolean(key)
         }
     }
