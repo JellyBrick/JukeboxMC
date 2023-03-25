@@ -1,11 +1,11 @@
 package org.jukeboxmc.player.data
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.proc.JWSVerifierFactory
 import com.nimbusds.jose.shaded.json.parser.ParseException
+import com.nimbusds.jwt.SignedJWT
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket
 import org.cloudburstmc.protocol.bedrock.util.EncryptionUtils
 import org.jukeboxmc.player.info.Device
@@ -16,7 +16,6 @@ import org.jukeboxmc.player.skin.PersonaPiece
 import org.jukeboxmc.player.skin.PersonaPieceTint
 import org.jukeboxmc.player.skin.Skin
 import org.jukeboxmc.player.skin.SkinAnimation
-import org.jukeboxmc.util.Utils
 import java.nio.charset.StandardCharsets
 import java.security.PublicKey
 import java.util.Base64
@@ -45,24 +44,19 @@ class LoginData(loginPacket: LoginPacket) {
         private set
 
     init {
-        decodeChainData(loginPacket.chain.toString())
-        decodeSkinData(loginPacket.extra.toString())
+        decodeChainData(loginPacket.chain)
+        decodeSkinData(loginPacket.extra)
     }
 
-    private fun decodeChainData(chainData: String) {
-        val map = Utils.jackson.readValue<Map<String, List<String>>>(chainData)
-        if (map.isEmpty() || !map.containsKey("chain") || map.getValue("chain").isEmpty()) {
-            return
-        }
-        val chains = map.getValue("chain")
+    private fun decodeChainData(chainData: List<SignedJWT>) {
         isXboxAuthenticated = try {
-            verifyChains(chains)
+            verifyChains(chainData)
         } catch (e: JOSEException) {
             false
         } catch (e: ParseException) {
             false
         }
-        chains.forEach {
+        chainData.forEach {
             val chainMap = decodeToken(it)
             if (chainMap.containsKey("extraData")) {
                 val extraData = chainMap["extraData"] as Map<*, *>
@@ -73,7 +67,7 @@ class LoginData(loginPacket: LoginPacket) {
         }
     }
 
-    private fun decodeSkinData(skinData: String) {
+    private fun decodeSkinData(skinData: SignedJWT) {
         val skinMap = decodeToken(skinData)
         if (skinMap.containsKey("DeviceModel") && skinMap.containsKey("DeviceId") &&
             skinMap.containsKey("ClientRandomId") && skinMap.containsKey("DeviceOS") && skinMap.containsKey("GuiScale")
@@ -81,14 +75,14 @@ class LoginData(loginPacket: LoginPacket) {
             val deviceModel = skinMap["DeviceModel"] as String
             val deviceId = skinMap["DeviceId"] as String
             val clientId = skinMap["ClientRandomId"] as Long
-            val deviceOS = skinMap["DeviceOS"] as Int
-            val uiProfile = skinMap["UIProfile"] as Int
+            val deviceOS = skinMap["DeviceOS"] as Long
+            val uiProfile = skinMap["UIProfile"] as Long
             deviceInfo = DeviceInfo(
                 deviceModel,
                 deviceId,
                 clientId,
-                Device.getDevice(deviceOS),
-                UIProfile.getById(uiProfile),
+                Device.getDevice(deviceOS.toInt()),
+                UIProfile.getById(uiProfile.toInt()),
             )
         }
         if (skinMap.containsKey("LanguageCode")) {
@@ -169,11 +163,10 @@ class LoginData(loginPacket: LoginPacket) {
     }
 
     @Throws(JOSEException::class, ParseException::class)
-    private fun verifyChains(chains: List<String>): Boolean {
+    private fun verifyChains(chains: List<SignedJWT>): Boolean {
         var lastKey: PublicKey? = null
         var mojangKeyVerified = false
-        for (chain in chains) {
-            val jws: JWSObject = JWSObject.parse(chain)
+        for (jws in chains) {
             if (!mojangKeyVerified) {
                 mojangKeyVerified = verify(EncryptionUtils.getMojangPublicKey(), jws)
             }
@@ -187,26 +180,17 @@ class LoginData(loginPacket: LoginPacket) {
         return mojangKeyVerified
     }
 
-    private fun decodeToken(token: String): Map<String, *> {
-        val tokenSplit = token.split('.').dropLastWhile { it.isEmpty() }.toTypedArray()
-        require(tokenSplit.size >= 2) { "Invalid token length" }
-        return Utils.jackson.readValue(
-            String(
-                Base64.getDecoder().decode(
-                    tokenSplit[1],
-                ),
-                StandardCharsets.UTF_8,
-            ),
-        )
+    private fun decodeToken(token: SignedJWT): Map<String, *> {
+        return token.payload.toJSONObject()
     }
 
     private fun getImage(skinMap: Map<String, *>, name: String): Image? {
         if (skinMap.containsKey(name + "Data")) {
             val skinImage = Base64.getDecoder().decode(skinMap[name + "Data"] as String)
             return if (skinMap.containsKey(name + "ImageHeight") && skinMap.containsKey(name + "ImageWidth")) {
-                val width = skinMap[name + "ImageWidth"] as Int
-                val height = skinMap[name + "ImageHeight"] as Int
-                Image(width, height, skinImage)
+                val width = skinMap[name + "ImageWidth"] as Long
+                val height = skinMap[name + "ImageHeight"] as Long
+                Image(width.toInt(), height.toInt(), skinImage)
             } else {
                 Image.getImage(skinImage)
             }
