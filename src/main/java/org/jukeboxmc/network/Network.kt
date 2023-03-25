@@ -2,8 +2,10 @@ package org.jukeboxmc.network
 
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.Channel
+import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioDatagramChannel
 import org.cloudburstmc.netty.channel.raknet.RakChannelFactory
+import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption
 import org.cloudburstmc.protocol.bedrock.BedrockPong
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec
@@ -19,26 +21,38 @@ import java.util.function.Consumer
  * @version 1.0
  */
 class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
-    private val bedrockPong: BedrockPong = BedrockPong()
+    private val bedrockPong: BedrockPong = BedrockPong().apply {
+        edition("MCPE")
+        gameType(server.gameMode.identifier)
+        motd(server.motd)
+        subMotd(server.subMotd)
+        playerCount(server.onlinePlayers.size)
+        maximumPlayerCount(server.maxPlayers)
+        ipv4Port(inetSocketAddress.port)
+        nintendoLimited(false)
+        protocolVersion(CODEC.protocolVersion)
+        version(CODEC.minecraftVersion)
+    }
     private val connections: MutableSet<PlayerConnection> = HashSet()
-    private val updater: Consumer<PlayerConnection>
+    private val updater: Consumer<PlayerConnection> =
+        Consumer<PlayerConnection> { obj: PlayerConnection -> obj.update() }
 
     private val channels: MutableList<Channel> = mutableListOf()
 
     init {
-        updater = Consumer<PlayerConnection> { obj: PlayerConnection -> obj.update() }
         try {
             val bootstrap: ServerBootstrap = ServerBootstrap()
                 .channelFactory(RakChannelFactory.server(NioDatagramChannel::class.java)) // TODO: epoll, kqueue
+                .group(NioEventLoopGroup())
+                .option(RakChannelOption.RAK_ADVERTISEMENT, bedrockPong.toByteBuf())
                 .childHandler(object : BedrockServerInitializer() {
                     override fun initSession(bedrockServerSession: BedrockServerSession) {
                         val playerConnection = addPlayer(PlayerConnection(server, bedrockServerSession))
                         server.addPlayer(playerConnection.player)
                     }
                 })
-                .localAddress(inetSocketAddress)
             channels.add(
-                bootstrap.bind()
+                bootstrap.bind(inetSocketAddress)
                     .awaitUninterruptibly()
                     .channel(),
             )
