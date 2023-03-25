@@ -7,7 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.command.CommandEnumData
  * @author Cloudburst
  * @version 1.0
  */
-class CommandEnum(val name: String, val values: MutableList<String>) {
+class CommandEnum(val name: String, val values: MutableList<String>) { // TODO: values to LinkedHashMap<String, Set<CommandEnumConstraint>>
 
     override fun hashCode(): Int {
         return name.hashCode()

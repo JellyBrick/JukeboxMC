@@ -1,9 +1,9 @@
 package org.jukeboxmc.command
 
-import com.google.common.collect.ImmutableMap
 import org.cloudburstmc.protocol.bedrock.data.command.CommandEnumData
 import org.cloudburstmc.protocol.bedrock.data.command.CommandParam
 import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData
+import org.cloudburstmc.protocol.bedrock.data.command.CommandParamOption
 import org.cloudburstmc.protocol.bedrock.data.command.CommandParamType
 
 /**
@@ -14,7 +14,7 @@ class CommandParameter {
     var name: String
     var type: CommandParamType
     var optional: Boolean
-    var options: Byte = 0
+    var options: MutableSet<CommandParamOption> = hashSetOf()
     var enumData: CommandEnum? = null
     var postFix: String? = null
 
@@ -27,7 +27,7 @@ class CommandParameter {
     @JvmOverloads
     constructor(name: String, enumType: String, optional: Boolean = false) {
         this.name = name
-        enumData = CommandEnum(enumType, ArrayList())
+        enumData = CommandEnum(enumType, mutableListOf())
         type = CommandParamType.TEXT
         this.optional = optional
     }
@@ -41,44 +41,44 @@ class CommandParameter {
     }
 
     fun toNetwork(): CommandParamData {
-        return CommandParamData().apply {
-            this.name = name
-            this.isOptional = optional
-            this.enumData =
-                if (enumData != null) {
-                    CommandEnumData(
-                        name,
-                        enumData.values,
-                        false,
-                    )
-                } else {
-                    null
-                }
-            this.type = PARAM_MAPPINGS[type.paramType]
-            this.postfix = postFix
-//            this.options = emptySet<CommandParamOption>()
+        return CommandParamData().also {
+            it.name = name
+            it.isOptional = optional
+            it.enumData = enumData?.let { commandEnum ->
+                CommandEnumData(
+                    name,
+                    commandEnum.toNetwork().values,
+                    false,
+                )
+            }
+            it.type = PARAM_MAPPINGS[type]
+            it.postfix = postFix
+            it.options.addAll(options)
         }
     }
 
     companion object {
-        private val PARAM_MAPPINGS: ImmutableMap<CommandParamType, CommandParam> =
-            ImmutableMap.builder<CommandParamType, CommandParam>()
-                .put(CommandParamType.INT, CommandParam.INT)
-                .put(CommandParamType.FLOAT, CommandParam.FLOAT)
-                .put(CommandParamType.VALUE, CommandParam.VALUE)
-                .put(CommandParamType.WILDCARD_INT, CommandParam.WILDCARD_INT)
-                .put(CommandParamType.OPERATOR, CommandParam.OPERATOR)
-                .put(CommandParamType.TARGET, CommandParam.TARGET)
-                .put(CommandParamType.WILDCARD_TARGET, CommandParam.WILDCARD_TARGET)
-                .put(CommandParamType.FILE_PATH, CommandParam.FILE_PATH)
-                .put(CommandParamType.INT_RANGE, CommandParam.INT_RANGE)
-                .put(CommandParamType.STRING, CommandParam.STRING)
-                .put(CommandParamType.POSITION, CommandParam.POSITION)
-                .put(CommandParamType.BLOCK_POSITION, CommandParam.BLOCK_POSITION)
-                .put(CommandParamType.MESSAGE, CommandParam.MESSAGE)
-                .put(CommandParamType.TEXT, CommandParam.TEXT)
-                .put(CommandParamType.JSON, CommandParam.JSON)
-                .put(CommandParamType.COMMAND, CommandParam.COMMAND)
-                .build()
+        private val PARAM_MAPPINGS =
+            mapOf(
+                CommandParamType.INT to CommandParam.INT,
+                CommandParamType.FLOAT to CommandParam.FLOAT,
+                CommandParamType.VALUE to CommandParam.VALUE,
+                CommandParamType.WILDCARD_INT to CommandParam.WILDCARD_INT,
+                CommandParamType.OPERATOR to CommandParam.OPERATOR,
+                CommandParamType.COMPARE_OPERATOR to CommandParam.COMPARE_OPERATOR,
+                CommandParamType.TARGET to CommandParam.TARGET,
+                CommandParamType.WILDCARD_TARGET to CommandParam.WILDCARD_TARGET,
+                CommandParamType.FILE_PATH to CommandParam.FILE_PATH,
+                CommandParamType.INT_RANGE to CommandParam.INT_RANGE,
+                CommandParamType.EQUIPMENT_SLOTS to CommandParam.EQUIPMENT_SLOTS,
+                CommandParamType.STRING to CommandParam.STRING,
+                CommandParamType.BLOCK_POSITION to CommandParam.BLOCK_POSITION,
+                CommandParamType.POSITION to CommandParam.POSITION,
+                CommandParamType.MESSAGE to CommandParam.MESSAGE,
+                CommandParamType.TEXT to CommandParam.TEXT,
+                CommandParamType.JSON to CommandParam.JSON,
+                CommandParamType.BLOCK_STATES to CommandParam.BLOCK_STATES,
+                CommandParamType.COMMAND to CommandParam.COMMAND,
+            )
     }
 }
