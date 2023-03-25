@@ -78,7 +78,7 @@ class BlockShulkerBox : Block {
         val blockEntity = blockEntity as BlockEntityShulkerBox? ?: return itemShulkerBox
         val shulkerBoxInventory = blockEntity.shulkerBoxInventory
         val builder = NbtMap.builder()
-        val itemsCompoundList: MutableList<NbtMap> = ArrayList()
+        val itemsCompoundList: MutableList<NbtMap> = mutableListOf()
         for (slot in 0 until shulkerBoxInventory.size) {
             val item = shulkerBoxInventory.getItem(slot)
             if (item != null && item.type != ItemType.AIR) {

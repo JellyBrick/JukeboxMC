@@ -85,10 +85,10 @@ open class Item : Cloneable {
         meta = 0
         durability = 0
         displayName = ""
-        lore = LinkedList()
+        lore = mutableListOf()
         nbt = null
-        canPlace = LinkedList()
-        canBreak = LinkedList()
+        canPlace = mutableListOf()
+        canBreak = mutableListOf()
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
@@ -113,10 +113,10 @@ open class Item : Cloneable {
         meta = 0
         durability = 0
         displayName = ""
-        lore = LinkedList()
+        lore = mutableListOf()
         nbt = null
-        canPlace = LinkedList()
-        canBreak = LinkedList()
+        canPlace = mutableListOf()
+        canBreak = mutableListOf()
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
@@ -137,10 +137,10 @@ open class Item : Cloneable {
         meta = itemData.damage
         durability = 0
         displayName = ""
-        lore = LinkedList()
+        lore = mutableListOf()
         nbt = itemData.tag
-        canPlace = LinkedList()
-        canBreak = LinkedList()
+        canPlace = mutableListOf()
+        canBreak = mutableListOf()
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
@@ -278,7 +278,7 @@ open class Item : Cloneable {
             nbtBuilder.putCompound("display", displayBuilder.build())
         }
         if (enchantments.isNotEmpty()) {
-            val enchantmentNBT: MutableList<NbtMap> = ArrayList()
+            val enchantmentNBT: MutableList<NbtMap> = mutableListOf()
             for (enchantment in enchantments.values) {
                 enchantmentNBT.add(
                     NbtMap.builder()

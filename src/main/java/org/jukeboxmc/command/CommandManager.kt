@@ -20,7 +20,7 @@ import org.jukeboxmc.command.internal.TimeCommand
  * @version 1.0
  */
 class CommandManager {
-    private val commands: MutableList<Command> = ArrayList()
+    private val commands: MutableList<Command> = mutableListOf()
 
     init {
         val commands = listOf(

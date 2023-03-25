@@ -21,7 +21,7 @@ import java.util.LinkedList
  * @version 1.0
  */
 object CreativeItems {
-    private val CREATIVE_ITEMS: MutableList<ItemData> = LinkedList()
+    private val CREATIVE_ITEMS: MutableList<ItemData> = mutableListOf()
     private val IDENTIFIER_BY_NETWORK_ID: MutableMap<Int, Identifier> = LinkedHashMap()
     fun init() {
         Bootstrap::class.java.classLoader.getResourceAsStream("creative_items.json")!!.use { inputStream ->

@@ -994,7 +994,7 @@ open class Player(
 
     val drops: List<Item>
         get() {
-            val drops: MutableList<Item> = ArrayList()
+            val drops: MutableList<Item> = mutableListOf()
             for (content in playerInventory.contents) {
                 if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {

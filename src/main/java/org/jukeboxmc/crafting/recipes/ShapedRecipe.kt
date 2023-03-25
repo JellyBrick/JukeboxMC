@@ -45,7 +45,7 @@ class ShapedRecipe : Recipe() {
     }
 
     fun addOutput(vararg items: Item): ShapedRecipe {
-        val itemDataList: MutableList<ItemData?> = ArrayList()
+        val itemDataList: MutableList<ItemData?> = mutableListOf()
         for (item in items) {
             itemDataList.add(item.toItemData())
         }
@@ -54,7 +54,7 @@ class ShapedRecipe : Recipe() {
     }
 
     override fun doRegister(craftingManager: CraftingManager, recipeId: String?): CraftingRecipeData? {
-        val ingredients: MutableList<ItemDescriptorWithCount> = ArrayList()
+        val ingredients: MutableList<ItemDescriptorWithCount> = mutableListOf()
         for (s in pattern) {
             val chars = s.toCharArray()
             for (c in chars) {

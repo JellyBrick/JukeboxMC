@@ -159,7 +159,7 @@ class ChunkManager(private val world: World, val dimension: Dimension) {
 
     @Synchronized
     fun saveChunks(): CompletableFuture<Void> {
-        val futures: MutableList<CompletableFuture<*>> = ArrayList()
+        val futures: MutableList<CompletableFuture<*>> = mutableListOf()
         for (loadingChunk in chunks.values) {
             val chunk = loadingChunk.getChunk()
             if (chunk != null) {

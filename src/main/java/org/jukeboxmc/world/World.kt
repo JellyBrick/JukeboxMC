@@ -660,7 +660,7 @@ class World(var name: String, val server: Server, generatorMap: Map<Dimension, S
         val maxX = FastMath.ceil(boundingBox.maxX.toDouble()).toInt()
         val maxY = FastMath.ceil(boundingBox.maxY.toDouble()).toInt()
         val maxZ = FastMath.ceil(boundingBox.maxZ.toDouble()).toInt()
-        val collides: MutableList<AxisAlignedBB> = ArrayList()
+        val collides: MutableList<AxisAlignedBB> = mutableListOf()
         for (z in minZ..maxZ) {
             for (x in minX..maxX) {
                 for (y in minY..maxY) {

@@ -25,7 +25,7 @@ object BlockPalette {
     val BLOCK_STATE_FROM_RUNTIME: Int2ObjectMap<NbtMap> = Int2ObjectLinkedOpenHashMap()
     val BLOCK_CACHE: Object2ObjectMap<BlockData, Block> = Object2ObjectOpenHashMap()
     val IDENTIFIER_TO_RUNTIME: Object2ObjectMap<Identifier, Int> = Object2ObjectOpenHashMap()
-    val BLOCK_NBT: MutableList<NbtMap> = LinkedList()
+    val BLOCK_NBT: MutableList<NbtMap> = mutableListOf()
 
     @JvmStatic
     fun init() {
@@ -112,7 +112,7 @@ object BlockPalette {
 
     @JvmStatic
     fun searchBlocks(predicate: Predicate<NbtMap>): List<NbtMap> {
-        val blocks: MutableList<NbtMap> = ArrayList()
+        val blocks: MutableList<NbtMap> = mutableListOf()
         for (nbtMap in STATE_FROM_RUNTIME.values) {
             if (predicate.test(nbtMap)) {
                 blocks.add(nbtMap)

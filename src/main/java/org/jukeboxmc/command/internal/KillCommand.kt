@@ -45,7 +45,7 @@ class KillCommand : Command(
                     commandSender.sendMessage("$builder killed.")
                 }
             } else if (target.equals("@e", ignoreCase = true)) {
-                val entities: MutableList<Entity?> = ArrayList()
+                val entities: MutableList<Entity?> = mutableListOf()
                 for (world in Server.instance.getWorlds()) {
                     entities.addAll(
                         world.entitys.stream().filter { entity: Entity -> entity !is Player }

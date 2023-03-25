@@ -49,7 +49,7 @@ class NonStream private constructor() {
         }
 
         fun <E> filterList(iterable: Iterable<E>, predicate: Predicate<E>): List<E> {
-            val list: MutableList<E> = ArrayList()
+            val list: MutableList<E> = mutableListOf()
             for (e in iterable) if (predicate.test(e)) list.add(e)
             return list
         }

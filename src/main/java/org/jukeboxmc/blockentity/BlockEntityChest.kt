@@ -67,7 +67,7 @@ class BlockEntityChest(
 
     override fun toCompound(): NbtMapBuilder {
         val builder = super.toCompound()
-        val itemsCompoundList: MutableList<NbtMap> = ArrayList()
+        val itemsCompoundList: MutableList<NbtMap> = mutableListOf()
         for (slot in 0 until realInventory.size) {
             val itemCompound = NbtMap.builder()
             val item = realInventory.getItem(slot)

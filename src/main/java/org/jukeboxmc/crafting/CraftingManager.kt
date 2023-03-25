@@ -95,7 +95,7 @@ class CraftingManager {
                         }
                     }
                 }
-                val outputItems: MutableList<ItemData> = ArrayList()
+                val outputItems: MutableList<ItemData> = mutableListOf()
                 if (recipe.containsKey("outputs")) {
                     val outputs = recipe["outputs"] as List<*>
                     outputs.forEach {
@@ -222,7 +222,7 @@ class CraftingManager {
             .findFirst()
         if (optional.isPresent) {
             val craftingData: CraftingRecipeData = optional.get()
-            val items: MutableList<Item> = LinkedList()
+            val items: MutableList<Item> = mutableListOf()
             for (output in craftingData.results) {
                 items.add(Item(output, false))
             }

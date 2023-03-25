@@ -48,7 +48,7 @@ class BlockEntityBarrel(
 
     override fun toCompound(): NbtMapBuilder {
         val builder = super.toCompound()
-        val itemsCompoundList: MutableList<NbtMap> = ArrayList()
+        val itemsCompoundList: MutableList<NbtMap> = mutableListOf()
         for (slot in 0 until barrelInventory.size) {
             val itemCompound = NbtMap.builder()
             val item = barrelInventory.getItem(slot)

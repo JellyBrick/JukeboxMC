@@ -123,7 +123,7 @@ class Scoreboard {
     private fun constructSetScore(): SetScorePacket {
         val setScorePacket = SetScorePacket()
         setScorePacket.action = SetScorePacket.Action.SET
-        val entries: MutableList<ScoreInfo> = ArrayList()
+        val entries: MutableList<ScoreInfo> = mutableListOf()
         val fastEntrySet = scoreboardLines.long2ObjectEntrySet() as Long2ObjectMap.FastEntrySet<ScoreboardLine>
         val fastIterator = fastEntrySet.fastIterator()
         while (fastIterator.hasNext()) {
@@ -161,7 +161,7 @@ class Scoreboard {
     private fun constructRemoveScores(scoreIDs: LongList): SetScorePacket {
         val setScorePacket = SetScorePacket()
         setScorePacket.action = SetScorePacket.Action.REMOVE
-        val entries: MutableList<ScoreInfo> = ArrayList()
+        val entries: MutableList<ScoreInfo> = mutableListOf()
         for (scoreID in scoreIDs) {
             entries.add(ScoreInfo(scoreID, "", 0))
         }

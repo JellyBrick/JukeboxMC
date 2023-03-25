@@ -92,8 +92,8 @@ class CommandData(
         private var usage = ""
         private var permission = ""
         private var permissionMessage = ""
-        private var aliases: MutableList<String> = ArrayList()
-        private var overloads: MutableList<Array<CommandParameter>> = ArrayList()
+        private var aliases: MutableList<String> = mutableListOf()
+        private var overloads: MutableList<Array<CommandParameter>> = mutableListOf()
 
         constructor()
         constructor(name: String) {

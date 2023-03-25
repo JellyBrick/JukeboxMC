@@ -19,7 +19,7 @@ class ShapelessRecipe : Recipe() {
     override val outputs: MutableList<ItemData?> = ObjectArrayList()
 
     fun addIngredient(vararg items: Item): ShapelessRecipe {
-        val itemDataList: MutableList<ItemDescriptorWithCount> = ArrayList()
+        val itemDataList: MutableList<ItemDescriptorWithCount> = mutableListOf()
         for (item in items) {
             itemDataList.add(ItemDescriptorWithCount.fromItem(item.toItemData()))
         }
@@ -28,7 +28,7 @@ class ShapelessRecipe : Recipe() {
     }
 
     fun addOutput(vararg items: Item): ShapelessRecipe {
-        val itemDataList: MutableList<ItemData?> = ArrayList()
+        val itemDataList: MutableList<ItemData?> = mutableListOf()
         for (item in items) {
             itemDataList.add(item.toItemData())
         }

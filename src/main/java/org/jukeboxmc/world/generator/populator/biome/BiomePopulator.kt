@@ -7,7 +7,7 @@ import org.jukeboxmc.world.generator.populator.Populator
  * @version 1.0
  */
 open class BiomePopulator {
-    private val populators: MutableList<Populator> = ArrayList()
+    private val populators: MutableList<Populator> = mutableListOf()
     fun addPopulator(populator: Populator) {
         populators.add(populator)
     }

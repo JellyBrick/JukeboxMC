@@ -52,7 +52,7 @@ class BlockEntityBlastFurnace(
 
     override fun toCompound(): NbtMapBuilder {
         val builder = super.toCompound()
-        val itemsCompoundList: MutableList<NbtMap> = ArrayList()
+        val itemsCompoundList: MutableList<NbtMap> = mutableListOf()
         for (slot in 0 until blastFurnaceInventory.size) {
             val itemCompound = NbtMap.builder()
             val item = blastFurnaceInventory.getItem(slot)
