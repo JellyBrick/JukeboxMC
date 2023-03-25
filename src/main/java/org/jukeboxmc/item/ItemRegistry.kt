@@ -3382,6 +3382,10 @@ object ItemRegistry {
         return ITEMTYPE_FROM_IDENTIFIER.getValue(identifier)
     }
 
+    fun hasItemType(identifier: Identifier): Boolean {
+        return ITEMTYPE_FROM_IDENTIFIER.containsKey(identifier)
+    }
+
     fun getItemRegistryData(itemType: ItemType): ItemRegistryData {
         return ITEMS.getValue(itemType)
     }

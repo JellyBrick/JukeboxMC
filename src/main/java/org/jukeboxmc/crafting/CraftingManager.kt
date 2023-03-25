@@ -17,6 +17,7 @@ import org.jukeboxmc.config.ConfigType
 import org.jukeboxmc.crafting.recipes.Recipe
 import org.jukeboxmc.crafting.recipes.SmeltingRecipe
 import org.jukeboxmc.item.Item
+import org.jukeboxmc.item.ItemRegistry
 import org.jukeboxmc.util.ItemPalette
 import java.util.LinkedList
 import java.util.Optional
@@ -64,7 +65,11 @@ class CraftingManager {
                                     val blockRuntimeId = map["blockRuntimeId"] as Int
                                     val usingNetId = map["usingNetId"] as Boolean
                                     val netId = map["netId"] as Int
-                                    val item = Item.createItem(ItemPalette.getIdentifier(id.toShort()))
+                                    val identifier = ItemPalette.getIdentifier(id.toShort())
+                                    if (!ItemRegistry.hasItemType(identifier)) {
+                                        return@forEach
+                                    }
+                                    val item = Item.createItem(identifier)
                                     inputItems.add(
                                         ItemDescriptorWithCount.fromItem(
                                             ItemData.builder()
@@ -104,7 +109,11 @@ class CraftingManager {
                         val blockRuntimeId = output["blockRuntimeId"] as Int
                         val usingNetId = output["usingNetId"] as Boolean
                         val netId = output["netId"] as Int
-                        val item = Item.createItem(ItemPalette.getIdentifier(id.toShort()))
+                        val identifier = ItemPalette.getIdentifier(id.toShort())
+                        if (!ItemRegistry.hasItemType(identifier)) {
+                            return@forEach
+                        }
+                        val item = Item.createItem(identifier)
                         outputItems.add(
                             ItemData.builder()
                                 .definition(item.definition)

@@ -6,7 +6,6 @@ import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
 import org.jukeboxmc.Bootstrap
 import java.io.InputStreamReader
-import java.util.stream.Collectors
 
 /**
  * @author LucGamesYT

@@ -101,7 +101,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             throw AssertionError("State $state was not found in block $identifier")
         }
         if (blockStates.getValue(state).javaClass != value.javaClass) {
-            throw AssertionError("State $state type is not the same for value  $value")
+            if (!(value.javaClass == java.lang.Byte::class.java && blockStates.getValue(state).javaClass == java.lang.Integer::class.java)) { // :(
+                throw AssertionError("State $state type is not the same for value $value")
+            }
         }
         val valid = checkValidity()
         val nbtMapBuilder = blockStates.toBuilder()
