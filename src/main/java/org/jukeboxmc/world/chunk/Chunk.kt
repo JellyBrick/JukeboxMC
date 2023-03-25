@@ -280,21 +280,15 @@ class Chunk(val world: World, val dimension: Dimension, val x: Int, val z: Int) 
 
     fun createLevelChunkPacket(): LevelChunkPacket {
         val byteBuf = Unpooled.buffer()
-        return try {
-            val levelChunkPacket = LevelChunkPacket()
-            levelChunkPacket.chunkX = x
-            levelChunkPacket.chunkZ = z
-            levelChunkPacket.isCachingEnabled = false
-            levelChunkPacket.isRequestSubChunks = false
-            levelChunkPacket.subChunksLength = availableSubChunks
-            writeTo(byteBuf)
-            val data = ByteArray(byteBuf.readableBytes())
-            byteBuf.readBytes(data)
-            levelChunkPacket.data = byteBuf // FIXME
-            levelChunkPacket
-        } finally {
-            byteBuf.release()
-        }
+        val levelChunkPacket = LevelChunkPacket()
+        levelChunkPacket.chunkX = x
+        levelChunkPacket.chunkZ = z
+        levelChunkPacket.isCachingEnabled = false
+        levelChunkPacket.isRequestSubChunks = false
+        levelChunkPacket.subChunksLength = availableSubChunks
+        writeTo(byteBuf)
+        levelChunkPacket.data = byteBuf.slice()
+        return levelChunkPacket
     }
 
     fun saveChunkSlice(blockPalettes: Array<Palette<Block>>, subY: Int, writeBatch: WriteBatch) {

@@ -137,8 +137,9 @@ class PlayerChunkManager(private val player: Player) {
                                             player.name + ", values " + sendQueue[key],
                                     )
                                 }
-                                //                                    packet.release();
+                                // packet?.release()
                             }
+                            // packet?.data?.release()
                         }
                     }
             }
