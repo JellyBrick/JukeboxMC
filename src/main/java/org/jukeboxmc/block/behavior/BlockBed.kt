@@ -58,14 +58,14 @@ class BlockBed : Block {
         val otherBlock = this.getSide(direction)
         if (otherBlock is BlockBed) {
             if (otherBlock.isHeadPiece != isHeadPiece) {
-                location.world?.setBlock(otherBlock.location, create(BlockType.AIR), 0)
+                location.world.setBlock(otherBlock.location, create(BlockType.AIR), 0)
             }
         }
-        location.world?.setBlock(breakPosition, create(BlockType.AIR), 0)
+        location.world.setBlock(breakPosition, create(BlockType.AIR), 0)
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBed?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBed?
     var isHeadPiece: Boolean
         get() = stateExists("head_piece_bit") && getByteState("head_piece_bit").toInt() == 1
         set(value) {

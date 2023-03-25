@@ -41,7 +41,7 @@ class BlockKelp : Block {
 
     override fun onBlockBreak(breakPosition: Vector) {
         val world = this.world
-        val block = world!!.getBlock(breakPosition, 1)
+        val block = world.getBlock(breakPosition, 1)
         if (block is BlockWater) {
             world.setBlock(breakPosition, block, 0)
             world.setBlock(breakPosition, create(BlockType.AIR), 1)

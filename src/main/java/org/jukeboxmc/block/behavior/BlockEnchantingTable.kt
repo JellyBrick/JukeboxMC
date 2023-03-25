@@ -53,5 +53,5 @@ class BlockEnchantingTable : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityEnchantmentTable?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityEnchantmentTable?
 }

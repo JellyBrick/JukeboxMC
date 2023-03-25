@@ -66,21 +66,21 @@ class BlockDoor : Block {
         itemInHand: Item,
     ): Boolean {
         setOpen(!isOpen)
-        location.world?.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
+        location.world.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
         return true
     }
 
     override fun onBlockBreak(breakPosition: Vector) {
-        val block = location.world?.getBlock(breakPosition, 1) ?: return
+        val block = location.world.getBlock(breakPosition, 1)
         if (isUpperBlock) {
-            location.world?.setBlock(location.subtract(0f, 1f, 0f), block, 0)
-            location.world?.setBlock(location.subtract(0f, 1f, 0f), create(BlockType.AIR), 1)
+            location.world.setBlock(location.subtract(0f, 1f, 0f), block, 0)
+            location.world.setBlock(location.subtract(0f, 1f, 0f), create(BlockType.AIR), 1)
         } else {
-            location.world?.setBlock(location.add(0f, 1f, 0f), block, 0)
-            location.world?.setBlock(location.add(0f, 1f, 0f), create(BlockType.AIR), 1)
+            location.world.setBlock(location.add(0f, 1f, 0f), block, 0)
+            location.world.setBlock(location.add(0f, 1f, 0f), create(BlockType.AIR), 1)
         }
-        location.world?.setBlock(location, block, 0)
-        location.world?.setBlock(location, create(BlockType.AIR), 1)
+        location.world.setBlock(location, block, 0)
+        location.world.setBlock(location, create(BlockType.AIR), 1)
     }
 
     fun setOpen(value: Boolean): BlockDoor {

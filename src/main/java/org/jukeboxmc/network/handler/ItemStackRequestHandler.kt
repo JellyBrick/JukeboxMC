@@ -688,11 +688,11 @@ class ItemStackRequestHandler : PacketHandler<ItemStackRequestPacket> {
             sourceItem = Item.create(ItemType.AIR)
         }
         this.setItem(player, source.container, source.slot, sourceItem)
-        val entityItem = player.world?.dropItem(
+        val entityItem = player.world.dropItem(
             dropItem,
             player.location.add(0f, player.eyeHeight, 0f),
             player.location.direction.multiply(0.4f, 0.4f, 0.4f),
-        )!!
+        )
         entityItem.playerHasThrown = player
         entityItem.spawn()
         val finalSourceItem = sourceItem

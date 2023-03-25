@@ -132,14 +132,14 @@ open class Player(
     var isBreakingBlock = false
     var teleportLocation: Location? = null
         private set
-    var spawnLocation: Location = location.world!!.spawnLocation
+    var spawnLocation: Location = location.world.spawnLocation
         set(value) {
             field = value
             val setSpawnPositionPacket = SetSpawnPositionPacket()
             setSpawnPositionPacket.spawnType = SetSpawnPositionPacket.Type.PLAYER_SPAWN
             setSpawnPositionPacket.dimensionId = value.dimension.ordinal
             setSpawnPositionPacket.spawnPosition = value.toVector3i()
-            setSpawnPositionPacket.blockPosition = location.world!!.spawnLocation.toVector3i()
+            setSpawnPositionPacket.blockPosition = location.world.spawnLocation.toVector3i()
             playerConnection.sendPacket(setSpawnPositionPacket)
         }
     var respawnLocation: Location? = null
@@ -171,7 +171,7 @@ open class Player(
             return
         }
         super.update(currentTick)
-        val nearbyEntities = this.world!!.getNearbyEntities(boundingBox.grow(1f, 0.5f, 1f), location.dimension, null)
+        val nearbyEntities = this.world.getNearbyEntities(boundingBox.grow(1f, 0.5f, 1f), location.dimension, null)
         for (nearbyEntity in nearbyEntities) {
             (nearbyEntity as? EntityMoveable)?.onCollideWithPlayer(this)
         }
@@ -197,7 +197,7 @@ open class Player(
             val hungerAttribute = getAttribute(AttributeType.PLAYER_HUNGER)
             val hunger = hungerAttribute.getCurrentValue()
             var health = -1f
-            val difficulty: Difficulty = this.world!!.difficulty
+            val difficulty: Difficulty = this.world.difficulty
             if (difficulty == Difficulty.PEACEFUL && foodTicks % 10 == 0) {
                 if (hunger < hungerAttribute.maxValue) {
                     addHunger(1)
@@ -512,19 +512,19 @@ open class Player(
             changeDimensionPacket.dimension = location.dimension.ordinal
             changeDimensionPacket.isRespawn = false
             playerConnection.sendPacket(changeDimensionPacket)
-        } else if (currentWorld?.name != world?.name) {
+        } else if (currentWorld.name != world.name) {
             playerConnection.getPlayerChunkManager().clear()
             this.despawn()
-            currentWorld?.players?.forEach { player: Player? -> player!!.despawn(this) }
+            currentWorld.players?.forEach { player: Player? -> player!!.despawn(this) }
             val loadedChunk = this.loadedChunk
             if (loadedChunk != null) {
                 loadedChunk.removeEntity(this)
             } else {
                 server.logger.info("Loaded chunk for removeEntity is null")
             }
-            currentWorld?.removeEntity(this)
+            currentWorld.removeEntity(this)
             this.location = location
-            world!!.addEntity(this)
+            world.addEntity(this)
             if (loadedChunk != null) {
                 loadedChunk.addEntity(this)
             } else {
@@ -599,7 +599,7 @@ open class Player(
         playSoundPacket.volume = volume
         playSoundPacket.pitch = pitch
         if (sendInChunk) {
-            this.world?.sendChunkPacket(position.chunkX, position.chunkZ, playSoundPacket)
+            this.world.sendChunkPacket(position.chunkX, position.chunkZ, playSoundPacket)
         } else {
             playerConnection.sendPacket(playSoundPacket)
         }
@@ -885,7 +885,7 @@ open class Player(
             server.pluginManager.callEvent(playerDeathEvent)
             if (playerDeathEvent.isDropInventory) {
                 for (drop in playerDeathEvent.drops) {
-                    this.world?.dropItem(drop, location, null)?.spawn()
+                    this.world.dropItem(drop, location, null)?.spawn()
                 }
                 playerInventory.clear()
                 cursorInventory.clear()
@@ -894,7 +894,7 @@ open class Player(
             if (playerDeathEvent.deathMessage.isNotEmpty()) {
                 server.broadcastMessage(playerDeathEvent.deathMessage)
             }
-            respawnLocation = this.world!!.spawnLocation.add(0f, this.eyeHeight, 0f)
+            respawnLocation = this.world.spawnLocation.add(0f, this.eyeHeight, 0f)
             val respawnPositionPacket = RespawnPacket()
             respawnPositionPacket.runtimeEntityId = entityId
             respawnPositionPacket.state = RespawnPacket.State.SERVER_SEARCHING

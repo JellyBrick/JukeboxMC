@@ -57,12 +57,12 @@ class EntityArrow : EntityProjectile() {
                 return
             }
             val pickupItemEvent = PlayerPickupItemEvent(player, arrow)
-            player.world?.server?.pluginManager?.callEvent(pickupItemEvent)
+            player.world.server?.pluginManager?.callEvent(pickupItemEvent)
             if (pickupItemEvent.isCancelled) {
                 return
             }
             close()
-            player.world?.sendLevelEvent(player.location, LevelEvent.SOUND_INFINITY_ARROW_PICKUP)
+            player.world.sendLevelEvent(player.location, LevelEvent.SOUND_INFINITY_ARROW_PICKUP)
             if (!wasInfinityArrow) {
                 player.inventory.addItem(arrow)
             }

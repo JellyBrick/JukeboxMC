@@ -59,11 +59,11 @@ class BlockDoublePlant : Block {
 
     override fun onBlockBreak(breakPosition: Vector) {
         if (isUpperBlock) {
-            location.world?.setBlock(location.subtract(0f, 1f, 0f), create(BlockType.AIR))
+            location.world.setBlock(location.subtract(0f, 1f, 0f), create(BlockType.AIR))
         } else {
-            location.world?.setBlock(location.add(0f, 1f, 0f), create(BlockType.AIR))
+            location.world.setBlock(location.add(0f, 1f, 0f), create(BlockType.AIR))
         }
-        location.world?.setBlock(location, create(BlockType.AIR))
+        location.world.setBlock(location, create(BlockType.AIR))
     }
 
     override fun toItem(): Item {

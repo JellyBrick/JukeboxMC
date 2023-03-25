@@ -40,7 +40,7 @@ class BlockLectern : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityLectern?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityLectern?
     var isPowered: Boolean
         get() = stateExists("powered_bit") && getByteState("powered_bit").toInt() == 1
         set(value) {

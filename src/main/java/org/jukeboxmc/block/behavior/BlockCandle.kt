@@ -60,11 +60,11 @@ class BlockCandle : Block {
         }
         if (isLit && itemInHand.type != ItemType.FLINT_AND_STEEL) {
             setLit(false)
-            location.world?.playSound(blockPosition, SoundEvent.FIZZ)
+            location.world.playSound(blockPosition, SoundEvent.FIZZ)
             return true
         } else if (!isLit && itemInHand.type == ItemType.FLINT_AND_STEEL) {
             setLit(true)
-            location.world?.playSound(blockPosition, SoundEvent.IGNITE)
+            location.world.playSound(blockPosition, SoundEvent.IGNITE)
             return true
         }
         return false

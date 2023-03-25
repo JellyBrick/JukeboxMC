@@ -27,7 +27,7 @@ abstract class EntityMoveable : Entity() {
         protected set
     override var fallDistance: Float = 0f
     protected fun checkObstruction(x: Float, y: Float, z: Float) {
-        if (location.world?.getCollisionCubes(this, boundingBox, false)?.size == 0) {
+        if (location.world.getCollisionCubes(this, boundingBox, false)?.size == 0) {
             return
         }
         val i = FastMath.floor(x.toDouble()).toInt()
@@ -36,13 +36,13 @@ abstract class EntityMoveable : Entity() {
         val diffX = x - i
         val diffY = y - j
         val diffZ = z - k
-        if (!this.world!!.getBlock(i, j, k, 0, location.dimension).isTransparent) {
-            val flag = this.world!!.getBlock(i - 1, j, k, 0, location.dimension).isTransparent
-            val flag1 = this.world!!.getBlock(i + 1, j, k, 0, location.dimension).isTransparent
-            val flag2 = this.world!!.getBlock(i, j - 1, k, 0, location.dimension).isTransparent
-            val flag3 = this.world!!.getBlock(i, j + 1, k, 0, location.dimension).isTransparent
-            val flag4 = this.world!!.getBlock(i, j, k - 1, 0, location.dimension).isTransparent
-            val flag5 = this.world!!.getBlock(i, j, k + 1, 0, location.dimension).isTransparent
+        if (!this.world.getBlock(i, j, k, 0, location.dimension).isTransparent) {
+            val flag = this.world.getBlock(i - 1, j, k, 0, location.dimension).isTransparent
+            val flag1 = this.world.getBlock(i + 1, j, k, 0, location.dimension).isTransparent
+            val flag2 = this.world.getBlock(i, j - 1, k, 0, location.dimension).isTransparent
+            val flag3 = this.world.getBlock(i, j + 1, k, 0, location.dimension).isTransparent
+            val flag4 = this.world.getBlock(i, j, k - 1, 0, location.dimension).isTransparent
+            val flag5 = this.world.getBlock(i, j, k + 1, 0, location.dimension).isTransparent
             var direction = -1
             var limit = 9999.0
             if (flag) {
@@ -104,7 +104,7 @@ abstract class EntityMoveable : Entity() {
         val movY = velocity.y
         val movZ = velocity.z
         val list =
-            this.world!!.getCollisionCubes(
+            this.world.getCollisionCubes(
                 this,
                 boundingBox.addCoordinates(velocity.x, velocity.y, velocity.z),
                 false,

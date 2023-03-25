@@ -130,7 +130,7 @@ abstract class Entity : AutoCloseable {
                 return this
             }
             val entity: Entity = entitySpawnEvent.getEntity()
-            world!!.addEntity(entity)
+            world.addEntity(entity)
             chunk!!.addEntity(entity)
             player.playerConnection.sendPacket(entity.createSpawnPacket())
             spawnedFor.add(player.entityId)
@@ -139,7 +139,7 @@ abstract class Entity : AutoCloseable {
     }
 
     open fun spawn(): Entity {
-        for (player in world!!.players) {
+        for (player in world.players) {
             this.spawn(player)
         }
         return this
@@ -161,14 +161,14 @@ abstract class Entity : AutoCloseable {
     }
 
     open fun despawn(): Entity {
-        world?.players?.forEach(::despawn)
+        world.players?.forEach(::despawn)
         return this
     }
 
     override fun close() {
         this.despawn()
         chunk?.removeEntity(this)
-        world?.removeEntity(this)
+        world.removeEntity(this)
         isClosed = true
         isDead = true
     }
@@ -188,15 +188,8 @@ abstract class Entity : AutoCloseable {
         }
     }
 
-    val world: World?
+    val world: World
         get() = location.world
-    val worldNonNull: World
-        get() {
-            if (location.world == null /*|| !location.world!!.isLoaded TODO*/) {
-                throw IllegalStateException("World is not loaded")
-            }
-            return location.world!!
-        }
     val x: Float
         get() = location.x
     val y: Float
@@ -224,9 +217,9 @@ abstract class Entity : AutoCloseable {
     val chunkZ: Int
         get() = location.blockZ shr 4
     val chunk: Chunk?
-        get() = location.world?.getChunk(location.chunkX, location.chunkZ, location.dimension)
+        get() = location.world.getChunk(location.chunkX, location.chunkZ, location.dimension)
     val loadedChunk: Chunk?
-        get() = location.world?.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
+        get() = location.world.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
     val dimension: Dimension
         get() = location.dimension
 
@@ -387,7 +380,7 @@ abstract class Entity : AutoCloseable {
         protected get() {
             val location = this.location
             val loadedChunk =
-                location.world!!.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
+                location.world.getLoadedChunk(location.chunkX, location.chunkZ, location.dimension)
                     ?: return false
             val block = loadedChunk.getBlock(location.blockX, location.blockY, location.blockZ, 0)
             return block.type == BlockType.LADDER
@@ -395,7 +388,7 @@ abstract class Entity : AutoCloseable {
     val isInWater: Boolean
         get() {
             val eyeLocation: Vector = location.add(0f, eyeHeight, 0f)
-            val loadedChunk = world!!.getLoadedChunk(eyeLocation.chunkX, eyeLocation.chunkZ, location.dimension)
+            val loadedChunk = world.getLoadedChunk(eyeLocation.chunkX, eyeLocation.chunkZ, location.dimension)
                 ?: return false
             val block = loadedChunk.getBlock(eyeLocation.blockX, eyeLocation.blockY, eyeLocation.blockZ, 0)
             if (block.type == BlockType.WATER || block.type == BlockType.FLOWING_WATER) {

@@ -93,7 +93,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
     }
 
     override fun spawn(): EntityHuman {
-        for (player in this.world!!.players) {
+        for (player in this.world.players) {
             if (this.dimension == player.dimension) {
                 this.spawn(player)
             }
@@ -109,7 +109,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
     }
 
     override fun despawn(): EntityHuman {
-        for (player in this.world!!.players) {
+        for (player in this.world.players) {
             if (this.dimension == player.dimension) {
                 this.despawn(player)
             }
@@ -235,7 +235,7 @@ open class EntityHuman : EntityLiving(), InventoryHolder {
         exhaustion = added.toFloat()
         this.level = level.toFloat()
         if (playLevelUpSound) {
-            this.location.world?.playSound(this.location, SoundEvent.LEVELUP, min(7, level / 5) shl 28)
+            this.location.world.playSound(this.location, SoundEvent.LEVELUP, min(7, level / 5) shl 28)
         }
     }
 

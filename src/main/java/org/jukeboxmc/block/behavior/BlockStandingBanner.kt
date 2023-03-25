@@ -52,7 +52,7 @@ class BlockStandingBanner : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBanner?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBanner?
     var signDirection: SignDirection
         get() = if (stateExists("ground_sign_direction")) SignDirection.values()[getIntState("ground_sign_direction")] else SignDirection.SOUTH
         set(signDirection) {

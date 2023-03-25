@@ -13,7 +13,7 @@ import kotlin.math.sin
  * @version 1.0
  */
 class Location @JvmOverloads constructor(
-    var world: World?,
+    var world: World,
     x: Float,
     y: Float,
     z: Float,
@@ -26,74 +26,44 @@ class Location @JvmOverloads constructor(
         this.dimension = dimension
     }
 
-    constructor(world: World?, x: Float, y: Float, z: Float, dimension: Dimension?) : this(
+    constructor(world: World, x: Float, y: Float, z: Float, dimension: Dimension = Dimension.OVERWORLD) : this(
         world,
         x,
         y,
         z,
         0f,
         0f,
-        dimension ?: Dimension.OVERWORLD,
+        dimension,
     )
 
-    constructor(world: World?, x: Int, y: Int, z: Int, dimension: Dimension?) : this(
+    constructor(world: World, x: Int, y: Int, z: Int, dimension: Dimension = Dimension.OVERWORLD) : this(
         world,
         x.toFloat(),
         y.toFloat(),
         z.toFloat(),
         0f,
         0f,
-        dimension ?: Dimension.OVERWORLD,
+        dimension,
     )
 
-    constructor(world: World?, x: Int, y: Int, z: Int) : this(
-        world,
-        x.toFloat(),
-        y.toFloat(),
-        z.toFloat(),
-        0f,
-        0f,
-        Dimension.OVERWORLD,
-    )
-
-    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float, dimension: Dimension?) : this(
+    constructor(world: World, vector: Vector, yaw: Float = 0f, pitch: Float = 0f, dimension: Dimension = Dimension.OVERWORLD) : this(
         world,
         vector.x,
         vector.y,
         vector.z,
         yaw,
         pitch,
-        dimension ?: Dimension.OVERWORLD,
+        dimension,
     )
 
-    constructor(world: World?, vector: Vector, yaw: Float, pitch: Float) : this(
-        world,
-        vector.x,
-        vector.y,
-        vector.z,
-        yaw,
-        pitch,
-        Dimension.OVERWORLD,
-    )
-
-    constructor(world: World?, vector: Vector, dimension: Dimension?) : this(
+    constructor(world: World, vector: Vector, dimension: Dimension = Dimension.OVERWORLD) : this(
         world,
         vector.x,
         vector.y,
         vector.z,
         0f,
         0f,
-        dimension ?: Dimension.OVERWORLD,
-    )
-
-    constructor(world: World?, vector: Vector) : this(
-        world,
-        vector.x,
-        vector.y,
-        vector.z,
-        0f,
-        0f,
-        Dimension.OVERWORLD,
+        dimension,
     )
 
     override fun add(x: Float, y: Float, z: Float): Location {
@@ -113,18 +83,18 @@ class Location @JvmOverloads constructor(
     }
 
     val block: Block
-        get() = world!!.getBlock(this)
+        get() = world.getBlock(this)
     val biome: Biome?
-        get() = world?.getBiome(this, dimension)
+        get() = world.getBiome(this, dimension)
 
     fun getBlock(layer: Int): Block? {
-        return world?.getBlock(this, layer)
+        return world.getBlock(this, layer)
     }
 
     val chunk: Chunk?
-        get() = world?.getChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
+        get() = world.getChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
     val loadedChunk: Chunk?
-        get() = world?.getLoadedChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
+        get() = world.getLoadedChunk(this.blockX shr 4, this.blockZ shr 4, dimension)
     val direction: Vector
         get() {
             val pitch = (pitch + 90) * Math.PI / 180
@@ -142,7 +112,7 @@ class Location @JvmOverloads constructor(
 
     override fun toString(): String {
         return "Location{" +
-            "world=" + world?.name +
+            "world=" + world.name +
             ", x=" + x +
             ", y=" + y +
             ", z=" + z +

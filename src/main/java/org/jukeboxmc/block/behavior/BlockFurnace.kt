@@ -57,7 +57,7 @@ class BlockFurnace : Block {
             val furnaceInventory = blockEntity.furnaceInventory
             for (content in furnaceInventory.contents) {
                 if (content.type != ItemType.AIR) {
-                    location.world?.dropItem(content, breakPosition, null)?.spawn()
+                    location.world.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             furnaceInventory.clear()
@@ -67,7 +67,7 @@ class BlockFurnace : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityFurnace?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityFurnace?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

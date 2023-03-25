@@ -43,7 +43,7 @@ class EntityEgg : EntityProjectile() {
     private fun spawnEggParticle(location: Location) {
         val itemEgg: Item = Item.create(ItemType.EGG)
         for (i in 0..5) {
-            this.world?.spawnParticle(
+            this.world.spawnParticle(
                 Particle.ITEM_BREAK,
                 location.add(0f, 0.5f, 0f),
                 itemEgg.runtimeId shl 16 or itemEgg.meta,

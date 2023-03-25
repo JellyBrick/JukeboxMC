@@ -31,7 +31,7 @@ class EntityItem : EntityMoveable() {
             return
         }
         if (!this.isImmobile) {
-            val blockTypeLayer0: BlockType = this.location.world!!.getBlock(
+            val blockTypeLayer0: BlockType = this.world.getBlock(
                 this.location.blockX,
                 this.boundingBox.maxY.toInt(),
                 this.location.blockZ,

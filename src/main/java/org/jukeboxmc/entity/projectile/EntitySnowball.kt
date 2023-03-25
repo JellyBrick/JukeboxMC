@@ -42,7 +42,7 @@ class EntitySnowball : EntityProjectile() {
 
     private fun spawnSnowballParticle(location: Location) {
         for (i in 0..5) {
-            this.world?.spawnParticle(Particle.SNOWBALL_POOF, location.add(0f, 0.5f, 0f))
+            this.world.spawnParticle(Particle.SNOWBALL_POOF, location.add(0f, 0.5f, 0f))
         }
     }
 }

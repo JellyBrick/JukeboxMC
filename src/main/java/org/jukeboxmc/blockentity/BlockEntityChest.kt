@@ -124,7 +124,7 @@ class BlockEntityChest(
     private fun getPaired(): BlockEntityChest? {
         if (pairPosition != null && isPaired) {
             val loadedChunk =
-                block.world?.getLoadedChunk(pairPosition!!.chunkX, pairPosition!!.chunkZ, dimension)
+                block.world.getLoadedChunk(pairPosition!!.chunkX, pairPosition!!.chunkZ, dimension)
             if (loadedChunk != null) {
                 val blockEntity = loadedChunk.getBlockEntity(
                     pairPosition!!.blockX,

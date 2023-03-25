@@ -26,7 +26,7 @@ class BarrelInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1,
             if (block is BlockBarrel) {
                 if (!block.isOpen) {
                     block.isOpen = true
-                    player.world?.playSound(block.location, SoundEvent.BARREL_OPEN)
+                    player.world.playSound(block.location, SoundEvent.BARREL_OPEN)
                 }
             }
         }
@@ -38,7 +38,7 @@ class BarrelInventory(holder: InventoryHolder?) : ContainerInventory(holder, -1,
             if (block is BlockBarrel) {
                 if (block.isOpen) {
                     block.isOpen = false
-                    player.world?.playSound(block.location, SoundEvent.BARREL_CLOSE)
+                    player.world.playSound(block.location, SoundEvent.BARREL_CLOSE)
                 }
             }
         }

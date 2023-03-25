@@ -14,7 +14,7 @@ class BlockEntityDataHandler : PacketHandler<BlockEntityDataPacket> {
     override fun handle(packet: BlockEntityDataPacket, server: Server, player: Player) {
         val vector = Vector(packet.blockPosition)
         vector.dimension = player.dimension
-        player.world?.getBlock(vector)?.let { block ->
+        player.world.getBlock(vector)?.let { block ->
             if (block.blockEntity != null) {
                 val blockEntity = block.blockEntity
                 if (blockEntity is BlockEntitySign) {

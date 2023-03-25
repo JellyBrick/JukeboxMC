@@ -37,7 +37,7 @@ class ItemSnowball : Item {
                 player.inventory.removeItem(ItemType.SNOWBALL, 1)
             }
             entitySnowball.spawn()
-            player.world?.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
+            player.world.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
             return true
         }
         return false

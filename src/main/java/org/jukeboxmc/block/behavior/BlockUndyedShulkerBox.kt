@@ -71,7 +71,7 @@ class BlockUndyedShulkerBox : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     override fun toItem(): ItemUndyedShulkerBox {
         val itemShulkerBox: ItemUndyedShulkerBox =

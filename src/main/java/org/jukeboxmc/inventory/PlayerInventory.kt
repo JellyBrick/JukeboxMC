@@ -115,7 +115,7 @@ class PlayerInventory(holder: InventoryHolder) : ContainerInventory(holder, 36) 
         if (holder is EntityHuman) {
             val entityHuman = holder as EntityHuman
             val mobEquipmentPacket: MobEquipmentPacket = createMobEquipmentPacket(entityHuman)
-            for (onlinePlayers in entityHuman.world!!.players) {
+            for (onlinePlayers in entityHuman.world.players) {
                 if (onlinePlayers !== entityHuman) {
                     onlinePlayers.playerConnection.sendPacket(mobEquipmentPacket)
                 }

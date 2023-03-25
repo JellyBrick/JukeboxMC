@@ -40,7 +40,7 @@ class BlockGravel : Block {
 
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.NORMAL) {
-            location.world?.scheduleBlockUpdate(location, 1)
+            location.world.scheduleBlockUpdate(location, 1)
         } else if (updateReason == UpdateReason.SCHEDULED) {
             val blockDown = location.block.clone().getSide(BlockFace.DOWN)
             if (blockDown.type == BlockType.AIR) {
@@ -53,7 +53,7 @@ class BlockGravel : Block {
                 if (fallingBlockEvent.isCancelled) {
                     return -1
                 }
-                location.world?.setBlock(location, create(BlockType.AIR))
+                location.world.setBlock(location, create(BlockType.AIR))
                 entity.spawn()
             }
         }

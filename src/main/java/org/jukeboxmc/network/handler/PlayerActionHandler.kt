@@ -114,7 +114,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
 
             PlayerActionType.START_BREAK -> {
                 val currentBreakTime = System.currentTimeMillis()
-                val startBreakBlock = player.world!!.getBlock(lasBreakPosition)
+                val startBreakBlock = player.world.getBlock(lasBreakPosition)
                 val playerInteractEvent = PlayerInteractEvent(
                     player,
                     if (startBreakBlock.type == BlockType.AIR) PlayerInteractEvent.Action.LEFT_CLICK_AIR else PlayerInteractEvent.Action.LEFT_CLICK_BLOCK,
@@ -135,7 +135,7 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                         levelEventPacket.type = LevelEvent.BLOCK_START_BREAK
                         levelEventPacket.position = packet.blockPosition.toFloat()
                         levelEventPacket.data = (65535 / breakTime).toInt()
-                        player.world?.sendChunkPacket(
+                        player.world.sendChunkPacket(
                             lasBreakPosition.chunkX,
                             lasBreakPosition.chunkZ,
                             levelEventPacket,
@@ -152,14 +152,14 @@ class PlayerActionHandler : PacketHandler<PlayerActionPacket> {
                 levelEventPacket.type = LevelEvent.BLOCK_STOP_BREAK
                 levelEventPacket.position = packet.blockPosition.toFloat()
                 levelEventPacket.data = 0
-                player.world?.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)
+                player.world.sendChunkPacket(lasBreakPosition.chunkX, lasBreakPosition.chunkZ, levelEventPacket)
                 player.isBreakingBlock = false
             }
 
             PlayerActionType.CONTINUE_BREAK -> {
                 if (player.isBreakingBlock) {
-                    val continueBlockBreak = player.world!!.getBlock(lasBreakPosition)
-                    player.world!!.spawnParticle(
+                    val continueBlockBreak = player.world.getBlock(lasBreakPosition)
+                    player.world.spawnParticle(
                         null,
                         Particle.CRACK_BLOCK,
                         lasBreakPosition,

@@ -30,8 +30,8 @@ open class ChestInventory : ContainerInventory {
             blockEventPacket.blockPosition = location.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 2
-            player.world?.playSound(location, SoundEvent.CHEST_OPEN)
-            player.world?.sendChunkPacket(location.blockX shr 4, location.blockZ shr 4, blockEventPacket)
+            player.world.playSound(location, SoundEvent.CHEST_OPEN)
+            player.world.sendChunkPacket(location.blockX shr 4, location.blockZ shr 4, blockEventPacket)
         }
     }
 
@@ -42,8 +42,8 @@ open class ChestInventory : ContainerInventory {
             blockEventPacket.blockPosition = location.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 0
-            player.world?.playSound(location, SoundEvent.CHEST_CLOSED)
-            player.world?.sendChunkPacket(location.blockX shr 4, location.blockZ shr 4, blockEventPacket)
+            player.world.playSound(location, SoundEvent.CHEST_CLOSED)
+            player.world.sendChunkPacket(location.blockX shr 4, location.blockZ shr 4, blockEventPacket)
         }
     }
 }

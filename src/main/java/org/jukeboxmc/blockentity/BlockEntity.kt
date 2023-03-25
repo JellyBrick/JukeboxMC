@@ -84,7 +84,7 @@ open class BlockEntity(val block: Block, val blockEntityType: BlockEntityType) {
         val blockEntityDataPacket = BlockEntityDataPacket()
         blockEntityDataPacket.blockPosition = location.toVector3i()
         blockEntityDataPacket.data = toCompound().build()
-        world!!.setBlockEntity(location, this, location.dimension)
+        world.setBlockEntity(location, this, location.dimension)
         world.sendDimensionPacket(blockEntityDataPacket, location.dimension)
         Server.instance.broadcastPacket(blockEntityDataPacket)
         isSpawned = true

@@ -19,7 +19,6 @@ import org.jukeboxmc.crafting.recipes.SmeltingRecipe
 import org.jukeboxmc.item.Item
 import org.jukeboxmc.item.ItemRegistry
 import org.jukeboxmc.util.ItemPalette
-import java.util.LinkedList
 import java.util.Optional
 import java.util.UUID
 

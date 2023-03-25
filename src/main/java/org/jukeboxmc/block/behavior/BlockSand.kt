@@ -52,7 +52,7 @@ class BlockSand : Block {
             if (fallingBlockEvent.isCancelled) {
                 return -1
             }
-            location.world?.setBlock(location, create(BlockType.AIR))
+            location.world.setBlock(location, create(BlockType.AIR))
             entity.spawn()
         }
         return -1

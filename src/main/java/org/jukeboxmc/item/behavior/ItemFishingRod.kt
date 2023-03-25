@@ -54,7 +54,7 @@ class ItemFishingRod : Item, Durability, Burnable {
                 entityFishingHook.spawn()
                 this.updateItem(player, 1)
                 player.entityFishingHook = entityFishingHook
-                player.world?.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
+                player.world.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
                 return true
             }
             return false

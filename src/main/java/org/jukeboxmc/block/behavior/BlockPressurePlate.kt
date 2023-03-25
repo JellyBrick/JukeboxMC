@@ -85,7 +85,7 @@ class BlockPressurePlate : Block {
     private val redstoneStrength: Int
         private get() {
             val boundingBox = boundingBox
-            for (entity in location.world!!.getNearbyEntities(boundingBox, location.dimension, null)) {
+            for (entity in location.world.getNearbyEntities(boundingBox, location.dimension, null)) {
                 if (entity is EntityHuman) {
                     return 15
                 }
@@ -100,13 +100,13 @@ class BlockPressurePlate : Block {
         if (oldSignal != redstoneStrength) {
             redstoneSignal = redstoneStrength
             if (!isPowered && wasPowered) {
-                location.world?.playSound(location, SoundEvent.POWER_OFF)
+                location.world.playSound(location, SoundEvent.POWER_OFF)
             } else if (isPowered && !wasPowered) {
-                location.world?.playSound(location, SoundEvent.POWER_ON)
+                location.world.playSound(location, SoundEvent.POWER_ON)
             }
         }
         if (isPowered) {
-            location.world?.scheduleBlockUpdate(location, 20)
+            location.world.scheduleBlockUpdate(location, 20)
         }
     }
 }

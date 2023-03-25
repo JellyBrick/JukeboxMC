@@ -52,7 +52,7 @@ class BlockLoom : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityLoom?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityLoom?
     var direction: Direction
         get() {
             return when (if (stateExists("direction")) getIntState("direction") else 0) {

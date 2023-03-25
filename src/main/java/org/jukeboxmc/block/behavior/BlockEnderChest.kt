@@ -54,7 +54,7 @@ class BlockEnderChest : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityEnderChest?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityEnderChest?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

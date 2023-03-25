@@ -43,7 +43,7 @@ class BlockSkull : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySkull?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntitySkull?
 
     fun setNoDrop(value: Boolean): BlockSkull {
         return setState("no_drop_bit", if (value) 1.toByte() else 0.toByte())

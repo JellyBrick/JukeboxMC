@@ -49,7 +49,7 @@ abstract class EntityProjectile : EntityMoveable() {
                     location.y + this.velocity.y,
                     location.z + this.velocity.z,
                 )
-                val nearbyEntities = location.world!!.getNearbyEntities(
+                val nearbyEntities = location.world.getNearbyEntities(
                     this.boundingBox.addCoordinates(
                         this.velocity.x,
                         this.velocity.y,
@@ -74,7 +74,7 @@ abstract class EntityProjectile : EntityMoveable() {
                 }
                 if (hitEntity != null) {
                     val projectileHitEntityEvent = ProjectileHitEntityEvent(hitEntity, this)
-                    this.world!!.server.pluginManager.callEvent(projectileHitEntityEvent)
+                    this.world.server.pluginManager.callEvent(projectileHitEntityEvent)
                     if (!projectileHitEntityEvent.isCancelled) {
                         val damage = damage
                         val event = EntityDamageByEntityEvent(hitEntity, shooter!!, damage, DamageSource.PROJECTILE)

@@ -91,7 +91,7 @@ class ItemBow : Item, Durability, Burnable {
         arrow.setPickupDelay(500, TimeUnit.MILLISECONDS)
         arrow.force = force
         val event = ProjectileLaunchEvent(arrow, ProjectileLaunchEvent.Cause.BOW)
-        player.world?.server?.pluginManager?.callEvent(event)
+        player.world.server?.pluginManager?.callEvent(event)
         if (!event.isCancelled) {
             val enchantmentInfinity = getEnchantment(EnchantmentType.INFINITY) as EnchantmentInfinity
             arrow.setWasInfinityArrow(true)

@@ -15,7 +15,7 @@ class BlockPickRequestHandler : PacketHandler<BlockPickRequestPacket> {
     override fun handle(packet: BlockPickRequestPacket, server: Server, player: Player) {
         val position: Vector = Vector(packet.blockPosition)
         position.dimension = player.dimension
-        player.world?.getBlock(position)?.let { pickedBlock ->
+        player.world.getBlock(position)?.let { pickedBlock ->
             if (player.gameMode == GameMode.CREATIVE) {
                 val item = pickedBlock.toItem()
                 if (item.type == ItemType.AIR) {

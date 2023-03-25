@@ -36,7 +36,7 @@ class ItemEgg : Item {
                 player.inventory.removeItem(ItemType.EGG, 1)
             }
             entityEgg.spawn()
-            player.world?.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
+            player.world.playSound(player.location, SoundEvent.THROW, -1, "minecraft:player", false, false)
             return true
         }
         return false

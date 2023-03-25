@@ -26,8 +26,8 @@ class EnderChestInventory(holder: InventoryHolder?) : ContainerInventory(holder,
             blockEventPacket.blockPosition = position!!.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 2
-            player.world?.playSound(position!!, SoundEvent.ENDERCHEST_OPEN)
-            player.world?.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
+            player.world.playSound(position!!, SoundEvent.ENDERCHEST_OPEN)
+            player.world.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
         }
     }
 
@@ -37,8 +37,8 @@ class EnderChestInventory(holder: InventoryHolder?) : ContainerInventory(holder,
             blockEventPacket.blockPosition = position!!.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 0
-            player.world?.playSound(position!!, SoundEvent.ENDERCHEST_CLOSED)
-            player.world?.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
+            player.world.playSound(position!!, SoundEvent.ENDERCHEST_CLOSED)
+            player.world.sendChunkPacket(position!!.blockX shr 4, position!!.blockZ shr 4, blockEventPacket)
         }
     }
 }

@@ -76,7 +76,7 @@ class BlockChest : Block {
             val chestInventory = blockEntity.getChestInventory()
             for (content in chestInventory.contents) {
                 if (content.type != ItemType.AIR) {
-                    location.world?.dropItem(content, breakPosition, null)?.spawn()
+                    location.world.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             chestInventory.clear()
@@ -86,7 +86,7 @@ class BlockChest : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityChest?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityChest?
     var blockFace: BlockFace
         get() = if (stateExists("facing_direction")) BlockFace.values()[getIntState("facing_direction")] else BlockFace.NORTH
         set(blockFace) {

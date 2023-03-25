@@ -16,7 +16,7 @@ open class BlockSign : Block {
     constructor(identifier: Identifier, blockStates: NbtMap?) : super(identifier, blockStates)
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntitySign?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntitySign?
     val lines: List<String>?
         get() {
             val blockEntity: BlockEntitySign? = blockEntity as BlockEntitySign?

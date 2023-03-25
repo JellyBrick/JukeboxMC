@@ -116,7 +116,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 
     private fun onDisconnect(disconnectReason: RakDisconnectReason?) {
         server.removePlayer(player)
-        player.world?.removeEntity(player)
+        player.world.removeEntity(player)
         player.chunk?.removeEntity(player)
         player.inventory.removeViewer(player)
         player.armorInventory.removeViewer(player)
@@ -152,7 +152,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 
     private fun doFirstSpawn() {
         spawned.set(true)
-        player.world!!.addEntity(player)
+        player.world.addEntity(player)
         val setEntityDataPacket = SetEntityDataPacket()
         setEntityDataPacket.runtimeEntityId = player.entityId
         setEntityDataPacket.metadata.putAll(player.metadata.getEntityDataMap())
@@ -199,7 +199,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         playStatusPacket.status = PlayStatusPacket.Status.PLAYER_SPAWN
         sendPacket(playStatusPacket)
         val setTimePacket = SetTimePacket()
-        setTimePacket.time = player.world!!.getWorldTime()
+        setTimePacket.time = player.world.getWorldTime()
         sendPacket(setTimePacket)
         for (onlinePlayer in server.onlinePlayers) {
             if (onlinePlayer.dimension == player.dimension) {
@@ -208,7 +208,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
             }
         }
         server.logger.info(
-            player.name + " logged in [World=" + player.world!!.name + ", X=" +
+            player.name + " logged in [World=" + player.world.name + ", X=" +
                 player.blockX + ", Y=" + player.blockY + ", Z=" + player.blockZ +
                 ", Dimension=" + player.location.dimension.dimensionName + "]",
         )
@@ -224,11 +224,11 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.playerPosition = player.location.toVector3f().add(0f, 2f, 0f) // TODO
         startGamePacket.defaultSpawn = player.location.toVector3i().add(0, 2, 0) // TODO
         startGamePacket.rotation = Vector2f.from(player.pitch, player.yaw)
-        startGamePacket.seed = player.world!!.seed
+        startGamePacket.seed = player.world.seed
         startGamePacket.dimensionId = player.location.dimension.ordinal
         startGamePacket.isTrustingPlayers = true
         startGamePacket.levelGameType = server.gameMode.toGameType()
-        startGamePacket.difficulty = player.world!!.difficulty.ordinal
+        startGamePacket.difficulty = player.world.difficulty.ordinal
         startGamePacket.spawnBiomeType = SpawnBiomeType.DEFAULT // TODO: User defined biome type
         startGamePacket.customBiomeName = ""
         startGamePacket.isAchievementsDisabled = true
@@ -240,9 +240,9 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.isCommandsEnabled = true
         startGamePacket.isMultiplayerGame = true
         startGamePacket.isBroadcastingToLan = true
-        startGamePacket.gamerules.addAll(player.world!!.getGameRules().getGameRules())
+        startGamePacket.gamerules.addAll(player.world.getGameRules().getGameRules())
         startGamePacket.levelId = ""
-        startGamePacket.levelName = player.world!!.name
+        startGamePacket.levelName = player.world.name
         startGamePacket.generatorId = 1
         startGamePacket.itemDefinitions = ItemPalette.entries
         startGamePacket.xblBroadcastMode = GamePublishSetting.PUBLIC

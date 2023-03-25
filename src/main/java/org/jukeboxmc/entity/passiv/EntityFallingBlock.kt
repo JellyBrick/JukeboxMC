@@ -28,7 +28,7 @@ class EntityFallingBlock : EntityMoveable() {
         val position: Vector = Vector(this.x - 0.5f, this.y, this.z - 0.5f).round()
         if (this.isOnGround) {
             this.close()
-            val world: World = this.world!!
+            val world: World = this.world
             val replacedBlock = world.getBlock(position)
             if (replacedBlock.canBeReplaced(null)) {
                 world.setBlock(position, block!!)

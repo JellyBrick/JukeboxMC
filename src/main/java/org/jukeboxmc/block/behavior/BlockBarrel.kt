@@ -74,7 +74,7 @@ class BlockBarrel : Block {
             val inventory = blockEntity.barrelInventory
             for (content in inventory.contents) {
                 if (content.type != ItemType.AIR) {
-                    location.world?.dropItem(content, breakPosition, null)?.spawn()
+                    location.world.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             inventory.clear()
@@ -84,7 +84,7 @@ class BlockBarrel : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBarrel?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBarrel?
     var isOpen: Boolean
         get() = stateExists("open_bit") && getByteState("open_bit").toInt() == 1
         set(value) {

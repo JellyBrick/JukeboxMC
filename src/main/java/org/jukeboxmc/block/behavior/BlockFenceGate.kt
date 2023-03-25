@@ -60,7 +60,7 @@ class BlockFenceGate : Block {
             }
         }
         isOpen = !isOpen
-        location.world?.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
+        location.world.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
         return true
     }
 

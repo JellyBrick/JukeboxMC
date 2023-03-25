@@ -14,7 +14,6 @@ import org.jukeboxmc.item.ItemRegistry
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.util.Base64
-import java.util.LinkedList
 
 /**
  * @author LucGamesYT

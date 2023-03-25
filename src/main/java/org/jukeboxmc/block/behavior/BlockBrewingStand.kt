@@ -59,7 +59,7 @@ class BlockBrewingStand : Block {
             val inventory = blockEntity.brewingStandInventory
             for (content in inventory.contents) {
                 if (content.type != ItemType.AIR) {
-                    location.world?.dropItem(content, breakPosition, null)?.spawn()
+                    location.world.dropItem(content, breakPosition, null)?.spawn()
                 }
             }
             inventory.clear()
@@ -69,7 +69,7 @@ class BlockBrewingStand : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityBrewingStand?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityBrewingStand?
     var isBrewingStandSlotA: Boolean
         get() = stateExists("brewing_stand_slot_a_bit") && getByteState("brewing_stand_slot_a_bit").toInt() == 1
         set(value) {

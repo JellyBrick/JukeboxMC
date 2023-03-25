@@ -44,7 +44,7 @@ abstract class FakeInventory(holder: InventoryHolder?, holderId: Int, size: Int)
                     val updateBlockPacket = UpdateBlockPacket()
                     updateBlockPacket.blockPosition = position.toVector3i()
                     updateBlockPacket.dataLayer = 0
-                    updateBlockPacket.definition = player.world!!.getBlock(position).definition
+                    updateBlockPacket.definition = player.world.getBlock(position).definition
                     updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
                     player.playerConnection.sendPacket(updateBlockPacket)
                 }

@@ -29,7 +29,7 @@ class PlayerChunkManager(private val player: Player) {
     private val sendQueue: Long2ObjectMap<LevelChunkPacket?> = Long2ObjectOpenHashMap()
     private val chunksSentCounter: AtomicLong = AtomicLong()
     private val removeChunkLoader: LongConsumer = LongConsumer { chunkKey: Long ->
-        val chunk = player.world?.getLoadedChunk(chunkKey, player.dimension)
+        val chunk = player.world.getLoadedChunk(chunkKey, player.dimension)
         chunk?.removeLoader(player)
     }
 
@@ -46,7 +46,7 @@ class PlayerChunkManager(private val player: Player) {
             val key = entry.longKey
             if (!loadedChunks.contains(key)) {
                 sendQueueIterator.remove()
-                val chunk = player.world?.getLoadedChunk(key, player.dimension)
+                val chunk = player.world.getLoadedChunk(key, player.dimension)
                 chunk?.removeLoader(player)
             }
         }
@@ -61,7 +61,7 @@ class PlayerChunkManager(private val player: Player) {
                 break
             sendQueue.remove(key)
             player.playerConnection.sendPacket(packet)
-            val chunk = player.world?.getLoadedChunk(key, player.dimension)
+            val chunk = player.world.getLoadedChunk(key, player.dimension)
             if (chunk != null) {
                 for (entity in chunk.getEntities()) {
                     if (entity !is Player && !entity.isClosed) {
@@ -115,7 +115,7 @@ class PlayerChunkManager(private val player: Player) {
             val cx = Utils.fromHashX(key)
             val cz = Utils.fromHashZ(key)
             if (sendQueue.putIfAbsent(key, null) == null) {
-                player.world?.getChunkFuture(cx, cz, player.dimension)?.thenApply { chunk: Chunk ->
+                player.world.getChunkFuture(cx, cz, player.dimension)?.thenApply { chunk: Chunk ->
                     chunk.addLoader(player)
                     chunk
                 }?.thenApplyAsync(

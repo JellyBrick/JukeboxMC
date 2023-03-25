@@ -75,14 +75,14 @@ class DoubleChestInventory(
             blockEventPacket.blockPosition = leftLocation.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 2
-            player.world?.sendChunkPacket(leftLocation.blockX shr 4, leftLocation.blockZ shr 4, blockEventPacket)
+            player.world.sendChunkPacket(leftLocation.blockX shr 4, leftLocation.blockZ shr 4, blockEventPacket)
             val rightLocation = right.inventoryHolder.block.location
             val blockEventPacket2 = BlockEventPacket()
             blockEventPacket2.blockPosition = rightLocation.toVector3i()
             blockEventPacket2.eventType = 1
             blockEventPacket2.eventData = 2
-            player.world?.playSound(rightLocation, SoundEvent.CHEST_OPEN)
-            player.world?.sendChunkPacket(rightLocation.blockX shr 4, rightLocation.blockZ shr 4, blockEventPacket2)
+            player.world.playSound(rightLocation, SoundEvent.CHEST_OPEN)
+            player.world.sendChunkPacket(rightLocation.blockX shr 4, rightLocation.blockZ shr 4, blockEventPacket2)
         }
     }
 
@@ -93,14 +93,14 @@ class DoubleChestInventory(
             blockEventPacket.blockPosition = leftLocation.toVector3i()
             blockEventPacket.eventType = 1
             blockEventPacket.eventData = 0
-            player.world?.sendChunkPacket(leftLocation.blockX shr 4, leftLocation.blockZ shr 4, blockEventPacket)
+            player.world.sendChunkPacket(leftLocation.blockX shr 4, leftLocation.blockZ shr 4, blockEventPacket)
             val rightLocation = right.inventoryHolder.block.location
             val blockEventPacket2 = BlockEventPacket()
             blockEventPacket2.blockPosition = rightLocation.toVector3i()
             blockEventPacket2.eventType = 1
             blockEventPacket2.eventData = 0
-            player.world?.playSound(rightLocation, SoundEvent.CHEST_CLOSED)
-            player.world?.sendChunkPacket(rightLocation.blockX shr 4, rightLocation.blockZ shr 4, blockEventPacket2)
+            player.world.playSound(rightLocation, SoundEvent.CHEST_CLOSED)
+            player.world.sendChunkPacket(rightLocation.blockX shr 4, rightLocation.blockZ shr 4, blockEventPacket2)
         }
     }
 }

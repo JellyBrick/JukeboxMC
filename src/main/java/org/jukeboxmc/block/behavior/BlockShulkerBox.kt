@@ -94,7 +94,7 @@ class BlockShulkerBox : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityShulkerBox?
 
     fun setColor(color: BlockColor): BlockShulkerBox {
         return setState("color", color.name.lowercase(Locale.getDefault()))

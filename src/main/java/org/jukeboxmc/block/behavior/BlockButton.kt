@@ -49,15 +49,15 @@ class BlockButton : Block {
             return false
         }
         isButtonPressed = true
-        location.world?.playSound(location, SoundEvent.POWER_ON)
-        location.world?.scheduleBlockUpdate(location, 20)
+        location.world.playSound(location, SoundEvent.POWER_ON)
+        location.world.scheduleBlockUpdate(location, 20)
         return true
     }
 
     override fun onUpdate(updateReason: UpdateReason): Long {
         if (updateReason == UpdateReason.SCHEDULED) {
             isButtonPressed = false
-            location.world?.playSound(location, SoundEvent.POWER_OFF)
+            location.world.playSound(location, SoundEvent.POWER_OFF)
         }
         return -1
     }

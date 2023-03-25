@@ -55,7 +55,7 @@ class BlockHopper : Block {
     }
 
     override val blockEntity: BlockEntity?
-        get() = location.world?.getBlockEntity(location, location.dimension) as BlockEntityHopper?
+        get() = location.world.getBlockEntity(location, location.dimension) as BlockEntityHopper?
     var isToggle: Boolean
         get() = stateExists("toggle_bit") && getByteState("toggle_bit").toInt() == 1
         set(value) {

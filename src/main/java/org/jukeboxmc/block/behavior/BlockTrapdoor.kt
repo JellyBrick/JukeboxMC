@@ -50,7 +50,7 @@ class BlockTrapdoor : Block {
         itemInHand: Item,
     ): Boolean {
         isOpen = !isOpen
-        location.world?.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
+        location.world.sendLevelEvent(location, LevelEvent.SOUND_DOOR_OPEN, 0)
         return true
     }
 

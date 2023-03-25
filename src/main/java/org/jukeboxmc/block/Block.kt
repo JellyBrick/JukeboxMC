@@ -52,7 +52,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     var blockStates: NbtMap
     var type: BlockType
         protected set
-    var location: Location = Location(null, Vector(0, 0, 0))
+    lateinit var location: Location
     var layer = 0
     protected var blockProperties: BlockProperties
 
@@ -87,13 +87,15 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         )
     }
 
-    val world: World?
+    val world: World
         get() = location.world
 
-    fun checkValidity(): Boolean = location.world?.let {
-        it.getBlock(location.blockX, location.blockY, location.blockZ, layer, location.dimension)
+    fun checkValidity(): Boolean = if (this::location.isInitialized) {
+        location.world.getBlock(location.blockX, location.blockY, location.blockZ, layer, location.dimension)
             .runtimeId == runtimeId
-    } ?: false
+    } else {
+        false
+    }
 
     fun setStateBlock(state: String, value: Any): Block {
         if (!blockStates.containsKey(state)) {
@@ -174,7 +176,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         val x = location.blockX + position.blockX
         val y = location.blockY + position.blockY
         val z = location.blockZ + position.blockZ
-        return location.world?.getBlock(x, y, z, layer, location.dimension)
+        return location.world.getBlock(x, y, z, layer, location.dimension)
     }
 
     open fun toItem(): Item {
@@ -218,7 +220,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             val itemDrops = mutableListOf<EntityItem>()
             for (droppedItem in blockBreakEvent.drops) {
                 if (droppedItem.type != ItemType.AIR) {
-                    itemDrops.add(player.world!!.dropItem(droppedItem, breakLocation.clone(), null))
+                    itemDrops.add(player.world.dropItem(droppedItem, breakLocation.clone(), null))
                 }
             }
             if (itemDrops.isNotEmpty()) {
@@ -226,15 +228,15 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             }
         }
         playBreakSound()
-        breakLocation.world?.sendLevelEvent(breakLocation, LevelEvent.PARTICLE_DESTROY_BLOCK, runtimeId)
+        breakLocation.world.sendLevelEvent(breakLocation, LevelEvent.PARTICLE_DESTROY_BLOCK, runtimeId)
     }
 
     private fun playBreakSound() {
-        location.world?.playSound(location, SoundEvent.BREAK, runtimeId)
+        location.world.playSound(location, SoundEvent.BREAK, runtimeId)
     }
 
     open fun onBlockBreak(breakPosition: Vector) {
-        location.world?.setBlock(breakPosition, create(BlockType.AIR), 0, breakPosition.dimension)
+        location.world.setBlock(breakPosition, create(BlockType.AIR), 0, breakPosition.dimension)
     }
 
     fun sendUpdate() {
@@ -243,7 +245,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         updateBlockPacket.blockPosition = location.toVector3i()
         updateBlockPacket.flags.addAll(UpdateBlockPacket.FLAG_ALL_PRIORITY)
         updateBlockPacket.dataLayer = layer
-        location.world?.sendChunkPacket(location.chunkX, location.chunkZ, updateBlockPacket)
+        location.world.sendChunkPacket(location.chunkX, location.chunkZ, updateBlockPacket)
     }
 
     fun sendUpdate(player: Player) {
@@ -470,7 +472,9 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
             block.identifier = identifier
             block.blockStates = blockStates
             block.type = type
-            block.location = location
+            if (this::location.isInitialized) {
+                block.location = location
+            }
             block.layer = layer
             block.blockProperties = blockProperties
             block
