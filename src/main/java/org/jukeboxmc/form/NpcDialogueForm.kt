@@ -27,7 +27,7 @@ class NpcDialogueForm(
     val dialogueButtons = ObjectArrayList<NpcDialogueButton>()
 
     fun buttons(buttons: List<NpcDialogueButton>): NpcDialogueForm {
-        val urlTag = npc.metadata.getString(EntityDataTypes.NPC_DATA) // FIXME: This is not valid tag, but I didn't find valid one so use this right now
+        val urlTag = npc.metadata.getString(EntityDataTypes.NPC_DATA) ?: "" // FIXME: This is not valid tag, but I didn't find valid one so use this right now
         val urlTags = when {
             urlTag.isEmpty() -> mutableListOf()
             else -> Utils.jackson.readValue<MutableList<NpcDialogueButton>>(urlTag)

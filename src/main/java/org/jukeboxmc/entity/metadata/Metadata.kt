@@ -18,8 +18,8 @@ class Metadata {
         return this
     }
 
-    fun getByte(entityData: EntityDataType<Byte>?): Byte {
-        return entityDataMap[entityData] as Byte
+    fun getByte(entityData: EntityDataType<Byte>?): Byte? {
+        return entityDataMap[entityData] as? Byte
     }
 
     fun setLong(entityData: EntityDataType<Long>?, value: Long): Metadata {
@@ -30,20 +30,20 @@ class Metadata {
         return this
     }
 
-    fun getLong(entityData: EntityDataType<Long>?): Long {
-        return entityDataMap[entityData] as Long
+    fun getLong(entityData: EntityDataType<Long>?): Long? {
+        return entityDataMap[entityData] as? Long
     }
 
     fun setShort(entityData: EntityDataType<Short>?, value: Short): Metadata {
         val oldValue = getShort(entityData)
         if (oldValue != value) {
-            entityDataMap[entityData] = value.toInt()
+            entityDataMap[entityData] = value
         }
         return this
     }
 
-    fun getShort(entityData: EntityDataType<Short>?): Short {
-        return entityDataMap[entityData] as Short
+    fun getShort(entityData: EntityDataType<Short>?): Short? {
+        return entityDataMap[entityData] as? Short
     }
 
     fun setString(entityData: EntityDataType<String>?, value: String?): Metadata {
@@ -54,8 +54,8 @@ class Metadata {
         return this
     }
 
-    fun getString(entityData: EntityDataType<String>?): String {
-        return entityDataMap[entityData] as String
+    fun getString(entityData: EntityDataType<String>?): String? {
+        return entityDataMap[entityData] as? String
     }
 
     fun setFloat(entityData: EntityDataType<Float>?, value: Float): Metadata {
@@ -66,8 +66,8 @@ class Metadata {
         return this
     }
 
-    fun getFloat(entityData: EntityDataType<Float>?): Float {
-        return entityDataMap[entityData] as Float
+    fun getFloat(entityData: EntityDataType<Float>?): Float? {
+        return entityDataMap[entityData] as? Float
     }
 
     fun setFlag(entityFlag: EntityFlag, value: Boolean): Metadata {
@@ -78,8 +78,8 @@ class Metadata {
         return this
     }
 
-    fun getInt(entityData: EntityDataType<Int>?): Int {
-        return entityDataMap[entityData] as Int
+    fun getInt(entityData: EntityDataType<Int>?): Int? {
+        return entityDataMap[entityData] as? Int
     }
 
     fun setInt(entityData: EntityDataType<Int>?, value: Int): Metadata {
@@ -91,7 +91,7 @@ class Metadata {
     }
 
     fun getFlag(entityFlag: EntityFlag): Boolean {
-        return entityDataMap.flags.contains(entityFlag)
+        return entityDataMap.orCreateFlags.contains(entityFlag)
     }
 
     fun getEntityDataMap(): EntityDataMap {

@@ -263,14 +263,20 @@ abstract class Entity : AutoCloseable {
         }
     var maxAirSupply: Short
         // ============ Metadata =============
-        get() = metadata.getShort(EntityDataTypes.AIR_SUPPLY)
+        get() = metadata.getShort(EntityDataTypes.AIR_SUPPLY) ?: run {
+            updateMetadata(metadata.setShort(EntityDataTypes.AIR_SUPPLY, 300))
+            300
+        }
         set(value) {
             if (value != maxAirSupply) {
                 this.updateMetadata(metadata.setShort(EntityDataTypes.AIR_SUPPLY, value))
             }
         }
     var scale: Float
-        get() = metadata.getFloat(EntityDataTypes.SCALE)
+        get() = metadata.getFloat(EntityDataTypes.SCALE) ?: run {
+            updateMetadata(metadata.setFloat(EntityDataTypes.SCALE, 1f))
+            1f
+        }
         set(value) {
             if (value != scale) {
                 this.updateMetadata(metadata.setFloat(EntityDataTypes.SCALE, value))
@@ -298,7 +304,7 @@ abstract class Entity : AutoCloseable {
     }
 
     var nameTag: String
-        get() = metadata.getString(EntityDataTypes.NAME)
+        get() = metadata.getString(EntityDataTypes.NAME) ?: ""
         set(value) {
             this.updateMetadata(metadata.setString(EntityDataTypes.NAME, value))
         }

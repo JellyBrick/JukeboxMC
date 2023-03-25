@@ -241,8 +241,8 @@ open class Player(
         if (metadata.getFlag(EntityFlag.BREATHING) != breathing && gameMode == GameMode.SURVIVAL) {
             this.updateMetadata(metadata.setFlag(EntityFlag.BREATHING, breathing))
         }
-        var air = metadata.getShort(EntityDataTypes.AIR_SUPPLY)
-        val maxAir = metadata.getShort(EntityDataTypes.AIR_SUPPLY_MAX)
+        var air = metadata.getShort(EntityDataTypes.AIR_SUPPLY)!!
+        val maxAir = metadata.getShort(EntityDataTypes.AIR_SUPPLY_MAX)!!
         if (gameMode == GameMode.SURVIVAL) {
             if (!breathing) {
                 if (--air < 0) {
