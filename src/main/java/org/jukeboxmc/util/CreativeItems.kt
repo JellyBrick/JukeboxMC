@@ -8,7 +8,9 @@ import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
 import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData
 import org.jukeboxmc.Bootstrap
+import org.jukeboxmc.Server
 import org.jukeboxmc.item.Item
+import org.jukeboxmc.item.ItemRegistry
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.util.Base64
@@ -28,12 +30,38 @@ object CreativeItems {
                 jacksonObjectMapper().readValue<Map<String, List<Map<String, Any>>>>(inputStreamReader)
             var netIdCounter = 0
             itemEntries.getValue("items").forEach { itemEntry ->
-                val item: ItemData.Builder
+                // TODO: nbt_b64 contains the info of item enchantments
                 val identifier: Identifier = Identifier.fromString(itemEntry["id"] as String)
-                item = if (itemEntry.containsKey("blockRuntimeId")) {
-                    toItemData(identifier, itemEntry["blockRuntimeId"] as Int)
-                } else {
-                    toItemData(identifier, 0)
+                if (!ItemRegistry.hasItemType(identifier)) {
+                    Server.instance.logger.debug("Item $identifier is not registered, skipping")
+                    return@forEach
+                }
+                if (!itemEntry.containsKey("block_state_b64")) {
+                    throw RuntimeException("Creative item " + identifier.fullName + " is missing block state")
+                }
+                val item: ItemData.Builder = run {
+                    val blockNBT = if (itemEntry.containsKey("block_state_b64")) {
+                        val blockState = itemEntry["block_state_b64"] as String
+                        NbtUtils.createReaderLE(
+                            ByteArrayInputStream(
+                                Base64.getDecoder().decode(blockState.toByteArray()),
+                            ),
+                        )
+                            .use { nbtReader -> nbtReader.readTag() as NbtMap }
+                    } else {
+                        NbtMap.EMPTY
+                    }
+                    val block = BlockPalette.getBlock(
+                        Identifier.fromString(blockNBT.getString("name")),
+                        blockNBT,
+                    )
+                    val meta = if (itemEntry.containsKey("damage")) {
+                        itemEntry["damage"] as Int
+                    } else {
+                        0
+                    }
+                    val i = Item.createItem(identifier)
+                    toItemData(i.definition, block.definition, meta)
                 }
                 if (itemEntry.containsKey("damage")) {
                     item.damage((itemEntry["damage"] as Int).toShort().toInt())
@@ -57,11 +85,17 @@ object CreativeItems {
         return IDENTIFIER_BY_NETWORK_ID[networkId]
     }
 
-    private fun toItemData(itemDefinition: ItemDefinition, blockDefinition: BlockDefinition): ItemData.Builder {
+    private fun toItemData(
+        itemDefinition: ItemDefinition,
+        blockDefinition: BlockDefinition?,
+        meta: Int,
+    ): ItemData.Builder {
         return ItemData.builder()
+            .usingNetId(false)
             .definition(itemDefinition) // TODO: component based
             .blockDefinition(blockDefinition)
             .count(1)
+            .damage(meta)
             .canPlace(*arrayOf())
             .canBreak(*arrayOf())
     }
