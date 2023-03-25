@@ -99,6 +99,7 @@ import org.jukeboxmc.block.behavior.BlockGreenWool
 import org.jukeboxmc.block.behavior.BlockGrindstone
 import org.jukeboxmc.block.behavior.BlockHangingRoots
 import org.jukeboxmc.block.behavior.BlockHopper
+import org.jukeboxmc.block.behavior.BlockInfestedStone
 import org.jukeboxmc.block.behavior.BlockIronOre
 import org.jukeboxmc.block.behavior.BlockJungleStandingSign
 import org.jukeboxmc.block.behavior.BlockJungleWallSign
@@ -1280,7 +1281,7 @@ object BlockRegistry {
         register(BlockType.MELON_BLOCK, Identifier.fromString("minecraft:melon_block"))
         register(BlockType.MELON_STEM, Identifier.fromString("minecraft:melon_stem"))
         register(BlockType.MOB_SPAWNER, Identifier.fromString("minecraft:mob_spawner"))
-        register(BlockType.INFESTED_STONE, Identifier.fromString("minecraft:monster_egg"))
+        register(BlockType.INFESTED_STONE, Identifier.fromString("minecraft:monster_egg"), BlockInfestedStone::class.java)
         register(BlockType.MOSSY_COBBLESTONE, Identifier.fromString("minecraft:mossy_cobblestone"))
         register(
             BlockType.MOSSY_COBBLESTONE_STAIRS,
@@ -2254,6 +2255,9 @@ object BlockRegistry {
     }
 
     fun getBlockProperties(identifier: Identifier): BlockProperties {
+        if (identifier.fullName.endsWith("_wool")) { // duct tape for wools, until we have proper blockstate & item upgrader
+            return BLOCK_PROPERTIES.getValue(Identifier.fromString("minecraft:wool"))
+        }
         return BLOCK_PROPERTIES.getValue(identifier)
     }
 }
