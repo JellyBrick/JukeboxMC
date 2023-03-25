@@ -40,7 +40,7 @@ object CreativeItems {
                     throw RuntimeException("Creative item " + identifier.fullName + " is missing block state")
                 }
                 val item: ItemData.Builder = run {
-                    val blockNBT = if (itemEntry.containsKey("block_state_b64")) {
+                    val blockStateNBT = if (itemEntry.containsKey("block_state_b64")) {
                         val blockState = itemEntry["block_state_b64"] as String
                         NbtUtils.createReaderLE(
                             ByteArrayInputStream(
@@ -52,8 +52,8 @@ object CreativeItems {
                         NbtMap.EMPTY
                     }
                     val block = BlockPalette.getBlock(
-                        Identifier.fromString(blockNBT.getString("name")),
-                        blockNBT,
+                        Identifier.fromString(blockStateNBT.getString("name")),
+                        blockStateNBT,
                     )
                     val meta = if (itemEntry.containsKey("damage")) {
                         itemEntry["damage"] as Int
