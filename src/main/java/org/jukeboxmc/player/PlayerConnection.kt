@@ -8,6 +8,7 @@ import org.cloudburstmc.protocol.bedrock.data.AuthoritativeMovementMode
 import org.cloudburstmc.protocol.bedrock.data.ChatRestrictionLevel
 import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting
 import org.cloudburstmc.protocol.bedrock.data.PlayerPermission
+import org.cloudburstmc.protocol.bedrock.data.SpawnBiomeType
 import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler
@@ -21,6 +22,7 @@ import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket
 import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket
 import org.cloudburstmc.protocol.common.PacketSignal
+import org.cloudburstmc.protocol.common.util.OptionalBoolean
 import org.jukeboxmc.Server
 import org.jukeboxmc.crafting.CraftingManager
 import org.jukeboxmc.event.network.PacketReceiveEvent
@@ -222,13 +224,17 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.playerPosition = player.location.toVector3f().add(0f, 2f, 0f) // TODO
         startGamePacket.defaultSpawn = player.location.toVector3i().add(0, 2, 0) // TODO
         startGamePacket.rotation = Vector2f.from(player.pitch, player.yaw)
-        startGamePacket.seed = 0L // TODO
+        startGamePacket.seed = player.world!!.seed
         startGamePacket.dimensionId = player.location.dimension.ordinal
         startGamePacket.isTrustingPlayers = true
         startGamePacket.levelGameType = server.gameMode.toGameType()
         startGamePacket.difficulty = player.world!!.difficulty.ordinal
+        startGamePacket.spawnBiomeType = SpawnBiomeType.DEFAULT // TODO: User defined biome type
+        startGamePacket.customBiomeName = ""
         startGamePacket.isAchievementsDisabled = true
         startGamePacket.dayCycleStopTime = 0
+        startGamePacket.isEduFeaturesEnabled = false // TODO: education features
+        startGamePacket.educationProductionId = "" // TODO: education features
         startGamePacket.rainLevel = 0f
         startGamePacket.lightningLevel = 0f
         startGamePacket.isCommandsEnabled = true
@@ -256,6 +262,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         startGamePacket.chatRestrictionLevel = ChatRestrictionLevel.NONE
         startGamePacket.isDisablingPlayerInteractions = false
         startGamePacket.isClientSideGenerationEnabled = false
+        startGamePacket.forceExperimentalGameplay = OptionalBoolean.empty()
         sendPacket(startGamePacket)
         val availableEntityIdentifiersPacket = AvailableEntityIdentifiersPacket()
         availableEntityIdentifiersPacket.identifiers = EntityIdentifiers.identifiers
