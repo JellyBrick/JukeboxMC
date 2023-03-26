@@ -1,11 +1,6 @@
 package org.jukeboxmc.block
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import java.util.LinkedList
-import java.util.Locale
-import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.behavior.BlockAcaciaStandingSign
@@ -219,7 +214,6 @@ import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
-import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
 
