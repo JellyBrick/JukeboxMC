@@ -3,6 +3,7 @@ package org.jukeboxmc.item
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.item.behavior.ItemAcaciaSign
 import org.jukeboxmc.item.behavior.ItemAir
@@ -204,10 +205,9 @@ import org.jukeboxmc.item.behavior.ItemWoodenTrapdoor
 import org.jukeboxmc.item.behavior.ItemYellowWool
 import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.util.Identifier
+import org.jukeboxmc.util.ItemPalette
 import java.io.InputStreamReader
 import java.util.stream.Collectors
-import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
-import org.jukeboxmc.util.ItemPalette
 
 /**
  * @author LucGamesYT
