@@ -1,7 +1,11 @@
 package org.jukeboxmc.block
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleBlockDefinition
 import org.jukeboxmc.Bootstrap
 import org.jukeboxmc.block.behavior.BlockAcaciaStandingSign
 import org.jukeboxmc.block.behavior.BlockAcaciaWallSign
@@ -214,8 +218,10 @@ import org.jukeboxmc.block.data.BlockProperties
 import org.jukeboxmc.item.TierType
 import org.jukeboxmc.item.ToolType
 import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
+import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.util.Utils
+import java.util.Locale
 
 /**
  * @author LucGamesYT
@@ -226,6 +232,8 @@ object BlockRegistry {
     private val BLOCKTYPE_FROM_IDENTIFIER: MutableMap<Identifier?, BlockType> = linkedMapOf()
     private val BLOCK_PROPERTIES: MutableMap<Identifier?, BlockProperties> = linkedMapOf()
     private val BLOCKCLASS_FROM_BLOCKTYPE: MutableMap<BlockType?, Class<out Block>> = linkedMapOf()
+
+    private val states: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
 
     private val blockDefinitionRegistry =
         SimpleDefinitionRegistry.getRegistry<BlockDefinition, SimpleDefinitionRegistry<BlockDefinition>>()
@@ -2246,8 +2254,18 @@ object BlockRegistry {
         if (blockClass != null) {
             BLOCKCLASS_FROM_BLOCKTYPE[blockType] = blockClass
         }
-        val block: Block = Block.create(identifier)
-        blockDefinitionRegistry.register(block.runtimeId, block.definition)
+        val toRuntimeId: Object2ObjectMap<NbtMap, Int> = Object2ObjectLinkedOpenHashMap()
+        for (blockMap in BlockPalette.searchBlocks { blockMap: NbtMap ->
+            blockMap.getString("name").lowercase(Locale.getDefault()) == identifier.fullName
+        }) {
+            val runtimeId = BlockPalette.getRuntimeId(blockMap)
+            toRuntimeId[blockMap.getCompound("states")] = runtimeId
+            blockDefinitionRegistry.register(
+                BlockPalette.getRuntimeId(blockMap),
+                SimpleBlockDefinition(identifier.fullName, runtimeId, blockMap.getCompound("states")),
+            )
+        }
+        states[identifier] = toRuntimeId
     }
 
     fun getIdentifier(blockType: BlockType): Identifier {
@@ -2271,5 +2289,16 @@ object BlockRegistry {
             return BLOCK_PROPERTIES.getValue(Identifier.fromString("minecraft:wool"))
         }
         return BLOCK_PROPERTIES.getValue(identifier)
+    }
+
+    fun getRuntimeId(identifier: Identifier, blockState: NbtMap): Int {
+        return states.getValue(identifier).getValue(blockState)
+    }
+
+    /**
+     * Returns an immutable [Map] of [NbtMap] to [Int] representing the block states and their runtime ids.
+     */
+    fun getBlockStates(identifier: Identifier): Object2ObjectMap<NbtMap, Int> {
+        return states.getValue(identifier)
     }
 }

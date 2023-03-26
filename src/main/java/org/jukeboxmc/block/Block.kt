@@ -6,7 +6,6 @@ import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.protocol.bedrock.data.LevelEvent
 import org.cloudburstmc.protocol.bedrock.data.SoundEvent
 import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
-import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleBlockDefinition
 import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket
 import org.jukeboxmc.Server
 import org.jukeboxmc.block.behavior.Waterlogable
@@ -27,13 +26,13 @@ import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.math.AxisAlignedBB
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.potion.ConduitPowerEffect
 import org.jukeboxmc.potion.EffectType
 import org.jukeboxmc.potion.HasteEffect
 import org.jukeboxmc.potion.MiningFatigueEffect
-import org.jukeboxmc.util.BlockPalette
 import org.jukeboxmc.util.Identifier
 import org.jukeboxmc.world.World
 import java.util.LinkedList
@@ -63,28 +62,16 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         this.identifier = identifier
         type = BlockRegistry.getBlockType(identifier)
         blockProperties = BlockRegistry.getBlockProperties(identifier)
-        if (!STATES.containsKey(this.identifier)) {
-            val toRuntimeId: Object2ObjectMap<NbtMap, Int> = Object2ObjectLinkedOpenHashMap()
-            for (blockMap in BlockPalette.searchBlocks { blockMap: NbtMap ->
-                blockMap.getString("name").lowercase(Locale.getDefault()) == this.identifier.fullName
-            }) {
-                toRuntimeId[blockMap.getCompound("states")] = BlockPalette.getRuntimeId(blockMap)
-            }
-            STATES[this.identifier] = toRuntimeId
-        }
+        val state = BlockRegistry.getBlockStates(identifier)
         val variableBlockStates: NbtMap = if (blockStates == null) {
-            val states: List<NbtMap> = LinkedList(STATES.getValue(this.identifier).keys)
+            val states: List<NbtMap> = LinkedList(state.keys)
             if (states.isEmpty()) NbtMap.EMPTY else states[0]
         } else {
             blockStates
         }
         this.blockStates = variableBlockStates
-        runtimeId = STATES.getValue(this.identifier).getValue(this.blockStates)
-        definition = SimpleBlockDefinition(
-            this.identifier.fullName,
-            this.runtimeId,
-            this.blockStates,
-        )
+        runtimeId = BlockRegistry.getRuntimeId(identifier, variableBlockStates)
+        definition = registry.getDefinition(runtimeId)
     }
 
     val world: World
@@ -543,5 +530,7 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
 
         inline fun <reified T : Block> create(identifier: Identifier, blockStates: NbtMap): T =
             createBlock(identifier, blockStates) as T
+
+        private val registry: SimpleDefinitionRegistry<BlockDefinition> = SimpleDefinitionRegistry.getRegistry()
     }
 }
