@@ -17,6 +17,7 @@ import org.jukeboxmc.item.enchantment.EnchantmentRegistry
 import org.jukeboxmc.item.enchantment.EnchantmentType
 import org.jukeboxmc.math.Location
 import org.jukeboxmc.math.Vector
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.player.GameMode
 import org.jukeboxmc.player.Player
 import org.jukeboxmc.util.BlockPalette
@@ -91,7 +92,7 @@ open class Item : Cloneable {
         enchantments = EnumMap(EnchantmentType::class.java)
         itemProperties = ItemRegistry.getItemProperties(identifier)
         itemLockType = ItemLockType.NONE
-        definition = SimpleItemDefinition(identifier.fullName, runtimeId, false) // TODO: component based
+        definition = registry.getDefinition(runtimeId)
     }
 
     @JvmOverloads
@@ -583,5 +584,8 @@ open class Item : Cloneable {
         }
 
         inline fun <reified T : Item> fromBase64(json: String): T = fromBase64AsItem(json) as T
+
+        private val registry: SimpleDefinitionRegistry<ItemDefinition> =
+            SimpleDefinitionRegistry.getRegistry()
     }
 }

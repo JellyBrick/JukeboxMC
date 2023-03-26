@@ -206,6 +206,8 @@ import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.util.Identifier
 import java.io.InputStreamReader
 import java.util.stream.Collectors
+import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
+import org.jukeboxmc.util.ItemPalette
 
 /**
  * @author LucGamesYT
@@ -3369,8 +3371,8 @@ object ItemRegistry {
         registryData.itemClass?.let {
             ITEMCLASS_FROM_ITEMTYPE[itemType] = it
         }
-        val item: Item = Item.create(itemType)
-        itemDefinitionRegistry.register(item.runtimeId, item.definition)
+        val runtimeId = ItemPalette.getRuntimeId(registryData.identifier)
+        itemDefinitionRegistry.register(runtimeId, SimpleItemDefinition(registryData.identifier.fullName, runtimeId, false))
     }
 
     fun getItemClass(itemType: ItemType): Class<out Item> {
