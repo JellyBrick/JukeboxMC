@@ -1,7 +1,5 @@
 package org.jukeboxmc.block
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.protocol.bedrock.data.LevelEvent
 import org.cloudburstmc.protocol.bedrock.data.SoundEvent
@@ -96,12 +94,13 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
         val valid = checkValidity()
         val nbtMapBuilder = blockStates.toBuilder()
         nbtMapBuilder[state] = value
-        STATES.getValue(identifier).forEach { (blockMap) ->
+        val states = BlockRegistry.getBlockStates(identifier)
+        states.forEach { (blockMap) ->
             if (blockMap == nbtMapBuilder) {
                 blockStates = blockMap
             }
         }
-        runtimeId = STATES.getValue(identifier).getValue(blockStates)
+        runtimeId = states.getValue(blockStates)
         if (valid) {
             this.sendUpdate()
             location.chunk?.setBlock(location.blockX, location.blockY, location.blockZ, layer, this)
@@ -471,7 +470,6 @@ open class Block @JvmOverloads constructor(identifier: Identifier, blockStates: 
     }
 
     companion object {
-        val STATES: Object2ObjectMap<Identifier, Object2ObjectMap<NbtMap, Int>> = Object2ObjectLinkedOpenHashMap()
         fun createBlock(blockType: BlockType): Block {
             return if (BlockRegistry.blockClassExists(blockType)) {
                 val constructor = BlockRegistry.getBlockClass(blockType).getConstructor(
