@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.data.defintions.SimpleItemDefinition
 import org.jukeboxmc.Bootstrap
+import org.jukeboxmc.Server
 import org.jukeboxmc.item.behavior.ItemAcaciaSign
 import org.jukeboxmc.item.behavior.ItemAir
 import org.jukeboxmc.item.behavior.ItemAnvil
@@ -3366,14 +3367,21 @@ object ItemRegistry {
     }
 
     @JvmOverloads
-    private fun register(itemType: ItemType, registryData: ItemRegistryData, componentBased: Boolean = false) {
+    fun register(itemType: ItemType, registryData: ItemRegistryData, componentBased: Boolean = false) {
         ITEMS[itemType] = registryData
         ITEMTYPE_FROM_IDENTIFIER[registryData.identifier] = itemType
         registryData.itemClass?.let {
             ITEMCLASS_FROM_ITEMTYPE[itemType] = it
         }
         val runtimeId = ItemPalette.getRuntimeId(registryData.identifier)
-        itemDefinitionRegistry.register(runtimeId, SimpleItemDefinition(registryData.identifier.fullName, runtimeId, componentBased))
+        if (runtimeId == null) {
+            Server.instance.logger.debug("Skipping registration of item ${registryData.identifier} because it has no runtime id")
+            return
+        }
+        itemDefinitionRegistry.register(
+            runtimeId,
+            SimpleItemDefinition(registryData.identifier.fullName, runtimeId, componentBased),
+        )
     }
 
     fun getItemClass(itemType: ItemType): Class<out Item> {

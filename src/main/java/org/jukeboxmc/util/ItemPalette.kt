@@ -153,8 +153,8 @@ object ItemPalette {
     }
 
     @JvmStatic
-    fun getRuntimeId(identifier: Identifier?): Int {
-        return IDENTIFIER_TO_RUNTIME[identifier]!!.toInt()
+    fun getRuntimeId(identifier: Identifier?): Int? {
+        return IDENTIFIER_TO_RUNTIME[identifier]?.toInt()
     }
 
     @JvmStatic

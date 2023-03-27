@@ -76,7 +76,7 @@ open class Item : Cloneable {
         type = ItemRegistry.getItemType(identifier)
         val itemRegistryData = ItemRegistry.getItemRegistryData(type)
         this.identifier = itemRegistryData.identifier
-        runtimeId = ItemPalette.getRuntimeId(this.identifier)
+        runtimeId = ItemPalette.getRuntimeId(this.identifier)!! // at this point this should NOT be null
         blockRuntimeId = 0
         if (withNetworkId) {
             stackNetworkId = stackNetworkCount++
@@ -100,7 +100,7 @@ open class Item : Cloneable {
         type = itemType
         val itemRegistryData = ItemRegistry.getItemRegistryData(itemType)
         identifier = itemRegistryData.identifier
-        runtimeId = ItemPalette.getRuntimeId(identifier)
+        runtimeId = ItemPalette.getRuntimeId(identifier)!! // at this point this should NOT be null
         if (withNetworkId) {
             stackNetworkId = stackNetworkCount++
         }
@@ -128,7 +128,7 @@ open class Item : Cloneable {
         type = ItemRegistry.getItemType(ItemPalette.getIdentifier(itemData.netId.toShort()))
         val itemRegistryData = ItemRegistry.getItemRegistryData(type)
         identifier = itemRegistryData.identifier
-        runtimeId = ItemPalette.getRuntimeId(identifier)
+        runtimeId = ItemPalette.getRuntimeId(identifier)!! // at this point this should NOT be null
         blockRuntimeId = itemData.blockDefinition!!.runtimeId
         if (withNetworkId) {
             stackNetworkId = stackNetworkCount++
