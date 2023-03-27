@@ -229,9 +229,9 @@ abstract class Inventory {
         return false
     }
 
-    val itemDataContents: List<ItemData?>
+    val itemDataContents: List<ItemData>
         get() {
-            val itemDataList: MutableList<ItemData?> = mutableListOf()
+            val itemDataList: MutableList<ItemData> = mutableListOf()
             for (content in contents) {
                 itemDataList.add(content.toItemData())
             }
