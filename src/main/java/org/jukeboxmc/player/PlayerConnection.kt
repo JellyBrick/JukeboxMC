@@ -2,7 +2,7 @@ package org.jukeboxmc.player
 
 import org.cloudburstmc.math.vector.Vector2f
 import org.cloudburstmc.nbt.NbtMap
-import org.cloudburstmc.netty.channel.raknet.RakDisconnectReason
+import org.cloudburstmc.protocol.bedrock.BedrockDisconnectReasons
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession
 import org.cloudburstmc.protocol.bedrock.data.AuthoritativeMovementMode
 import org.cloudburstmc.protocol.bedrock.data.ChatRestrictionLevel
@@ -40,7 +40,6 @@ import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
-import org.cloudburstmc.protocol.bedrock.BedrockDisconnectReasons
 
 /**
  * @author LucGamesYT
@@ -286,6 +285,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
             BedrockDisconnectReasons.TIMEOUT -> {
                 "Timeout"
             }
+
             BedrockDisconnectReasons.REMOVED -> {
                 "Shutdown"
             }
