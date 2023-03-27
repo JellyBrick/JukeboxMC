@@ -40,6 +40,7 @@ import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
+import org.cloudburstmc.protocol.bedrock.BedrockDisconnectReasons
 
 /**
  * @author LucGamesYT
@@ -66,15 +67,6 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 
     init {
         this.session = session
-        // FIXME
-//        this.session.hardcodedBlockingId.set(Item.create<Item>(ItemType.SHIELD).runtimeId)
-//        this.session.addDisconnectHandler { disconnectReason: DisconnectReason? ->
-//            server.scheduler.execute {
-//                onDisconnect(
-//                    disconnectReason,
-//                )
-//            }
-//        }
         loggedIn = AtomicBoolean(false)
         spawned = AtomicBoolean(false)
         player = Player(server, this)
@@ -101,6 +93,10 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
                     }
                     return PacketSignal.HANDLED
                 }
+
+                override fun onDisconnect(reason: String) {
+                    this@PlayerConnection.onDisconnect(reason)
+                }
             }
     }
 
@@ -117,7 +113,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         }
     }
 
-    private fun onDisconnect(disconnectReason: RakDisconnectReason?) {
+    private fun onDisconnect(disconnectReason: String?) {
         server.removePlayer(player)
         player.world.removeEntity(player)
         player.chunk?.removeEntity(player)
@@ -285,13 +281,12 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         sendPacket(craftingDataPacket)
     }
 
-    private fun parseDisconnectMessage(disconnectReason: RakDisconnectReason?): String {
-        return when (disconnectReason ?: RakDisconnectReason.DISCONNECTED) {
-            RakDisconnectReason.ALREADY_CONNECTED -> {
-                "Already connected"
+    private fun parseDisconnectMessage(disconnectReason: String?): String {
+        return when (disconnectReason ?: BedrockDisconnectReasons.DISCONNECTED) {
+            BedrockDisconnectReasons.TIMEOUT -> {
+                "Timeout"
             }
-
-            RakDisconnectReason.SHUTTING_DOWN -> {
+            BedrockDisconnectReasons.REMOVED -> {
                 "Shutdown"
             }
 
@@ -302,7 +297,7 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
     }
 
     fun disconnect() {
-        onDisconnect(RakDisconnectReason.DISCONNECTED)
+        onDisconnect(BedrockDisconnectReasons.CLOSED)
         session.disconnect()
     }
 
