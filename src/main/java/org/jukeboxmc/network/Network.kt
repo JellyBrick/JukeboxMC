@@ -44,7 +44,8 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
             val bootstrap: ServerBootstrap = ServerBootstrap()
                 .channelFactory(RakChannelFactory.server(NioDatagramChannel::class.java)) // TODO: epoll, kqueue
                 .group(NioEventLoopGroup())
-                .option(RakChannelOption.RAK_HANDLE_PING, true) // TODO: dynamic
+//                .option(RakChannelOption.RAK_HANDLE_PING, true) // TODO: dynamic
+                .option(RakChannelOption.RAK_ADVERTISEMENT, bedrockPong.toByteBuf())
                 .childHandler(object : BedrockServerInitializer() {
                     override fun initSession(bedrockServerSession: BedrockServerSession) {
                         val playerConnection = addPlayer(PlayerConnection(server, bedrockServerSession))
