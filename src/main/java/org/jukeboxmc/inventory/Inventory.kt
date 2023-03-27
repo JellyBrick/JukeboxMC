@@ -19,7 +19,12 @@ abstract class Inventory {
             _size = arg
         }
         get() = _size
-    protected open var contents: Array<Item>
+    private var _contents: Array<Item>
+    open var contents: Array<Item>
+        protected set(arg) {
+            _contents = arg
+        }
+        get() = _contents
     var holderId: Long = -1
         protected set
 
@@ -30,7 +35,7 @@ abstract class Inventory {
         if (holder is Player) {
             holderId = holder.entityId
         }
-        this.contents = Array(size) { Item.create(ItemType.AIR) }
+        this._contents = Array(size) { Item.create(ItemType.AIR) }
     }
 
     constructor(holder: InventoryHolder?, holderId: Int, size: Int) {
@@ -38,7 +43,7 @@ abstract class Inventory {
         this._size = size
         viewer = LinkedHashSet()
         this.holderId = holderId.toLong()
-        this.contents = Array(size) { Item.create(ItemType.AIR) }
+        this._contents = Array(size) { Item.create(ItemType.AIR) }
     }
 
     abstract fun sendContents(player: Player)
@@ -77,7 +82,7 @@ abstract class Inventory {
     }
 
     /**
-     * @return the **cloned** [Item] in the specified slot.
+     * Returns the **cloned** [Item] in the specified slot.
      *
      * If you want to change item state, use [setItem] instead.
      */
@@ -198,11 +203,6 @@ abstract class Inventory {
     fun removeItem(itemType: ItemType, amount: Int) {
         this.removeItem(itemType, 0, amount)
     }
-
-    /**
-     * @return the **cloned** contents of this inventory.
-     */
-    fun getContents(): Array<Item> = contents.clone()
 
     fun clear(slot: Int) {
         this.setItem(slot, Item.create(ItemType.AIR))
