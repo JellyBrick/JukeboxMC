@@ -3365,14 +3365,15 @@ object ItemRegistry {
         }
     }
 
-    private fun register(itemType: ItemType, registryData: ItemRegistryData) {
+    @JvmOverloads
+    private fun register(itemType: ItemType, registryData: ItemRegistryData, componentBased: Boolean = false) {
         ITEMS[itemType] = registryData
         ITEMTYPE_FROM_IDENTIFIER[registryData.identifier] = itemType
         registryData.itemClass?.let {
             ITEMCLASS_FROM_ITEMTYPE[itemType] = it
         }
         val runtimeId = ItemPalette.getRuntimeId(registryData.identifier)
-        itemDefinitionRegistry.register(runtimeId, SimpleItemDefinition(registryData.identifier.fullName, runtimeId, false))
+        itemDefinitionRegistry.register(runtimeId, SimpleItemDefinition(registryData.identifier.fullName, runtimeId, componentBased))
     }
 
     fun getItemClass(itemType: ItemType): Class<out Item> {
