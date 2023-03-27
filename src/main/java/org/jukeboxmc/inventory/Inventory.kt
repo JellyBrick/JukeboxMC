@@ -13,29 +13,37 @@ import org.jukeboxmc.player.Player
 abstract class Inventory {
     val viewer: MutableSet<Player>
     protected var holder: InventoryHolder?
+    private var _size: Int
     open var size: Int
-        protected set
+        protected set(arg) {
+            _size = arg
+        }
+        get() = _size
+    private var _contents: Array<Item>
     open var contents: Array<Item>
-        protected set
+        protected set(arg) {
+            _contents = arg
+        }
+        get() = _contents
     var holderId: Long = -1
         protected set
 
     constructor(holder: InventoryHolder, size: Int) {
         this.holder = holder
-        this.size = size
+        this._size = size
         viewer = LinkedHashSet()
         if (holder is Player) {
             holderId = holder.entityId
         }
-        contents = Array(size) { Item.create(ItemType.AIR) }
+        this._contents = Array(size) { Item.create(ItemType.AIR) }
     }
 
     constructor(holder: InventoryHolder?, holderId: Int, size: Int) {
         this.holder = holder
-        this.size = size
+        this._size = size
         viewer = LinkedHashSet()
         this.holderId = holderId.toLong()
-        contents = Array(size) { Item.create(ItemType.AIR) }
+        this._contents = Array(size) { Item.create(ItemType.AIR) }
     }
 
     abstract fun sendContents(player: Player)
