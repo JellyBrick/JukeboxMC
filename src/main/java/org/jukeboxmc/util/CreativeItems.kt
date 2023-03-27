@@ -90,7 +90,6 @@ object CreativeItems {
         meta: Int,
     ): ItemData.Builder {
         return ItemData.builder()
-            .usingNetId(false)
             .definition(itemDefinition) // TODO: component based
             .blockDefinition(blockDefinition)
             .count(1)
