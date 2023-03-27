@@ -24,7 +24,11 @@ abstract class Inventory {
         protected set(arg) {
             _contents = arg
         }
-        get() = _contents
+        get() {
+            val contents = Array(size) { Item.create<Item>(ItemType.AIR) }
+            System.arraycopy(_contents, 0, contents, 0, size)
+            return contents
+        }
     var holderId: Long = -1
         protected set
 

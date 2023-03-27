@@ -811,7 +811,7 @@ open class Player(
     private val protectionReduction: Float
         private get() {
             var protectionReduction = 0f
-            for (content in armorInventory.getContents()) {
+            for (content in armorInventory.contents) {
                 if (content is ItemArmor) {
                     val enchantment = content.getEnchantment(EnchantmentType.PROTECTION)
                     if (enchantment != null) {
@@ -824,7 +824,7 @@ open class Player(
     private val projectileProtectionReduction: Float
         private get() {
             var protectionReduction = 0f
-            for (content in armorInventory.getContents()) {
+            for (content in armorInventory.contents) {
                 if (content is ItemArmor) {
                     val enchantment = content.getEnchantment(EnchantmentType.PROJECTILE_PROTECTION)
                     if (enchantment != null) {
@@ -837,7 +837,7 @@ open class Player(
     private val fireProtectionReduction: Float
         private get() {
             var protectionReduction = 0f
-            for (content in armorInventory.getContents()) {
+            for (content in armorInventory.contents) {
                 if (content is ItemArmor) {
                     val enchantment = content.getEnchantment(EnchantmentType.FIRE_PROTECTION)
                     if (enchantment != null) {
@@ -995,21 +995,21 @@ open class Player(
     val drops: List<Item>
         get() {
             val drops: MutableList<Item> = mutableListOf()
-            for (content in playerInventory.getContents()) {
+            for (content in playerInventory.contents) {
                 if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
                     }
                 }
             }
-            for (content in cursorInventory.getContents()) {
+            for (content in cursorInventory.contents) {
                 if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
                     }
                 }
             }
-            for (content in armorInventory.getContents()) {
+            for (content in armorInventory.contents) {
                 if (content.type != ItemType.AIR) {
                     if (content.getEnchantment(EnchantmentType.CURSE_OF_VANISHING) == null) {
                         drops.add(content)
