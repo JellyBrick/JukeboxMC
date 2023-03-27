@@ -81,8 +81,13 @@ abstract class Inventory {
         }
     }
 
+    /**
+     * Returns the **cloned** [Item] in the specified slot.
+     *
+     * If you want to change item state, use [setItem] instead.
+     */
     open fun getItem(slot: Int): Item {
-        return contents[slot]
+        return contents[slot].clone()
     }
 
     fun canAddItem(item: Item): Boolean {
