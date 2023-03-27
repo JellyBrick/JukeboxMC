@@ -79,13 +79,9 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
         spawned = AtomicBoolean(false)
         player = Player(server, this)
         playerChunkManager = PlayerChunkManager(player)
-        session.codec = Network.CODEC.toBuilder()
-            .apply {
-                val codecHelper = session.codec.createHelper()
-                codecHelper.itemDefinitions = SimpleDefinitionRegistry.getRegistry()
-                codecHelper.blockDefinitions = SimpleDefinitionRegistry.getRegistry()
-                helper { codecHelper }
-            }.build()
+        session.codec = Network.CODEC
+        session.peer.codecHelper.itemDefinitions = SimpleDefinitionRegistry.getRegistry()
+        session.peer.codecHelper.blockDefinitions = SimpleDefinitionRegistry.getRegistry()
         session.packetHandler =
             object : BedrockPacketHandler {
                 override fun handlePacket(packet: BedrockPacket): PacketSignal {
