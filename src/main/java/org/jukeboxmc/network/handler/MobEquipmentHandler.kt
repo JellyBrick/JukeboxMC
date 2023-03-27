@@ -16,6 +16,11 @@ class MobEquipmentHandler : PacketHandler<MobEquipmentPacket> {
     override fun handle(packet: MobEquipmentPacket, server: Server, player: Player) {
         val inventory = getInventory(player, WindowId.getWindowIdById(packet.containerId))
         val item = inventory.getItem(packet.hotbarSlot)
+        if (packet.item == null) {
+            // apparently item is null when they change slot to air
+            inventory.sendContents(player)
+            return
+        }
         if (item != Item(packet.item, false)) {
             inventory.sendContents(player)
             return
