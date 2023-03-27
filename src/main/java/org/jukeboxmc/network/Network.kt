@@ -10,12 +10,8 @@ import org.cloudburstmc.protocol.bedrock.BedrockPong
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec
 import org.cloudburstmc.protocol.bedrock.codec.v575.Bedrock_v575
-import org.cloudburstmc.protocol.bedrock.data.defintions.BlockDefinition
-import org.cloudburstmc.protocol.bedrock.data.defintions.ItemDefinition
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitializer
-import org.cloudburstmc.protocol.common.DefinitionRegistry
 import org.jukeboxmc.Server
-import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.player.PlayerConnection
 import java.net.InetSocketAddress
 import java.util.function.Consumer

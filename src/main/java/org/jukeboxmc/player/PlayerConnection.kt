@@ -31,6 +31,7 @@ import org.jukeboxmc.event.player.PlayerQuitEvent
 import org.jukeboxmc.network.Network
 import org.jukeboxmc.network.handler.HandlerRegistry
 import org.jukeboxmc.network.handler.PacketHandler
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 import org.jukeboxmc.player.data.LoginData
 import org.jukeboxmc.player.manager.PlayerChunkManager
 import org.jukeboxmc.util.BiomeDefinitions
@@ -39,7 +40,6 @@ import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
-import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 
 /**
  * @author LucGamesYT
