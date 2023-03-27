@@ -37,8 +37,9 @@ import org.jukeboxmc.util.BiomeDefinitions
 import org.jukeboxmc.util.CreativeItems
 import org.jukeboxmc.util.EntityIdentifiers
 import org.jukeboxmc.util.ItemPalette
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
+import org.jukeboxmc.network.registry.SimpleDefinitionRegistry
 
 /**
  * @author LucGamesYT
@@ -74,12 +75,17 @@ class PlayerConnection(val server: Server, session: BedrockServerSession) {
 //                )
 //            }
 //        }
-        session.codec.createHelper().itemDefinitions
         loggedIn = AtomicBoolean(false)
         spawned = AtomicBoolean(false)
         player = Player(server, this)
         playerChunkManager = PlayerChunkManager(player)
-        session.codec = Network.CODEC
+        session.codec = Network.CODEC.toBuilder()
+            .apply {
+                val codecHelper = session.codec.createHelper()
+                codecHelper.itemDefinitions = SimpleDefinitionRegistry.getRegistry()
+                codecHelper.blockDefinitions = SimpleDefinitionRegistry.getRegistry()
+                helper { codecHelper }
+            }.build()
         session.packetHandler =
             object : BedrockPacketHandler {
                 override fun handlePacket(packet: BedrockPacket): PacketSignal {

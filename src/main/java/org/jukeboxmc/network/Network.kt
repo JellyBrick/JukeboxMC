@@ -113,14 +113,6 @@ class Network(val server: Server, val inetSocketAddress: InetSocketAddress) {
     }
 
     companion object {
-        val CODEC: BedrockCodec = Bedrock_v575.CODEC.toBuilder()
-            .apply {
-                val codecHelper = Bedrock_v575.CODEC.createHelper()
-                codecHelper.itemDefinitions =
-                    SimpleDefinitionRegistry.getRegistry<ItemDefinition, DefinitionRegistry<ItemDefinition>>()
-                codecHelper.blockDefinitions =
-                    SimpleDefinitionRegistry.getRegistry<BlockDefinition, DefinitionRegistry<BlockDefinition>>()
-                helper { codecHelper }
-            }.build()
+        val CODEC: BedrockCodec = Bedrock_v575.CODEC
     }
 }
